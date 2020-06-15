@@ -286,7 +286,8 @@ def setup():
   jmdict = parse_jmdict()
   jmdict2sqldb(jmdict)
 
-def search(q, langs = [DLANG], file = SQLITE_FILE):             # {{{1
+def search(q, langs = [DLANG], max_results = None,              # {{{1
+           file = SQLITE_FILE):
   entries = set()
   rx      = re.compile(q, re.I)
   mat     = lambda x: rx.search(x) is not None
@@ -300,7 +301,8 @@ def search(q, langs = [DLANG], file = SQLITE_FILE):             # {{{1
       for r in c.execute("SELECT * FROM sense WHERE lang = ? AND matches(gloss)",
                          (lang,)):
         entries.add(r["entry"])
-    for seq in sorted(entries):
+    for i, seq in enumerate(sorted(entries)):
+      if max_results and i >= max_results: break
       k = tuple(
         Kanji(r["elem"], frozenset(r["chars"]))
         for r in c.execute("SELECT * FROM kanji WHERE entry = ?", (seq,))

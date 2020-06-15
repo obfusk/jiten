@@ -53,8 +53,7 @@ def jmdict(ctx, lang, word, max, query):                        # {{{1
   if ctx.obj["verbose"]:
     click.echo("query: " + click.style(q, fg = "bright_red"))
     click.echo()
-  for i, e in enumerate(J.search(q, lang)):
-    if max and i >= max: break
+  for e in J.search(q, lang, max):
     if ctx.obj["verbose"]:
       click.echo("#" + click.style(str(e.seq), fg = "blue"))
     click.echo(" | ".join(
