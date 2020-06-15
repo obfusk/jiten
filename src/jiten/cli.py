@@ -38,14 +38,23 @@ def cli(ctx, colour, **kw):
 
 # TODO
 @cli.command(help = "Search JMDict.")
-@click.option("--lang", multiple = True, default = [J.DLANG])
-@click.argument("query")
+@click.option("-l", "--lang", multiple = True, default = [J.DLANG],
+              metavar = "LANG",
+              help = "Choose language(s) ("+", ".join(J.LANGS)+").")
+@click.option("-w", "--word", is_flag = True,
+              help = "Match whole word (same as \\b...\\b).")
+@click.option("-m", "--max", default = None, type = click.INT,
+              help = "Maximum number of results.")
+@click.argument("query", required = False)
 @click.pass_context
-def jmdict(ctx, lang, query):                                   # {{{1
+def jmdict(ctx, lang, word, max, query):                        # {{{1
+  q = query or click.prompt("query")
+  if word: q = "\\b" + q + "\\b"
   if ctx.obj["verbose"]:
-    click.echo("query: " + click.style(query, fg = "bright_red"))
+    click.echo("query: " + click.style(q, fg = "bright_red"))
     click.echo()
-  for e in J.search(query, lang):
+  for i, e in enumerate(J.search(q, lang)):
+    if max and i >= max: break
     if ctx.obj["verbose"]:
       click.echo("#" + click.style(str(e.seq), fg = "blue"))
     click.echo(" | ".join(
@@ -78,8 +87,8 @@ def kanji(ctx, query):                                          # {{{1
 
 # TODO
 @cli.command(help = "Serve the web interface.")
-@click.option("--host", default = "localhost")
-@click.option("--port", default = 8888, type = click.INT)
+@click.option("--host", default = "localhost", metavar = "HOST")
+@click.option("--port", default = 8888, metavar = "PORT", type = click.INT)
 @click.pass_context
 def serve(ctx, host, port):
   click.echo(click.style("TODO", fg = "red"))
