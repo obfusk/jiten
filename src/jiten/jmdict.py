@@ -101,7 +101,7 @@ sterven
 
 """                                                             # }}}1
 
-import gzip, itertools, sqlite3, sys
+import gzip, sys
 import xml.etree.ElementTree as ET
 
 from collections import namedtuple
@@ -109,14 +109,10 @@ from functools import lru_cache
 
 import click
 
-iskanji = lambda c: 0x4e00 <= ord(c) <= 0x9faf
-flatten = itertools.chain.from_iterable
+from jiten.misc import flatten, uniq
+from jiten.sql import sqlite_do
 
-def uniq(xs):
-  seen = set()
-  for x in xs:
-    if x not in seen:
-      seen.add(x); yield x
+iskanji = lambda c: 0x4e00 <= ord(c) <= 0x9faf
 
 SQLITE_FILE   = "res/jmdict.sqlite3"
 JMDICT_FILE   = "res/jmdict/jmdict.xml.gz"
@@ -233,24 +229,23 @@ def parse_jmdict(file = JMDICT_FILE):                           # {{{1
 
 # TODO
 def jmdict2sqldb(data, file = SQLITE_FILE):                     # {{{1
-  conn = sqlite3.connect(file); c = conn.cursor()
-  c.executescript(JMDICT_CREATE_SQL)
-  with click.progressbar(data, label = "writing jmdict") as bar:
-    for e in bar:
-      c.execute("INSERT INTO jmdict VALUES (?,?)",
-                (e.seq, e.usually_kana()))
-      for k in e.kanji:
-        c.execute("INSERT INTO jmdict_kanji VALUES (?,?,?)",
-                  (e.seq, k.elem, "".join(k.chars)))
-      for r in e.reading:
-        c.execute("INSERT INTO jmdict_reading VALUES (?,?,?)",
-                  (e.seq, r.elem, "\n".join(r.restr)))
-      for s in e.sense:
-        c.execute("INSERT INTO jmdict_sense VALUES (?,?,?,?,?,?)",
-                  (e.seq, "\n".join(s.pos), s.lang,
-                   "\n".join(s.gloss), "\n".join(s.info),
-                   s.usually_kana))
-  conn.commit(); conn.close()
+  with sqlite_do(file) as c:
+    c.executescript(JMDICT_CREATE_SQL)
+    with click.progressbar(data, label = "writing jmdict") as bar:
+      for e in bar:
+        c.execute("INSERT INTO jmdict VALUES (?,?)",
+                  (e.seq, e.usually_kana()))
+        for k in e.kanji:
+          c.execute("INSERT INTO jmdict_kanji VALUES (?,?,?)",
+                    (e.seq, k.elem, "".join(k.chars)))
+        for r in e.reading:
+          c.execute("INSERT INTO jmdict_reading VALUES (?,?,?)",
+                    (e.seq, r.elem, "\n".join(r.restr)))
+        for s in e.sense:
+          c.execute("INSERT INTO jmdict_sense VALUES (?,?,?,?,?,?)",
+                    (e.seq, "\n".join(s.pos), s.lang,
+                     "\n".join(s.gloss), "\n".join(s.info),
+                     s.usually_kana))
                                                                 # }}}1
 
                                                                 # {{{1
