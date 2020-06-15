@@ -3,7 +3,8 @@ SHELL = /bin/bash
 .PHONY: test
 
 test:
-	export PYTHONPATH=$$PWD/src       ;\
-	python3 -m jiten.jmdict --doctest ;\
-	python3 -m jiten.kanji  --doctest ;\
+	export PYTHONPATH=$$PWD/src       ;  \
+	python3 -m jiten.freq   --doctest && \
+	python3 -m jiten.jmdict --doctest && \
+	python3 -m jiten.kanji  --doctest && \
 	python3 -m jiten.misc   --doctest

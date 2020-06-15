@@ -175,9 +175,32 @@ def setup():
   kanjidic = parse_kanjidic()
   kanjidic2sqldb(kanjidic)
 
-# TODO
 def search(q, max_results = None, file = SQLITE_FILE):          # {{{1
-  ...
+  ent   = lambda r: Entry(*(list(r[1:8]) + [ tuple(x.splitlines())
+                                             for x in r[8:] ]))
+  ideo  = tuple(M.uniq(filter(M.isideo, q)))
+  with sqlite_do(file) as c:
+    if ideo:
+      for char in ideo:
+        for i, r in enumerate(c.execute("SELECT * FROM entry WHERE char = ?",
+                                        (char,))):
+          if max_results and i >= max_results: break
+          yield ent(r)
+    else:
+      rx    = re.compile(q, re.I | re.M)
+      mat1  = lambda x: rx.search(x) is not None
+      mat2  = lambda x: rx.search(x.replace(".", "")
+                                   .replace("-", "")) is not None
+      c.connection.create_function("matches1", 1, mat1)
+      c.connection.create_function("matches2", 1, mat2)
+      for i, r in enumerate(c.execute("""
+          SELECT * FROM entry WHERE
+            matches1(on_) OR matches1(kun) OR matches1(nanori) OR
+            matches2(on_) OR matches2(kun) OR matches2(nanori) OR
+            matches1(meaning)
+          """)):
+        if max_results and i >= max_results: break
+        yield ent(r)
                                                                 # }}}1
 
 if __name__ == "__main__":

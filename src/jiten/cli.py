@@ -55,9 +55,6 @@ def jmdict(ctx, lang, word, max, query):                        # {{{1
     click.echo("query: " + click.style(q, fg = "bright_red"))
     click.echo()
   for e, rank in J.search(q, lang, max):
-    if ctx.obj["verbose"]:
-      click.echo("seq# " + click.style(str(e.seq), fg = "blue")
-                 + ", freq# " + click.style(str(rank), fg = "cyan"))
     click.echo(" | ".join(
       click.style(k.elem, fg = "bright_yellow") for k in e.kanji
     ))
@@ -74,16 +71,54 @@ def jmdict(ctx, lang, word, max, query):                        # {{{1
         click.echo(click.style("* ", fg = "magenta") + t)
     if e.usually_kana():
       click.echo("[" + J.USUKANA + "]")
+    if ctx.obj["verbose"]:
+      click.echo("seq# " + click.style(str(e.seq), fg = "blue")
+                 + ", freq# " + click.style(str(rank), fg = "cyan"))
     click.echo()
                                                                 # }}}1
 
 # TODO
 @cli.command(help = "Search KanjiDic.")
-@click.argument("query")
+@click.option("-w", "--word", is_flag = True,
+              help = "Match whole word (same as \\b...\\b).")
+@click.option("-m", "--max", default = None, type = click.INT,
+              help = "Maximum number of results.")
+@click.argument("query", required = False)
 @click.pass_context
-def kanji(ctx, query):                                          # {{{1
-  click.echo(click.style("TODO", fg = "red"))
-  ctx.exit(1)
+def kanji(ctx, word, max, query):                               # {{{1
+  q = query or click.prompt("query")
+  if word: q = "\\b" + q + "\\b"
+  if ctx.obj["verbose"]:
+    click.echo("query: " + click.style(q, fg = "bright_red"))
+    click.echo()
+  for e in K.search(q, max):
+    click.echo(e.char)
+    click.echo(" | ".join(
+      click.style(r, fg = "bright_yellow") for r in e.on
+    ) or "[no on readings]")
+    click.echo(" | ".join(
+      click.style(r, fg = "bright_green") for r in e.kun
+    ) or "[no kun readings]")
+    click.echo(" | ".join(
+      click.style(r, fg = "cyan") for r in e.nanori
+    ) or "[no name readings]")
+    for m in e.meaning:
+      click.echo(click.style("* ", fg = "magenta") + m)
+    if ctx.obj["verbose"]:
+      click.echo(
+        click.style(hex(ord(e.char)), fg = "blue")
+        + ", " + click.style(str(e.strokes), fg = "yellow")
+        + " strokes"
+        + (", grade " + click.style(e.level, fg = "cyan")
+           if e.level else "")
+        + (", freq# " + click.style(str(e.freq), fg = "magenta")
+           if e.freq else "")
+        + (", old jlpt " + click.style(str(e.jlpt), fg = "blue")
+           if e.jlpt else "")
+        + (", skip " + click.style(e.skip, fg = "yellow")
+           if e.skip else "")
+      )
+    click.echo()
                                                                 # }}}1
 
 # TODO

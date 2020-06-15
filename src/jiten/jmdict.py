@@ -292,13 +292,14 @@ JMDICT_CREATE_SQL = """
 """                                                             # }}}1
 
 def setup():
+  F.setup()
   jmdict = parse_jmdict()
   jmdict2sqldb(jmdict)
 
 def search(q, langs = [DLANG], max_results = None,              # {{{1
            file = SQLITE_FILE):
   entries = set()
-  rx      = re.compile(q, re.I)
+  rx      = re.compile(q, re.I | re.M)
   mat     = lambda x: rx.search(x) is not None
   with sqlite_do(file) as c:
     c.connection.create_function("matches", 1, mat)

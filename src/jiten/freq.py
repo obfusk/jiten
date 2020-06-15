@@ -80,10 +80,22 @@ def rank_freq(data):
 
 def rank(w): return freq_rank.get(w, NOFREQ)
 
-news_freq = process_freq(parse_freq(NEWSFREQ_FILE, True))
-book_freq = process_freq(parse_freq(BOOKFREQ_FILE, False))
+def setup():
+  global news_freq, book_freq, freq, freq_rank
+  if setup.done: return
+  setup.done = True
 
-freq      = merge_freq(news_freq, book_freq)
-freq_rank = rank_freq(freq)
+  news_freq = process_freq(parse_freq(NEWSFREQ_FILE, True))
+  book_freq = process_freq(parse_freq(BOOKFREQ_FILE, False))
+
+  freq      = merge_freq(news_freq, book_freq)
+  freq_rank = rank_freq(freq)
+setup.done = False
+
+if __name__ == "__main__":
+  if "--doctest" in sys.argv:
+    setup()
+    import doctest
+    if doctest.testmod(verbose = True)[0]: sys.exit(1)
 
 # vim: set tw=70 sw=2 sts=2 et fdm=marker :
