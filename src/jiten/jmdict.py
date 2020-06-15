@@ -118,7 +118,7 @@ def uniq(xs):
     if x not in seen:
       seen.add(x); yield x
 
-SQLITE_FILE   = "res/db.sqlite3"
+SQLITE_FILE   = "res/jmdict.sqlite3"
 JMDICT_FILE   = "res/jmdict/jmdict.xml.gz"
 
 USUKANA       = "word usually written using kana alone"
@@ -232,7 +232,7 @@ def parse_jmdict(file = JMDICT_FILE):                           # {{{1
                                                                 # }}}1
 
 # TODO
-def jmdict2sql(data, file = SQLITE_FILE):                       # {{{1
+def jmdict2sqldb(data, file = SQLITE_FILE):                     # {{{1
   conn = sqlite3.connect(file); c = conn.cursor()
   c.executescript(JMDICT_CREATE_SQL)
   with click.progressbar(data, label = "writing jmdict") as bar:
@@ -285,6 +285,10 @@ JMDICT_CREATE_SQL = """
     FOREIGN KEY(entry) REFERENCES jmdict(seq)
   );
 """                                                             # }}}1
+
+def setup():
+  jmdict = parse_jmdict()
+  jmdict2sqldb(jmdict)
 
 # ...
 
