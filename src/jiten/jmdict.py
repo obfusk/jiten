@@ -99,11 +99,9 @@ goed werken
 succesvol zijn
 sterven
 
-TODO
-
 """                                                             # }}}1
 
-import gzip, itertools, sys
+import gzip, itertools, sqlite3, sys
 import xml.etree.ElementTree as ET
 
 from collections import namedtuple
@@ -120,6 +118,7 @@ def uniq(xs):
     if x not in seen:
       seen.add(x); yield x
 
+SQLITE_FILE   = "res/db.sqlite3"
 JMDICT_FILE   = "res/jmdict/jmdict.xml.gz"
 
 USUKANA       = "word usually written using kana alone"
@@ -211,6 +210,7 @@ def parse_jmdict(file = JMDICT_FILE):                           # {{{1
           reb   = re.find("reb").text.strip()   # reading elem
           restr = tuple( x.text.strip() for x in re.findall("re_restr") )
                   # reading only applies to keb subset
+          assert all( "\n" not in x for x in restr )
           reading.append(Reading(reb, restr))
         for se in e.findall("sense"):           # 1+ sense elem
           pos   = tuple( x.text.strip() for x in se.findall("pos") ) or pos
@@ -223,10 +223,68 @@ def parse_jmdict(file = JMDICT_FILE):                           # {{{1
               gloss.append(x.text.strip())
           if lang is None: continue
           s_inf = tuple( x.text.strip() for x in se.findall("s_inf") )
+          assert all( "\n" not in x for x in pos )
+          assert all( "\n" not in x for x in gloss )
+          assert all( "\n" not in x for x in s_inf )
           sense.append(Sense(pos, lang, tuple(gloss), s_inf, _usually_kana(se)))
         data.append(Entry(seq, *( tuple(x) for x in [kanji, reading, sense] )))
       return data
                                                                 # }}}1
+
+# TODO
+def jmdict2sql(data, file = SQLITE_FILE):                       # {{{1
+  conn = sqlite3.connect(file); c = conn.cursor()
+  c.executescript(JMDICT_CREATE_SQL)
+  with click.progressbar(data, label = "writing jmdict") as bar:
+    for e in bar:
+      c.execute("INSERT INTO jmdict VALUES (?,?)",
+                (e.seq, e.usually_kana()))
+      for k in e.kanji:
+        c.execute("INSERT INTO jmdict_kanji VALUES (?,?,?)",
+                  (e.seq, k.elem, "".join(k.chars)))
+      for r in e.reading:
+        c.execute("INSERT INTO jmdict_reading VALUES (?,?,?)",
+                  (e.seq, r.elem, "\n".join(r.restr)))
+      for s in e.sense:
+        c.execute("INSERT INTO jmdict_sense VALUES (?,?,?,?,?,?)",
+                  (e.seq, "\n".join(s.pos), s.lang,
+                   "\n".join(s.gloss), "\n".join(s.info),
+                   s.usually_kana))
+  conn.commit(); conn.close()
+                                                                # }}}1
+
+                                                                # {{{1
+JMDICT_CREATE_SQL = """
+  DROP TABLE IF EXISTS jmdict;
+  DROP TABLE IF EXISTS jmdict_kanji;
+  DROP TABLE IF EXISTS jmdict_reading;
+  DROP TABLE IF EXISTS jmdict_sense;
+  CREATE TABLE jmdict(
+    seq INTEGER PRIMARY KEY ASC,
+    usually_kana BOOLEAN
+  );
+  CREATE TABLE jmdict_kanji(
+    entry INTEGER,
+    elem TEXT,
+    chars TEXT,
+    FOREIGN KEY(entry) REFERENCES jmdict(seq)
+  );
+  CREATE TABLE jmdict_reading(
+    entry INTEGER,
+    elem TEXT,
+    restr TEXT,
+    FOREIGN KEY(entry) REFERENCES jmdict(seq)
+  );
+  CREATE TABLE jmdict_sense(
+    entry INTEGER,
+    pos TEXT,
+    lang TEXT,
+    gloss TEXT,
+    info TEXT,
+    usually_kana BOOLEAN,
+    FOREIGN KEY(entry) REFERENCES jmdict(seq)
+  );
+"""                                                             # }}}1
 
 # ...
 
