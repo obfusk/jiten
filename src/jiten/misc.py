@@ -20,7 +20,18 @@ r"""
 
 """                                                             # }}}1
 
-import itertools
+import itertools, sys
+
+OKPUNC = "々"
+
+ispunc      = lambda c: 0x3000 <= ord(c) <= 0x303f
+ishiragana  = lambda c: 0x3040 <= ord(c) <= 0x309f
+iskatakana  = lambda c: 0x30a0 <= ord(c) <= 0x30ff
+iskanji     = lambda c: 0x4e00 <= ord(c) <= 0x9faf
+
+iskana      = lambda c: ishiragana(c) or iskatakana(c)
+isjap       = lambda c: iskanji(c) or iskana(c)  # probably
+isokjap     = lambda c: isjap(c) or c in OKPUNC  # probably
 
 flatten = itertools.chain.from_iterable
 
@@ -29,5 +40,10 @@ def uniq(xs):
   for x in xs:
     if x not in seen:
       seen.add(x); yield x
+
+if __name__ == "__main__":
+  if "--doctest" in sys.argv:
+    import doctest
+    if doctest.testmod(verbose = True)[0]: sys.exit(1)
 
 # vim: set tw=70 sw=2 sts=2 et fdm=marker :

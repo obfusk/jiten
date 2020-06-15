@@ -109,10 +109,9 @@ from functools import lru_cache
 
 import click
 
-from jiten.misc import flatten, uniq
-from jiten.sql import sqlite_do
-
-iskanji = lambda c: 0x4e00 <= ord(c) <= 0x9faf
+from . import freq as F
+from .misc import iskanji, flatten, uniq
+from .sql import sqlite_do
 
 SQLITE_FILE   = "res/jmdict.sqlite3"
 JMDICT_FILE   = "res/jmdict/jmdict.xml.gz"
@@ -128,10 +127,6 @@ Kanji         = namedtuple("Kanji"  , """elem chars""".split())
 Reading       = namedtuple("Reading", """elem restr""".split())
 Sense         = namedtuple("Sense",
                 """pos lang gloss info usually_kana""".split())
-
-@lru_cache(maxsize = None)
-def usually_kana(e):
-  return any( s.usually_kana for s in e.sense )
 
 # TODO
 # * include all readings if usually_kana? or only frequent ones?
@@ -160,13 +155,25 @@ def charsets(e): return frozenset( k.chars for k in e.kanji )
 def chars(e):
   return frozenset(flatten( k.chars for k in e.kanji ))
 
-Entry.usually_kana    = usually_kana
+@lru_cache(maxsize = None)
+def freq(e): return sum( F.freq.get(w, 0) for w in e.definition() )
+
+@lru_cache(maxsize = None)
+def rank(e): return min( F.rank(w) for w in e.definition() )
+
+@lru_cache(maxsize = None)
+def usually_kana(e):
+  return any( s.usually_kana for s in e.sense )
+
 Entry.definition      = definition
 Entry.words           = words
 Entry.meanings        = meanings
 Entry.meaning         = meaning
 Entry.charsets        = charsets
 Entry.chars           = chars
+Entry.freq            = freq
+Entry.rank            = rank
+Entry.usually_kana    = usually_kana
 Entry.__hash__        = lambda e: hash(e.seq)
 
 def isichidan(s): return any( "Ichidan verb" in x for x in s.pos )
@@ -234,8 +241,8 @@ def jmdict2sqldb(data, file = SQLITE_FILE):                     # {{{1
     c.executescript(JMDICT_CREATE_SQL)
     with click.progressbar(data, width = 0, label = "writing jmdict") as bar:
       for e in bar:
-        c.execute("INSERT INTO entry VALUES (?,?)",
-                  (e.seq, e.usually_kana()))
+        c.execute("INSERT INTO entry VALUES (?,?,?,?)",
+                  (e.seq, str(e.freq()), e.rank(), e.usually_kana()))
         for k in e.kanji:
           c.execute("INSERT INTO kanji VALUES (?,?,?)",
                     (e.seq, k.elem, "".join(k.chars)))
@@ -257,6 +264,8 @@ JMDICT_CREATE_SQL = """
   DROP TABLE IF EXISTS sense;
   CREATE TABLE entry(
     seq INTEGER PRIMARY KEY ASC,
+    freq INTEGER,
+    rank INTEGER,
     usually_kana BOOLEAN
   );
   CREATE TABLE kanji(
@@ -294,14 +303,17 @@ def search(q, langs = [DLANG], max_results = None,              # {{{1
   with sqlite_do(file) as c:
     c.connection.create_function("matches", 1, mat)
     for lang in langs:
-      for r in c.execute("SELECT * FROM kanji WHERE matches(elem)"):
+      for r in c.execute("SELECT entry FROM kanji WHERE matches(elem)"):
         entries.add(r["entry"])
-      for r in c.execute("SELECT * FROM reading WHERE matches(elem)"):
+      for r in c.execute("SELECT entry FROM reading WHERE matches(elem)"):
         entries.add(r["entry"])
-      for r in c.execute("SELECT * FROM sense WHERE lang = ? AND matches(gloss)",
-                         (lang,)):
+      for r in c.execute("SELECT entry FROM sense WHERE" +
+                         " lang = ? AND matches(gloss)", (lang,)):
         entries.add(r["entry"])
-    for i, seq in enumerate(sorted(entries)):
+    ents = sorted( tuple(r) for e in entries for r in c.execute(
+      "SELECT rank, seq FROM entry WHERE seq = ?", (e,)
+    ))
+    for i, (rank, seq) in enumerate(ents):
       if max_results and i >= max_results: break
       k = tuple(
         Kanji(r["elem"], frozenset(r["chars"]))
@@ -317,13 +329,12 @@ def search(q, langs = [DLANG], max_results = None,              # {{{1
               tuple(r["info"].splitlines()), bool(r["usually_kana"]))
         for r in c.execute("SELECT * FROM sense WHERE entry = ?", (seq,))
       )
-      yield Entry(seq, *( tuple(x) for x in [k, r, s] ))
+      yield Entry(seq, *( tuple(x) for x in [k, r, s] )), rank
                                                                 # }}}1
 
-# ...
-
-# if __name__ == "__main__":
-#   import doctest
-#   if doctest.testmod()[0]: sys.exit(1)
+if __name__ == "__main__":
+  if "--doctest" in sys.argv:
+    import doctest
+    if doctest.testmod(verbose = True)[0]: sys.exit(1)
 
 # vim: set tw=70 sw=2 sts=2 et fdm=marker :

@@ -24,7 +24,7 @@ __version__ = "0.0.1"
 
 import click
 
-import jiten.jmdict as J
+from . import jmdict as J
 
 @click.group()
 @click.option("-v", "--verbose", is_flag = True, help = "Be verbose.")
@@ -53,9 +53,10 @@ def jmdict(ctx, lang, word, max, query):                        # {{{1
   if ctx.obj["verbose"]:
     click.echo("query: " + click.style(q, fg = "bright_red"))
     click.echo()
-  for e in J.search(q, lang, max):
+  for e, rank in J.search(q, lang, max):
     if ctx.obj["verbose"]:
-      click.echo("#" + click.style(str(e.seq), fg = "blue"))
+      click.echo("seq# " + click.style(str(e.seq), fg = "blue")
+                 + ", freq# " + click.style(str(rank), fg = "cyan"))
     click.echo(" | ".join(
       click.style(k.elem, fg = "bright_yellow") for k in e.kanji
     ))
