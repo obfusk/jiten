@@ -24,10 +24,13 @@ import itertools, sys
 
 OKPUNC = "々"
 
-ispunc      = lambda c: 0x3000 <= ord(c) <= 0x303f
-ishiragana  = lambda c: 0x3040 <= ord(c) <= 0x309f
-iskatakana  = lambda c: 0x30a0 <= ord(c) <= 0x30ff
-iskanji     = lambda c: 0x4e00 <= ord(c) <= 0x9faf
+ispunc      = lambda c:  0x3000 <= ord(c) <=  0x303f
+ishiragana  = lambda c:  0x3040 <= ord(c) <=  0x309f
+iskatakana  = lambda c:  0x30a0 <= ord(c) <=  0x30ff
+iskanji     = lambda c:  0x4e00 <= ord(c) <=  0x9faf
+iscompat    = lambda c:  0xf900 <= ord(c) <=  0xfaff
+isuniext    = lambda c:  0x3400 <= ord(c) <=  0x4dbf or \
+                        0x20000 <= ord(c) <= 0x2ebef
 
 iskana      = lambda c: ishiragana(c) or iskatakana(c)
 isjap       = lambda c: iskanji(c) or iskana(c)  # probably

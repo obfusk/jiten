@@ -1,3 +1,4 @@
+*.sqlite3-journal
 __pycache__
 
 /res/*.sqlite3

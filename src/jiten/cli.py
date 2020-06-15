@@ -25,6 +25,7 @@ __version__ = "0.0.1"
 import click
 
 from . import jmdict as J
+from . import kanji as K
 
 @click.group()
 @click.option("-v", "--verbose", is_flag = True, help = "Be verbose.")
@@ -98,6 +99,7 @@ def serve(ctx, host, port):
 @cli.command(help = "Create sqlite databases from XML files.")
 def setup():
   J.setup()
+  K.setup()
 
 if __name__ == "__main__":
   cli()
