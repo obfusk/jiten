@@ -20,19 +20,15 @@ r"""
 
 """                                                             # }}}1
 
-import re, sqlite3
+import sqlite3
 
 from contextlib import contextmanager
-
-def _regexp(p, s):
-  return re.search(p, s) is not None
 
 @contextmanager
 def sqlite_do(file):
   conn = sqlite3.connect(file)
-  conn.create_function("regexp", 2, _regexp)
-  c = conn.cursor()
-  yield c
+  conn.row_factory = sqlite3.Row
+  yield conn.cursor()
   conn.commit()
   conn.close()
 

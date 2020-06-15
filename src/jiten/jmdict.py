@@ -101,7 +101,7 @@ sterven
 
 """                                                             # }}}1
 
-import gzip, sys
+import gzip, re, sys
 import xml.etree.ElementTree as ET
 
 from collections import namedtuple
@@ -194,7 +194,7 @@ def parse_jmdict(file = JMDICT_FILE):                           # {{{1
   alang = "{http://www.w3.org/XML/1998/namespace}lang"
   data  = []
   with gzip.open(file) as f:
-    with click.progressbar(ET.parse(f).getroot(),
+    with click.progressbar(ET.parse(f).getroot(), width = 0,
                            label = "parsing jmdict") as bar:
       for e in bar:
         seq, pos = int(e.find("ent_seq").text), ()
@@ -222,27 +222,28 @@ def parse_jmdict(file = JMDICT_FILE):                           # {{{1
           assert all( "\n" not in x for x in pos )
           assert all( "\n" not in x for x in gloss )
           assert all( "\n" not in x for x in s_inf )
+          assert all( "" not in x for x in gloss )
+          assert all( "" not in x for x in s_inf )
           sense.append(Sense(pos, lang, tuple(gloss), s_inf, _usually_kana(se)))
         data.append(Entry(seq, *( tuple(x) for x in [kanji, reading, sense] )))
       return data
                                                                 # }}}1
 
-# TODO
 def jmdict2sqldb(data, file = SQLITE_FILE):                     # {{{1
   with sqlite_do(file) as c:
     c.executescript(JMDICT_CREATE_SQL)
-    with click.progressbar(data, label = "writing jmdict") as bar:
+    with click.progressbar(data, width = 0, label = "writing jmdict") as bar:
       for e in bar:
-        c.execute("INSERT INTO jmdict VALUES (?,?)",
+        c.execute("INSERT INTO entry VALUES (?,?)",
                   (e.seq, e.usually_kana()))
         for k in e.kanji:
-          c.execute("INSERT INTO jmdict_kanji VALUES (?,?,?)",
+          c.execute("INSERT INTO kanji VALUES (?,?,?)",
                     (e.seq, k.elem, "".join(k.chars)))
         for r in e.reading:
-          c.execute("INSERT INTO jmdict_reading VALUES (?,?,?)",
+          c.execute("INSERT INTO reading VALUES (?,?,?)",
                     (e.seq, r.elem, "\n".join(r.restr)))
         for s in e.sense:
-          c.execute("INSERT INTO jmdict_sense VALUES (?,?,?,?,?,?)",
+          c.execute("INSERT INTO sense VALUES (?,?,?,?,?,?)",
                     (e.seq, "\n".join(s.pos), s.lang,
                      "\n".join(s.gloss), "\n".join(s.info),
                      s.usually_kana))
@@ -250,40 +251,72 @@ def jmdict2sqldb(data, file = SQLITE_FILE):                     # {{{1
 
                                                                 # {{{1
 JMDICT_CREATE_SQL = """
-  DROP TABLE IF EXISTS jmdict;
-  DROP TABLE IF EXISTS jmdict_kanji;
-  DROP TABLE IF EXISTS jmdict_reading;
-  DROP TABLE IF EXISTS jmdict_sense;
-  CREATE TABLE jmdict(
+  DROP TABLE IF EXISTS entry;
+  DROP TABLE IF EXISTS kanji;
+  DROP TABLE IF EXISTS reading;
+  DROP TABLE IF EXISTS sense;
+  CREATE TABLE entry(
     seq INTEGER PRIMARY KEY ASC,
     usually_kana BOOLEAN
   );
-  CREATE TABLE jmdict_kanji(
+  CREATE TABLE kanji(
     entry INTEGER,
     elem TEXT,
     chars TEXT,
-    FOREIGN KEY(entry) REFERENCES jmdict(seq)
+    FOREIGN KEY(entry) REFERENCES entry(seq)
   );
-  CREATE TABLE jmdict_reading(
+  CREATE TABLE reading(
     entry INTEGER,
     elem TEXT,
     restr TEXT,
-    FOREIGN KEY(entry) REFERENCES jmdict(seq)
+    FOREIGN KEY(entry) REFERENCES entry(seq)
   );
-  CREATE TABLE jmdict_sense(
+  CREATE TABLE sense(
     entry INTEGER,
     pos TEXT,
     lang TEXT,
     gloss TEXT,
     info TEXT,
     usually_kana BOOLEAN,
-    FOREIGN KEY(entry) REFERENCES jmdict(seq)
+    FOREIGN KEY(entry) REFERENCES entry(seq)
   );
 """                                                             # }}}1
 
 def setup():
   jmdict = parse_jmdict()
   jmdict2sqldb(jmdict)
+
+def search(q, langs = [DLANG], file = SQLITE_FILE):             # {{{1
+  entries = set()
+  rx      = re.compile(q, re.I)
+  mat     = lambda x: rx.search(x) is not None
+  with sqlite_do(file) as c:
+    c.connection.create_function("matches", 1, mat)
+    for lang in langs:
+      for r in c.execute("SELECT * FROM kanji WHERE matches(elem)"):
+        entries.add(r["entry"])
+      for r in c.execute("SELECT * FROM reading WHERE matches(elem)"):
+        entries.add(r["entry"])
+      for r in c.execute("SELECT * FROM sense WHERE lang = ? AND matches(gloss)",
+                         (lang,)):
+        entries.add(r["entry"])
+    for seq in sorted(entries):
+      k = tuple(
+        Kanji(r["elem"], frozenset(r["chars"]))
+        for r in c.execute("SELECT * FROM kanji WHERE entry = ?", (seq,))
+      )
+      r = tuple(
+        Reading(r["elem"], tuple(r["restr"].splitlines()))
+        for r in c.execute("SELECT * FROM reading WHERE entry = ?", (seq,))
+      )
+      s = tuple(
+        Sense(tuple(r["pos"].splitlines()), r["lang"],
+              tuple(r["gloss"].splitlines()),
+              tuple(r["info"].splitlines()), bool(r["usually_kana"]))
+        for r in c.execute("SELECT * FROM sense WHERE entry = ?", (seq,))
+      )
+      yield Entry(seq, *( tuple(x) for x in [k, r, s] ))
+                                                                # }}}1
 
 # ...
 
