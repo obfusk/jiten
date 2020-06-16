@@ -48,13 +48,22 @@ def cli(ctx, colour, **kw):
               help = "Maximum number of results.")
 @click.argument("query", required = False)
 @click.pass_context
-def jmdict(ctx, lang, word, max, query):                        # {{{1
-  q = query or click.prompt("query")
+def jmdict(ctx, lang, word, max, query):
+  args = (ctx.obj["verbose"], lang, word, max)
+  if query:
+    jmdict_search(*args, query)
+  else:
+    while True:
+      q = click.prompt("query", "", show_default = False).strip()
+      if not q: break
+      jmdict_search(*args, q)
+
+def jmdict_search(verbose, lang, word, max_results, q):         # {{{1
   if word: q = "\\b" + q + "\\b"
-  if ctx.obj["verbose"]:
+  if verbose:
     click.echo("query: " + click.style(q, fg = "bright_red"))
     click.echo()
-  for e, rank in J.search(q, lang, max):
+  for e, rank in J.search(q, lang, max_results):
     click.echo(" | ".join(
       click.style(k.elem, fg = "bright_yellow") for k in e.kanji
     ))
@@ -71,7 +80,7 @@ def jmdict(ctx, lang, word, max, query):                        # {{{1
         click.echo(click.style("* ", fg = "magenta") + t)
     if e.usually_kana():
       click.echo("[" + J.USUKANA + "]")
-    if ctx.obj["verbose"]:
+    if verbose:
       click.echo("seq# " + click.style(str(e.seq), fg = "blue")
                  + ", freq# " + click.style(str(rank), fg = "cyan"))
     click.echo()
@@ -85,13 +94,22 @@ def jmdict(ctx, lang, word, max, query):                        # {{{1
               help = "Maximum number of results.")
 @click.argument("query", required = False)
 @click.pass_context
-def kanji(ctx, word, max, query):                               # {{{1
-  q = query or click.prompt("query")
+def kanji(ctx, word, max, query):
+  args = (ctx.obj["verbose"], word, max)
+  if query:
+    kanji_search(*args, query)
+  else:
+    while True:
+      q = click.prompt("query", "", show_default = False).strip()
+      if not q: break
+      kanji_search(*args, q)
+
+def kanji_search(verbose, word, max_results, q):                # {{{1
   if word: q = "\\b" + q + "\\b"
-  if ctx.obj["verbose"]:
+  if verbose:
     click.echo("query: " + click.style(q, fg = "bright_red"))
     click.echo()
-  for e in K.search(q, max):
+  for e in K.search(q, max_results):
     click.echo(e.char)
     click.echo(" | ".join(
       click.style(r, fg = "bright_yellow") for r in e.on
@@ -104,7 +122,7 @@ def kanji(ctx, word, max, query):                               # {{{1
     ) or "[no name readings]")
     for m in e.meaning:
       click.echo(click.style("* ", fg = "magenta") + m)
-    if ctx.obj["verbose"]:
+    if verbose:
       click.echo(
         click.style(hex(ord(e.char)), fg = "blue")
         + ", " + click.style(str(e.strokes), fg = "yellow")
