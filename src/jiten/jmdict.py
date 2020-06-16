@@ -335,7 +335,8 @@ def search(q, langs = [DLANG], max_results = None,              # {{{1
         for r in c.execute("SELECT * FROM sense WHERE entry = ?" +
                            " ORDER BY rowid ASC", (seq,))
       )
-      yield Entry(seq, *( tuple(x) for x in [k, r, s] )), rank
+      yield (Entry(seq, *( tuple(x) for x in [k, r, s] )),
+             (rank if rank != F.NOFREQ else None))
                                                                 # }}}1
 
 if __name__ == "__main__":

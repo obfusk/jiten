@@ -83,8 +83,9 @@ def jmdict_search(verbose, lang, word, max_results, q):         # {{{1
     if e.usually_kana():
       yield "[" + J.USUKANA + "]\n"
     if verbose:
-      yield "seq# " + click.style(str(e.seq), fg = "blue") \
-        + ", freq# " + click.style(str(rank), fg = "cyan") + "\n"
+      yield   "seq# " + click.style(str(e.seq), fg = "blue") \
+        + (", freq# " + click.style(str(rank ), fg = "cyan")
+            if rank else "") + "\n"
     yield "\n"
                                                                 # }}}1
 
