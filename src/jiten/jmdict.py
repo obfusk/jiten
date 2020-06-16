@@ -194,6 +194,7 @@ def _usually_kana(e):
 def _kanji_chars(s): return frozenset( c for c in s if iskanji(c) )
 
 # TODO
+# * extract & use more fields!?
 # * stagk, stagr, xref, ...; adjective?
 # * ke_inf -> ateji!
 # * assert kanji, reading only contain kanji, kana?
@@ -236,6 +237,7 @@ def parse_jmdict(file = JMDICT_FILE):                           # {{{1
       return data
                                                                 # }}}1
 
+# NB: kanji/reading/sense are retrieved in insertion order!
 def jmdict2sqldb(data, file = SQLITE_FILE):                     # {{{1
   with sqlite_do(file) as c:
     c.executescript(JMDICT_CREATE_SQL)
@@ -312,23 +314,26 @@ def search(q, langs = [DLANG], max_results = None,              # {{{1
                          " lang = ? AND matches(gloss)", (lang,)):
         entries.add(r["entry"])
     ents = sorted( tuple(r) for e in entries for r in c.execute(
-      "SELECT rank, seq FROM entry WHERE seq = ?", (e,)
+      "SELECT rank, seq FROM entry WHERE seq = ?", (e,) # #=1
     ))
     for i, (rank, seq) in enumerate(ents):
       if max_results and i >= max_results: break
       k = tuple(
         Kanji(r["elem"], frozenset(r["chars"]))
-        for r in c.execute("SELECT * FROM kanji WHERE entry = ?", (seq,))
+        for r in c.execute("SELECT * FROM kanji WHERE entry = ?" +
+                           " ORDER BY rowid ASC", (seq,))
       )
       r = tuple(
         Reading(r["elem"], tuple(r["restr"].splitlines()))
-        for r in c.execute("SELECT * FROM reading WHERE entry = ?", (seq,))
+        for r in c.execute("SELECT * FROM reading WHERE entry = ?" +
+                           " ORDER BY rowid ASC", (seq,))
       )
       s = tuple(
         Sense(tuple(r["pos"].splitlines()), r["lang"],
               tuple(r["gloss"].splitlines()),
               tuple(r["info"].splitlines()), bool(r["usually_kana"]))
-        for r in c.execute("SELECT * FROM sense WHERE entry = ?", (seq,))
+        for r in c.execute("SELECT * FROM sense WHERE entry = ?" +
+                           " ORDER BY rowid ASC", (seq,))
       )
       yield Entry(seq, *( tuple(x) for x in [k, r, s] )), rank
                                                                 # }}}1

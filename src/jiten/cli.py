@@ -5,7 +5,7 @@
 #
 # File        : jiten/cli.py
 # Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-# Date        : 2020-06-15
+# Date        : 2020-06-16
 #
 # Copyright   : Copyright (C) 2020  Felix C. Stegerman
 # Version     : v0.0.1
@@ -22,6 +22,8 @@ r"""
 
 __version__ = "0.0.1"
 
+import os
+
 import click
 
 from . import jmdict as J
@@ -36,6 +38,7 @@ from . import kanji as K
 def cli(ctx, colour, **kw):
   if colour is not None: ctx.color = colour
   ctx.obj = dict(kw)
+  os.environ["PAGER"] = "less -FR"                              # TODO
 
 # TODO
 @cli.command(help = "Search JMDict.")
@@ -51,39 +54,38 @@ def cli(ctx, colour, **kw):
 def jmdict(ctx, lang, word, max, query):
   args = (ctx.obj["verbose"], lang, word, max)
   if query:
-    jmdict_search(*args, query)
+    click.echo_via_pager(jmdict_search(*args, query))
   else:
     while True:
       q = click.prompt("query", "", show_default = False).strip()
       if not q: break
-      jmdict_search(*args, q)
+      click.echo_via_pager(jmdict_search(*args, q))
 
 def jmdict_search(verbose, lang, word, max_results, q):         # {{{1
   if word: q = "\\b" + q + "\\b"
   if verbose:
-    click.echo("query: " + click.style(q, fg = "bright_red"))
-    click.echo()
+    yield "query: " + click.style(q, fg = "bright_red") + "\n\n"
   for e, rank in J.search(q, lang, max_results):
-    click.echo(" | ".join(
+    yield " | ".join(
       click.style(k.elem, fg = "bright_yellow") for k in e.kanji
-    ))
-    click.echo(" | ".join(
+    ) + "\n"
+    yield " | ".join(
       click.style(r.elem, fg = "bright_green") for r in e.reading
-    ))
+    ) + "\n"
     for l in lang:
-      click.echo(click.style("[" + l + "]", fg = "cyan"))
+      yield click.style("[" + l + "]", fg = "cyan") + "\n"
       for m in e.meanings(l):
         t = click.wrap_text("| ".join(m),
           click.get_terminal_size()[0], initial_indent = "  ",
           subsequent_indent = "  "
         )[2:].replace("|", click.style(" |", fg = "magenta"))
-        click.echo(click.style("* ", fg = "magenta") + t)
+        yield click.style("* ", fg = "magenta") + t + "\n"
     if e.usually_kana():
-      click.echo("[" + J.USUKANA + "]")
+      yield "[" + J.USUKANA + "]\n"
     if verbose:
-      click.echo("seq# " + click.style(str(e.seq), fg = "blue")
-                 + ", freq# " + click.style(str(rank), fg = "cyan"))
-    click.echo()
+      yield "seq# " + click.style(str(e.seq), fg = "blue") \
+        + ", freq# " + click.style(str(rank), fg = "cyan") + "\n"
+    yield "\n"
                                                                 # }}}1
 
 # TODO
@@ -97,34 +99,32 @@ def jmdict_search(verbose, lang, word, max_results, q):         # {{{1
 def kanji(ctx, word, max, query):
   args = (ctx.obj["verbose"], word, max)
   if query:
-    kanji_search(*args, query)
+    click.echo_via_pager(kanji_search(*args, query))
   else:
     while True:
       q = click.prompt("query", "", show_default = False).strip()
       if not q: break
-      kanji_search(*args, q)
+      click.echo_via_pager(kanji_search(*args, q))
 
 def kanji_search(verbose, word, max_results, q):                # {{{1
   if word: q = "\\b" + q + "\\b"
   if verbose:
-    click.echo("query: " + click.style(q, fg = "bright_red"))
-    click.echo()
+    yield "query: " + click.style(q, fg = "bright_red") + "\n\n"
   for e in K.search(q, max_results):
-    click.echo(e.char)
-    click.echo(" | ".join(
+    yield e.char + "\n"
+    yield (" | ".join(
       click.style(r, fg = "bright_yellow") for r in e.on
-    ) or "[no on readings]")
-    click.echo(" | ".join(
+    ) or "[no on readings]") + "\n"
+    yield (" | ".join(
       click.style(r, fg = "bright_green") for r in e.kun
-    ) or "[no kun readings]")
-    click.echo(" | ".join(
+    ) or "[no kun readings]") + "\n"
+    yield (" | ".join(
       click.style(r, fg = "cyan") for r in e.nanori
-    ) or "[no name readings]")
+    ) or "[no name readings]") + "\n"
     for m in e.meaning:
-      click.echo(click.style("* ", fg = "magenta") + m)
+      yield click.style("* ", fg = "magenta") + m + "\n"
     if verbose:
-      click.echo(
-        click.style(hex(ord(e.char)), fg = "blue")
+      yield (click.style(hex(ord(e.char)), fg = "blue")
         + ", " + click.style(str(e.strokes), fg = "yellow")
         + " strokes"
         + (", grade " + click.style(e.level, fg = "cyan")
@@ -134,9 +134,8 @@ def kanji_search(verbose, word, max_results, q):                # {{{1
         + (", old jlpt " + click.style(str(e.jlpt), fg = "blue")
            if e.jlpt else "")
         + (", skip " + click.style(e.skip, fg = "yellow")
-           if e.skip else "")
-      )
-    click.echo()
+           if e.skip else "")) + "\n"
+    yield "\n"
                                                                 # }}}1
 
 # TODO

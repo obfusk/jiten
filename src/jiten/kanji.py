@@ -182,10 +182,8 @@ def search(q, max_results = None, file = SQLITE_FILE):          # {{{1
   with sqlite_do(file) as c:
     if ideo:
       for char in ideo:
-        for i, r in enumerate(c.execute("SELECT * FROM entry WHERE char = ?",
-                                        (char,))):
-          if max_results and i >= max_results: break
-          yield ent(r)
+        for r in c.execute("SELECT * FROM entry WHERE code = ?", (ord(char),)):
+          yield ent(r) # #=1
     else:
       rx    = re.compile(q, re.I | re.M)
       mat1  = lambda x: rx.search(x) is not None
@@ -194,10 +192,13 @@ def search(q, max_results = None, file = SQLITE_FILE):          # {{{1
       c.connection.create_function("matches1", 1, mat1)
       c.connection.create_function("matches2", 1, mat2)
       for i, r in enumerate(c.execute("""
-          SELECT * FROM entry WHERE
-            matches1(on_) OR matches1(kun) OR matches1(nanori) OR
-            matches2(on_) OR matches2(kun) OR matches2(nanori) OR
-            matches1(meaning)
+          SELECT * FROM entry
+            WHERE
+              matches1(on_) OR matches1(kun) OR matches1(nanori) OR
+              matches2(on_) OR matches2(kun) OR matches2(nanori) OR
+              matches1(meaning)
+            ORDER BY
+              freq ASC NULLS LAST, code ASC
           """)):
         if max_results and i >= max_results: break
         yield ent(r)
