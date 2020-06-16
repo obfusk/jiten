@@ -9,7 +9,7 @@
 #
 # Copyright   : Copyright (C) 2020  Felix C. Stegerman
 # Version     : v0.0.1
-# License     : GPLv3+
+# License     : AGPLv3+
 #
 # --                                                            ; }}}1
 
@@ -27,7 +27,7 @@ import os
 import click
 
 from . import jmdict as J
-from . import kanji as K
+from . import kanji  as K
 
 @click.group()
 @click.option("-v", "--verbose", is_flag = True, help = "Be verbose.")
@@ -139,14 +139,12 @@ def kanji_search(verbose, word, max_results, q):                # {{{1
     yield "\n"
                                                                 # }}}1
 
-# TODO
 @cli.command(help = "Serve the web interface.")
-@click.option("--host", default = "localhost", metavar = "HOST")
-@click.option("--port", default = 8888, metavar = "PORT", type = click.INT)
-@click.pass_context
-def serve(ctx, host, port):
-  click.echo(click.style("TODO", fg = "red"))
-  ctx.exit(1)
+@click.option("-h", "--host", default = "localhost", metavar = "HOST")
+@click.option("-p", "--port", default = 5000, metavar = "PORT", type = click.INT)
+def serve(host, port):
+  from .app import app
+  app.run(host = host, port = port, load_dotenv = False)
 
 # TODO
 @cli.command(help = "Create sqlite databases from XML files.")

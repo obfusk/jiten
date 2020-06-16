@@ -9,7 +9,7 @@
 #
 # Copyright   : Copyright (C) 2020  Felix C. Stegerman
 # Version     : v0.0.1
-# License     : GPLv3+
+# License     : AGPLv3+
 #
 # --                                                            ; }}}1
 
