@@ -179,7 +179,7 @@ def search(q, max_results = None, file = SQLITE_FILE):          # {{{1
   ent   = lambda r: Entry(*(list(r[1:8]) + [ tuple(x.splitlines())
                                              for x in r[8:] ]))
   ideo  = tuple(M.uniq(filter(M.isideo, q)))
-  with sqlite_do(file) as c:
+  with sqlite_do(file, True) as c:                              # TODO
     if ideo:
       for char in ideo:
         for r in c.execute("SELECT * FROM entry WHERE code = ?", (ord(char),)):
