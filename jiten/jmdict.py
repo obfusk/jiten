@@ -301,7 +301,7 @@ def setup():
 def search(q, langs = [DLANG], max_results = None,              # {{{1
            file = SQLITE_FILE):
   entries = set()
-  with sqlite_do(file) as c:                                    # TODO
+  with sqlite_do(file) as c:
     rx  = re.compile(q, re.I | re.M)
     mat = lambda x: rx.search(x) is not None
     c.connection.create_function("matches", 1, mat)
