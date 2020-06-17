@@ -37,8 +37,9 @@
                       }}" title="on reading">
                     {% if e.on %}
                       {% for r in e.on %}
+                        {% set rc = r.replace("-", "").replace(".", "") %}
                         <a class="selbtn btn btn-warning p-1 mb-1"
-                          href="/jmdict?query={{ r }}">{{ r }}</a>
+                          href="/jmdict?query={{ rc }}">{{ r }}</a>
                       {% endfor %}
                     {% else %}
                       <span class="text-muted">no on readings</span>
@@ -49,8 +50,9 @@
                       }}" title="kun reading">
                     {% if e.kun %}
                       {% for r in e.kun %}
+                        {% set rc = r.replace("-", "").replace(".", "") %}
                         <a class="selbtn btn btn-success p-1 mb-1"
-                          href="/jmdict?query={{ r }}">{{ r }}</a>
+                          href="/jmdict?query={{ rc }}">{{ r }}</a>
                       {% endfor %}
                     {% else %}
                       <span class="text-muted">no kun readings</span>
@@ -61,8 +63,9 @@
                       }}" title="name reading">
                     {% if e.nanori %}
                       {% for r in e.nanori %}
+                        {% set rc = r.replace("-", "").replace(".", "") %}
                         <a class="selbtn btn btn-info p-1 mb-1"
-                          href="/jmdict?query={{ r }}">{{ r }}</a>
+                          href="/jmdict?query={{ rc }}">{{ r }}</a>
                       {% endfor %}
                     {% else %}
                       <span class="text-muted">no name readings</span>
