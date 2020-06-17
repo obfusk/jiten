@@ -37,19 +37,23 @@ def sqlite_do(file, memcached = False):
 
 # NB: Python >= 3.7
 def sqlite_memcached(file):
+  print("tid", threading.get_ident())
   with LOCK:
     tid = threading.get_ident()
     sha = hashlib.sha1(file.encode()).hexdigest()
-    uri = "file:{}?mode=memory&cache=shared".format(sha)
+    uri = ":memory:" # "file:{}?mode=memory&cache=shared".format(sha)
     if sha in MEMDBS:
-      if not tid in MEMDBS[sha]:
-        MEMDBS[sha][tid] = sqlite3.connect(uri)
-      return MEMDBS[sha][tid]
+      # if not tid in MEMDBS[sha]:
+      #   MEMDBS[sha][tid] = sqlite3.connect(uri)
+      # return MEMDBS[sha][tid]
+      print("found.")
+      return MEMDBS[sha]
     dst = sqlite3.connect(uri)
     src = sqlite3.connect(file)
     src.backup(dst)
     src.close()
-    MEMDBS[sha] = dict(tid = dst)
+    # MEMDBS[sha] = dict(tid = dst)
+    MEMDBS[sha] = dst
     return dst
 
 # vim: set tw=70 sw=2 sts=2 et fdm=marker :
