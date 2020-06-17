@@ -37,7 +37,7 @@
                     }}" title="on reading">
                     {% if e.on %}
                       {% for r in e.on %}
-                        <a class="btn btn-warning p-1 mb-1"
+                        <a class="selbtn btn btn-warning p-1 mb-1"
                           href="/jmdict?query={{ r }}">{{ r }}</a>
                       {% endfor %}
                     {% else %}
@@ -49,7 +49,7 @@
                     }}" title="kun reading">
                     {% if e.kun %}
                       {% for r in e.kun %}
-                        <a class="btn btn-success p-1 mb-1"
+                        <a class="selbtn btn btn-success p-1 mb-1"
                           href="/jmdict?query={{ r }}">{{ r }}</a>
                       {% endfor %}
                     {% else %}
@@ -61,7 +61,7 @@
                     }}" title="name reading">
                     {% if e.nanori %}
                       {% for r in e.nanori %}
-                        <a class="btn btn-info p-1 mb-1"
+                        <a class="selbtn btn btn-info p-1 mb-1"
                           href="/jmdict?query={{ r }}">{{ r }}</a>
                       {% endfor %}
                     {% else %}

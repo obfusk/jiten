@@ -1,17 +1,15 @@
 body {
-  padding-top:  4.5rem;
-  margin:       1rem;
+  padding-top: 4.5rem;
+  margin: 1rem;
 }
 
 @font-face {
   font-family: KanjiStrokeOrders;
   src: url(/static/font/KanjiStrokeOrders_v4.001.ttf);
 }
-
 .stroke {
   font-family: KanjiStrokeOrders;
 }
-
 .kanji {
   font-family:
     KanjiStrokeOrders,
@@ -30,6 +28,20 @@ legend {
   padding-left: 0.25em;
   padding-right: 0.25em;
   width: auto;
+}
+
+.selbtn {
+  -webkit-user-select: revert !important;
+  -moz-user-select: revert !important;
+  -ms-user-select: revert !important;
+  user-select: revert !important;
+}
+.fakebtn {
+  cursor: revert !important;
+}
+.fakebtn:hover, .fakebtn:active {
+  color: inherit !important;
+  background-color: inherit !important;
 }
 
 .nowrap {

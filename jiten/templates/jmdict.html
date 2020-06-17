@@ -18,7 +18,75 @@
   <body>
     {% import "_search.html" as search %}
     {% include "_nav.html" %}
-    <!-- ... -->
+    <div class="container">
+      {{ search.jmdict(query) }}
+      {% if query %}
+        {% for e, rank in results %}
+          <br/>
+          <div class="card">
+            <div class="card-body">
+              <ul class="list-group">
+                <li class="list-group-item pb-1 px-2 pt-2" title="kanji">
+                  {% for k in e.kanji %}
+                    <span class="selbtn fakebtn btn btn-lg btn-warning p-1 mb-1">
+                      {% for c in k.elem -%}
+                        {% if isideo(c) -%}
+                          <a class="text-reset"
+                            href="/kanji?query={{ c }}">{{ c }}</a>
+                        {%- else -%}
+                          {{ c }}
+                        {%- endif %}
+                      {%- endfor %}
+                    </span>
+                  {% endfor %}
+                </li>
+                <li class="list-group-item pb-1 px-2 pt-2" title="reading">
+                  {% for r in e.reading %}
+                    <a class="selbtn btn btn-success p-1 mb-1"
+                      href="/jmdict?query={{ r.elem }}">{{ r.elem }}</a>
+                  {% endfor %}
+                </li>
+              </ul>
+              {% for l in langs %}
+                <br/>
+                <h4>{{ l }}</h4>
+                <ul class="list-group my-1" title="meanings">
+                  {% for m in e.meanings(l) %}
+                    <li class="list-group-item pb-1 px-2 pt-2">
+                      {% for x in m %}
+                        <span class="selbtn fakebtn btn btn-outline-primary text-reset p-1 mb-1">
+                          {{ x }}
+                        </span>
+                      {% endfor %}
+                    </li>
+                  {% endfor %}
+                </ul>
+              {% endfor %}
+              <div class="p-1" title="miscellaneous">
+                {% if e.usually_kana() %}
+                  {{ USUKANA }}
+                  <br/>
+                {% endif %}
+                <span class="nowrap">
+                  seq#
+                  <span class="badge badge-primary">
+                    {{ e.seq }}
+                  </span>
+                </span>
+                {% if rank %}
+                  <span class="nowrap">
+                    » freq#
+                    <span class="badge badge-info">
+                      {{ rank }}
+                    </span>
+                  </span>
+                {% endif %}
+              </div>
+            </div>
+          </div>
+        {% endfor %}
+      {% endif %}
+    </div>
     {% include "_footer.html" %}
   </body>
 </html>
