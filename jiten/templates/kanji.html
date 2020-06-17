@@ -14,11 +14,118 @@
   <head>
     {% include "_meta.html" %}
     <title>jiten - kanji</title>
+    <style>
+      .kanji { font-size: 8em; } /* TODO */
+    </style>
   </head>
   <body>
     {% import "_search.html" as search %}
     {% include "_nav.html" %}
-    <!-- ... -->
+    <div class="container">
+      {{ search.kanji(query) }}
+      {% if query %}
+        {% for e in results %}
+          <br/>
+          <div class="card">
+            <div class="card-body">
+              <div class="d-flex">
+                <a class="kanji text-reset text-decoration-none mr-3"
+                  href="/kanji?query={{ e.char }}">{{ e.char }}</a>
+                <ul class="list-group flex-grow-1">
+                  <li class="list-group-item {{
+                      "pb-1 px-2 pt-2" if e.on else "p-2"
+                    }}" title="on reading">
+                    {% if e.on %}
+                      {% for r in e.on %}
+                        <a class="btn btn-warning p-1 mb-1"
+                          href="/jmdict?query={{ r }}">{{ r }}</a>
+                      {% endfor %}
+                    {% else %}
+                      <span class="text-muted">no on readings</span>
+                    {% endif %}
+                  </li>
+                  <li class="list-group-item {{
+                      "pb-1 px-2 pt-2" if e.kun else "p-2"
+                    }}" title="kun reading">
+                    {% if e.kun %}
+                      {% for r in e.kun %}
+                        <a class="btn btn-success p-1 mb-1"
+                          href="/jmdict?query={{ r }}">{{ r }}</a>
+                      {% endfor %}
+                    {% else %}
+                      <span class="text-muted">no kun readings</span>
+                    {% endif %}
+                  </li>
+                  <li class="list-group-item {{
+                      "pb-1 px-2 pt-2" if e.nanori else "p-2"
+                    }}" title="name reading">
+                    {% if e.nanori %}
+                      {% for r in e.nanori %}
+                        <a class="btn btn-info p-1 mb-1"
+                          href="/jmdict?query={{ r }}">{{ r }}</a>
+                      {% endfor %}
+                    {% else %}
+                      <span class="text-muted">no name readings</span>
+                    {% endif %}
+                  </li>
+                </ul>
+              </div>
+              <ul class="list-group my-1" title="meanings">
+                {% for m in e.meaning %}
+                  <li class="list-group-item p-2">{{ m }}</li>
+                {% endfor %}
+              </ul>
+              <div class="p-1" title="miscellaneous">
+                <span class="nowrap">
+                  <span class="badge badge-primary">
+                    {{ hex(ord(e.char)) }}
+                  </span>
+                </span>
+                <span class="nowrap">
+                  »
+                  <span class="badge badge-warning">
+                    {{ e.strokes }}
+                  </span>
+                  strokes
+                </span>
+                {% if e.level %}
+                  <span class="nowrap">
+                    » grade
+                    <span class="badge badge-info">
+                      {{ e.level }}
+                    </span>
+                  </span>
+                {% endif %}
+                {% if e.freq %}
+                  <span class="nowrap">
+                    » freq#
+                    <span class="badge badge-danger">
+                      {{ e.freq }}
+                    </span>
+                  </span>
+                {% endif %}
+                {% if e.jlpt %}
+                  <span class="nowrap">
+                    » old jlpt
+                    <span class="badge badge-primary">
+                      {{ e.jlpt }}
+                    </span>
+                  </span>
+                {% endif %}
+                {% if e.skip %}
+                  <span class="nowrap">
+                    » skip
+                    <span class="badge badge-warning">
+                      {{ e.skip }}
+                    </span>
+                  </span>
+                {% endif %}
+              </div>
+            </div>
+          </div>
+        {% endfor %}
+      {% endif %}
+    </div>
     {% include "_footer.html" %}
   </body>
 </html>

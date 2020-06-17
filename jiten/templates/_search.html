@@ -1,43 +1,74 @@
-{% macro jmdict() %}
+{% macro jmdict(query = "") %}
   <!-- TODO: don't hardcode eng/dut/ger -->
   <div class="card">
     <form class="card-body" action="/jmdict">
       <div class="form-group form-inline justify-content-end mb-0">
         <label class="sr-only" for="jmdict-query">Query</label>
         <input type="text" class="form-control mr-sm-2 mb-2 flex-grow-1"
-          id="jmdict-query" name="query"
+          id="jmdict-query" name="query" value="{{ query }}"
           placeholder="japanese or english/dutch/german" required />
         <button type="submit" class="btn btn-primary mb-2">Search JMDict</button>
       </div>
-      <fieldset class="form-group mb-0">
-        <div class="form-check form-check-inline">
-          <input type="checkbox" class="form-check-input"
-            id="jmdict-eng" name="lang" value="eng" checked />
-          <label class="form-check-label" for="jmdict-eng">eng</label>
-        </div>
-        <div class="form-check form-check-inline">
-          <input type="checkbox" class="form-check-input"
-            id="jmdict-dut" name="lang" value="dut" />
-          <label class="form-check-label" for="jmdict-dut">dut</label>
-        </div>
-        <div class="form-check form-check-inline">
-          <input type="checkbox" class="form-check-input"
-            id="jmdict-ger" name="lang" value="ger" />
-          <label class="form-check-label" for="jmdict-ger">ger</label>
-        </div>
-      </fieldset>
+      <div class="form-group mb-0">
+        <fieldset class="d-inline border p-2">
+          <legend>options</legend>
+          <div class="form-check form-check-inline">
+            <input type="checkbox" class="form-check-input"
+              id="jmdict-word" name="word" value="yes" />
+            <label class="form-check-label" for="jmdict-word">word</label>
+          </div>
+          <div class="form-check form-check-inline">
+            <input type="checkbox" class="form-check-input"
+              id="jmdict-exact" name="exact" value="yes" />
+            <label class="form-check-label" for="jmdict-exact">exact</label>
+          </div>
+        </fieldset>
+        <fieldset class="d-inline border p-2">
+          <legend>lang</legend>
+          <div class="form-check form-check-inline">
+            <input type="checkbox" class="form-check-input"
+              id="jmdict-eng" name="lang" value="eng" checked />
+            <label class="form-check-label" for="jmdict-eng">eng</label>
+          </div>
+          <div class="form-check form-check-inline">
+            <input type="checkbox" class="form-check-input"
+              id="jmdict-dut" name="lang" value="dut" />
+            <label class="form-check-label" for="jmdict-dut">dut</label>
+          </div>
+          <div class="form-check form-check-inline">
+            <input type="checkbox" class="form-check-input"
+              id="jmdict-ger" name="lang" value="ger" />
+            <label class="form-check-label" for="jmdict-ger">ger</label>
+          </div>
+        </fieldset>
+      </div>
     </form>
   </div>
 {% endmacro %}
-{% macro kanji() %}
+{% macro kanji(query = "") %}
   <div class="card">
     <form class="card-body" action="/kanji">
       <div class="form-group form-inline justify-content-end mb-0">
         <label class="sr-only" for="kanji-query">Query</label>
         <input type="text" class="form-control mr-sm-2 mb-2 flex-grow-1"
-          id="kanji-query" name="query"
+          id="kanji-query" name="query" value="{{ query }}"
           placeholder="kanji/kana or english" required />
         <button type="submit" class="btn btn-primary mb-2">Search Kanji</button>
+      </div>
+      <div class="form-group mb-0">
+        <fieldset class="d-inline border p-2">
+          <legend>options</legend>
+          <div class="form-check form-check-inline">
+            <input type="checkbox" class="form-check-input"
+              id="kanji-word" name="word" value="yes" />
+            <label class="form-check-label" for="kanji-word">word</label>
+          </div>
+          <div class="form-check form-check-inline">
+            <input type="checkbox" class="form-check-input"
+              id="kanji-exact" name="exact" value="yes" />
+            <label class="form-check-label" for="kanji-exact">exact</label>
+          </div>
+        </fieldset>
       </div>
     </form>
   </div>

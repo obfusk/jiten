@@ -7,7 +7,30 @@ body {
   font-family: KanjiStrokeOrders;
   src: url(/static/font/KanjiStrokeOrders_v4.001.ttf);
 }
-.kanji { font-family: KanjiStrokeOrders; }
+
+.stroke {
+  font-family: KanjiStrokeOrders;
+}
+
+.kanji {
+  font-family:
+    KanjiStrokeOrders,
+    "Noto Serif CJK JP", "Noto Serif CJK SC", "Noto Serif CJK TC",
+    ipaexmincho, ipamincho, serif;
+}
+.kanji:hover {
+  font-family:
+    "Noto Sans CJK JP", "Noto Sans CJK SC", "Noto Sans CJK TC",
+    ipaexgothic, ipagothic, sans-serif;
+}
+
+legend {
+  font-size: 1em;
+  margin: 0;
+  padding-left: 0.25em;
+  padding-right: 0.25em;
+  width: auto;
+}
 
 .nowrap {
   display: inline-block;

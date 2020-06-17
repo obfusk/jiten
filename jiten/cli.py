@@ -28,6 +28,7 @@ import click
 
 from . import jmdict as J
 from . import kanji  as K
+from . import misc   as M
 
 @click.group()
 @click.option("-v", "--verbose", is_flag = True, help = "Be verbose.")
@@ -64,8 +65,7 @@ def jmdict(ctx, lang, word, exact, max, query):
       click.echo_via_pager(jmdict_search(*args, q))
 
 def jmdict_search(verbose, lang, word, exact, max_results, q):  # {{{1
-  if word   : q = "\\b" + q + "\\b"
-  elif exact: q = "^"   + q + "$"
+  q = M.process_query(q, word, exact)
   if verbose:
     yield "query: " + click.style(q, fg = "bright_red") + "\n\n"
   for e, rank in J.search(q, lang, max_results):
@@ -113,8 +113,7 @@ def kanji(ctx, word, exact, max, query):
       click.echo_via_pager(kanji_search(*args, q))
 
 def kanji_search(verbose, word, exact, max_results, q):         # {{{1
-  if word   : q = "\\b" + q + "\\b"
-  elif exact: q = "^"   + q + "$"
+  q = M.process_query(q, word, exact)
   if verbose:
     yield "query: " + click.style(q, fg = "bright_red") + "\n\n"
   for e in K.search(q, max_results):

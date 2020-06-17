@@ -50,6 +50,12 @@ def uniq(xs):
 def resource_path(*path):
   return os.path.join(os.path.dirname(__file__), *path)
 
+def process_query(q, word, exact):
+  if not q: return ""
+  if word : return "\\b" + q + "\\b"
+  if exact: return "^"   + q + "$"
+  return q
+
 if __name__ == "__main__":
   if "--doctest" in sys.argv:
     import doctest

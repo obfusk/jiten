@@ -28,6 +28,7 @@ from flask import Flask, redirect, request, render_template, url_for
 
 from . import jmdict as J
 from . import kanji  as K
+from . import misc   as M
 
 name  = "jiten"
 app   = Flask(__name__)
@@ -47,18 +48,27 @@ def r_index():
   return render_template("index.html", page = "index")
 
 # TODO
+# * --max
 @app.route("/jmdict")
 def r_jmdict():
-  query = request.args.get("query", "")
+  word  = bool(request.args.get("word"))
+  exact = bool(request.args.get("exact"))
+  query = M.process_query(request.args.get("query"), word, exact)
   lang  = [ l for l in request.args.getlist("lang") if l in J.LANGS ]
-  return render_template("jmdict.html", page = "jmdict",
-                         query = query, lang = lang)
+  data  = dict(page = "jmdict", query = query, lang = lang)
+  if query: data["results"] = J.search(query)
+  return render_template("jmdict.html", **data)
 
 # TODO
+# * --max
 @app.route("/kanji")
 def r_kanji():
-  query = request.args.get("query", "")
-  return render_template("kanji.html", page = "kanji", query = query)
+  word  = bool(request.args.get("word"))
+  exact = bool(request.args.get("exact"))
+  query = M.process_query(request.args.get("query"), word, exact)
+  data  = dict(page = "kanji", query = query, ord = ord, hex = hex)
+  if query: data["results"] = K.search(query)
+  return render_template("kanji.html", **data)
 
 @app.route("/stroke")
 def r_stroke():
