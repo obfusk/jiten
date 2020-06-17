@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+  <!--
+
+    File        : templates/stroke.html
+    Maintainer  : Felix C. Stegerman <flx@obfusk.net>
+    Date        : 2020-06-16
+
+    Copyright   : Copyright (C) 2020  Felix C. Stegerman
+    Version     : v0.0.1
+    License     : AGPLv3+
+
+  -->
+  <head>
+    {% include "_meta.html" %}
+    <title>jiten - stroke order</title>
+    <style>
+      #out { font-size: 9em; } /* TODO */
+    </style>
+  </head>
+  <body>
+    {% import "_search.html" as search %}
+    {% include "_nav.html" %}
+    <div class="container">
+      <div class="card text-center">
+        <div class="card-body">
+          <h2 class="card-title">漢字と仮名の筆順</h2>
+          <a class="btn btn-outline-primary"
+            href="/static/Table_hiragana.svg">平仮名表</a>
+          <a class="btn btn-outline-primary"
+            href="/static/Table_katakana.svg">片仮名表</a>
+        </div>
+      </div>
+      <br/>
+      {{ search.stroke(query) }}
+      <br/>
+      <div class="card">
+        <div class="card-body p-0">
+          <div class="kanji text-center"
+            id="out">{{ query or "漢字と仮名の筆順" }}</div>
+        </div>
+      </div>
+    </div>
+    {% include "_footer.html" %}
+  </body>
+</html>

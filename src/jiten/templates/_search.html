@@ -1,0 +1,57 @@
+{% macro jmdict() %}
+  <!-- TODO: don't hardcode eng/dut/ger -->
+  <div class="card">
+    <form class="card-body" action="/jmdict">
+      <div class="form-group form-inline justify-content-end mb-0">
+        <label class="sr-only" for="jmdict-query">Query</label>
+        <input type="text" class="form-control mr-sm-2 mb-2 flex-grow-1"
+          id="jmdict-query" name="query"
+          placeholder="japanese or english/dutch/german" required />
+        <button type="submit" class="btn btn-primary mb-2">Search JMDict</button>
+      </div>
+      <fieldset class="form-group mb-0">
+        <div class="form-check form-check-inline">
+          <input type="checkbox" class="form-check-input"
+            id="jmdict-eng" name="lang" value="eng" checked />
+          <label class="form-check-label" for="jmdict-eng">eng</label>
+        </div>
+        <div class="form-check form-check-inline">
+          <input type="checkbox" class="form-check-input"
+            id="jmdict-dut" name="lang" value="dut" />
+          <label class="form-check-label" for="jmdict-dut">dut</label>
+        </div>
+        <div class="form-check form-check-inline">
+          <input type="checkbox" class="form-check-input"
+            id="jmdict-ger" name="lang" value="ger" />
+          <label class="form-check-label" for="jmdict-ger">ger</label>
+        </div>
+      </fieldset>
+    </form>
+  </div>
+{% endmacro %}
+{% macro kanji() %}
+  <div class="card">
+    <form class="card-body" action="/kanji">
+      <div class="form-group form-inline justify-content-end mb-0">
+        <label class="sr-only" for="kanji-query">Query</label>
+        <input type="text" class="form-control mr-sm-2 mb-2 flex-grow-1"
+          id="kanji-query" name="query"
+          placeholder="kanji/kana or english" required />
+        <button type="submit" class="btn btn-primary mb-2">Search Kanji</button>
+      </div>
+    </form>
+  </div>
+{% endmacro %}
+{% macro stroke(query = "") %}
+  <div class="card">
+    <form class="card-body" action="/stroke">
+      <div class="form-group form-inline justify-content-end mb-0">
+        <label class="sr-only" for="stroke-query">Query</label>
+        <input type="text" class="form-control mr-sm-2 mb-2 flex-grow-1"
+          id="stroke-query" name="query" value="{{ query }}"
+          placeholder="漢字か仮名を入力" required />
+        <button type="submit" class="btn btn-primary mb-2">筆順を示す</button>
+      </div>
+    </form>
+  </div>
+{% endmacro %}

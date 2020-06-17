@@ -1,0 +1,18 @@
+body {
+  padding-top:  4.5rem;
+  margin:       1rem;
+}
+
+@font-face {
+  font-family: KanjiStrokeOrders;
+  src: url(/static/font/KanjiStrokeOrders_v4.001.ttf);
+}
+.kanji { font-family: KanjiStrokeOrders; }
+
+.nowrap {
+  display: inline-block;
+}
+
+footer {
+  text-align: center;
+}
