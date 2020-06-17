@@ -1,0 +1,12 @@
+    ents = list(c.execute("""
+      SELECT rank, seq FROM entry
+        WHERE seq IN (
+          SELECT entry FROM kanji WHERE matches(elem)
+          UNION
+          SELECT entry FROM reading WHERE matches(elem)
+          UNION
+          SELECT entry FROM gloss WHERE lang IN ({}) AND matches(elem)
+        )
+        ORDER BY rank ASC, seq ASC
+    """.format(",".join( "'"+l+"'" for l in langs if l in LANGS ))))
+
