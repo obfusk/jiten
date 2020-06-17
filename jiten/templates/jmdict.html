@@ -26,25 +26,37 @@
           <div class="card">
             <div class="card-body">
               <ul class="list-group jap">
-                <li class="list-group-item pb-1 px-2 pt-2" title="kanji">
-                  {% for k in e.kanji %}
-                    <span class="selbtn fakebtn btn btn-lg btn-warning p-1 mb-1">
-                      {% for c in k.elem -%}
-                        {% if isideo(c) -%}
-                          <a class="text-reset"
-                            href="/kanji?query={{ c }}">{{ c }}</a>
-                        {%- else -%}
-                          {{ c }}
-                        {%- endif %}
-                      {%- endfor %}
-                    </span>
-                  {% endfor %}
+                <li class="list-group-item {{
+                      "pb-1 px-2 pt-2" if e.kanji else "p-2"
+                    }}" title="kanji">
+                  {% if e.kanji %}
+                    {% for k in e.kanji %}
+                      <span class="selbtn fakebtn btn btn-lg btn-warning p-1 mb-1">
+                        {% for c in k.elem -%}
+                          {% if isideo(c) -%}
+                            <a class="text-reset"
+                              href="/kanji?query={{ c }}">{{ c }}</a>
+                          {%- else -%}
+                            {{ c }}
+                          {%- endif %}
+                        {%- endfor %}
+                      </span>
+                    {% endfor %}
+                  {% else %}
+                    <span class="text-muted">no kanji</span>
+                  {% endif %}
                 </li>
-                <li class="list-group-item pb-1 px-2 pt-2" title="reading">
-                  {% for r in e.reading %}
-                    <a class="selbtn btn btn-success p-1 mb-1"
-                      href="/jmdict?query={{ r.elem }}">{{ r.elem }}</a>
-                  {% endfor %}
+                <li class="list-group-item {{
+                      "pb-1 px-2 pt-2" if e.reading else "p-2"
+                    }}" title="reading">
+                  {% if e.reading %}
+                    {% for r in e.reading %}
+                      <a class="selbtn btn btn-success p-1 mb-1"
+                        href="/jmdict?query={{ r.elem }}">{{ r.elem }}</a>
+                    {% endfor %}
+                  {% else %}
+                    <span class="text-muted">no readings</span>
+                  {% endif %}
                 </li>
               </ul>
               {% for l in langs %}

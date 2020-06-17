@@ -55,7 +55,7 @@ def cli(ctx, colour, **kw):
 @click.argument("query", required = False)
 @click.pass_context
 def jmdict(ctx, lang, word, exact, max, query):
-  args = (ctx.obj["verbose"], lang, exact, word, max)
+  args = (ctx.obj["verbose"], lang, word, exact, max)
   if query:
     click.echo_via_pager(jmdict_search(*args, query))
   else:
@@ -69,12 +69,12 @@ def jmdict_search(verbose, lang, word, exact, max_results, q):  # {{{1
   if verbose:
     yield "query: " + click.style(q, fg = "bright_red") + "\n\n"
   for e, rank in J.search(q, lang, max_results):
-    yield " | ".join(
+    yield (" | ".join(
       click.style(k.elem, fg = "bright_yellow") for k in e.kanji
-    ) + "\n"
-    yield " | ".join(
+    ) or "[no kanji]") + "\n"
+    yield (" | ".join(
       click.style(r.elem, fg = "bright_green") for r in e.reading
-    ) + "\n"
+    ) or "[no readings]") + "\n"
     for l in lang:
       yield click.style("[" + l + "]", fg = "cyan") + "\n"
       for m in e.meanings(l):
