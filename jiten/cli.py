@@ -47,12 +47,14 @@ def cli(ctx, colour, **kw):
               help = "Choose language(s) ("+", ".join(J.LANGS)+").")
 @click.option("-w", "--word", is_flag = True,
               help = "Match whole word (same as \\b...\\b).")
+@click.option("-e", "--exact", is_flag = True,
+              help = "Match exactly (same as ^...$).")
 @click.option("-m", "--max", default = None, type = click.INT,
               help = "Maximum number of results.")
 @click.argument("query", required = False)
 @click.pass_context
-def jmdict(ctx, lang, word, max, query):
-  args = (ctx.obj["verbose"], lang, word, max)
+def jmdict(ctx, lang, word, exact, max, query):
+  args = (ctx.obj["verbose"], lang, exact, word, max)
   if query:
     click.echo_via_pager(jmdict_search(*args, query))
   else:
@@ -61,8 +63,9 @@ def jmdict(ctx, lang, word, max, query):
       if not q: break
       click.echo_via_pager(jmdict_search(*args, q))
 
-def jmdict_search(verbose, lang, word, max_results, q):         # {{{1
-  if word: q = "\\b" + q + "\\b"
+def jmdict_search(verbose, lang, word, exact, max_results, q):  # {{{1
+  if word   : q = "\\b" + q + "\\b"
+  elif exact: q = "^"   + q + "$"
   if verbose:
     yield "query: " + click.style(q, fg = "bright_red") + "\n\n"
   for e, rank in J.search(q, lang, max_results):
@@ -93,12 +96,14 @@ def jmdict_search(verbose, lang, word, max_results, q):         # {{{1
 @cli.command(help = "Search KanjiDic.")
 @click.option("-w", "--word", is_flag = True,
               help = "Match whole word (same as \\b...\\b).")
+@click.option("-e", "--exact", is_flag = True,
+              help = "Match exactly (same as ^...$).")
 @click.option("-m", "--max", default = None, type = click.INT,
               help = "Maximum number of results.")
 @click.argument("query", required = False)
 @click.pass_context
-def kanji(ctx, word, max, query):
-  args = (ctx.obj["verbose"], word, max)
+def kanji(ctx, word, exact, max, query):
+  args = (ctx.obj["verbose"], word, exact, max)
   if query:
     click.echo_via_pager(kanji_search(*args, query))
   else:
@@ -107,8 +112,9 @@ def kanji(ctx, word, max, query):
       if not q: break
       click.echo_via_pager(kanji_search(*args, q))
 
-def kanji_search(verbose, word, max_results, q):                # {{{1
-  if word: q = "\\b" + q + "\\b"
+def kanji_search(verbose, word, exact, max_results, q):         # {{{1
+  if word   : q = "\\b" + q + "\\b"
+  elif exact: q = "^"   + q + "$"
   if verbose:
     yield "query: " + click.style(q, fg = "bright_red") + "\n\n"
   for e in K.search(q, max_results):
