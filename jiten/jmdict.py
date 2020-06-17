@@ -305,11 +305,11 @@ def search(q, langs = [DLANG], max_results = None,              # {{{1
     rx  = re.compile(q, re.I | re.M)
     mat = lambda x: rx.search(x) is not None
     c.connection.create_function("matches", 1, mat)
+    for r in c.execute("SELECT entry FROM kanji WHERE matches(elem)"):
+      entries.add(r["entry"])
+    for r in c.execute("SELECT entry FROM reading WHERE matches(elem)"):
+      entries.add(r["entry"])
     for lang in langs:
-      for r in c.execute("SELECT entry FROM kanji WHERE matches(elem)"):
-        entries.add(r["entry"])
-      for r in c.execute("SELECT entry FROM reading WHERE matches(elem)"):
-        entries.add(r["entry"])
       for r in c.execute("SELECT entry FROM sense WHERE" +
                          " lang = ? AND matches(gloss)", (lang,)):
         entries.add(r["entry"])
