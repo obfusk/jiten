@@ -5,7 +5,7 @@
 #
 # File        : jiten/freq.py
 # Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-# Date        : 2020-06-15
+# Date        : 2020-06-16
 #
 # Copyright   : Copyright (C) 2020  Felix C. Stegerman
 # Version     : v0.0.1
@@ -38,10 +38,10 @@ import sys
 from collections import defaultdict
 from fractions import Fraction
 
-from .misc import isokjap
+from . import misc as M
 
-NEWSFREQ_FILE   = "res/freq/wordfreq_ck.utf8"
-BOOKFREQ_FILE   = "res/freq/base_aggregates.txt.nobom"
+NEWSFREQ_FILE   = M.resource_path("res/freq/wordfreq_ck.utf8")
+BOOKFREQ_FILE   = M.resource_path("res/freq/base_aggregates.txt.nobom")
 
 EXCEPTIONS      = "Tシャツ".split()
 NOFREQ          = 999999
@@ -56,7 +56,7 @@ def parse_freq(file, word_first):                               # {{{1
       fields      = line.split("\t")[:2]
       word, freq  = fields if word_first else fields[::-1]
       freq        = int(freq)
-      if word and (word in EXCEPTIONS or all(map(isokjap, word))):
+      if word and (word in EXCEPTIONS or all(map(M.isokjap, word))):
         assert word not in data or data[word] == freq
         data[word] = freq
   return data

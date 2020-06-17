@@ -5,7 +5,7 @@
 #
 # File        : jiten/misc.py
 # Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-# Date        : 2020-06-15
+# Date        : 2020-06-16
 #
 # Copyright   : Copyright (C) 2020  Felix C. Stegerman
 # Version     : v0.0.1
@@ -20,7 +20,7 @@ r"""
 
 """                                                             # }}}1
 
-import itertools, sys
+import itertools, os, sys
 
 OKPUNC = "々"
 
@@ -45,6 +45,10 @@ def uniq(xs):
   for x in xs:
     if x not in seen:
       seen.add(x); yield x
+
+# TODO: use importlib.resources?!
+def resource_path(*path):
+  return os.path.join(os.path.dirname(__file__), *path)
 
 if __name__ == "__main__":
   if "--doctest" in sys.argv:

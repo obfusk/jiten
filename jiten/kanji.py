@@ -5,7 +5,7 @@
 #
 # File        : jiten/kanji.py
 # Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-# Date        : 2020-06-15
+# Date        : 2020-06-16
 #
 # Copyright   : Copyright (C) 2020  Felix C. Stegerman
 # Version     : v0.0.1
@@ -81,8 +81,8 @@ import click
 from . import misc as M
 from .sql import sqlite_do
 
-SQLITE_FILE   = "res/kanji.sqlite3"
-KANJIDIC_FILE = "res/jmdict/kanjidic2.xml.gz"
+SQLITE_FILE   = M.resource_path("res/kanji.sqlite3")
+KANJIDIC_FILE = M.resource_path("res/jmdict/kanjidic2.xml.gz")
 
 Entry = namedtuple("Entry", """char cat level strokes freq jlpt
                                skip on kun nanori meaning""".split())

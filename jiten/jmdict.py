@@ -5,7 +5,7 @@
 #
 # File        : jiten/jmdict.py
 # Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-# Date        : 2020-06-15
+# Date        : 2020-06-16
 #
 # Copyright   : Copyright (C) 2020  Felix C. Stegerman
 # Version     : v0.0.1
@@ -27,7 +27,7 @@ r"""
 ('ばか', 'バカ', '馬鹿', '莫迦', '破家', '馬稼')
 >>> baka.usually_kana()
 True
->>> print("\n".join(flatten(baka.meanings())))
+>>> print("\n".join(M.flatten(baka.meanings())))
 idiot
 moron
 fool
@@ -44,7 +44,7 @@ nut
 person singularly obsessed with something
 [usu. in compounds]
 Mactra chinensis (species of trough shell)
->>> print("\n".join(list(flatten(baka.meanings("ger")))[:10]))
+>>> print("\n".join(list(M.flatten(baka.meanings("ger")))[:10]))
 Dummkopf
 Idiot
 Esel
@@ -63,7 +63,7 @@ Unsinn
 ('いく', 'ゆく', '行く', '逝く', '往く')
 >>> iku.usually_kana()
 True
->>> print("\n".join(flatten(iku.meanings())))
+>>> print("\n".join(M.flatten(iku.meanings())))
 to go
 to move (in a direction or towards a specific location)
 to head (towards)
@@ -87,7 +87,7 @@ to cum
 to trip
 to get high
 to have a drug-induced hallucination
->>> print("\n".join(list(flatten(iku.meanings("dut")))[:10]))
+>>> print("\n".join(list(M.flatten(iku.meanings("dut")))[:10]))
 gaan
 lopen
 wandelen
@@ -110,11 +110,11 @@ from functools import lru_cache
 import click
 
 from . import freq as F
-from .misc import iskanji, flatten, uniq
+from . import misc as M
 from .sql import sqlite_do
 
-SQLITE_FILE   = "res/jmdict.sqlite3"
-JMDICT_FILE   = "res/jmdict/jmdict.xml.gz"
+SQLITE_FILE   = M.resource_path("res/jmdict.sqlite3")
+JMDICT_FILE   = M.resource_path("res/jmdict/jmdict.xml.gz")
 
 USUKANA       = "word usually written using kana alone"
 
@@ -134,26 +134,26 @@ Sense         = namedtuple("Sense",
 def definition(e):
   r, k  = [ list(x) for x in [e.reading, e.kanji] ]
   xs    = r + k if e.usually_kana() else k or r
-  return tuple(uniq( x.elem for x in xs ))
+  return tuple(M.uniq( x.elem for x in xs ))
 
 @lru_cache(maxsize = None)
 def words(e):
-  return frozenset( x.elem for x in flatten([e.kanji, e.reading]) )
+  return frozenset( x.elem for x in M.flatten([e.kanji, e.reading]) )
 
 @lru_cache(maxsize = None)
 def meanings(e, lang = DLANG):
-  return tuple( tuple(flatten([s.gloss, s.info_notes()]))
+  return tuple( tuple(M.flatten([s.gloss, s.info_notes()]))
                 for s in e.sense if s.lang == lang )
 
 @lru_cache(maxsize = None)
-def meaning(e, lang = DLANG): return frozenset(flatten(e.meanings(lang)))
+def meaning(e, lang = DLANG): return frozenset(M.flatten(e.meanings(lang)))
 
 @lru_cache(maxsize = None)
 def charsets(e): return frozenset( k.chars for k in e.kanji )
 
 @lru_cache(maxsize = None)
 def chars(e):
-  return frozenset(flatten( k.chars for k in e.kanji ))
+  return frozenset(M.flatten( k.chars for k in e.kanji ))
 
 @lru_cache(maxsize = None)
 def freq(e): return sum( F.freq.get(w, 0) for w in e.definition() )
@@ -191,7 +191,7 @@ Sense.info_notes      = lambda s: [ "["+i+"]" for i in s.info ]
 def _usually_kana(e):
   return any( USUKANA in x.text for x in e.findall("misc") )
 
-def _kanji_chars(s): return frozenset( c for c in s if iskanji(c) )
+def _kanji_chars(s): return frozenset( c for c in s if M.iskanji(c) )
 
 # TODO
 # * extract & use more fields!?
