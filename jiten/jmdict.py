@@ -252,10 +252,13 @@ def jmdict2sqldb(data, file = SQLITE_FILE):                     # {{{1
           c.execute("INSERT INTO reading VALUES (?,?,?)",
                     (e.seq, r.elem, "\n".join(r.restr)))
         for s in e.sense:
-          c.execute("INSERT INTO sense VALUES (?,?,?,?,?,?)",
+          c.execute("INSERT INTO sense VALUES (?,?,?,?,?)",
                     (e.seq, "\n".join(s.pos), s.lang,
-                     "\n".join(s.gloss), "\n".join(s.info),
-                     s.usually_kana))
+                     "\n".join(s.info), s.usually_kana))
+          sense = c.lastrowid
+          for g in s.gloss:
+            c.execute("INSERT INTO gloss VALUES (?,?,?,?)",
+                      (e.seq, sense, g, s.lang))
                                                                 # }}}1
 
                                                                 # {{{1
@@ -264,6 +267,7 @@ JMDICT_CREATE_SQL = """
   DROP TABLE IF EXISTS kanji;
   DROP TABLE IF EXISTS reading;
   DROP TABLE IF EXISTS sense;
+  DROP TABLE IF EXISTS gloss;
   CREATE TABLE entry(
     seq INTEGER PRIMARY KEY ASC,
     freq INTEGER,
@@ -286,10 +290,17 @@ JMDICT_CREATE_SQL = """
     entry INTEGER,
     pos TEXT,
     lang TEXT,
-    gloss TEXT,
     info TEXT,
     usually_kana BOOLEAN,
     FOREIGN KEY(entry) REFERENCES entry(seq)
+  );
+  CREATE TABLE gloss(
+    entry INTEGER,
+    sense INTEGER,
+    elem TEXT,
+    lang TEXT,
+    FOREIGN KEY(entry) REFERENCES entry(seq),
+    FOREIGN KEY(sense) REFERENCES sense(rowid)
   );
 """                                                             # }}}1
 
@@ -304,14 +315,13 @@ def search(q, langs = [DLANG], max_results = None,              # {{{1
   with sqlite_do(file) as c:
     rx  = re.compile(q, re.I | re.M)
     mat = lambda x: rx.search(x) is not None
-    c.connection.create_function("matches", 1, mat)
+    for r in c.execute("SELECT entry FROM kanji WHERE elem LIKE ?", (q,)):
+      entries.add(r["entry"])
+    for r in c.execute("SELECT entry FROM reading WHERE elem LIKE ?", (q,)):
+      entries.add(r["entry"])
     for lang in langs:
-      for r in c.execute("SELECT entry FROM kanji WHERE matches(elem)"):
-        entries.add(r["entry"])
-      for r in c.execute("SELECT entry FROM reading WHERE matches(elem)"):
-        entries.add(r["entry"])
-      for r in c.execute("SELECT entry FROM sense WHERE" +
-                         " lang = ? AND matches(gloss)", (lang,)):
+      for r in c.execute("SELECT entry FROM gloss WHERE" +
+                         " lang = ? AND elem LIKE ?", (lang, q)):
         entries.add(r["entry"])
     ents = sorted( tuple(r) for e in entries for r in c.execute(
       "SELECT rank, seq FROM entry WHERE seq = ?", (e,) # #=1
@@ -330,10 +340,14 @@ def search(q, langs = [DLANG], max_results = None,              # {{{1
       )
       s = tuple(
         Sense(tuple(r["pos"].splitlines()), r["lang"],
-              tuple(r["gloss"].splitlines()),
+              tuple(
+                g["elem"]
+                for g in c.execute("SELECT elem FROM gloss WHERE sense = ?" +
+                                   " ORDER BY rowid ASC", (r["rowid"],))
+              ),
               tuple(r["info"].splitlines()), bool(r["usually_kana"]))
-        for r in c.execute("SELECT * FROM sense WHERE entry = ?" +
-                           " ORDER BY rowid ASC", (seq,))
+        for r in list(c.execute("SELECT rowid, * FROM sense WHERE" +
+                                " entry = ? ORDER BY rowid ASC", (seq,)))
       )
       yield (Entry(seq, *( tuple(x) for x in [k, r, s] )),
              (rank if rank != F.NOFREQ else None))

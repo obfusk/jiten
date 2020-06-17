@@ -147,14 +147,28 @@ def kanjidic2sqldb(data, file = SQLITE_FILE):                   # {{{1
         c.execute("INSERT INTO entry VALUES ({})"
                   .format(",".join(["?"]*12)),
                   (ord(e.char), e.char, e.cat, e.level, e.strokes,
-                   e.freq, e.jlpt, e.skip, "\n".join(e.on),
-                   "\n".join(e.kun), "\n".join(e.nanori),
-                   "\n".join(e.meaning)))
+                   e.freq, e.jlpt, e.skip))
+        entry = c.lastrowid
+        for r in e.on:
+          cr = r.replace("-", "").replace(".", "")
+          c.execute("INSERT INTO on_ VALUES (?,?,?)", (entry, r, cr))
+        for r in e.kun:
+          cr = r.replace("-", "").replace(".", "")
+          c.execute("INSERT INTO kun VALUES (?,?,?)", (entry, r, cr))
+        for r in e.nanori:
+          cr = r.replace("-", "").replace(".", "")
+          c.execute("INSERT INTO nanori VALUES (?,?,?)", (entry, r, cr))
+        for m in e.meaning:
+          c.execute("INSERT INTO meaning VALUES (?,?)", (entry, m))
                                                                 # }}}1
 
                                                                 # {{{1
 KANJIDIC_CREATE_SQL = """
   DROP TABLE IF EXISTS entry;
+  DROP TABLE IF EXISTS on_;
+  DROP TABLE IF EXISTS kun;
+  DROP TABLE IF EXISTS nanori;
+  DROP TABLE IF EXISTS meaning;
   CREATE TABLE entry(
     code INTEGER PRIMARY KEY ASC,
     char TEXT,
@@ -163,11 +177,30 @@ KANJIDIC_CREATE_SQL = """
     strokes INTEGER,
     freq INTEGER,
     jlpt INTEGER,
-    skip TEXT,
-    on_ TEXT,
-    kun TEXT,
-    nanori TEXT,
-    meaning TEXT
+    skip TEXT
+  );
+  CREATE TABLE on_(
+    entry INTEGER,
+    elem TEXT,
+    clean TEXT,
+    FOREIGN KEY(entry) REFERENCES entry(code)
+  );
+  CREATE TABLE kun(
+    entry INTEGER,
+    elem TEXT,
+    clean TEXT,
+    FOREIGN KEY(entry) REFERENCES entry(code)
+  );
+  CREATE TABLE nanori(
+    entry INTEGER,
+    elem TEXT,
+    clean TEXT,
+    FOREIGN KEY(entry) REFERENCES entry(code)
+  );
+  CREATE TABLE meaning(
+    entry INTEGER,
+    elem TEXT,
+    FOREIGN KEY(entry) REFERENCES entry(code)
   );
 """                                                             # }}}1
 
@@ -176,27 +209,34 @@ def setup():
   kanjidic2sqldb(kanjidic)
 
 def search(q, max_results = None, file = SQLITE_FILE):          # {{{1
-  ent   = lambda r: Entry(*(list(r[1:8]) + [ tuple(x.splitlines())
-                                             for x in r[8:] ]))
-  ideo  = tuple(M.uniq(filter(M.isideo, q)))
+  def ent(r):
+    return Entry(*r[1:],
+      tuple(r["elem"] for r in c.execute("SELECT elem FROM on_ " +
+                        "WHERE entry = ?", (r[0],))),
+      tuple(r["elem"] for r in c.execute("SELECT elem FROM kun " +
+                        "WHERE entry = ?", (r[0],))),
+      tuple(r["elem"] for r in c.execute("SELECT elem FROM nanori " +
+                        "WHERE entry = ?", (r[0],))),
+      tuple(r["elem"] for r in c.execute("SELECT elem FROM meaning " +
+                        "WHERE entry = ?", (r[0],))),
+    )
+  ideo = tuple(M.uniq(filter(M.isideo, q)))
   with sqlite_do(file) as c:
     if ideo:
       for char in ideo:
         for r in c.execute("SELECT * FROM entry WHERE code = ?", (ord(char),)):
           yield ent(r) # #=1
     else:
-      rx    = re.compile(q, re.I | re.M)
-      mat1  = lambda x: rx.search(x) is not None
-      mat2  = lambda x: rx.search(x.replace(".", "")
-                                   .replace("-", "")) is not None
-      c.connection.create_function("matches1", 1, mat1)
-      c.connection.create_function("matches2", 1, mat2)
+      rx  = re.compile(q, re.I | re.M)
+      mat = lambda x: rx.search(x) is not None
+      c.connection.create_function("matches", 1, mat)
       for i, r in enumerate(c.execute("""
           SELECT * FROM entry
             WHERE
-              matches1(on_) OR matches1(kun) OR matches1(nanori) OR
-              matches2(on_) OR matches2(kun) OR matches2(nanori) OR
-              matches1(meaning)
+              entry IN (
+                SELECT entry FROM on_ WHERE matches(elem) OR matches(clean)
+                max_results(
+              ) OR 
             ORDER BY
               freq ASC NULLS LAST, code ASC
           """)):
