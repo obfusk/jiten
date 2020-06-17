@@ -16,7 +16,7 @@ body {
     "Noto Serif CJK JP", "Noto Serif CJK SC", "Noto Serif CJK TC",
     ipaexmincho, ipamincho, serif;
 }
-.kanji:hover {
+.jap, .kanji:hover {
   font-family:
     "Noto Sans CJK JP", "Noto Sans CJK SC", "Noto Sans CJK TC",
     ipaexgothic, ipagothic, sans-serif;
