@@ -5,7 +5,7 @@
 #
 # File        : jiten/misc.py
 # Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-# Date        : 2020-06-16
+# Date        : 2020-06-18
 #
 # Copyright   : Copyright (C) 2020  Felix C. Stegerman
 # Version     : v0.0.1
@@ -52,9 +52,8 @@ def resource_path(*path):
 
 def process_query(q, word, exact):
   if not q: return ""
-  if word : return "\\b" + q + "\\b"
-  if exact: return "^"   + q + "$"
-  return q
+  else: q = q.strip()
+  return "\\b"+q+"\\b" if word else ("^"+q+"$" if exact else q)
 
 if __name__ == "__main__":
   if "--doctest" in sys.argv:
