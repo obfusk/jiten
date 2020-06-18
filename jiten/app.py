@@ -20,7 +20,7 @@ r"""
 
 """                                                             # }}}1
 
-import os
+import os, re
 
 import jinja2
 
@@ -59,8 +59,12 @@ def r_jmdict():
   max_r = request.args.get("max", MAX, type = int)
   data  = dict(page = "jmdict", query = query, langs = langs,
                isideo = M.isideo, USUKANA = J.USUKANA)
-  if query: data["results"] = J.search(query, langs, max_results = max_r)
-  return render_template("jmdict.html", **data)
+  try:
+    if query:
+      data["results"] = J.search(query, langs, max_results = max_r)
+    return render_template("jmdict.html", **data)
+  except re.error as e:
+    return "regex error: " + str(e)
 
 # TODO
 # * --max
@@ -71,8 +75,12 @@ def r_kanji():
   query = M.process_query(request.args.get("query"), word, exact)
   max_r = request.args.get("max", MAX, type = int)
   data  = dict(page = "kanji", query = query, ord = ord, hex = hex)
-  if query: data["results"] = K.search(query, max_results = max_r)
-  return render_template("kanji.html", **data)
+  try:
+    if query:
+      data["results"] = K.search(query, max_results = max_r)
+    return render_template("kanji.html", **data)
+  except re.error as e:
+    return "regex error: " + str(e)
 
 @app.route("/stroke")
 def r_stroke():
