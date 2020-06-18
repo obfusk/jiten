@@ -300,65 +300,50 @@ def setup():
   jmdict = parse_jmdict()
   jmdict2sqldb(jmdict)
 
-KANJI, READING, SENSE = {}, {}, {}
-
-def preload()
+# TODO
+ENTRIES, SEARCH, KANJI, READING, SENSE = None, {}, {}, {}, {}
+def preload():                                                  # {{{1
   if preload.done: return
   preload.done = True
-  for r in c.execute("SELECT * FROM kanji ORDER BY rowid ASC"):
-    KANJI.setdefault(r["entry"], []).append(
-      Kanji(r["elem"], frozenset(r["chars"]))
-    )
-  for r in c.execute("SELECT * FROM reading ORDER BY rowid ASC"):
-    READING.setdefault(r["entry"], []).append(
-      Reading(r["elem"], tuple(r["restr"].splitlines()))
-    )
-  for r in c.execute("SELECT * FROM sense ORDER BY rowid ASC"):
-    SENSE.setdefault(r["entry"], []).append(
-      Sense(tuple(r["pos"].splitlines()), r["lang"],
-            tuple(r["gloss"].splitlines()),
-            tuple(r["info"].splitlines()), bool(r["usually_kana"]))
-    )
-preload.done = False
+  with sqlite_do(SQLITE_FILE) as c:
+    for r in c.execute("SELECT * FROM kanji ORDER BY entry ASC, rowid ASC"):
+      KANJI.setdefault(r["entry"], []).append(
+        Kanji(r["elem"], frozenset(r["chars"]))
+      )
+      SEARCH.setdefault(r["entry"], []).append(r["elem"])
+    for r in c.execute("SELECT * FROM reading ORDER BY entry ASC, rowid ASC"):
+      READING.setdefault(r["entry"], []).append(
+        Reading(r["elem"], tuple(r["restr"].splitlines()))
+      )
+      SEARCH.setdefault(r["entry"], []).append(r["elem"])
+    for r in c.execute("SELECT * FROM sense ORDER BY entry ASC, rowid ASC"):
+      gloss = tuple(r["gloss"].splitlines())
+      SENSE.setdefault(r["entry"], []).append(
+        Sense(tuple(r["pos"].splitlines()), r["lang"], gloss,
+              tuple(r["info"].splitlines()), bool(r["usually_kana"]))
+      )
+      SEARCH.setdefault(r["entry"], []).append(gloss)
+  global ENTRIES
+  ENTRIES = sorted(SEARCH.keys())
+preload.done = False                                            # }}}1
 
-def search(q, langs = [DLANG], max_results = None,              # {{{1
-           file = SQLITE_FILE):
-  with sqlite_do(file) as c:
-    rx      = re.compile(q, re.I | re.M)
-    mat     = lambda x: rx.search(x) is not None
-    c.connection.create_function("matches", 1, mat)
-    lang    = ",".join( "'" + l + "'" for l in langs if l in LANGS )
-    limit   = "LIMIT " + str(max_results) if max_results else ""
-    entries = [ r["entry"] for r in c.execute("""
-        SELECT entry FROM kanji WHERE matches(elem)
-      UNION
-        SELECT entry FROM reading WHERE matches(elem)
-      UNION
-        SELECT entry FROM sense WHERE lang IN ({}) AND matches(gloss)
-      ORDER BY entry ASC {}
-    """.format(lang, limit)) ]
-    for i, rankseq in enumerate(entries):
-      if max_results and i >= max_results: break
-      rank, seq = rankseq // MAXSEQ, rankseq % MAXSEQ
-      k = tuple()
-      # Kanji(r["elem"], frozenset(r["chars"]))
-      # for r in c.execute("SELECT * FROM kanji WHERE entry = ?" +
-      #                    " ORDER BY rowid ASC", (rankseq,))
-      #
-      r = tuple()
-      # Reading(r["elem"], tuple(r["restr"].splitlines()))
-      # for r in c.execute("SELECT * FROM reading WHERE entry = ?" +
-      #                    " ORDER BY rowid ASC", (rankseq,))
-      #
-      s = tuple()
-      # Sense(tuple(r["pos"].splitlines()), r["lang"],
-      #       tuple(r["gloss"].splitlines()),
-      #       tuple(r["info"].splitlines()), bool(r["usually_kana"]))
-      # for r in c.execute("SELECT * FROM sense WHERE entry = ?" +
-      #                    " ORDER BY rowid ASC", (rankseq,))
-      #
-      yield (Entry(seq, *( tuple(x) for x in [k, r, s] )),
-             (rank if rank != F.NOFREQ else None))
+def search(q, langs = [DLANG], max_results = None):             # {{{1
+  preload()
+  rx = re.compile(q, re.I | re.M)
+  entries = []
+  for e in ENTRIES:
+    for x in SEARCH[e]:
+      if any( rx.search(y) for y in x ) if isinstance(x, tuple) \
+                                        else rx.search(x):
+        entries.append(e)
+        if max_results and len(entries) >= max_results: break
+  for i, rankseq in enumerate(entries):
+    if max_results and i >= max_results: break
+    rank, seq = rankseq // MAXSEQ, rankseq % MAXSEQ
+    k = tuple(KANJI  .get(rankseq, ()))
+    r = tuple(READING.get(rankseq, ()))
+    s = tuple(SENSE  .get(rankseq, ()))
+    yield (Entry(seq, k, r, s), (rank if rank != F.NOFREQ else None))
                                                                 # }}}1
 
 if __name__ == "__main__":
