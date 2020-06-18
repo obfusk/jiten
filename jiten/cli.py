@@ -151,7 +151,9 @@ def kanji_search(verbose, word, exact, max_results, q):         # {{{1
 @cli.command(help = "Serve the web interface.")
 @click.option("-h", "--host", default = "localhost", metavar = "HOST")
 @click.option("-p", "--port", default = 5000, metavar = "PORT", type = click.INT)
-def serve(host, port):
+@click.option("--preload", default = False, is_flag = True)
+def serve(host, port, preload):
+  if preload: J.preload()
   from .app import app
   app.run(host = host, port = port, load_dotenv = False)
 
