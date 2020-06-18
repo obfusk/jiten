@@ -305,6 +305,9 @@ JMDICT_CREATE_SQL = """
     usually_kana BOOLEAN,
     FOREIGN KEY(entry) REFERENCES entry(rankseq)
   );
+  CREATE INDEX idx_kanji ON kanji (entry);
+  CREATE INDEX idx_reading ON reading (entry);
+  CREATE INDEX idx_sense ON sense (entry);
 """                                                             # }}}1
 
 def setup():
