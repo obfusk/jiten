@@ -191,6 +191,7 @@ def search(q, max_results = None, file = SQLITE_FILE):          # {{{1
                                    .replace("-", "")) is not None
       c.connection.create_function("matches1", 1, mat1)
       c.connection.create_function("matches2", 1, mat2)
+      limit = "LIMIT " + str(int(max_results)) if max_results else ""
       for i, r in enumerate(c.execute("""
           SELECT * FROM entry
             WHERE
@@ -199,8 +200,8 @@ def search(q, max_results = None, file = SQLITE_FILE):          # {{{1
               matches1(meaning)
             ORDER BY
               freq ASC NULLS LAST, code ASC
-          """)):
-        if max_results and i >= max_results: break
+            {}
+          """.format(limit))):
         yield ent(r)
                                                                 # }}}1
 

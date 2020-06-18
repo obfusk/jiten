@@ -319,7 +319,7 @@ def search(q, langs = [DLANG], max_results = None,              # {{{1
     mat     = lambda x: rx.search(x) is not None
     c.connection.create_function("matches", 1, mat)
     lang    = ",".join( "'" + l + "'" for l in langs if l in LANGS )
-    limit   = "LIMIT " + str(max_results) if max_results else ""
+    limit   = "LIMIT " + str(int(max_results)) if max_results else ""
     entries = [ r["entry"] for r in c.execute("""
         SELECT entry FROM kanji WHERE matches(elem)
       UNION
