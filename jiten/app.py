@@ -55,9 +55,10 @@ def r_jmdict():
   exact = bool(request.args.get("exact"))
   query = M.process_query(request.args.get("query"), word, exact)
   langs = [ l for l in request.args.getlist("lang") if l in J.LANGS ] or [J.DLANG]
+  max_r = request.args.get("max", 20, type = int)
   data  = dict(page = "jmdict", query = query, langs = langs,
                isideo = M.isideo, USUKANA = J.USUKANA)
-  if query: data["results"] = J.search(query, langs, max_results = 20)
+  if query: data["results"] = J.search(query, langs, max_results = max_r)
   return render_template("jmdict.html", **data)
 
 # TODO
@@ -67,8 +68,9 @@ def r_kanji():
   word  = bool(request.args.get("word"))
   exact = bool(request.args.get("exact"))
   query = M.process_query(request.args.get("query"), word, exact)
+  max_r = request.args.get("max", 20, type = int)
   data  = dict(page = "kanji", query = query, ord = ord, hex = hex)
-  if query: data["results"] = K.search(query, max_results = 20)
+  if query: data["results"] = K.search(query, max_results = max_r)
   return render_template("kanji.html", **data)
 
 @app.route("/stroke")
