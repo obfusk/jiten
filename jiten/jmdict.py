@@ -5,7 +5,7 @@
 #
 # File        : jiten/jmdict.py
 # Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-# Date        : 2020-06-16
+# Date        : 2020-06-18
 #
 # Copyright   : Copyright (C) 2020  Felix C. Stegerman
 # Version     : v0.0.1
@@ -117,6 +117,7 @@ SQLITE_FILE   = M.resource_path("res/jmdict.sqlite3")
 JMDICT_FILE   = M.resource_path("res/jmdict/jmdict.xml.gz")
 
 USUKANA       = "word usually written using kana alone"
+MAXSEQ        = 10000000
 
 LANGS         = "eng dut ger".split()
 DLANG         = "eng"
@@ -227,6 +228,7 @@ def parse_jmdict(file = JMDICT_FILE):                           # {{{1
               gloss.append(x.text.strip())
           if lang is None: continue
           s_inf = tuple( x.text.strip() for x in se.findall("s_inf") )
+          assert seq < MAXSEQ
           assert all( "\n" not in x for x in pos )
           assert all( "\n" not in x for x in gloss )
           assert all( "\n" not in x for x in s_inf )
@@ -237,23 +239,24 @@ def parse_jmdict(file = JMDICT_FILE):                           # {{{1
       return data
                                                                 # }}}1
 
-# NB: kanji/reading/sense are retrieved in insertion order!
+# NB: kanji/reading/sense are retrieved in insertion (i.e. rowid) order!
 def jmdict2sqldb(data, file = SQLITE_FILE):                     # {{{1
   with sqlite_do(file) as c:
     c.executescript(JMDICT_CREATE_SQL)
     with click.progressbar(data, width = 0, label = "writing jmdict") as bar:
       for e in bar:
-        c.execute("INSERT INTO entry VALUES (?,?,?,?)",
-                  (e.seq, str(e.freq()), e.rank(), e.usually_kana()))
+        rankseq = e.rank() * MAXSEQ + e.seq
+        c.execute("INSERT INTO entry VALUES (?,?,?)",
+                  (rankseq, str(e.freq()), e.usually_kana()))
         for k in e.kanji:
           c.execute("INSERT INTO kanji VALUES (?,?,?)",
-                    (e.seq, k.elem, "".join(k.chars)))
+                    (rankseq, k.elem, "".join(k.chars)))
         for r in e.reading:
           c.execute("INSERT INTO reading VALUES (?,?,?)",
-                    (e.seq, r.elem, "\n".join(r.restr)))
+                    (rankseq, r.elem, "\n".join(r.restr)))
         for s in e.sense:
           c.execute("INSERT INTO sense VALUES (?,?,?,?,?,?)",
-                    (e.seq, "\n".join(s.pos), s.lang,
+                    (rankseq, "\n".join(s.pos), s.lang,
                      "\n".join(s.gloss), "\n".join(s.info),
                      s.usually_kana))
                                                                 # }}}1
@@ -265,22 +268,21 @@ JMDICT_CREATE_SQL = """
   DROP TABLE IF EXISTS reading;
   DROP TABLE IF EXISTS sense;
   CREATE TABLE entry(
-    seq INTEGER PRIMARY KEY ASC,
+    rankseq INTEGER PRIMARY KEY ASC,
     freq INTEGER,
-    rank INTEGER,
     usually_kana BOOLEAN
   );
   CREATE TABLE kanji(
     entry INTEGER,
     elem TEXT,
     chars TEXT,
-    FOREIGN KEY(entry) REFERENCES entry(seq)
+    FOREIGN KEY(entry) REFERENCES entry(rankseq)
   );
   CREATE TABLE reading(
     entry INTEGER,
     elem TEXT,
     restr TEXT,
-    FOREIGN KEY(entry) REFERENCES entry(seq)
+    FOREIGN KEY(entry) REFERENCES entry(rankseq)
   );
   CREATE TABLE sense(
     entry INTEGER,
@@ -289,7 +291,7 @@ JMDICT_CREATE_SQL = """
     gloss TEXT,
     info TEXT,
     usually_kana BOOLEAN,
-    FOREIGN KEY(entry) REFERENCES entry(seq)
+    FOREIGN KEY(entry) REFERENCES entry(rankseq)
   );
 """                                                             # }}}1
 
@@ -298,43 +300,63 @@ def setup():
   jmdict = parse_jmdict()
   jmdict2sqldb(jmdict)
 
+KANJI, READING, SENSE = {}, {}, {}
+
+def preload()
+  if preload.done: return
+  preload.done = True
+  for r in c.execute("SELECT * FROM kanji ORDER BY rowid ASC"):
+    KANJI.setdefault(r["entry"], []).append(
+      Kanji(r["elem"], frozenset(r["chars"]))
+    )
+  for r in c.execute("SELECT * FROM reading ORDER BY rowid ASC"):
+    READING.setdefault(r["entry"], []).append(
+      Reading(r["elem"], tuple(r["restr"].splitlines()))
+    )
+  for r in c.execute("SELECT * FROM sense ORDER BY rowid ASC"):
+    SENSE.setdefault(r["entry"], []).append(
+      Sense(tuple(r["pos"].splitlines()), r["lang"],
+            tuple(r["gloss"].splitlines()),
+            tuple(r["info"].splitlines()), bool(r["usually_kana"]))
+    )
+preload.done = False
+
 def search(q, langs = [DLANG], max_results = None,              # {{{1
            file = SQLITE_FILE):
-  entries = set()
   with sqlite_do(file) as c:
-    rx  = re.compile(q, re.I | re.M)
-    mat = lambda x: rx.search(x) is not None
+    rx      = re.compile(q, re.I | re.M)
+    mat     = lambda x: rx.search(x) is not None
     c.connection.create_function("matches", 1, mat)
-    for r in c.execute("SELECT entry FROM kanji WHERE matches(elem)"):
-      entries.add(r["entry"])
-    for r in c.execute("SELECT entry FROM reading WHERE matches(elem)"):
-      entries.add(r["entry"])
-    for lang in langs:
-      for r in c.execute("SELECT entry FROM sense WHERE" +
-                         " lang = ? AND matches(gloss)", (lang,)):
-        entries.add(r["entry"])
-    ents = sorted( tuple(r) for e in entries for r in c.execute(
-      "SELECT rank, seq FROM entry WHERE seq = ?", (e,) # #=1
-    ))
-    for i, (rank, seq) in enumerate(ents):
+    lang    = ",".join( "'" + l + "'" for l in langs if l in LANGS )
+    limit   = "LIMIT " + str(max_results) if max_results else ""
+    entries = [ r["entry"] for r in c.execute("""
+        SELECT entry FROM kanji WHERE matches(elem)
+      UNION
+        SELECT entry FROM reading WHERE matches(elem)
+      UNION
+        SELECT entry FROM sense WHERE lang IN ({}) AND matches(gloss)
+      ORDER BY entry ASC {}
+    """.format(lang, limit)) ]
+    for i, rankseq in enumerate(entries):
       if max_results and i >= max_results: break
-      k = tuple(
-        Kanji(r["elem"], frozenset(r["chars"]))
-        for r in c.execute("SELECT * FROM kanji WHERE entry = ?" +
-                           " ORDER BY rowid ASC", (seq,))
-      )
-      r = tuple(
-        Reading(r["elem"], tuple(r["restr"].splitlines()))
-        for r in c.execute("SELECT * FROM reading WHERE entry = ?" +
-                           " ORDER BY rowid ASC", (seq,))
-      )
-      s = tuple(
-        Sense(tuple(r["pos"].splitlines()), r["lang"],
-              tuple(r["gloss"].splitlines()),
-              tuple(r["info"].splitlines()), bool(r["usually_kana"]))
-        for r in c.execute("SELECT * FROM sense WHERE entry = ?" +
-                           " ORDER BY rowid ASC", (seq,))
-      )
+      rank, seq = rankseq // MAXSEQ, rankseq % MAXSEQ
+      k = tuple()
+      # Kanji(r["elem"], frozenset(r["chars"]))
+      # for r in c.execute("SELECT * FROM kanji WHERE entry = ?" +
+      #                    " ORDER BY rowid ASC", (rankseq,))
+      #
+      r = tuple()
+      # Reading(r["elem"], tuple(r["restr"].splitlines()))
+      # for r in c.execute("SELECT * FROM reading WHERE entry = ?" +
+      #                    " ORDER BY rowid ASC", (rankseq,))
+      #
+      s = tuple()
+      # Sense(tuple(r["pos"].splitlines()), r["lang"],
+      #       tuple(r["gloss"].splitlines()),
+      #       tuple(r["info"].splitlines()), bool(r["usually_kana"]))
+      # for r in c.execute("SELECT * FROM sense WHERE entry = ?" +
+      #                    " ORDER BY rowid ASC", (rankseq,))
+      #
       yield (Entry(seq, *( tuple(x) for x in [k, r, s] )),
              (rank if rank != F.NOFREQ else None))
                                                                 # }}}1
