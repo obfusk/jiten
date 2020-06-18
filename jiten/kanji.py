@@ -5,7 +5,7 @@
 #
 # File        : jiten/kanji.py
 # Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-# Date        : 2020-06-16
+# Date        : 2020-06-18
 #
 # Copyright   : Copyright (C) 2020  Felix C. Stegerman
 # Version     : v0.0.1
@@ -83,6 +83,8 @@ from .sql import sqlite_do
 
 SQLITE_FILE   = M.resource_path("res/kanji.sqlite3")
 KANJIDIC_FILE = M.resource_path("res/jmdict/kanjidic2.xml.gz")
+
+NOFREQ        = 9999
 
 Entry = namedtuple("Entry", """char cat level strokes freq jlpt
                                skip on kun nanori meaning""".split())
@@ -199,9 +201,9 @@ def search(q, max_results = None, file = SQLITE_FILE):          # {{{1
               matches2(on_) OR matches2(kun) OR matches2(nanori) OR
               matches1(meaning)
             ORDER BY
-              freq ASC NULLS LAST, code ASC
+              IFNULL(freq, {}) ASC, code ASC
             {}
-          """.format(limit))):
+          """.format(NOFREQ, limit))):
         yield ent(r)
                                                                 # }}}1
 
