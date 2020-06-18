@@ -44,8 +44,8 @@ def cli(ctx, colour, **kw):
 
 # TODO
 @cli.command(help = "Search JMDict.")
-@click.option("-l", "--lang", multiple = True, default = [J.DLANG],
-              metavar = "LANG",
+@click.option("-l", "--lang", multiple = True,
+              default = [J.LANGS[0]], metavar = "LANG",
               help = "Choose language(s) ("+", ".join(J.LANGS)+").")
 @click.option("-w", "--word", is_flag = True,
               help = "Match whole word (same as \\b...\\b).")

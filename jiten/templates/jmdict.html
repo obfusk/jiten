@@ -19,7 +19,7 @@
     {% import "_search.html" as search %}
     {% include "_nav.html" %}
     <div class="container">
-      {{ search.jmdict(query) }}
+      {{ search.jmdict(LANGS, langs, query) }}
       {% if query %}
         {% for e, rank in results %}
           <br/>
@@ -31,7 +31,7 @@
                     }}" title="kanji">
                   {% if e.kanji %}
                     {% for k in e.kanji %}
-                      <span class="selbtn fakebtn btn btn-lg btn-warning p-1 mb-1">
+                      <span class="selbtn fakebtn btn btn-lg btn-warning py-1 mb-1">
                         {% for c in k.elem -%}
                           {% if isideo(c) -%}
                             <a class="text-reset"
@@ -51,7 +51,7 @@
                     }}" title="reading">
                   {% if e.reading %}
                     {% for r in e.reading %}
-                      <a class="selbtn btn btn-success p-1 mb-1"
+                      <a class="selbtn btn btn-success py-1 mb-1"
                         href="/jmdict?query={{ r.elem }}&word=yes">{{ r.elem }}</a>
                     {% endfor %}
                   {% else %}
@@ -67,7 +67,7 @@
                   {% for g in gloss[l] %}
                     <li class="list-group-item pb-1 px-2 pt-2">
                       {% for x in g %}
-                        <span class="selbtn fakebtn btn btn-outline-primary text-reset p-1 mb-1">
+                        <span class="selbtn fakebtn btn btn-outline-primary text-reset py-1 mb-1">
                           {{ x }}
                         </span>
                       {% endfor %}
@@ -78,7 +78,7 @@
               <div class="p-1" title="miscellaneous">
                 {% if info %}
                   {% for i in info %}
-                    <span class="badge badge-success">
+                    <span class="selbtn fakebtn btn btn-success btn-sm mb-1">
                       {{ i }}
                     </span>
                   {% endfor %}

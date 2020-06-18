@@ -118,9 +118,7 @@ JMDICT_FILE   = M.resource_path("res/jmdict/jmdict.xml.gz")
 
 USUKANA       = "word usually written using kana alone"
 MAXSEQ        = 10000000
-
 LANGS         = "eng dut ger".split()
-DLANG         = "eng"
 
 Entry         = namedtuple("Entry",
                 """seq kanji reading sense""".split())
@@ -142,12 +140,13 @@ def words(e):
   return frozenset( x.elem for x in M.flatten([e.kanji, e.reading]) )
 
 @lru_cache(maxsize = None)
-def meanings(e, lang = DLANG):
+def meanings(e, lang = LANGS[0]):
   return tuple( tuple(M.flatten([s.gloss, s.info_notes()]))
                 for s in e.sense if s.lang == lang )
 
 @lru_cache(maxsize = None)
-def meaning(e, lang = DLANG): return frozenset(M.flatten(e.meanings(lang)))
+def meaning(e, lang = LANGS[0]):
+  return frozenset(M.flatten(e.meanings(lang)))
 
 @lru_cache(maxsize = None)
 def charsets(e): return frozenset( k.chars for k in e.kanji )
@@ -315,7 +314,7 @@ def setup():
   jmdict = parse_jmdict()
   jmdict2sqldb(jmdict)
 
-def search(q, langs = [DLANG], max_results = None,              # {{{1
+def search(q, langs = [LANGS[0]], max_results = None,           # {{{1
            file = SQLITE_FILE):
   with sqlite_do(file) as c:
     rx      = re.compile(q, re.I | re.M)

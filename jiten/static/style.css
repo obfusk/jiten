@@ -3,6 +3,10 @@ body {
   margin: 1rem;
 }
 
+.navbar {
+  padding: .5rem 1rem;
+}
+
 @font-face {
   font-family: KanjiStrokeOrders;
   src: url(/static/font/KanjiStrokeOrders_v4.001.ttf);

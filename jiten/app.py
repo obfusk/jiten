@@ -24,7 +24,8 @@ import os, re
 
 import jinja2
 
-from flask import Flask, redirect, request, render_template, url_for
+from flask import Flask, make_response, redirect, request, \
+                  render_template, url_for
 
 from . import jmdict as J
 from . import kanji  as K
@@ -44,25 +45,50 @@ if os.environ.get(name.upper() + "_HTTPS") == "force":
     response.headers["Strict-Transport-Security"] = 'max-age=63072000'
     return response
 
+# TODO
+def respond(template, **data):
+  langs = get_langs()
+  dark  = "yes" == request.args.get("dark", request.cookies.get("dark"))
+  targs = request.args.copy()
+  targs.setlist("dark", ["no" if dark else "yes"])
+  targs.setlist("save", ["yes"])
+  resp  = make_response(render_template(
+    template, dark = dark, LANGS = J.LANGS, langs = langs,
+    toggle = url_for(request.endpoint, **dict(targs.lists())),
+    **data
+  ))
+  if "yes" == request.args.get("save"):
+    resp.set_cookie("dark", "yes" if dark else "no")
+    resp.set_cookie("lang", " ".join(langs))
+  return resp
+
+def get_langs():
+  ls = request.args.getlist("lang") or request.cookies.get("lang", "").split()
+  return [ l for l in ls if l in J.LANGS ] or [J.LANGS[0]]
+
+def get_word_exact_query_max():
+  word  = "yes" == request.args.get("word")
+  exact = "yes" == request.args.get("exact")
+  return word, exact, \
+    M.process_query(request.args.get("query"), word, exact), \
+    request.args.get("max", MAX, type = int)
+
 @app.route("/")
 def r_index():
-  return render_template("index.html", page = "index")
+  return respond("index.html", page = "index")
 
 # TODO
 # * --max
 @app.route("/jmdict")
 def r_jmdict():
-  word  = bool(request.args.get("word"))
-  exact = bool(request.args.get("exact"))
-  query = M.process_query(request.args.get("query"), word, exact)
-  langs = [ l for l in request.args.getlist("lang") if l in J.LANGS ] or [J.DLANG]
-  max_r = request.args.get("max", MAX, type = int)
-  data  = dict(page = "jmdict", query = query, langs = langs,
-               isideo = M.isideo, USUKANA = J.USUKANA)
+  word, exact, query, max_r = get_word_exact_query_max()
+  langs = get_langs()
+  data  = dict(page = "jmdict", query = query, isideo = M.isideo,
+               USUKANA = J.USUKANA)
   try:
     if query:
       data["results"] = J.search(query, langs, max_results = max_r)
-    return render_template("jmdict.html", **data)
+    return respond("jmdict.html", **data)
   except re.error as e:
     return "regex error: " + str(e)
 
@@ -70,21 +96,18 @@ def r_jmdict():
 # * --max
 @app.route("/kanji")
 def r_kanji():
-  word  = bool(request.args.get("word"))
-  exact = bool(request.args.get("exact"))
-  query = M.process_query(request.args.get("query"), word, exact)
-  max_r = request.args.get("max", MAX, type = int)
-  data  = dict(page = "kanji", query = query, ord = ord, hex = hex)
+  word, exact, query, max_r = get_word_exact_query_max()
+  data = dict(page = "kanji", query = query, ord = ord, hex = hex)
   try:
     if query:
       data["results"] = K.search(query, max_results = max_r)
-    return render_template("kanji.html", **data)
+    return respond("kanji.html", **data)
   except re.error as e:
     return "regex error: " + str(e)
 
 @app.route("/stroke")
 def r_stroke():
-  query = request.args.get("query", "")
-  return render_template("stroke.html", page= "stroke", query = query)
+  query = request.args.get("query", "").strip()
+  return respond("stroke.html", page= "stroke", query = query)
 
 # vim: set tw=70 sw=2 sts=2 et fdm=marker :
