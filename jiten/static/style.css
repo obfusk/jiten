@@ -22,6 +22,10 @@ body {
     ipaexgothic, ipagothic, sans-serif;
 }
 
+.navbar {
+  padding: .5rem 1rem;
+}
+
 legend {
   font-size: 1em;
   margin: 0;

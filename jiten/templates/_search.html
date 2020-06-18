@@ -1,5 +1,15 @@
-{% macro jmdict(query = "") %}
-  <!-- TODO: don't hardcode eng/dut/ger -->
+{# <!--
+
+  File        : templates/_search.html
+  Maintainer  : Felix C. Stegerman <flx@obfusk.net>
+  Date        : 2020-06-18
+
+  Copyright   : Copyright (C) 2020  Felix C. Stegerman
+  Version     : v0.0.1
+  License     : AGPLv3+
+
+--> #}
+{% macro jmdict(LANGS, langs, query = "") %}
   <div class="card">
     <form class="card-body" action="/jmdict">
       <div class="form-group form-inline justify-content-end mb-0">
@@ -27,21 +37,15 @@
         </fieldset>
         <fieldset class="d-inline border p-2">
           <legend>lang</legend>
-          <div class="form-check form-check-inline">
-            <input type="checkbox" class="form-check-input"
-              id="jmdict-eng" name="lang" value="eng" checked />
-            <label class="form-check-label" for="jmdict-eng">eng</label>
-          </div>
-          <div class="form-check form-check-inline">
-            <input type="checkbox" class="form-check-input"
-              id="jmdict-dut" name="lang" value="dut" />
-            <label class="form-check-label" for="jmdict-dut">dut</label>
-          </div>
-          <div class="form-check form-check-inline">
-            <input type="checkbox" class="form-check-input"
-              id="jmdict-ger" name="lang" value="ger" />
-            <label class="form-check-label" for="jmdict-ger">ger</label>
-          </div>
+          {% for l in LANGS %}
+            <div class="form-check form-check-inline">
+              <input type="checkbox" class="form-check-input"
+                id="jmdict-{{ l }}" name="lang" value="{{ l }}"
+                {% if l in langs %}checked{% endif %} />
+              <label class="form-check-label"
+                for="jmdict-{{ l }}" >{{ l }}</label>
+            </div>
+          {% endfor %}
         </fieldset>
       </div>
     </form>
