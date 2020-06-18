@@ -21,6 +21,7 @@ r"""
 """                                                             # }}}1
 
 __version__ = "0.0.1"
+name        = "jiten"
 
 import os
 
@@ -52,7 +53,7 @@ def cli(ctx, colour, **kw):
               help = "Match exactly (same as ^...$).")
 @click.option("-m", "--max", default = None, type = click.INT,
               help = "Maximum number of results.")
-@click.argument("query", required = False)
+@click.argument("query", required = False, metavar = "REGEX")
 @click.pass_context
 def jmdict(ctx, lang, word, exact, max, query):
   args = (ctx.obj["verbose"], lang, word, exact, max)
@@ -104,7 +105,7 @@ def jmdict_search(verbose, lang, word, exact, max_results, q):  # {{{1
               help = "Match exactly (same as ^...$).")
 @click.option("-m", "--max", default = None, type = click.INT,
               help = "Maximum number of results.")
-@click.argument("query", required = False)
+@click.argument("query", required = False, metavar = "REGEX")
 @click.pass_context
 def kanji(ctx, word, exact, max, query):
   args = (ctx.obj["verbose"], word, exact, max)
@@ -162,6 +163,6 @@ def setup():
   K.setup()
 
 if __name__ == "__main__":
-  cli()
+  cli(prog_name = name)
 
 # vim: set tw=70 sw=2 sts=2 et fdm=marker :
