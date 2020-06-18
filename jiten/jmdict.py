@@ -315,34 +315,6 @@ def setup():
   jmdict = parse_jmdict()
   jmdict2sqldb(jmdict)
 
-preloaded = None
-
-def preload():                                                  # {{{1
-  global preloaded
-  preloaded = dict(k = {}, r = {}, s = {})
-  with sqlite_do(SQLITE_FILE) as c:
-    ka = c.execute("SELECT * FROM kanji ORDER BY rowid ASC")
-    with click.progressbar(ka, width = 0, label = "preloading kanji") as bar:
-      for r in bar:
-        preloaded["k"].setdefault(r["entry"], []).append(
-          Kanji(r["elem"], frozenset(r["chars"]))
-        )
-    re = c.execute("SELECT * FROM reading ORDER BY rowid ASC")
-    with click.progressbar(re, width = 0, label = "preloading reading") as bar:
-      for r in bar:
-        preloaded["r"].setdefault(r["entry"], []).append(
-          Reading(r["elem"], tuple(r["restr"].splitlines()))
-        )
-    se = c.execute("SELECT * FROM sense ORDER BY rowid ASC")
-    with click.progressbar(se, width = 0, label = "preloading sense") as bar:
-      for r in bar:
-        preloaded["s"].setdefault(r["entry"], []).append(
-          Sense(tuple(r["pos"].splitlines()), r["lang"],
-                tuple(r["gloss"].splitlines()),
-                tuple(r["info"].splitlines()), bool(r["usually_kana"]))
-        )
-                                                                # }}}1
-
 def search(q, langs = [DLANG], max_results = None,              # {{{1
            file = SQLITE_FILE):
   with sqlite_do(file) as c:
@@ -361,28 +333,23 @@ def search(q, langs = [DLANG], max_results = None,              # {{{1
     """.format(lang, limit)) ]
     for i, rankseq in enumerate(entries):
       rank, seq = rankseq // MAXSEQ, rankseq % MAXSEQ
-      if preloaded:
-        k = tuple(preloaded["k"].get(rankseq, []))
-        r = tuple(preloaded["r"].get(rankseq, []))
-        s = tuple(preloaded["s"].get(rankseq, []))
-      else:
-        k = tuple(
-          Kanji(r["elem"], frozenset(r["chars"]))
-          for r in c.execute("SELECT * FROM kanji WHERE entry = ?" +
-                             " ORDER BY rowid ASC", (rankseq,))
-        )
-        r = tuple(
-          Reading(r["elem"], tuple(r["restr"].splitlines()))
-          for r in c.execute("SELECT * FROM reading WHERE entry = ?" +
-                             " ORDER BY rowid ASC", (rankseq,))
-        )
-        s = tuple(
-          Sense(tuple(r["pos"].splitlines()), r["lang"],
-                tuple(r["gloss"].splitlines()),
-                tuple(r["info"].splitlines()), bool(r["usually_kana"]))
-          for r in c.execute("SELECT * FROM sense WHERE entry = ?" +
-                             " ORDER BY rowid ASC", (rankseq,))
-        )
+      k = tuple(
+        Kanji(r["elem"], frozenset(r["chars"]))
+        for r in c.execute("SELECT * FROM kanji WHERE entry = ?" +
+                           " ORDER BY rowid ASC", (rankseq,))
+      )
+      r = tuple(
+        Reading(r["elem"], tuple(r["restr"].splitlines()))
+        for r in c.execute("SELECT * FROM reading WHERE entry = ?" +
+                           " ORDER BY rowid ASC", (rankseq,))
+      )
+      s = tuple(
+        Sense(tuple(r["pos"].splitlines()), r["lang"],
+              tuple(r["gloss"].splitlines()),
+              tuple(r["info"].splitlines()), bool(r["usually_kana"]))
+        for r in c.execute("SELECT * FROM sense WHERE entry = ?" +
+                           " ORDER BY rowid ASC", (rankseq,))
+      )
       yield (Entry(seq, *( tuple(x) for x in [k, r, s] )),
              (rank if rank != F.NOFREQ else None))
                                                                 # }}}1
