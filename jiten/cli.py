@@ -5,7 +5,7 @@
 #
 # File        : jiten/cli.py
 # Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-# Date        : 2020-06-16
+# Date        : 2020-06-18
 #
 # Copyright   : Copyright (C) 2020  Felix C. Stegerman
 # Version     : v0.0.1
@@ -75,16 +75,20 @@ def jmdict_search(verbose, lang, word, exact, max_results, q):  # {{{1
     yield (" | ".join(
       click.style(r.elem, fg = "bright_green") for r in e.reading
     ) or "[no readings]") + "\n"
+    gloss, info = e.gloss_pos_info(lang)
     for l in lang:
       yield click.style("[" + l + "]", fg = "cyan") + "\n"
-      for m in e.meanings(l):
-        t = click.wrap_text("| ".join(m),
+      for g in gloss[l]:
+        t = click.wrap_text("| ".join(g),
           click.get_terminal_size()[0], initial_indent = "  ",
           subsequent_indent = "  "
         )[2:].replace("|", click.style(" |", fg = "magenta"))
         yield click.style("* ", fg = "magenta") + t + "\n"
-    if e.usually_kana():
-      yield "[" + J.USUKANA + "]\n"
+    t = click.wrap_text("| ".join(info),
+      click.get_terminal_size()[0], initial_indent = "   ",
+      subsequent_indent = "   "
+    )[3:].replace("|", click.style(" |", fg = "green"))
+    if t: yield click.style(">> ", fg = "green") + t + "\n"
     if verbose:
       yield   "seq# " + click.style(str(e.seq), fg = "blue") \
         + (", freq# " + click.style(str(rank ), fg = "cyan")

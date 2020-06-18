@@ -166,6 +166,17 @@ def rank(e): return min( F.rank(w) for w in e.definition() )
 def usually_kana(e):
   return any( s.usually_kana for s in e.sense )
 
+# TODO: lru_cache?
+def gloss_pos_info(e, langs):
+  gloss, pos, info = {}, [], []
+  for l in langs:
+    for s in e.sense:
+      if not s.lang == l: continue
+      pos.extend(s.pos); info.extend(s.info)
+      gloss.setdefault(l, []).append(s.gloss)
+      if e.usually_kana(): info.append(USUKANA)
+  return gloss, M.uniq(pos + info)
+
 Entry.definition      = definition
 Entry.words           = words
 Entry.meanings        = meanings
@@ -175,6 +186,7 @@ Entry.chars           = chars
 Entry.freq            = freq
 Entry.rank            = rank
 Entry.usually_kana    = usually_kana
+Entry.gloss_pos_info  = gloss_pos_info
 Entry.__hash__        = lambda e: hash(e.seq)
 
 def isichidan(s): return any( "Ichidan verb" in x for x in s.pos )
