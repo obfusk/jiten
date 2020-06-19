@@ -63,9 +63,9 @@ def get_langs():
 def get_word_exact_query_max():
   word  = "yes" == request.args.get("word")
   exact = "yes" == request.args.get("exact")
-  query = M.process_query(request.args.get("query"), word, exact)
-  max_r = request.args.get("max", MAX, type = int)
-  return word, exact, query, max_r
+  return word, exact, \
+    M.process_query(request.args.get("query"), word, exact), \
+    request.args.get("max", MAX, type = int)
 
 @app.route("/")
 def r_index():
@@ -76,7 +76,7 @@ def r_index():
 @app.route("/jmdict")
 def r_jmdict():
   word, exact, query, max_r = get_word_exact_query_max()
-  langs = get_langs()[0]
+  langs = get_langs()
   data  = dict(page = "jmdict", query = query, isideo = M.isideo,
                USUKANA = J.USUKANA)
   try:
