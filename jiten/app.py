@@ -5,7 +5,7 @@
 #
 # File        : jiten/app.py
 # Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-# Date        : 2020-06-18
+# Date        : 2020-06-19
 #
 # Copyright   : Copyright (C) 2020  Felix C. Stegerman
 # Version     : v0.0.1
@@ -45,21 +45,29 @@ if os.environ.get(name.upper() + "_HTTPS") == "force":
     response.headers["Strict-Transport-Security"] = 'max-age=63072000'
     return response
 
-# TODO
-def respond(template, **data):
-  langs = get_langs()
-  dark  = "yes" == request.args.get("dark", request.cookies.get("dark"))
+def arg(k, *a, **kw):
+  return request.args.get(k, *a, **kw)
+
+def arg_bool(k, *a, **kw):
+  return arg(k, *a, **kw) == "yes"
+
+def dark_toggle_link(dark):
   targs = request.args.copy()
   targs.setlist("dark", ["no" if dark else "yes"])
   targs.setlist("save", ["yes"])
-  resp  = make_response(render_template(
+  return url_for(request.endpoint, **dict(targs.lists()))
+
+def respond(template, **data):
+  langs, dark = get_langs(), arg_bool("dark", request.cookies.get("dark"))
+  resp = make_response(render_template(
     template, dark = dark, LANGS = J.LANGS, langs = langs,
-    toggle = url_for(request.endpoint, **dict(targs.lists())),
-    **data
+    toggle = dark_toggle_link(dark), **data
   ))
-  if "yes" == request.args.get("save"):
-    resp.set_cookie("dark", "yes" if dark else "no")
-    resp.set_cookie("lang", " ".join(langs))
+  if arg_bool("save"):
+    if "dark" in request.args:
+      resp.set_cookie("dark", "yes" if dark else "no")
+    else:
+      resp.set_cookie("lang", " ".join(langs))
   return resp
 
 def get_langs():
@@ -67,11 +75,10 @@ def get_langs():
   return [ l for l in ls if l in J.LANGS ] or [J.LANGS[0]]
 
 def get_word_exact_query_max():
-  word  = "yes" == request.args.get("word")
-  exact = "yes" == request.args.get("exact")
+  word, exact = arg_bool("word"), arg_bool("exact")
   return word, exact, \
-    M.process_query(request.args.get("query"), word, exact), \
-    request.args.get("max", MAX, type = int)
+         M.process_query(arg("query"), word, exact), \
+         arg("max", MAX, type = int)
 
 @app.route("/")
 def r_index():
@@ -82,12 +89,11 @@ def r_index():
 @app.route("/jmdict")
 def r_jmdict():
   word, exact, query, max_r = get_word_exact_query_max()
-  langs = get_langs()
-  data  = dict(page = "jmdict", query = query, isideo = M.isideo,
-               USUKANA = J.USUKANA)
+  opts  = dict(langs = get_langs(), max_results = max_r,
+               noun = arg_bool("noun"), verb = arg_bool("verb"))
+  data  = dict(page = "jmdict", query = query, isideo = M.isideo)
   try:
-    if query:
-      data["results"] = J.search(query, langs, max_results = max_r)
+    if query: data["results"] = J.search(query, **opts)
     return respond("jmdict.html", **data)
   except re.error as e:
     return "regex error: " + str(e)
@@ -99,15 +105,14 @@ def r_kanji():
   word, exact, query, max_r = get_word_exact_query_max()
   data = dict(page = "kanji", query = query, ord = ord, hex = hex)
   try:
-    if query:
-      data["results"] = K.search(query, max_results = max_r)
+    if query: data["results"] = K.search(query, max_results = max_r)
     return respond("kanji.html", **data)
   except re.error as e:
     return "regex error: " + str(e)
 
 @app.route("/stroke")
 def r_stroke():
-  query = request.args.get("query", "").strip()
-  return respond("stroke.html", page= "stroke", query = query)
+  return respond("stroke.html", page= "stroke",
+                 query = arg("query", "").strip())
 
 # vim: set tw=70 sw=2 sts=2 et fdm=marker :

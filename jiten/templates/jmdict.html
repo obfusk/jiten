@@ -4,7 +4,7 @@
 
     File        : templates/jmdict.html
     Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-    Date        : 2020-06-18
+    Date        : 2020-06-19
 
     Copyright   : Copyright (C) 2020  Felix C. Stegerman
     Version     : v0.0.1
@@ -52,7 +52,7 @@
                   {% if e.reading %}
                     {% for r in e.reading %}
                       <a class="selbtn btn btn-success py-1 mb-1"
-                        href="/jmdict?query={{ r.elem }}&word=yes">{{ r.elem }}</a>
+                        href="/jmdict?query={{ r.elem }}&exact=yes">{{ r.elem }}</a>
                     {% endfor %}
                   {% else %}
                     <span class="text-muted">no readings</span>
@@ -75,30 +75,56 @@
                   {% endfor %}
                 </ul>
               {% endfor %}
-              <div class="p-1" title="miscellaneous">
+              <ul class="list-group my-1" title="miscellaneous">
                 {% if info %}
-                  {% for i in info %}
-                    <span class="selbtn fakebtn btn btn-success btn-sm mb-1">
-                      {{ i }}
-                    </span>
-                  {% endfor %}
-                  <br/>
+                  <li class="list-group-item pb-1 px-2 pt-2">
+                    {% for i in info %}
+                      <span class="selbtn fakebtn btn btn-success btn-sm mb-1">
+                        {{ i }}
+                      </span>
+                    {% endfor %}
+                  </li>
                 {% endif %}
-                <span class="nowrap">
-                  seq#
-                  <span class="badge badge-primary">
-                    {{ e.seq }}
-                  </span>
-                </span>
-                {% if rank %}
+                {% set xi = e.xinfo()|list %}
+                {% if xi %}
+                  <li class="list-group-item pb-1 px-2 pt-2">
+                    {% for i in xi %}
+                      <span class="selbtn fakebtn btn btn-primary btn-sm mb-1">
+                        {{ i }}
+                      </span>
+                    {% endfor %}
+                  </li>
+                {% endif %}
+                {% set xr = e.xrefs()|list %}
+                {% if xr %}
+                  <li class="list-group-item pb-1 px-2 pt-2">
+                    see
+                    {% for i in xr %}
+                      <a class="selbtn btn btn-warning btn-sm mb-1"
+                        href="/jmdict?query={{ i }}&exact=yes">{{ i }}</a>
+                    {% endfor %}
+                  </li>
+                {% endif %}
+                <li class="list-group-item pb-1 px-2 pt-2">
                   <span class="nowrap">
-                    » freq#
-                    <span class="badge badge-info">
-                      {{ rank }}
+                    seq#
+                    <span class="badge badge-primary">
+                      {{ e.seq }}
                     </span>
                   </span>
-                {% endif %}
-              </div>
+                  {% if rank %}
+                    <span class="nowrap">
+                      » freq#
+                      <span class="badge badge-info">
+                        {{ rank }}
+                      </span>
+                    </span>
+                  {% endif %}
+                  {% if e.isprio() %}
+                    <span class="nowrap">» prio</span>
+                  {% endif %}
+                </li>
+              </ul>
             </div>
           </div>
         {% endfor %}

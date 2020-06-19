@@ -39,7 +39,7 @@
                       {% for r in e.on %}
                         {% set rc = r.replace("-", "").replace(".", "") %}
                         <a class="selbtn btn btn-warning py-1 mb-1"
-                          href="/jmdict?query={{ rc }}&word=yes">{{ r }}</a>
+                          href="/jmdict?query={{ rc }}&exact=yes">{{ r }}</a>
                       {% endfor %}
                     {% else %}
                       <span class="text-muted">no on readings</span>
@@ -52,7 +52,7 @@
                       {% for r in e.kun %}
                         {% set rc = r.replace("-", "").replace(".", "") %}
                         <a class="selbtn btn btn-success py-1 mb-1"
-                          href="/jmdict?query={{ rc }}&word=yes">{{ r }}</a>
+                          href="/jmdict?query={{ rc }}&exact=yes">{{ r }}</a>
                       {% endfor %}
                     {% else %}
                       <span class="text-muted">no kun readings</span>
@@ -65,7 +65,7 @@
                       {% for r in e.nanori %}
                         {% set rc = r.replace("-", "").replace(".", "") %}
                         <a class="selbtn btn btn-info py-1 mb-1"
-                          href="/jmdict?query={{ rc }}&word=yes">{{ r }}</a>
+                          href="/jmdict?query={{ rc }}&exact=yes">{{ r }}</a>
                       {% endfor %}
                     {% else %}
                       <span class="text-muted">no name readings</span>

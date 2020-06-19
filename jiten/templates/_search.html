@@ -2,7 +2,7 @@
 
   File        : templates/_search.html
   Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-  Date        : 2020-06-18
+  Date        : 2020-06-19
 
   Copyright   : Copyright (C) 2020  Felix C. Stegerman
   Version     : v0.0.1
@@ -22,17 +22,43 @@
       <div class="form-group mb-0">
         <fieldset class="d-inline border p-2 pl-3">
           <legend>options</legend>
-          <div class="form-check form-check-inline">
-            <input type="checkbox" class="form-check-input"
-              id="jmdict-word" name="word" value="yes" />
-            <label class="form-check-label" for="jmdict-word"
-              title="\b...\b">word</label>
+          <div class="nowrap">
+            <div class="form-check form-check-inline">
+              <input type="checkbox" class="form-check-input"
+                id="jmdict-word" name="word" value="yes" />
+              <label class="form-check-label" for="jmdict-word"
+                title="\b...\b">word</label>
+            </div>
+            <div class="form-check form-check-inline">
+              <input type="checkbox" class="form-check-input"
+                id="jmdict-exact" name="exact" value="yes" />
+              <label class="form-check-label" for="jmdict-exact"
+                title="^...$">exact</label>
+            </div>
           </div>
-          <div class="form-check form-check-inline">
-            <input type="checkbox" class="form-check-input"
-              id="jmdict-exact" name="exact" value="yes" />
-            <label class="form-check-label" for="jmdict-exact"
-              title="^...$">exact</label>
+          &nbsp; &nbsp;
+          <div class="nowrap">
+            <div class="form-check form-check-inline">
+              <input type="checkbox" class="form-check-input"
+                id="jmdict-noun" name="noun" value="yes"
+                {% if request.args.get("noun") == "yes" %}checked{% endif %} />
+              <label class="form-check-label" for="jmdict-noun"
+                title="select nouns">noun</label>
+            </div>
+            <div class="form-check form-check-inline">
+              <input type="checkbox" class="form-check-input"
+                id="jmdict-verb" name="verb" value="yes"
+                {% if request.args.get("verb") == "yes" %}checked{% endif %} />
+              <label class="form-check-label" for="jmdict-verb"
+                title="select verbs">verb</label>
+            </div>
+            <div class="form-check form-check-inline">
+              <input type="checkbox" class="form-check-input"
+                id="jmdict-prio" name="prio" value="yes"
+                {% if request.args.get("prio") == "yes" %}checked{% endif %} />
+              <label class="form-check-label" for="jmdict-prio"
+                title="select priority entries">prio</label>
+            </div>
           </div>
         </fieldset>
         <fieldset class="d-inline border p-2 pl-3">
@@ -46,8 +72,7 @@
                 for="jmdict-{{ l }}">{{ l }}</label>
             </div>
           {% endfor %}
-          &nbsp;
-          &nbsp;
+          &nbsp; &nbsp;
           <div class="form-check form-check-inline">
             <input type="checkbox" class="form-check-input"
               id="jmdict-save" name="save" value="yes" />

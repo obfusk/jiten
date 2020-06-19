@@ -5,7 +5,7 @@
 #
 # File        : jiten/freq.py
 # Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-# Date        : 2020-06-16
+# Date        : 2020-06-19
 #
 # Copyright   : Copyright (C) 2020  Felix C. Stegerman
 # Version     : v0.0.1
@@ -44,7 +44,8 @@ NEWSFREQ_FILE   = M.resource_path("res/freq/wordfreq_ck.utf8")
 BOOKFREQ_FILE   = M.resource_path("res/freq/base_aggregates.txt.nobom")
 
 EXCEPTIONS      = "Tシャツ".split()
-NOFREQ          = 999999
+NOFREQ          =  999999
+MAXFREQ         = 1000000
 
 # TODO
 # * is isokjap OK?
