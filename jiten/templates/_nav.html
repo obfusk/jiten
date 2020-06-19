@@ -22,7 +22,6 @@
       </li>
     </ul>
     <a class="btn btn-light btn-sm my-2 my-lg-0"
-        href="?dark={{ "no" if dark else "yes" }}&save=yes"
-      >Toggle Dark Mode</a>
+      href="{{ toggle }}">{{ "Light" if dark else "Dark" }} Mode</a>
   </div>
 </nav>

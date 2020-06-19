@@ -24,7 +24,8 @@ import os, re
 
 import jinja2
 
-from flask import Flask, make_response, redirect, request, render_template
+from flask import Flask, make_response, redirect, request, \
+                  render_template, url_for
 
 from . import jmdict as J
 from . import kanji  as K
@@ -48,8 +49,13 @@ if os.environ.get(name.upper() + "_HTTPS") == "force":
 def respond(template, **data):
   langs = get_langs()
   dark  = "yes" == request.args.get("dark", request.cookies.get("dark"))
+  targs = request.args.copy()
+  targs.setlist("dark", ["no" if dark else "yes"])
+  targs.setlist("save", ["yes"])
   resp  = make_response(render_template(
-    template, dark = dark, LANGS = J.LANGS, langs = langs, **data
+    template, dark = dark, LANGS = J.LANGS, langs = langs,
+    toggle = url_for(request.endpoint, **dict(targs.lists())),
+    **data
   ))
   if "yes" == request.args.get("save"):
     resp.set_cookie("dark", "yes" if dark else "no")
