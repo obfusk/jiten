@@ -20,7 +20,7 @@
         <button type="submit" class="btn btn-primary mb-2">Search JMDict</button>
       </div>
       <div class="form-group mb-0">
-        <fieldset class="d-inline border p-2">
+        <fieldset class="d-inline border p-2 pl-3">
           <legend>options</legend>
           <div class="form-check form-check-inline">
             <input type="checkbox" class="form-check-input"
@@ -35,7 +35,7 @@
               title="^...$">exact</label>
           </div>
         </fieldset>
-        <fieldset class="d-inline border p-2">
+        <fieldset class="d-inline border p-2 pl-3">
           <legend>lang</legend>
           {% for l in LANGS %}
             <div class="form-check form-check-inline">
@@ -43,9 +43,17 @@
                 id="jmdict-{{ l }}" name="lang" value="{{ l }}"
                 {% if l in langs %}checked{% endif %} />
               <label class="form-check-label"
-                for="jmdict-{{ l }}" >{{ l }}</label>
+                for="jmdict-{{ l }}">{{ l }}</label>
             </div>
           {% endfor %}
+          &nbsp;
+          &nbsp;
+          <div class="form-check form-check-inline">
+            <input type="checkbox" class="form-check-input"
+              id="jmdict-save" name="save" value="yes" />
+            <label class="form-check-label"
+              for="jmdict-save">save</label>
+          </div>
         </fieldset>
       </div>
     </form>
