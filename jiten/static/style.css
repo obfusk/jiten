@@ -3,6 +3,10 @@ body {
   margin: 1rem;
 }
 
+.navbar {
+  padding: .5rem 1rem;
+}
+
 @font-face {
   font-family: KanjiStrokeOrders;
   src: url(/static/font/KanjiStrokeOrders_v4.001.ttf);
@@ -20,10 +24,6 @@ body {
   font-family:
     "Noto Sans CJK JP", "Noto Sans CJK SC", "Noto Sans CJK TC",
     ipaexgothic, ipagothic, sans-serif;
-}
-
-.navbar {
-  padding: .5rem 1rem;
 }
 
 legend {
