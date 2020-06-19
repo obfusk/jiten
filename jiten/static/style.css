@@ -48,10 +48,6 @@ legend {
   background-color: inherit !important;
 }
 
-.wsp-normal {
-  white-space: normal;
-}
-
 .nowrap {
   display: inline-block;
 }
