@@ -23,11 +23,12 @@ jobs:
         key: ${{ runner.os }}
     - name: Copy DB from cache (if any)
       run: |
-        cp -v ~/CACHE/*.sqlite3 jiten/res/jmdict/ || true
+        cp -v ~/CACHE/*.sqlite3 jiten/res/ || true
     - name: Setup
       run: make
     - name: Copy DB to cache
       run: |
-        cp -v jiten/res/jmdict/*.sqlite3 ~/CACHE/
+        mkdir -p ~/CACHE
+        cp -v jiten/res/*.sqlite3 ~/CACHE/
     - name: Test
       run: make test
