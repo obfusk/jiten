@@ -5,7 +5,7 @@
 #
 # File        : jiten/sql.py
 # Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-# Date        : 2020-06-15
+# Date        : 2020-06-19
 #
 # Copyright   : Copyright (C) 2020  Felix C. Stegerman
 # Version     : v0.0.1
@@ -16,7 +16,7 @@
                                                                 # {{{1
 r"""
 
-...
+SQL helper functions.
 
 """                                                             # }}}1
 

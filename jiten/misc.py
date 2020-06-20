@@ -5,7 +5,7 @@
 #
 # File        : jiten/misc.py
 # Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-# Date        : 2020-06-18
+# Date        : 2020-06-19
 #
 # Copyright   : Copyright (C) 2020  Felix C. Stegerman
 # Version     : v0.0.1
@@ -16,7 +16,27 @@
                                                                 # {{{1
 r"""
 
-...
+Miscellaneous helper functions.
+
+>>> ishiragana("ふ"), ishiragana("フ")
+(True, False)
+>>> iskatakana("ふ"), iskatakana("フ")
+(False, True)
+
+>>> iskana("ふ"), iskana("フ")
+(True, True)
+
+>>> iskanji("猫")
+True
+
+>>> ispunc("々")
+True
+
+>>> list(flatten([[1, 2], [3, 4]]))
+[1, 2, 3, 4]
+
+>>> list(uniq([1, 2, 3, 1, 4, 2, 2]))
+[1, 2, 3, 4]
 
 """                                                             # }}}1
 
@@ -57,7 +77,8 @@ def process_query(q, word, exact):
 
 if __name__ == "__main__":
   if "--doctest" in sys.argv:
+    verbose = "--verbose" in sys.argv
     import doctest
-    if doctest.testmod(verbose = True)[0]: sys.exit(1)
+    if doctest.testmod(verbose = verbose)[0]: sys.exit(1)
 
 # vim: set tw=70 sw=2 sts=2 et fdm=marker :

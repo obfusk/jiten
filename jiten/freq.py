@@ -16,6 +16,8 @@
                                                                 # {{{1
 r"""
 
+Word frequencies.
+
 >>> len(news_freq)
 142193
 >>> len(book_freq)
@@ -95,8 +97,9 @@ setup.done = False
 
 if __name__ == "__main__":
   if "--doctest" in sys.argv:
+    verbose = "--verbose" in sys.argv
     setup()
     import doctest
-    if doctest.testmod(verbose = True)[0]: sys.exit(1)
+    if doctest.testmod(verbose = verbose)[0]: sys.exit(1)
 
 # vim: set tw=70 sw=2 sts=2 et fdm=marker :

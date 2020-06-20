@@ -5,7 +5,7 @@
 #
 # File        : jiten/kanji.py
 # Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-# Date        : 2020-06-18
+# Date        : 2020-06-19
 #
 # Copyright   : Copyright (C) 2020  Felix C. Stegerman
 # Version     : v0.0.1
@@ -16,9 +16,19 @@
                                                                 # {{{1
 r"""
 
+KanjiDic.
+
 >>> kanjidic = parse_kanjidic()
 >>> len(kanjidic)
 13108
+>>> len(set( x.char for x in kanjidic ))
+13108
+
+>>> [ x for x in kanjidic if x.char == "猫" ][0]
+Entry(char='猫', cat='KANJI', level='常用', strokes=11, freq=1702, jlpt=2, skip='1-3-8', on=('ビョウ',), kun=('ねこ',), nanori=(), meaning=('cat',))
+
+>>> [ x for x in kanjidic if x.char == "日" ][0]
+Entry(char='日', cat='KANJI', level='常用1', strokes=4, freq=1, jlpt=4, skip='3-3-1', on=('ニチ', 'ジツ'), kun=('ひ', '-び', '-か'), nanori=('あ', 'あき', 'いる', 'く', 'くさ', 'こう', 'す', 'たち', 'に', 'にっ', 'につ', 'へ'), meaning=('day', 'sun', 'Japan', 'counter for days'))
 
 >>> len([ x for x in kanjidic if x.level == "常用1" ])
 80
@@ -173,9 +183,9 @@ KANJIDIC_CREATE_SQL = """
   );
 """                                                             # }}}1
 
-def setup():
+def setup(file = SQLITE_FILE):
   kanjidic = parse_kanjidic()
-  kanjidic2sqldb(kanjidic)
+  kanjidic2sqldb(kanjidic, file)
 
 def search(q, max_results = None, file = SQLITE_FILE):          # {{{1
   ent   = lambda r: Entry(*(list(r[1:8]) + [ tuple(x.splitlines())
@@ -209,7 +219,8 @@ def search(q, max_results = None, file = SQLITE_FILE):          # {{{1
 
 if __name__ == "__main__":
   if "--doctest" in sys.argv:
+    verbose = "--verbose" in sys.argv
     import doctest
-    if doctest.testmod(verbose = True)[0]: sys.exit(1)
+    if doctest.testmod(verbose = verbose)[0]: sys.exit(1)
 
 # vim: set tw=70 sw=2 sts=2 et fdm=marker :
