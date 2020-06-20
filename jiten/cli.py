@@ -5,7 +5,7 @@
 #
 # File        : jiten/cli.py
 # Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-# Date        : 2020-06-19
+# Date        : 2020-06-20
 #
 # Copyright   : Copyright (C) 2020  Felix C. Stegerman
 # Version     : v0.0.1
@@ -233,6 +233,8 @@ def cli(ctx, colour, **kw):
               help = "Choose language(s) ("+", ".join(J.LANGS)+").")
 @click.option("-w", "--word", is_flag = True,
               help = "Match whole word (same as \\b...\\b).")
+@click.option("-1", "--1stword", "--first-word", "fstwd", is_flag = True,
+              help = "Match first word (same as ^...\\b).")
 @click.option("-e", "--exact", is_flag = True,
               help = "Match exactly (same as ^...$).")
 @click.option("-m", "--max", "max_results", default = None,
@@ -252,17 +254,8 @@ def jmdict(ctx, query, **kw):
       if not q: break
       click.echo_via_pager(jmdict_search(q, **ctx.obj))
 
-def indent_and_wrap(xs, pre, fg):
-  xs = list(xs)
-  if not xs: return None
-  t = click.wrap_text("| ".join(xs),
-    click.get_terminal_size()[0], initial_indent = pre,
-    subsequent_indent = " " * len(pre)
-  )[len(pre):].replace("|", click.style(" |", fg = fg))
-  return click.style(pre, fg = fg) + t + "\n"
-
-def jmdict_search(q, verbose, word, exact, langs, **kw):  # {{{1
-  q = M.process_query(q, word, exact)
+def jmdict_search(q, verbose, word, exact, fstwd, langs, **kw): # {{{1
+  q = M.process_query(q, word, exact, fstwd)
   if verbose:
     yield "query: " + click.style(q, fg = "bright_red") + "\n\n"
   for e, rank in J.search(q, langs = langs, **kw):
@@ -291,9 +284,20 @@ def jmdict_search(q, verbose, word, exact, langs, **kw):  # {{{1
     yield "\n"
                                                                 # }}}1
 
+def indent_and_wrap(xs, pre, fg):
+  xs = list(xs)
+  if not xs: return None
+  t = click.wrap_text("| ".join(xs),
+    click.get_terminal_size()[0], initial_indent = pre,
+    subsequent_indent = " " * len(pre)
+  )[len(pre):].replace("|", click.style(" |", fg = fg))
+  return click.style(pre, fg = fg) + t + "\n"
+
 @cli.command(help = "Search KanjiDic.")
 @click.option("-w", "--word", is_flag = True,
               help = "Match whole word (same as \\b...\\b).")
+@click.option("-1", "--1stword", "--first-word", "fstwd", is_flag = True,
+              help = "Match first word (same as ^...\\b).")
 @click.option("-e", "--exact", is_flag = True,
               help = "Match exactly (same as ^...$).")
 @click.option("-m", "--max", "max_results", default = None,
@@ -310,8 +314,8 @@ def kanji(ctx, query, **kw):
       if not q: break
       click.echo_via_pager(kanji_search(q, **ctx.obj))
 
-def kanji_search(q, verbose, word, exact, max_results):         # {{{1
-  q = M.process_query(q, word, exact)
+def kanji_search(q, verbose, word, exact, fstwd, max_results):  # {{{1
+  q = M.process_query(q, word, exact, fstwd)
   if verbose:
     yield "query: " + click.style(q, fg = "bright_red") + "\n\n"
   for e in K.search(q, max_results):

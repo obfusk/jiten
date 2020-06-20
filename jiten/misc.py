@@ -5,7 +5,7 @@
 #
 # File        : jiten/misc.py
 # Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-# Date        : 2020-06-19
+# Date        : 2020-06-20
 #
 # Copyright   : Copyright (C) 2020  Felix C. Stegerman
 # Version     : v0.0.1
@@ -70,10 +70,13 @@ def uniq(xs):
 def resource_path(*path):
   return os.path.join(os.path.dirname(__file__), *path)
 
-def process_query(q, word, exact):
+def process_query(q, word, exact, fstwd):
   if not q: return ""
   else: q = q.strip()
-  return "\\b"+q+"\\b" if word else ("^"+q+"$" if exact else q)
+  if exact: return "^"   + q +   "$"
+  if fstwd: return "^"   + q + "\\b"
+  if word : return "\\b" + q + "\\b"
+  return q
 
 if __name__ == "__main__":
   if "--doctest" in sys.argv:

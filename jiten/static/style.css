@@ -7,6 +7,11 @@ body {
   padding: .5rem 1rem;
 }
 
+.navbar-nav-svg {
+  height: 1rem;
+  width: 1rem;
+}
+
 @font-face {
   font-family: KanjiStrokeOrders;
   src: url(/static/font/KanjiStrokeOrders_v4.001.ttf);

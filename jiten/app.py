@@ -5,7 +5,7 @@
 #
 # File        : jiten/app.py
 # Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-# Date        : 2020-06-19
+# Date        : 2020-06-20
 #
 # Copyright   : Copyright (C) 2020  Felix C. Stegerman
 # Version     : v0.0.1
@@ -74,11 +74,9 @@ def get_langs():
   ls = request.args.getlist("lang") or request.cookies.get("lang", "").split()
   return [ l for l in ls if l in J.LANGS ] or [J.LANGS[0]]
 
-def get_word_exact_query_max():
-  word, exact = arg_bool("word"), arg_bool("exact")
-  return word, exact, \
-         M.process_query(arg("query"), word, exact), \
-         arg("max", MAX, type = int)
+def get_query_max():
+  w, e, f = arg_bool("word"), arg_bool("exact"), arg_bool("1stword")
+  return M.process_query(arg("query"), w, e, f), arg("max", MAX, type = int)
 
 @app.route("/")
 def r_index():
@@ -88,10 +86,10 @@ def r_index():
 # * --max
 @app.route("/jmdict")
 def r_jmdict():
-  word, exact, query, max_r = get_word_exact_query_max()
-  opts  = dict(langs = get_langs(), max_results = max_r,
-               noun = arg_bool("noun"), verb = arg_bool("verb"))
-  data  = dict(page = "jmdict", query = query, isideo = M.isideo)
+  query, max_r = get_query_max()
+  opts = dict(langs = get_langs(), max_results = max_r,
+              noun = arg_bool("noun"), verb = arg_bool("verb"))
+  data = dict(page = "jmdict", query = query, isideo = M.isideo)
   try:
     if query: data["results"] = J.search(query, **opts)
     return respond("jmdict.html", **data)
@@ -102,7 +100,7 @@ def r_jmdict():
 # * --max
 @app.route("/kanji")
 def r_kanji():
-  word, exact, query, max_r = get_word_exact_query_max()
+  query, max_r = get_query_max()
   data = dict(page = "kanji", query = query, ord = ord, hex = hex)
   try:
     if query: data["results"] = K.search(query, max_results = max_r)

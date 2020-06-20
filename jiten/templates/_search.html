@@ -2,7 +2,7 @@
 
   File        : templates/_search.html
   Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-  Date        : 2020-06-19
+  Date        : 2020-06-20
 
   Copyright   : Copyright (C) 2020  Felix C. Stegerman
   Version     : v0.0.1
@@ -25,9 +25,16 @@
           <div class="nowrap">
             <div class="form-check form-check-inline">
               <input type="checkbox" class="form-check-input"
-                id="jmdict-word" name="word" value="yes" />
+                id="jmdict-word" name="word" value="yes"
+                {% if not query %}checked{% endif %} />
               <label class="form-check-label" for="jmdict-word"
                 title="\b...\b">word</label>
+            </div>
+            <div class="form-check form-check-inline">
+              <input type="checkbox" class="form-check-input"
+                id="jmdict-1stword" name="1stword" value="yes" />
+              <label class="form-check-label" for="jmdict-1stword"
+                title="^...\b">1st word</label>
             </div>
             <div class="form-check form-check-inline">
               <input type="checkbox" class="form-check-input"
