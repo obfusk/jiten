@@ -1,0 +1,33 @@
+name: CI
+on: [push, pull_request]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: [3.5, 3.6, 3.7, 3.8]
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v2
+      with:
+        python-version: ${{ matrix.python-version }}
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+    - name: Cache DB
+      uses: actions/cache@v2
+      with:
+        path: ~/CACHE
+        key: ${{ runner.os }}
+    - name: Copy DB from cache (if any)
+      run: |
+        cp -v ~/CACHE/*.sqlite3 res/jmdict/ || true
+    - name: Setup
+      run: make
+    - name: Copy DB to cache
+      run: |
+        cp -v res/jmdict/*.sqlite3 ~/CACHE/
+    - name: Test
+      run: make test
