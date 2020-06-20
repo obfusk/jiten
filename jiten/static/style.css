@@ -35,13 +35,13 @@ legend {
 }
 
 .selbtn {
-  -webkit-user-select: revert !important;
-  -moz-user-select: revert !important;
-  -ms-user-select: revert !important;
-  user-select: revert !important;
+  -webkit-user-select: unset !important;
+  -moz-user-select: unset !important;
+  -ms-user-select: unset !important;
+  user-select: unset !important;
 }
 .fakebtn {
-  cursor: revert !important;
+  cursor: unset !important;
 }
 .fakebtn:hover, .fakebtn:active {
   color: inherit !important;

@@ -16,6 +16,7 @@ jobs:
       run: |
         python -m pip install --upgrade pip
         pip install -r requirements.txt
+        pip install html5validator
     - name: Cache DB
       uses: actions/cache@v2
       with:
@@ -31,4 +32,4 @@ jobs:
         mkdir -p ~/CACHE
         cp -v jiten/res/*.sqlite3 ~/CACHE/
     - name: Test
-      run: make test
+      run: make ci-test
