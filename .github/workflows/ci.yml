@@ -20,16 +20,9 @@ jobs:
     - name: Cache DB
       uses: actions/cache@v2
       with:
-        path: ~/CACHE
+        path: jiten/res/*.sqlite3
         key: ${{ runner.os }}
-    - name: Copy DB from cache (if any)
-      run: |
-        cp -v ~/CACHE/*.sqlite3 jiten/res/ || true
     - name: Setup
       run: make
-    - name: Copy DB to cache
-      run: |
-        mkdir -p ~/CACHE
-        cp -v jiten/res/*.sqlite3 ~/CACHE/
     - name: Test
       run: make ci-test
