@@ -10,7 +10,7 @@ URL     := http://localhost:5000
 H5VCMD  := html5validator --show-warnings --log INFO --no-langdetect
 
 .PHONY: all test ci-test clean cleanup validate-css tmp-html
-.PHONY: validate-html validate-html-curl validate-html-py
+.PHONY: check-html validate-html validate-html-curl validate-html-py
 
 all:
 	python3 -m jiten.cli setup
@@ -23,7 +23,7 @@ test:
 	python3 -m jiten.kanji  --doctest --verbose
 	python3 -m jiten.misc   --doctest --verbose
 
-ci-test: test validate-css validate-html
+ci-test: test validate-css validate-html check-html
 
 clean: cleanup
 	rm -f jiten/res/*.sqlite3
@@ -40,15 +40,23 @@ tmp-html:
 	python3 -m jiten.cli serve & pid=$$!; \
 	trap "kill $$pid" EXIT; mkdir -p tmp-html; sleep 5; \
 	curl -sG $(URL) > tmp-html/index.html; \
-	curl -sG $(URL)/jmdict -d max=10 --data-urlencode query=cat   \
-	  > tmp-html/cat.html  ; \
-	curl -sG $(URL)/jmdict -d max=10 --data-urlencode query=idiot \
-	  > tmp-html/idiot.html; \
-	curl -sG $(URL)/kanji  -d max=10 --data-urlencode query=ねこ  \
-	  > tmp-html/neko.html ; \
-	curl -sG $(URL)/kanji  -d max=10 --data-urlencode query=日    \
-	  > tmp-html/hi.html   ; \
+	curl -sG $(URL)/jmdict -d max=10 -d word=yes \
+	  --data-urlencode query=cat   > tmp-html/cat.html  ; \
+	curl -sG $(URL)/jmdict -d max=10 -d word=yes \
+	  --data-urlencode query=idiot > tmp-html/idiot.html; \
+	curl -sG $(URL)/kanji  -d max=10 -d word=yes \
+	  --data-urlencode query=ねこ  > tmp-html/neko.html ; \
+	curl -sG $(URL)/kanji  -d max=10 -d word=yes \
+	  --data-urlencode query=日    > tmp-html/hi.html   ; \
 	curl -sG $(URL)/stroke > tmp-html/stroke.html
+
+# TODO
+check-html:
+	grep -qF 猫 tmp-html/cat.html
+	grep -qF "cat (esp. the domestic cat, Felis catus)" tmp-html/cat.html
+	grep -qF "word usually written using kana alone" tmp-html/cat.html
+	grep -qF 0x732b tmp-html/neko.html
+	grep -qF "counter for days" tmp-html/hi.html
 
 validate-html: tmp-html validate-html-curl validate-html-py
 
