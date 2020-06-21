@@ -39,6 +39,7 @@ CLI
 <BLANKLINE>
 
 >>> run("-v jmdict -m1 -w cat")
+DB v1 up to date.
 query: \bcat\b
 <BLANKLINE>
 猫
@@ -58,6 +59,7 @@ seq# 1467640, freq# 2201, prio
 <BLANKLINE>
 
 >>> run("-v jmdict -m1 -w kat -l dut")
+DB v1 up to date.
 query: \bkat\b
 <BLANKLINE>
 猫
@@ -74,6 +76,7 @@ seq# 1467640, freq# 2201, prio
 <BLANKLINE>
 
 >>> run("-v jmdict -m1 -w idiot")
+DB v1 up to date.
 query: \bidiot\b
 <BLANKLINE>
 馬鹿 | 莫迦 | 破家 | 馬稼
@@ -94,6 +97,7 @@ seq# 1601260, freq# 2472, prio
 <BLANKLINE>
 
 >>> run("-v jmdict -m1 -e 誤魔化す")
+DB v1 up to date.
 query: ^誤魔化す$
 <BLANKLINE>
 誤魔化す | 誤摩化す | 胡麻化す | 誤魔かす | 胡魔化す
@@ -111,6 +115,7 @@ seq# 1271480, freq# 10495, prio
 <BLANKLINE>
 
 >>> run("-v jmdict -m1 -w まる")
+DB v1 up to date.
 query: \bまる\b
 <BLANKLINE>
 丸 | 円
@@ -132,6 +137,7 @@ seq# 1216250, freq# 63, prio
 <BLANKLINE>
 
 >>> run("-v jmdict -m1 -w cat --verb")
+DB v1 up to date.
 query: \bcat\b
 <BLANKLINE>
 逆撫で | 逆なで
@@ -146,6 +152,7 @@ seq# 1227180, freq# 30500
 <BLANKLINE>
 
 >>> run("-v jmdict -m1 -w みる --noun")
+DB v1 up to date.
 query: \bみる\b
 <BLANKLINE>
 海松 | 水松
@@ -160,6 +167,7 @@ seq# 1772790, freq# 75
 <BLANKLINE>
 
 >>> run("-v jmdict -m1 -w みる --noun --prio")
+DB v1 up to date.
 query: \bみる\b
 <BLANKLINE>
 <BLANKLINE>
@@ -177,6 +185,7 @@ query: \bみる\b
 <BLANKLINE>
 
 >>> run("-v kanji -m1 -e cat")
+DB v1 up to date.
 query: ^cat$
 <BLANKLINE>
 猫
@@ -189,6 +198,7 @@ query: ^cat$
 <BLANKLINE>
 
 >>> run("-v kanji -m1 -w 日")
+DB v1 up to date.
 query: \b日\b
 <BLANKLINE>
 日
@@ -216,11 +226,13 @@ from . import jmdict as J
 from . import kanji  as K
 from . import misc   as M
 
-def check_db(ctx):
-  if not os.path.exists(J.SQLITE_FILE):
-    click.secho("DB not found; please run setup first.",
-                fg = "red", err = True)
-    ctx.exit(1)
+def setup_db(verbose):
+  msg = "up to date"
+  if J.setup():
+    msg = "set up"
+    K.setup()
+  if verbose:
+    click.secho("DB v{} {}.".format(J.DBVERSION, msg), fg = "green")
 
 @click.group(help = """
   jiten - japanese cli&web dictionary based on jmdict/kanjidic
@@ -253,7 +265,7 @@ def cli(ctx, colour, **kw):
 @click.argument("query", required = False, metavar = "REGEX")
 @click.pass_context
 def jmdict(ctx, query, **kw):
-  check_db(ctx)
+  setup_db(ctx.obj["verbose"])
   ctx.obj.update(kw)
   if query:
     click.echo_via_pager(jmdict_search(query, **ctx.obj))
@@ -314,7 +326,7 @@ def indent_and_wrap(xs, pre, fg):
 @click.argument("query", required = False, metavar = "REGEX")
 @click.pass_context
 def kanji(ctx, query, **kw):
-  check_db(ctx)
+  setup_db(ctx.obj["verbose"])
   ctx.obj.update(kw)
   if query:
     click.echo_via_pager(kanji_search(query, **ctx.obj))
@@ -361,26 +373,20 @@ def kanji_search(q, verbose, word, exact, fstwd, max_results):  # {{{1
 @click.option("-p", "--port", default = 5000, metavar = "PORT", type = click.INT)
 @click.pass_context
 def serve(ctx, host, port):
-  check_db(ctx)
+  setup_db(ctx.obj["verbose"])
   from .app import app
   app.run(host = host, port = port, load_dotenv = False)
 
-# TODO
 @cli.command(help = "Create sqlite databases from XML files.")
 def setup():
-  msg = "up to date"
-  if J.setup():
-    msg = "set up"
-    K.setup()
-  click.secho("DB v{} {}.".format(J.DBVERSION, msg), fg = "green")
+  setup_db(True)
 
 @cli.command("_doctest", hidden = True)
-@click.option("-v", "--verbose", is_flag = True)
 @click.pass_context
-def doctest(ctx, verbose):
-  check_db(ctx)
+def doctest(ctx):
+  setup_db(ctx.obj["verbose"])
   import doctest
-  if doctest.testmod(verbose = verbose)[0]: ctx.exit(1)
+  if doctest.testmod(verbose = ctx.obj["verbose"])[0]: ctx.exit(1)
 
 if __name__ == "__main__":
   cli(prog_name = name)
