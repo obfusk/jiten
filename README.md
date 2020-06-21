@@ -10,10 +10,7 @@
 
 <!-- }}}1 -->
 
-<!--
 [![PyPI Version](https://img.shields.io/pypi/v/jiten.svg)](https://pypi.python.org/pypi/jiten)
--->
-
 [![AGPLv3+](https://img.shields.io/badge/license-AGPLv3+-blue.svg)](https://www.gnu.org/licenses/agpl-3.0.html)
 
 ## Description
