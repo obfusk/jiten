@@ -5,7 +5,7 @@
 #
 # File        : jiten/cli.py
 # Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-# Date        : 2020-06-20
+# Date        : 2020-06-21
 #
 # Copyright   : Copyright (C) 2020  Felix C. Stegerman
 # Version     : v0.0.1
@@ -205,7 +205,7 @@ query: \b日\b
 
 """                                                             # }}}1
 
-__version__ = "0.0.1"
+__version__ = "0.1.0"
 name        = "jiten"
 
 import os, sys
@@ -216,7 +216,15 @@ from . import jmdict as J
 from . import kanji  as K
 from . import misc   as M
 
-@click.group()
+def check_db(ctx):
+  if not os.path.exists(J.SQLITE_FILE):
+    click.secho("DB not found; please run setup first.",
+                fg = "red", err = True)
+    ctx.exit(1)
+
+@click.group(help = """
+  jiten - japanese cli&web dictionary based on jmdict/kanjidic
+""")
 @click.option("-v", "--verbose", is_flag = True, help = "Be verbose.")
 @click.option("-c", "--colour/--no-colour", is_flag = True,
               default = None, help = "Use terminal colours.")
@@ -245,6 +253,7 @@ def cli(ctx, colour, **kw):
 @click.argument("query", required = False, metavar = "REGEX")
 @click.pass_context
 def jmdict(ctx, query, **kw):
+  check_db(ctx)
   ctx.obj.update(kw)
   if query:
     click.echo_via_pager(jmdict_search(query, **ctx.obj))
@@ -305,6 +314,7 @@ def indent_and_wrap(xs, pre, fg):
 @click.argument("query", required = False, metavar = "REGEX")
 @click.pass_context
 def kanji(ctx, query, **kw):
+  check_db(ctx)
   ctx.obj.update(kw)
   if query:
     click.echo_via_pager(kanji_search(query, **ctx.obj))
@@ -349,7 +359,9 @@ def kanji_search(q, verbose, word, exact, fstwd, max_results):  # {{{1
 @cli.command(help = "Serve the web interface.")
 @click.option("-h", "--host", default = "localhost", metavar = "HOST")
 @click.option("-p", "--port", default = 5000, metavar = "PORT", type = click.INT)
-def serve(host, port):
+@click.pass_context
+def serve(ctx, host, port):
+  check_db(ctx)
   from .app import app
   app.run(host = host, port = port, load_dotenv = False)
 
@@ -360,12 +372,13 @@ def setup():
   if J.setup():
     msg = "set up"
     K.setup()
-  click.echo("DB v{} {}.".format(J.DBVERSION, msg))
+  click.secho("DB v{} {}.".format(J.DBVERSION, msg), fg = "green")
 
 @cli.command("_doctest", hidden = True)
 @click.option("-v", "--verbose", is_flag = True)
 @click.pass_context
 def doctest(ctx, verbose):
+  check_db(ctx)
   import doctest
   if doctest.testmod(verbose = verbose)[0]: ctx.exit(1)
 

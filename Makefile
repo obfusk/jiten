@@ -31,6 +31,7 @@ clean: cleanup
 cleanup:
 	find -name '*~' -delete -print
 	rm -fr jiten/__pycache__/ tmp-html/
+	rm -fr build/ dist/ jiten.egg-info/
 
 validate-css:
 	curl -sF "file=@jiten/static/style.css;type=text/css" \
@@ -69,3 +70,13 @@ validate-html-curl:
 
 validate-html-py:
 	$(H5VCMD) --root tmp-html/
+
+.PHONY: _package _publish
+
+_package:
+	python3 setup.py sdist bdist_wheel
+	twine check dist/*
+
+_publish: cleanup _package
+	read -r -p "Are you sure? "; \
+	[[ "$$REPLY" == [Yy]* ]] && twine upload dist/*

@@ -1,4 +1,9 @@
 *.sqlite3
 *.sqlite3-journal
-/tmp-html
 __pycache__
+
+/build
+/dist
+/jiten.egg-info
+
+/tmp-html
