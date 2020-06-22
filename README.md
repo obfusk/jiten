@@ -60,6 +60,12 @@ $ export JITEN_HTTPS=force
 
 ## License
 
+### Code
+
 [![AGPLv3+](https://www.gnu.org/graphics/agplv3-155x51.png)](https://www.gnu.org/licenses/agpl-3.0.html)
+
+### JMDict & KanjiDic
+
+[![CC-BY-SA](https://licensebuttons.net/l/by-sa/2.0/88x31.png)](https://www.edrdg.org/edrdg/licence.html)
 
 <!-- vim: set tw=70 sw=2 sts=2 et fdm=marker : -->
