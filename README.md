@@ -2,7 +2,7 @@
 
     File        : README.md
     Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-    Date        : 2020-06-21
+    Date        : 2020-06-23
 
     Copyright   : Copyright (C) 2020  Felix C. Stegerman
     Version     : v0.1.0
@@ -18,7 +18,7 @@
 
 jiten - japanese cli&web dictionary based on jmdict/kanjidic
 
-→ https://jiten-py.herokuapp.com
+→ https://jiten.obfusk.dev
 
 ![CLI screenshot](screenshot-cli.png)
 
