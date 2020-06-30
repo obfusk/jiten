@@ -5,7 +5,7 @@
 #
 # File        : jiten/app.py
 # Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-# Date        : 2020-06-20
+# Date        : 2020-06-30
 #
 # Copyright   : Copyright (C) 2020  Felix C. Stegerman
 # Version     : v0.0.1
@@ -64,10 +64,9 @@ def respond(template, **data):
     toggle = dark_toggle_link(dark), **data
   ))
   if arg_bool("save"):
-    if "dark" in request.args:
-      resp.set_cookie("dark", "yes" if dark else "no")
-    else:
-      resp.set_cookie("lang", " ".join(langs))
+    k, v = ("dark", "yes" if dark else "no") \
+           if "dark" in request.args else ("lang", " ".join(langs))
+    resp.set_cookie(k, v, max_age = 3600*24*365*10)
   return resp
 
 def get_langs():
