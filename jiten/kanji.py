@@ -107,6 +107,12 @@ def level(l):
   if l == 10    : return "人名(常用)"
   raise ValueError("unexpected level: " + l)
 
+def level2int(l):
+  try:
+    return LEVELS.index(l)
+  except ValueError:
+    return 99
+
 def category(c):
   if M.iskanji(c) : return "KANJI"
   if M.iscompat(c): return "CJK COMPATIBILITY IDEOGRAPH"
@@ -192,11 +198,21 @@ def search(q, max_results = None, file = SQLITE_FILE):          # {{{1
   ent   = lambda r: Entry(*(list(r[1:8]) + [ tuple(x.splitlines())
                                              for x in r[8:] ]))
   ideo  = tuple(M.uniq(filter(M.isideo, q)))
+  order = """ORDER BY IFNULL(freq, {}) ASC, level2int(level) ASC,
+             code ASC""".format(NOFREQ)
+  limit = "LIMIT " + str(int(max_results)) if max_results else ""
   with sqlite_do(file) as c:
+    c.connection.create_function("level2int", 1, level2int)
     if ideo:
       for char in ideo:
         for r in c.execute("SELECT * FROM entry WHERE code = ?", (ord(char),)):
           yield ent(r) # #=1
+    elif re.fullmatch(r"\+[sS]\s*[\d-]+", q):
+      s = q[2:].strip()
+      for r in c.execute("""
+          SELECT * FROM entry WHERE skip = ? {} {}
+          """.format(order, limit), (s,)):
+        yield ent(r)
     else:
       rx    = re.compile(q, re.I | re.M)
       mat1  = lambda x: rx.search(x) is not None
@@ -204,17 +220,14 @@ def search(q, max_results = None, file = SQLITE_FILE):          # {{{1
                                    .replace("-", "")) is not None
       c.connection.create_function("matches1", 1, mat1)
       c.connection.create_function("matches2", 1, mat2)
-      limit = "LIMIT " + str(int(max_results)) if max_results else ""
       for r in c.execute("""
           SELECT * FROM entry
             WHERE
               matches1(on_) OR matches1(kun) OR matches1(nanori) OR
               matches2(on_) OR matches2(kun) OR matches2(nanori) OR
               matches1(meaning)
-            ORDER BY
-              IFNULL(freq, {}) ASC, code ASC
-            {}
-          """.format(NOFREQ, limit)):
+            {} {}
+          """.format(order, limit)):
         yield ent(r)
                                                                 # }}}1
 

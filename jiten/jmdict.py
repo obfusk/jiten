@@ -444,11 +444,10 @@ def search(q, langs = [LANGS[0]], max_results = None,           # {{{1
            noun = False, verb = False, prio = False,
            file = SQLITE_FILE):
   with sqlite_do(file) as c:
-    if re.fullmatch(r"\+#\d+", q):
-      seq = int(q[2:])
-      q   = "SELECT rank FROM entry WHERE seq = ?"
-      r   = c.execute(q, (seq,)).fetchone()
-      if r: yield load_entry(c, seq), r[0]
+    if re.fullmatch(r"\+#\s*\d+", q):
+      seq = int(q[2:].strip())
+      for r in c.execute("SELECT rank FROM entry WHERE seq = ?", (seq,)):
+        yield load_entry(c, seq), r[0] # #=1
     else:
       rx    = re.compile(q, re.I | re.M)
       mat   = lambda x: rx.search(x) is not None
