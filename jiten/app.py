@@ -5,10 +5,10 @@
 #
 # File        : jiten/app.py
 # Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-# Date        : 2020-06-30
+# Date        : 2020-07-01
 #
 # Copyright   : Copyright (C) 2020  Felix C. Stegerman
-# Version     : v0.0.1
+# Version     : v0.1.0
 # License     : AGPLv3+
 #
 # --                                                            ; }}}1
@@ -95,6 +95,18 @@ def r_jmdict():
   except re.error as e:
     return "regex error: " + str(e)
 
+@app.route("/jmdict/by-freq")
+def r_jmdict_by_freq():
+  offset  = arg("offset", 0, type = int)
+  results = list(J.by_freq(offset, 1000))
+  return respond("jmdict-by-freq.html", page = "jmdict/by-freq",
+                 offset = offset, results = results)
+
+@app.route("/jmdict/random")
+def r_jmdict_random():
+  q = "+#{}".format(J.random_seq())
+  return redirect(url_for("r_jmdict", query = q))
+
 # TODO
 # * --max
 @app.route("/kanji")
@@ -107,9 +119,20 @@ def r_kanji():
   except re.error as e:
     return "regex error: " + str(e)
 
+@app.route("/kanji/by-freq")
+def r_kanji_by_freq():
+  return respond("kanji-by-freq.html", page = "kanji/by-freq",
+                 kanji = K.by_freq())
+
+@app.route("/kanji/by-level")
+def r_kanji_by_level():
+  levels = [ (l, list(K.by_level(l))) for l in K.LEVELS ]
+  return respond("kanji-by-level.html", page = "kanji/by-level",
+                 levels = levels)
+
 @app.route("/stroke")
 def r_stroke():
-  return respond("stroke.html", page= "stroke",
+  return respond("stroke.html", page = "stroke",
                  query = arg("query", "").strip())
 
 # vim: set tw=70 sw=2 sts=2 et fdm=marker :

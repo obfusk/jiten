@@ -5,10 +5,10 @@
 #
 # File        : jiten/jmdict.py
 # Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-# Date        : 2020-06-19
+# Date        : 2020-07-01
 #
 # Copyright   : Copyright (C) 2020  Felix C. Stegerman
-# Version     : v0.0.1
+# Version     : v0.1.0
 # License     : AGPLv3+
 #
 # --                                                            ; }}}1
@@ -416,53 +416,76 @@ def nvp(noun, verb, prio):
   if prio         : s.append("prio = 1")
   return "WHERE " + " AND ".join(s)
 
+def load_entry(c, seq):                                         # {{{1
+  k = tuple(
+      Kanji(r["elem"], frozenset(r["chars"]),
+            tuple(r["info"].splitlines()), bool(r["prio"]))
+    for r in c.execute("SELECT * FROM kanji WHERE entry = ?" +
+                       " ORDER BY rowid ASC", (seq,))
+  )
+  r = tuple(
+      Reading(r["elem"], tuple(r["restr"].splitlines()),
+              tuple(r["info"].splitlines()), bool(r["prio"]))
+    for r in c.execute("SELECT * FROM reading WHERE entry = ?" +
+                       " ORDER BY rowid ASC", (seq,))
+  )
+  s = tuple(
+      Sense(tuple(r["pos"].splitlines()), r["lang"],
+            tuple(r["gloss"].splitlines()),
+            tuple(r["info"].splitlines()),
+            tuple(r["xref"].splitlines()))
+    for r in c.execute("SELECT * FROM sense WHERE entry = ?" +
+                       " ORDER BY rowid ASC", (seq,))
+  )
+  return Entry(seq, *( tuple(x) for x in [k, r, s] ))
+                                                                # }}}1
+
 def search(q, langs = [LANGS[0]], max_results = None,           # {{{1
            noun = False, verb = False, prio = False,
            file = SQLITE_FILE):
   with sqlite_do(file) as c:
-    rx      = re.compile(q, re.I | re.M)
-    mat     = lambda x: rx.search(x) is not None
-    c.connection.create_function("matches", 1, mat)
-    lang    = ",".join( "'" + l + "'" for l in langs if l in LANGS )
-    limit   = "LIMIT " + str(int(max_results)) if max_results else ""
-    entries = [ tuple(r) for r in c.execute("""
-      SELECT rank, seq FROM (
-          SELECT entry FROM kanji WHERE matches(elem)
-        UNION
-          SELECT entry FROM reading WHERE matches(elem)
-        UNION
-          SELECT entry FROM sense WHERE
-            lang IN ({}) AND matches(gloss)
-      )
-      INNER JOIN entry ON seq = entry
-      {}
-      ORDER BY prio DESC, rank ASC, seq ASC
-      {}
-    """.format(lang, nvp(noun, verb, prio), limit)) ]
-    for i, (rank, seq) in enumerate(entries):
-      k = tuple(
-          Kanji(r["elem"], frozenset(r["chars"]),
-                tuple(r["info"].splitlines()), bool(r["prio"]))
-        for r in c.execute("SELECT * FROM kanji WHERE entry = ?" +
-                           " ORDER BY rowid ASC", (seq,))
-      )
-      r = tuple(
-          Reading(r["elem"], tuple(r["restr"].splitlines()),
-                  tuple(r["info"].splitlines()), bool(r["prio"]))
-        for r in c.execute("SELECT * FROM reading WHERE entry = ?" +
-                           " ORDER BY rowid ASC", (seq,))
-      )
-      s = tuple(
-          Sense(tuple(r["pos"].splitlines()), r["lang"],
-                tuple(r["gloss"].splitlines()),
-                tuple(r["info"].splitlines()),
-                tuple(r["xref"].splitlines()))
-        for r in c.execute("SELECT * FROM sense WHERE entry = ?" +
-                           " ORDER BY rowid ASC", (seq,))
-      )
-      e = Entry(seq, *( tuple(x) for x in [k, r, s] ))
-      yield e, (rank if rank != F.NOFREQ else None)
+    if re.fullmatch(r"\+#\d+", q):
+      seq = int(q[2:])
+      q   = "SELECT rank FROM entry WHERE seq = ?"
+      r   = c.execute(q, (seq,)).fetchone()
+      if r: yield load_entry(c, seq), r[0]
+    else:
+      rx    = re.compile(q, re.I | re.M)
+      mat   = lambda x: rx.search(x) is not None
+      c.connection.create_function("matches", 1, mat)
+      lang  = ",".join( "'" + l + "'" for l in langs if l in LANGS )
+      limit = "LIMIT " + str(int(max_results)) if max_results else ""
+      ents  = [ tuple(r) for r in c.execute("""
+        SELECT rank, seq FROM (
+            SELECT entry FROM kanji WHERE matches(elem)
+          UNION
+            SELECT entry FROM reading WHERE matches(elem)
+          UNION
+            SELECT entry FROM sense WHERE
+              lang IN ({}) AND matches(gloss)
+        )
+        INNER JOIN entry ON seq = entry
+        {}
+        ORDER BY prio DESC, rank ASC, seq ASC
+        {}
+      """.format(lang, nvp(noun, verb, prio), limit)) ]
+      for rank, seq in ents:
+        yield load_entry(c, seq), (rank if rank != F.NOFREQ else None)
                                                                 # }}}1
+
+def by_freq(offset = 0, limit = 1000, file = SQLITE_FILE):
+  with sqlite_do(file) as c:
+    ents = [ tuple(r) for r in c.execute("""
+        SELECT seq, rank FROM entry WHERE prio AND rank != {}
+          ORDER BY rank ASC LIMIT ? OFFSET ?
+        """.format(F.NOFREQ), (limit, offset)) ]
+    for seq, rank in ents:
+      yield load_entry(c, seq), rank
+
+def random_seq(file = SQLITE_FILE):
+  with sqlite_do(file) as c:
+    q = "SELECT seq FROM entry ORDER BY RANDOM() LIMIT 1"
+    return c.execute(q).fetchone()[0]
 
 if __name__ == "__main__":
   if "--doctest" in sys.argv:

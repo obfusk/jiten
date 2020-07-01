@@ -12,13 +12,25 @@
         <a class="nav-link" href="/">Home</a>
       </li>
       <li class="nav-item {{ "active" if page == "jmdict" else "" }}">
-        <a class="nav-link" href="/jmdict">JMDict</a>
+        <a class="nav-link" href="/jmdict">Search JMDict</a>
       </li>
       <li class="nav-item {{ "active" if page == "kanji" else "" }}">
-        <a class="nav-link" href="/kanji">Kanji</a>
+        <a class="nav-link" href="/kanji">Search Kanji</a>
       </li>
       <li class="nav-item {{ "active" if page == "stroke" else "" }}">
         <a class="nav-link" href="/stroke">Stroke Order</a>
+      </li>
+      <li class="nav-item {{ "active" if page == "kanji/by-freq" else "" }}">
+        <a class="nav-link" href="/kanji/by-freq">Kanji by Frequency</a>
+      </li>
+      <li class="nav-item {{ "active" if page == "kanji/by-level" else "" }}">
+        <a class="nav-link" href="/kanji/by-level">Kanji by Level</a>
+      </li>
+      <li class="nav-item {{ "active" if page == "jmdict/by-freq" else "" }}">
+        <a class="nav-link" href="/jmdict/by-freq">JMDict by Frequency</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="/jmdict/random">Random JMDict Entry</a>
       </li>
     </ul>
     <ul class="navbar-nav">

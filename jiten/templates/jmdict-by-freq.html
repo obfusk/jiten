@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en">
+  <!--
+
+    File        : templates/jmdict-by-freq.html
+    Maintainer  : Felix C. Stegerman <flx@obfusk.net>
+    Date        : 2020-07-01
+
+    Copyright   : Copyright (C) 2020  Felix C. Stegerman
+    Version     : v0.1.0
+    License     : AGPLv3+
+
+  -->
+  <head>
+    {% include "_meta.html" %}
+    <title>jiten - jmdict by frequency</title>
+  </head>
+  <body>
+    {% include "_nav.html" %}
+    <div class="container">
+      {% for row in results|batch(100) %}
+        <div class="card">
+          <div class="card-body">
+            {% for e, r in row %}
+              <!--
+                TODO:
+                * show title on mobile?!
+                * langs for meanings()?!
+              -->
+              <a class="btn btn-warning mb-1"
+                title="{{ r }} | {{ "; ".join(e.meanings()|sum(start=())) }}"
+                href="/jmdict?query={{ ("+#" + e.seq|string)|urlencode }}"
+                >{{ "、".join(e.definition()) }}</a>
+            {% endfor %}
+          </div>
+        </div>
+        <br/>
+      {% endfor %}
+      <div class="text-right">
+        {% if offset >= 1000 %}
+          <a class="btn btn-primary"
+            href="?offset={{ offset - 1000 }}">« Previous</a>
+        {% endif %}
+        <a class="btn btn-primary"
+          href="?offset={{ offset + 1000 }}">Next »</a>
+      </div>
+    </div>
+    {% include "_footer.html" %}
+  </body>
+</html>

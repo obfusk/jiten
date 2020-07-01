@@ -5,10 +5,10 @@
 #
 # File        : jiten/kanji.py
 # Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-# Date        : 2020-06-19
+# Date        : 2020-07-01
 #
 # Copyright   : Copyright (C) 2020  Felix C. Stegerman
-# Version     : v0.0.1
+# Version     : v0.1.0
 # License     : AGPLv3+
 #
 # --                                                            ; }}}1
@@ -94,7 +94,8 @@ from .sql import sqlite_do
 SQLITE_FILE   = M.resource_path("res/kanji.sqlite3")
 KANJIDIC_FILE = M.resource_path("res/jmdict/kanjidic2.xml.gz")
 
-NOFREQ        = 9999
+NOFREQ = 9999
+LEVELS = "常用1 常用2 常用3 常用4 常用5 常用6 常用 人名 人名(常用)".split()
 
 Entry = namedtuple("Entry", """char cat level strokes freq jlpt
                                skip on kun nanori meaning""".split())
@@ -204,7 +205,7 @@ def search(q, max_results = None, file = SQLITE_FILE):          # {{{1
       c.connection.create_function("matches1", 1, mat1)
       c.connection.create_function("matches2", 1, mat2)
       limit = "LIMIT " + str(int(max_results)) if max_results else ""
-      for i, r in enumerate(c.execute("""
+      for r in c.execute("""
           SELECT * FROM entry
             WHERE
               matches1(on_) OR matches1(kun) OR matches1(nanori) OR
@@ -213,9 +214,24 @@ def search(q, max_results = None, file = SQLITE_FILE):          # {{{1
             ORDER BY
               IFNULL(freq, {}) ASC, code ASC
             {}
-          """.format(NOFREQ, limit))):
+          """.format(NOFREQ, limit)):
         yield ent(r)
                                                                 # }}}1
+
+def by_freq(file = SQLITE_FILE):
+  with sqlite_do(file) as c:
+    for r in c.execute("""
+        SELECT char, freq FROM entry
+          WHERE freq IS NOT NULL ORDER BY freq ASC
+        """):
+      yield r["char"], r["freq"]
+
+def by_level(level, file = SQLITE_FILE):
+  with sqlite_do(file) as c:
+    for r in c.execute("""
+        SELECT char FROM entry WHERE level = ? ORDER BY code ASC
+        """, (level,)):
+      yield r["char"]
 
 if __name__ == "__main__":
   if "--doctest" in sys.argv:
