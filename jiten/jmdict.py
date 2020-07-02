@@ -5,7 +5,7 @@
 #
 # File        : jiten/jmdict.py
 # Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-# Date        : 2020-07-01
+# Date        : 2020-07-02
 #
 # Copyright   : Copyright (C) 2020  Felix C. Stegerman
 # Version     : v0.1.0
@@ -443,11 +443,12 @@ def load_entry(c, seq):                                         # {{{1
 def search(q, langs = [LANGS[0]], max_results = None,           # {{{1
            noun = False, verb = False, prio = False,
            file = SQLITE_FILE):
+  fix_rank = lambda r: (r if r != F.NOFREQ else None)
   with sqlite_do(file) as c:
     if re.fullmatch(r"\+#\s*\d+", q):
       seq = int(q[2:].strip())
       for r in c.execute("SELECT rank FROM entry WHERE seq = ?", (seq,)):
-        yield load_entry(c, seq), r[0] # #=1
+        yield load_entry(c, seq), fix_rank(r[0]) # #=1
     else:
       rx    = re.compile(q, re.I | re.M)
       mat   = lambda x: rx.search(x) is not None
@@ -469,7 +470,7 @@ def search(q, langs = [LANGS[0]], max_results = None,           # {{{1
         {}
       """.format(lang, nvp(noun, verb, prio), limit)) ]
       for rank, seq in ents:
-        yield load_entry(c, seq), (rank if rank != F.NOFREQ else None)
+        yield load_entry(c, seq), fix_rank(rank)
                                                                 # }}}1
 
 def by_freq(offset = 0, limit = 1000, file = SQLITE_FILE):
