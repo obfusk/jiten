@@ -5,7 +5,7 @@
 #
 # File        : jiten/app.py
 # Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-# Date        : 2020-07-01
+# Date        : 2020-07-02
 #
 # Copyright   : Copyright (C) 2020  Felix C. Stegerman
 # Version     : v0.1.0
@@ -31,19 +31,28 @@ from . import jmdict as J
 from . import kanji  as K
 from . import misc   as M
 
-MAX   = 50
-name  = "jiten"
-app   = Flask(__name__)
+MAX     = 50
+name    = "jiten"
+HTTPS   = name.upper() + "_HTTPS"
+DOMAIN  = name.upper() + "_DOMAIN"
+app     = Flask(__name__)
 
-if os.environ.get(name.upper() + "_HTTPS") == "force":
+if os.environ.get(HTTPS) == "force":
   @app.before_request
   def https_required():
     if request.scheme != "https":
-      return redirect(request.url.replace("http:", "https:"), code = 301)
+      return redirect(request.url.replace("http:", "https:", 1), code = 301)
   @app.after_request
   def after_request_func(response):
     response.headers["Strict-Transport-Security"] = 'max-age=63072000'
     return response
+
+if os.environ.get(DOMAIN):
+  domain = os.environ.get(DOMAIN)
+  @app.before_request
+  def redirect_domain():
+    if request.host != domain:
+      return redirect(request.url.replace(request.host, domain, 1), code = 301)
 
 def arg(k, *a, **kw):
   return request.args.get(k, *a, **kw)
@@ -59,15 +68,16 @@ def dark_toggle_link(dark):
 
 def respond(template, **data):
   langs, dark = get_langs(), arg_bool("dark", request.cookies.get("dark"))
-  resp = make_response(render_template(
-    template, dark = dark, LANGS = J.LANGS, langs = langs,
-    toggle = dark_toggle_link(dark), **data
-  ))
   if arg_bool("save"):
     k, v = ("dark", "yes" if dark else "no") \
            if "dark" in request.args else ("lang", " ".join(langs))
+    resp = redirect(request.url.replace("&save=yes", ""))       # TODO
     resp.set_cookie(k, v, max_age = 3600*24*365*10)
-  return resp
+    return resp
+  return make_response(render_template(
+    template, dark = dark, LANGS = J.LANGS, langs = langs,
+    toggle = dark_toggle_link(dark), **data
+  ))
 
 def get_langs():
   ls = request.args.getlist("lang") or request.cookies.get("lang", "").split()
