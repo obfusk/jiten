@@ -10,13 +10,4 @@
 <script src="/static/jquery-3.5.1.slim.min.js"></script>
 <script src="/static/popper-1.16.0.min.js"></script>
 <script src="/static/bootstrap.min.js"></script>
-<script>
-  // TODO: move somewhere more appropriate
-  $(document).ready(() => {
-    $(".clear-input").each((i, e) => $(e).click(() => {
-      $(".clear-input-checked", $(e).parents("form")).prop("checked", true)
-      $("input", $(e).parents(".input-group")).val("").focus()
-    }))
-    $($("input")[0]).focus()
-  })
-</script>
+<script src="/static/script.js"></script>

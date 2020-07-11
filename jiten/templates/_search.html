@@ -15,6 +15,11 @@
       <div class="form-group form-inline justify-content-end mb-0">
         <label class="sr-only" for="jmdict-query">Query (Regex)</label>
         <div class="input-group mr-sm-2 mb-2 flex-grow-1">
+          <div class="input-group-prepend">
+            <button type="button" title="あ↔ア"
+                class="convert-kana input-group-text btn btn-dark"
+              >あ</button>
+          </div>
           <input type="text" class="form-control"
             id="jmdict-query" name="query" value="{{ query }}" required
             placeholder="regex to match japanese/english/dutch/german" />
@@ -114,6 +119,11 @@
       <div class="form-group form-inline justify-content-end mb-0">
         <label class="sr-only" for="kanji-query">Query (Regex)</label>
         <div class="input-group mr-sm-2 mb-2 flex-grow-1">
+          <div class="input-group-prepend">
+            <button type="button" title="あ↔ア"
+                class="convert-kana input-group-text btn btn-dark"
+              >あ</button>
+          </div>
           <input type="text" class="form-control"
             id="kanji-query" name="query" value="{{ query }}"
             placeholder="kanji or regex to match kana/english" required />
