@@ -19,7 +19,8 @@
             id="jmdict-query" name="query" value="{{ query }}" required
             placeholder="regex to match japanese/english/dutch/german" />
           <div class="input-group-append">
-            <a class="clear-input input-group-text" href="#">
+            <button type="button"
+                class="clear-input input-group-text btn btn-dark">
               <!-- https://www.flaticon.com/free-icon/close-button_61155 -->
               <svg xmlns="http://www.w3.org/2000/svg"
                 style="width: 0.7rem; height: 0.7rem;"
@@ -29,7 +30,7 @@
                   points="357,35.7 321.3,0 178.5,142.8 35.7,0 0,35.7 142.8,178.5 0,321.3 35.7,357 178.5,214.2 321.3,357 357,321.3 214.2,178.5"
                   fill="currentColor" />
               </svg>
-            </a>
+            </button>
           </div>
         </div>
         <button type="submit" class="btn btn-primary mb-2">Search JMDict</button>
@@ -39,7 +40,8 @@
           <legend>options</legend>
           <div class="nowrap">
             <div class="form-check form-check-inline">
-              <input type="checkbox" class="form-check-input"
+              <input type="checkbox"
+                class="form-check-input clear-input-checked"
                 id="jmdict-word" name="word" value="yes"
                 {% if not query %}checked{% endif %} />
               <label class="form-check-label" for="jmdict-word"
@@ -116,7 +118,8 @@
             id="kanji-query" name="query" value="{{ query }}"
             placeholder="kanji or regex to match kana/english" required />
           <div class="input-group-append">
-            <a class="clear-input input-group-text" href="#">
+            <button type="button"
+                class="clear-input input-group-text btn btn-dark">
               <!-- https://www.flaticon.com/free-icon/close-button_61155 -->
               <svg xmlns="http://www.w3.org/2000/svg"
                 style="width: 0.7rem; height: 0.7rem;"
@@ -126,7 +129,7 @@
                   points="357,35.7 321.3,0 178.5,142.8 35.7,0 0,35.7 142.8,178.5 0,321.3 35.7,357 178.5,214.2 321.3,357 357,321.3 214.2,178.5"
                   fill="currentColor" />
               </svg>
-            </a>
+            </button>
           </div>
         </div>
         <button type="submit" class="btn btn-primary mb-2">Search Kanji</button>
@@ -165,7 +168,8 @@
             id="stroke-query" name="query" value="{{ query }}"
             placeholder="漢字か仮名を入力" required />
           <div class="input-group-append">
-            <a class="clear-input input-group-text" href="#">
+            <button type="button"
+                class="clear-input input-group-text btn btn-dark">
               <!-- https://www.flaticon.com/free-icon/close-button_61155 -->
               <svg xmlns="http://www.w3.org/2000/svg"
                 style="width: 0.7rem; height: 0.7rem;"
@@ -175,7 +179,7 @@
                   points="357,35.7 321.3,0 178.5,142.8 35.7,0 0,35.7 142.8,178.5 0,321.3 35.7,357 178.5,214.2 321.3,357 357,321.3 214.2,178.5"
                   fill="currentColor" />
               </svg>
-            </a>
+            </button>
           </div>
         </div>
         <button type="submit" class="btn btn-primary mb-2">筆順を示す</button>
