@@ -5,7 +5,7 @@
 #
 # File        : jiten/cli.py
 # Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-# Date        : 2020-06-21
+# Date        : 2020-07-11
 #
 # Copyright   : Copyright (C) 2020  Felix C. Stegerman
 # Version     : v0.0.1
@@ -193,7 +193,7 @@ query: ^cat$
 ねこ
 [no name readings]
 * cat
-0x732b, 11 strokes, grade 常用, freq# 1702, old jlpt 2, skip 1-3-8
+0x732b, 11 strokes, level 常用, freq# 1702, old jlpt 2, skip 1-3-8
 <BLANKLINE>
 <BLANKLINE>
 
@@ -209,7 +209,7 @@ query: \b日\b
 * sun
 * Japan
 * counter for days
-0x65e5, 4 strokes, grade 常用1, freq# 1, old jlpt 4, skip 3-3-1
+0x65e5, 4 strokes, level 常用1, freq# 1, old jlpt 4, skip 3-3-1
 <BLANKLINE>
 <BLANKLINE>
 
@@ -357,7 +357,7 @@ def kanji_search(q, verbose, word, exact, fstwd, max_results):  # {{{1
       yield (click.style(hex(ord(e.char)), fg = "blue")
         + ", " + click.style(str(e.strokes), fg = "yellow")
         + " strokes"
-        + (", grade " + click.style(e.level, fg = "cyan")
+        + (", level " + click.style(e.level, fg = "cyan")
            if e.level else "")
         + (", freq# " + click.style(str(e.freq), fg = "magenta")
            if e.freq else "")
