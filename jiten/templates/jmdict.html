@@ -4,7 +4,7 @@
 
     File        : templates/jmdict.html
     Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-    Date        : 2020-06-19
+    Date        : 2020-07-11
 
     Copyright   : Copyright (C) 2020  Felix C. Stegerman
     Version     : v0.0.1
@@ -60,7 +60,7 @@
                 </li>
               </ul>
               {% set gloss, info = e.gloss_pos_info(langs) %}
-              {% for l in langs %}
+              {% for l in langs if gloss[l] %}
                 <br/>
                 <h4>{{ l }}</h4>
                 <ul class="list-group my-1" title="meanings">
