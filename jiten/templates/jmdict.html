@@ -108,9 +108,10 @@
                 <li class="list-group-item pb-1 px-2 pt-2">
                   <span class="nowrap">
                     seq#
-                    <span class="badge badge-primary">
+                    <a class="badge badge-primary"
+                        href="/jmdict?query={{ ("+#" + e.seq|string)|urlencode }}">
                       {{ e.seq }}
-                    </span>
+                    </a>
                   </span>
                   {% if rank %}
                     <span class="nowrap">
