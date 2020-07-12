@@ -20,7 +20,7 @@
                 class="jap convert-kana input-group-text btn btn-dark"
               >あ</button>
           </div>
-          <input type="text" class="jap form-control"
+          <input type="text" class="jap form-control" autofocus
             id="jmdict-query" name="query" value="{{ query }}" required
             placeholder="regex to match japanese/english/dutch/german" />
           <div class="input-group-append">
@@ -124,7 +124,7 @@
                 class="jap convert-kana input-group-text btn btn-dark"
               >あ</button>
           </div>
-          <input type="text" class="jap form-control"
+          <input type="text" class="jap form-control" autofocus
             id="kanji-query" name="query" value="{{ query }}"
             placeholder="kanji or regex to match kana/english" required />
           <div class="input-group-append">
@@ -174,7 +174,7 @@
       <div class="form-group form-inline justify-content-end mb-0">
         <label class="sr-only" for="stroke-query">Query (Regex)</label>
         <div class="input-group mr-sm-2 mb-2 flex-grow-1">
-          <input type="text" class="jap form-control"
+          <input type="text" class="jap form-control" autofocus
             id="stroke-query" name="query" value="{{ query }}"
             placeholder="漢字か仮名を入力" required />
           <div class="input-group-append">

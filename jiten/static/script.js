@@ -141,6 +141,4 @@ $("#romaji").click(() => {
   if (r) window.alert(romajiToHiragana(r))
 })
 
-$($("input")[0]).focus()
-
 })
