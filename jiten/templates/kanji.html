@@ -4,7 +4,7 @@
 
     File        : templates/kanji.html
     Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-    Date        : 2020-07-11
+    Date        : 2020-07-12
 
     Copyright   : Copyright (C) 2020  Felix C. Stegerman
     Version     : v0.0.1
@@ -30,15 +30,15 @@
             <div class="card-body">
               <div class="d-flex">
                 <a class="kanji text-reset text-decoration-none mr-3"
-                  href="/kanji?query={{ e.char }}">{{ e.char }}</a>
-                <ul class="list-group flex-grow-1 jap">
+                  href="/jmdict?query={{ e.char }}">{{ e.char }}</a>
+                <ul class="list-group flex-grow-1">
                   <li class="list-group-item {{
                         "pb-1 px-2 pt-2" if e.on else "p-2"
                       }}" title="on reading">
                     {% if e.on %}
                       {% for r in e.on %}
                         {% set rc = r.replace("-", "").replace(".", "") %}
-                        <a class="selbtn btn btn-warning py-1 mb-1"
+                        <a class="jap selbtn btn btn-warning py-1 mb-1"
                           href="/jmdict?query={{ rc }}&exact=yes">{{ r }}</a>
                       {% endfor %}
                     {% else %}
@@ -51,7 +51,7 @@
                     {% if e.kun %}
                       {% for r in e.kun %}
                         {% set rc = r.replace("-", "").replace(".", "") %}
-                        <a class="selbtn btn btn-success py-1 mb-1"
+                        <a class="jap selbtn btn btn-success py-1 mb-1"
                           href="/jmdict?query={{ rc }}&exact=yes">{{ r }}</a>
                       {% endfor %}
                     {% else %}
@@ -64,7 +64,7 @@
                     {% if e.nanori %}
                       {% for r in e.nanori %}
                         {% set rc = r.replace("-", "").replace(".", "") %}
-                        <a class="selbtn btn btn-info py-1 mb-1"
+                        <a class="jap selbtn btn btn-info py-1 mb-1"
                           href="/jmdict?query={{ rc }}&exact=yes">{{ r }}</a>
                       {% endfor %}
                     {% else %}
@@ -78,11 +78,25 @@
                   <li class="list-group-item p-2">{{ m }}</li>
                 {% endfor %}
               </ul>
+              {% set js = jmdict[e.char]|list %}
+              {% if js %}
+                <!-- TODO: filter kanji containing char?! -->
+                <div title="jmdict">
+                  {% for e, r in js %}
+                    <a class="jap selbtn btn btn-warning mb-1"
+                      title="{{ "; ".join(e.meanings()|sum(start=())) }}"
+                      href="/jmdict?query={{ ("+#" + e.seq|string)|urlencode }}"
+                      >{{ e.kanji[0].elem }}
+                      【{{ e.reading[0].elem }}】</a>
+                  {% endfor %}
+                </div>
+              {% endif %}
               <div class="p-1" title="miscellaneous">
                 <span class="nowrap">
-                  <span class="badge badge-primary">
+                  <a class="badge badge-primary"
+                      href="/kanji?query={{ e.char }}">
                     {{ hex(ord(e.char)) }}
-                  </span>
+                  </a>
                 </span>
                 <span class="nowrap">
                   »
@@ -94,7 +108,7 @@
                 {% if e.level %}
                   <span class="nowrap">
                     » level
-                    <span class="badge badge-info">
+                    <span class="jap badge badge-info">
                       {{ e.level }}
                     </span>
                   </span>

@@ -2,7 +2,7 @@
 
   File        : templates/_search.html
   Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-  Date        : 2020-07-11
+  Date        : 2020-07-12
 
   Copyright   : Copyright (C) 2020  Felix C. Stegerman
   Version     : v0.0.1
@@ -17,10 +17,10 @@
         <div class="input-group mr-sm-2 mb-2 flex-grow-1">
           <div class="input-group-prepend">
             <button type="button" title="あ↔ア"
-                class="convert-kana input-group-text btn btn-dark"
+                class="jap convert-kana input-group-text btn btn-dark"
               >あ</button>
           </div>
-          <input type="text" class="form-control"
+          <input type="text" class="jap form-control"
             id="jmdict-query" name="query" value="{{ query }}" required
             placeholder="regex to match japanese/english/dutch/german" />
           <div class="input-group-append">
@@ -121,10 +121,10 @@
         <div class="input-group mr-sm-2 mb-2 flex-grow-1">
           <div class="input-group-prepend">
             <button type="button" title="あ↔ア"
-                class="convert-kana input-group-text btn btn-dark"
+                class="jap convert-kana input-group-text btn btn-dark"
               >あ</button>
           </div>
-          <input type="text" class="form-control"
+          <input type="text" class="jap form-control"
             id="kanji-query" name="query" value="{{ query }}"
             placeholder="kanji or regex to match kana/english" required />
           <div class="input-group-append">
@@ -174,7 +174,7 @@
       <div class="form-group form-inline justify-content-end mb-0">
         <label class="sr-only" for="stroke-query">Query (Regex)</label>
         <div class="input-group mr-sm-2 mb-2 flex-grow-1">
-          <input type="text" class="form-control"
+          <input type="text" class="jap form-control"
             id="stroke-query" name="query" value="{{ query }}"
             placeholder="漢字か仮名を入力" required />
           <div class="input-group-append">

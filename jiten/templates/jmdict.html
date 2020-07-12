@@ -4,7 +4,7 @@
 
     File        : templates/jmdict.html
     Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-    Date        : 2020-07-11
+    Date        : 2020-07-12
 
     Copyright   : Copyright (C) 2020  Felix C. Stegerman
     Version     : v0.0.1
@@ -25,13 +25,13 @@
           <br/>
           <div class="card">
             <div class="card-body">
-              <ul class="list-group jap">
+              <ul class="list-group">
                 <li class="list-group-item {{
                       "pb-1 px-2 pt-2" if e.kanji else "p-2"
                     }}" title="kanji">
                   {% if e.kanji %}
                     {% for k in e.kanji %}
-                      <span class="selbtn fakebtn btn btn-lg btn-warning py-1 mb-1">
+                      <span class="jap selbtn fakebtn btn btn-lg btn-warning py-1 mb-1">
                         {% for c in k.elem -%}
                           {% if isideo(c) -%}
                             <a class="text-reset"
@@ -51,7 +51,7 @@
                     }}" title="reading">
                   {% if e.reading %}
                     {% for r in e.reading %}
-                      <a class="selbtn btn btn-success py-1 mb-1"
+                      <a class="jap selbtn btn btn-success py-1 mb-1"
                         href="/jmdict?query={{ r.elem }}&exact=yes">{{ r.elem }}</a>
                     {% endfor %}
                   {% else %}
@@ -100,7 +100,7 @@
                   <li class="list-group-item pb-1 px-2 pt-2">
                     see
                     {% for i in xr %}
-                      <a class="selbtn btn btn-warning btn-sm mb-1"
+                      <a class="jap selbtn btn btn-warning btn-sm mb-1"
                         href="/jmdict?query={{ i }}&exact=yes">{{ i }}</a>
                     {% endfor %}
                   </li>

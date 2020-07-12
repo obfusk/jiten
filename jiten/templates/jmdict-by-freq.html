@@ -4,7 +4,7 @@
 
     File        : templates/jmdict-by-freq.html
     Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-    Date        : 2020-07-01
+    Date        : 2020-07-12
 
     Copyright   : Copyright (C) 2020  Felix C. Stegerman
     Version     : v0.1.0
@@ -27,7 +27,7 @@
                 * show title on mobile?!
                 * langs for meanings()?!
               -->
-              <a class="btn btn-warning mb-1"
+              <a class="jap selbtn btn btn-warning mb-1"
                 title="{{ r }} | {{ "; ".join(e.meanings()|sum(start=())) }}"
                 href="/jmdict?query={{ ("+#" + e.seq|string)|urlencode }}"
                 >{{ "、".join(e.definition()) }}</a>

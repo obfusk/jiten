@@ -4,7 +4,7 @@
 
     File        : templates/kanji-by-level.html
     Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-    Date        : 2020-07-01
+    Date        : 2020-07-12
 
     Copyright   : Copyright (C) 2020  Felix C. Stegerman
     Version     : v0.1.0
@@ -24,7 +24,7 @@
             <h4 class="card-title">{{ level }}</h4>
             <h6 class="card-subtitle text-muted mb-3">{{ chars|length }}</h6>
             {% for c in chars %}
-              <a class="btn btn-warning mb-1"
+              <a class="jap selbtn btn btn-warning mb-1"
                 href="/kanji?query={{ c }}">{{ c }}</a>
             {% endfor %}
           </div>

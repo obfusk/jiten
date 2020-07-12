@@ -27,8 +27,11 @@ body {
 }
 .jap, .kanji:hover {
   font-family:
+    -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    "Helvetica Neue", Arial,
     "Noto Sans CJK JP", "Noto Sans CJK SC", "Noto Sans CJK TC",
-    ipaexgothic, ipagothic, sans-serif;
+    ipaexgothic, ipagothic, sans-serif,
+    "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
 }
 
 legend {

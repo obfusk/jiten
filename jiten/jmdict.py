@@ -452,6 +452,7 @@ def search(q, langs = [LANGS[0]], max_results = None,           # {{{1
     else:
       lang  = ",".join( "'" + l + "'" for l in langs if l in LANGS )
       limit = "LIMIT " + str(int(max_results)) if max_results else ""
+      fltr  = nvp(noun, verb, prio)
       if all( M.iscjk(c) for c in q ):
         query = ("""
           SELECT rank, seq FROM (
@@ -460,9 +461,10 @@ def search(q, langs = [LANGS[0]], max_results = None,           # {{{1
               SELECT entry FROM reading WHERE elem LIKE ?
           )
           INNER JOIN entry ON seq = entry
+          {}
           ORDER BY prio DESC, rank ASC, seq ASC
           {}
-        """.format(limit), ("%"+q+"%",)*2)                    # safe!
+        """.format(fltr, limit), ("%"+q+"%",)*2)              # safe!
       else:
         rx    = re.compile(q, re.I | re.M)
         mat   = lambda x: rx.search(x) is not None
@@ -479,7 +481,7 @@ def search(q, langs = [LANGS[0]], max_results = None,           # {{{1
           {}
           ORDER BY prio DESC, rank ASC, seq ASC
           {}
-        """.format(lang, nvp(noun, verb, prio), limit),)      # safe!
+        """.format(lang, fltr, limit),)                       # safe!
         c.connection.create_function("matches", 1, mat)
       for r, seq in [ tuple(r) for r in c.execute(*query) ]:  # eager!
         yield load_entry(c, seq), fix_rank(r)
