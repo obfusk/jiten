@@ -9,7 +9,7 @@
   License     : AGPLv3+
 
 --> #}
-{% macro jmdict(LANGS, langs, query = "") %}
+{% macro jmdict(LANGS, langs, query = "", af = True) %}
   <div class="card">
     <form class="card-body" action="/jmdict">
       <div class="form-group form-inline justify-content-end mb-0">
@@ -20,7 +20,8 @@
                 class="jap convert-kana input-group-text btn btn-dark"
               >あ</button>
           </div>
-          <input type="text" class="jap form-control" autofocus
+          <input type="text" class="jap form-control"
+            {% if af %}autofocus{% endif %}
             id="jmdict-query" name="query" value="{{ query }}" required
             placeholder="regex to match japanese/english/dutch/german" />
           <div class="input-group-append">
@@ -113,7 +114,7 @@
     </form>
   </div>
 {% endmacro %}
-{% macro kanji(query = "") %}
+{% macro kanji(query = "", af = True) %}
   <div class="card">
     <form class="card-body" action="/kanji">
       <div class="form-group form-inline justify-content-end mb-0">
@@ -124,7 +125,8 @@
                 class="jap convert-kana input-group-text btn btn-dark"
               >あ</button>
           </div>
-          <input type="text" class="jap form-control" autofocus
+          <input type="text" class="jap form-control"
+            {% if af %}autofocus{% endif %}
             id="kanji-query" name="query" value="{{ query }}"
             placeholder="kanji or regex to match kana/english" required />
           <div class="input-group-append">
@@ -168,13 +170,14 @@
     </form>
   </div>
 {% endmacro %}
-{% macro stroke(query = "") %}
+{% macro stroke(query = "", af = True) %}
   <div class="card">
     <form class="card-body" action="/stroke">
       <div class="form-group form-inline justify-content-end mb-0">
         <label class="sr-only" for="stroke-query">Query (Regex)</label>
         <div class="input-group mr-sm-2 mb-2 flex-grow-1">
-          <input type="text" class="jap form-control" autofocus
+          <input type="text" class="jap form-control"
+            {% if af %}autofocus{% endif %}
             id="stroke-query" name="query" value="{{ query }}"
             placeholder="漢字か仮名を入力" required />
           <div class="input-group-append">

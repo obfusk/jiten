@@ -4,7 +4,7 @@
 
     File        : templates/index.html
     Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-    Date        : 2020-06-18
+    Date        : 2020-07-12
 
     Copyright   : Copyright (C) 2020  Felix C. Stegerman
     Version     : v0.0.1
@@ -21,9 +21,9 @@
     <div class="container">
       {{ search.jmdict(LANGS, langs) }}
       <br/>
-      {{ search.kanji() }}
+      {{ search.kanji(af = False) }}
       <br/>
-      {{ search.stroke() }}
+      {{ search.stroke(af = False) }}
     </div>
     {% include "_footer.html" %}
   </body>
