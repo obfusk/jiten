@@ -1,7 +1,10 @@
 $(document).ready(() => {
   $(".convert-kana").each((i, e) => $(e).click(() => {
     const i = $("input", $(e).parents(".input-group"))
-    i.val(convertKana(i.val())).focus()
+    const v = i.val(), a = i[0].selectionStart, b = i[0].selectionEnd
+    const w = a == b ? convertKana(v)
+            : v.slice(0, a) + convertKana(v.slice(a, b)) + v.slice(b)
+    i.val(w).focus()
   }))
   $(".clear-input").each((i, e) => $(e).click(() => {
     $(".clear-input-checked", $(e).parents("form")).prop("checked", true)
