@@ -19,14 +19,14 @@ r"""
 JMDict.
 
 >>> DBVERSION
-1
+2
 
 >>> jmdict = parse_jmdict()
 >>> len(jmdict)
-188250
+188544
 
 >>> print(jmdict[-1].sense[0].gloss[0])
-Japanese-Multilingual Dictionary Project - Creation Date: 2020-06-14
+Japanese-Multilingual Dictionary Project - Creation Date: 2020-07-11
 
 >>> baka = [ x for x in jmdict if any( r.elem == "ばか" for r in x.reading ) ][0]
 >>> baka.seq
@@ -163,7 +163,7 @@ from . import freq as F
 from . import misc as M
 from .sql import sqlite_do
 
-DBVERSION     = 1 # NB: update this when data/schema changes
+DBVERSION     = 2 # NB: update this when data/schema changes
 SQLITE_FILE   = M.resource_path("res/jmdict.sqlite3")
 JMDICT_FILE   = M.resource_path("res/jmdict/jmdict.xml.gz")
 

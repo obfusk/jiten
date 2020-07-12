@@ -77,7 +77,7 @@ Entry(char='日', cat='KANJI', level='常用1', strokes=4, freq=1, jlpt=4, skip=
 >>> len([ x for x in kanjidic if not len(x.kun) ])
 3289
 >>> len([ x for x in kanjidic if not len(x.meaning) ])
-2753
+2752
 
 """                                                             # }}}1
 
