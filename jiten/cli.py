@@ -5,7 +5,7 @@
 #
 # File        : jiten/cli.py
 # Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-# Date        : 2020-07-11
+# Date        : 2020-07-12
 #
 # Copyright   : Copyright (C) 2020  Felix C. Stegerman
 # Version     : v0.0.1
@@ -250,6 +250,7 @@ def cli(ctx, colour, **kw):
 @cli.command(help = "Search JMDict.")
 @click.option("-l", "--lang", "langs", multiple = True,
               default = [J.LANGS[0]], metavar = "LANG",
+              envvar = name.upper() + "_LANGS",
               help = "Choose language(s) ("+", ".join(J.LANGS)+").")
 @click.option("-w", "--word", is_flag = True,
               help = "Match whole word (same as \\b...\\b).")
@@ -276,7 +277,8 @@ def jmdict(ctx, query, **kw):
       click.echo_via_pager(jmdict_search(q, **ctx.obj))
 
 def jmdict_search(q, verbose, word, exact, fstwd, langs, **kw): # {{{1
-  q = M.process_query(q, word, exact, fstwd)
+  langs = [ l for ls in langs for l in ls.split(",") ]
+  q     = M.process_query(q, word, exact, fstwd)
   if verbose:
     yield "query: " + click.style(q, fg = "bright_red") + "\n\n"
   for e, rank in J.search(q, langs = langs, **kw):
