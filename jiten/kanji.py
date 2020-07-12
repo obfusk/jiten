@@ -5,7 +5,7 @@
 #
 # File        : jiten/kanji.py
 # Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-# Date        : 2020-07-01
+# Date        : 2020-07-12
 #
 # Copyright   : Copyright (C) 2020  Felix C. Stegerman
 # Version     : v0.1.0
@@ -199,7 +199,7 @@ def search(q, max_results = None, file = SQLITE_FILE):          # {{{1
                                              for x in r[8:] ]))
   ideo  = tuple(M.uniq(filter(M.isideo, q)))
   order = """ORDER BY IFNULL(freq, {}) ASC, level2int(level) ASC,
-             code ASC""".format(NOFREQ)
+             code ASC""".format(NOFREQ)                       # safe!
   limit = "LIMIT " + str(int(max_results)) if max_results else ""
   with sqlite_do(file) as c:
     c.connection.create_function("level2int", 1, level2int)
@@ -211,7 +211,7 @@ def search(q, max_results = None, file = SQLITE_FILE):          # {{{1
       s = q[2:].strip()
       for r in c.execute("""
           SELECT * FROM entry WHERE skip = ? {} {}
-          """.format(order, limit), (s,)):
+          """.format(order, limit), (s,)):                    # safe!
         yield ent(r)
     else:
       rx    = re.compile(q, re.I | re.M)
@@ -227,7 +227,7 @@ def search(q, max_results = None, file = SQLITE_FILE):          # {{{1
               matches2(on_) OR matches2(kun) OR matches2(nanori) OR
               matches1(meaning)
             {} {}
-          """.format(order, limit)):
+          """.format(order, limit)):                          # safe!
         yield ent(r)
                                                                 # }}}1
 

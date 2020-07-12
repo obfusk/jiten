@@ -5,7 +5,7 @@
 #
 # File        : jiten/misc.py
 # Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-# Date        : 2020-06-30
+# Date        : 2020-07-12
 #
 # Copyright   : Copyright (C) 2020  Felix C. Stegerman
 # Version     : v0.0.1
@@ -42,7 +42,7 @@ True
 
 import itertools, os, sys
 
-OKPUNC = "々"
+OKPUNC      = "々"
 
 ispunc      = lambda c:  0x3000 <= ord(c) <=  0x303f
 ishiragana  = lambda c:  0x3040 <= ord(c) <=  0x309f
@@ -55,10 +55,11 @@ isuniext    = lambda c:  0x3400 <= ord(c) <=  0x4dbf or \
 
 iskana      = lambda c: ishiragana(c) or iskatakana(c)
 isideo      = lambda c: iskanji(c) or iscompat(c) or isuniext(c)
-isjap       = lambda c: iskanji(c) or iskana(c)  # probably
-isokjap     = lambda c: isjap(c) or c in OKPUNC  # probably
+isjap       = lambda c: iskanji(c) or iskana(c)                 # TODO
+isokjap     = lambda c: isjap(c) or c in OKPUNC                 # TODO
+iscjk       = lambda c: isideo(c) or iskana(c) or ispunc(c)     # TODO
 
-flatten = itertools.chain.from_iterable
+flatten     = itertools.chain.from_iterable
 
 def uniq(xs):
   seen = set()

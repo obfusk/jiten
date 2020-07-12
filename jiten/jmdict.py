@@ -5,7 +5,7 @@
 #
 # File        : jiten/jmdict.py
 # Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-# Date        : 2020-07-02
+# Date        : 2020-07-12
 #
 # Copyright   : Copyright (C) 2020  Felix C. Stegerman
 # Version     : v0.1.0
@@ -450,27 +450,39 @@ def search(q, langs = [LANGS[0]], max_results = None,           # {{{1
       for r in c.execute("SELECT rank FROM entry WHERE seq = ?", (seq,)):
         yield load_entry(c, seq), fix_rank(r[0]) # #=1
     else:
-      rx    = re.compile(q, re.I | re.M)
-      mat   = lambda x: rx.search(x) is not None
-      c.connection.create_function("matches", 1, mat)
       lang  = ",".join( "'" + l + "'" for l in langs if l in LANGS )
       limit = "LIMIT " + str(int(max_results)) if max_results else ""
-      ents  = [ tuple(r) for r in c.execute("""
-        SELECT rank, seq FROM (
-            SELECT entry FROM kanji WHERE matches(elem)
-          UNION
-            SELECT entry FROM reading WHERE matches(elem)
-          UNION
-            SELECT entry FROM sense WHERE
-              lang IN ({}) AND matches(gloss)
-        )
-        INNER JOIN entry ON seq = entry
-        {}
-        ORDER BY prio DESC, rank ASC, seq ASC
-        {}
-      """.format(lang, nvp(noun, verb, prio), limit)) ]
-      for rank, seq in ents:
-        yield load_entry(c, seq), fix_rank(rank)
+      if all( M.iscjk(c) for c in q ):
+        query = ("""
+          SELECT rank, seq FROM (
+              SELECT entry FROM kanji WHERE elem LIKE ?
+            UNION
+              SELECT entry FROM reading WHERE elem LIKE ?
+          )
+          INNER JOIN entry ON seq = entry
+          ORDER BY prio DESC, rank ASC, seq ASC
+          {}
+        """.format(limit), ("%"+q+"%",)*2)                    # safe!
+      else:
+        rx    = re.compile(q, re.I | re.M)
+        mat   = lambda x: rx.search(x) is not None
+        query = ("""
+          SELECT rank, seq FROM (
+              SELECT entry FROM kanji WHERE matches(elem)
+            UNION
+              SELECT entry FROM reading WHERE matches(elem)
+            UNION
+              SELECT entry FROM sense WHERE
+                lang IN ({}) AND matches(gloss)
+          )
+          INNER JOIN entry ON seq = entry
+          {}
+          ORDER BY prio DESC, rank ASC, seq ASC
+          {}
+        """.format(lang, nvp(noun, verb, prio), limit),)      # safe!
+        c.connection.create_function("matches", 1, mat)
+      for r, seq in [ tuple(r) for r in c.execute(*query) ]:  # eager!
+        yield load_entry(c, seq), fix_rank(r)
                                                                 # }}}1
 
 def by_freq(offset = 0, limit = 1000, file = SQLITE_FILE):
@@ -478,7 +490,7 @@ def by_freq(offset = 0, limit = 1000, file = SQLITE_FILE):
     ents = [ tuple(r) for r in c.execute("""
         SELECT seq, rank FROM entry WHERE prio AND rank != {}
           ORDER BY rank ASC LIMIT ? OFFSET ?
-        """.format(F.NOFREQ), (limit, offset)) ]
+        """.format(F.NOFREQ), (limit, offset)) ]              # safe!
     for seq, rank in ents:
       yield load_entry(c, seq), rank
 
