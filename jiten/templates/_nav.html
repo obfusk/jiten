@@ -55,9 +55,29 @@
           target="_blank" rel="noopener">SKIP Codes</a>
       </li>
     </ul>
-    <button type="button" id="romaji"
+    <button type="button" data-toggle="modal" data-target="#romaji-modal"
       class="jap btn btn-light btn-sm my-2 my-lg-0 ml-md-3">a→あ</button>
     <a class="btn btn-light btn-sm my-2 my-lg-0 ml-2"
       href="{{ toggle }}">{{ "Light" if dark else "Dark" }} Mode</a>
   </div>
 </nav>
+
+<div class="modal" tabindex="-1" role="dialog" id="romaji-modal">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">a→あ</h5>
+        <button type="button" class="close" data-dismiss="modal"
+            aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <form class="modal-body form-inline justify-content-end"
+          action="javascript:void(0);">
+        <input type="text" id="romaji" placeholder="romaji"
+          class="jap form-control flex-grow-1 mr-sm-2 mb-2 mb-lg-0" />
+        <button id="romaji-convert" class="btn btn-primary">Convert</button>
+      </form>
+    </div>
+  </div>
+</div>

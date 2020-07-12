@@ -113,7 +113,7 @@ const ROMAP = {
   cha: "tya", cho: "tyo", chu: "tyu",
    ja: "zya",  jo: "zyo",  ju: "zyu",
 }
-const RORX  = "(([" + COLS.replaceAll("-", "") + "])\\2?)?y?" +
+const RORX  = "(([" + COLS.replace(/-/g, "") + "])\\2?)?y?" +
               "[" + ROWS + "]" +
               "|(" + Object.keys(ROMAP).join("|") + ")|(nn|-)|(.)"
 
@@ -136,9 +136,10 @@ $(".clear-input").each((i, e) => $(e).click(() => {
 }))
 
 // TODO
-$("#romaji").click(() => {
-  const r = window.prompt("romaji")
-  if (r) window.alert(romajiToHiragana(r))
-})
+$("#romaji-convert").click(() =>
+  $("#romaji").val(romajiToHiragana($("#romaji").val()))
+)
+
+$("#romaji-modal").on("shown.bs.modal", () => $("#romaji").focus())
 
 })
