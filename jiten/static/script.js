@@ -1,3 +1,15 @@
+//  --                                                          ; {{{1
+//
+//  File        : static/script.js
+//  Maintainer  : Felix C. Stegerman <flx@obfusk.net>
+//  Date        : 2020-07-13
+//
+//  Copyright   : Copyright (C) 2020  Felix C. Stegerman
+//  Version     : v0.1.1
+//  License     : AGPLv3+
+//
+//  --                                                          ; }}}1
+
 "use strict";
 $(document).ready(() => {
 
@@ -135,7 +147,6 @@ $(".clear-input").each((i, e) => $(e).click(() => {
   $("input", $(e).parents(".input-group")).val("").focus()
 }))
 
-// TODO
 $("#romaji-convert").click(() =>
   $("#romaji").val(romajiToHiragana($("#romaji").val()))
 )
@@ -143,3 +154,5 @@ $("#romaji-convert").click(() =>
 $("#romaji-modal").on("shown.bs.modal", () => $("#romaji").focus())
 
 })
+
+// vim: set tw=70 sw=2 sts=2 et fdm=marker :
