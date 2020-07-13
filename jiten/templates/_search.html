@@ -2,7 +2,7 @@
 
   File        : templates/_search.html
   Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-  Date        : 2020-07-12
+  Date        : 2020-07-13
 
   Copyright   : Copyright (C) 2020  Felix C. Stegerman
   Version     : v0.0.1
@@ -39,7 +39,7 @@
             </button>
           </div>
         </div>
-        <button type="submit" class="btn btn-primary mb-2">Search JMDict</button>
+        <button class="btn btn-primary mb-2">Search JMDict</button>
       </div>
       <div class="form-group mb-0">
         <fieldset class="d-inline border p-2 pl-3">
@@ -144,7 +144,7 @@
             </button>
           </div>
         </div>
-        <button type="submit" class="btn btn-primary mb-2">Search Kanji</button>
+        <button class="btn btn-primary mb-2">Search Kanji</button>
       </div>
       <div class="form-group mb-0">
         <fieldset class="d-inline border p-2 pl-3">
@@ -176,6 +176,11 @@
       <div class="form-group form-inline justify-content-end mb-0">
         <label class="sr-only" for="stroke-query">Query (Regex)</label>
         <div class="input-group mr-sm-2 mb-2 flex-grow-1">
+          <div class="input-group-prepend">
+            <button type="button" title="あ↔ア"
+                class="jap convert-kana input-group-text btn btn-dark"
+              >あ</button>
+          </div>
           <input type="text" class="jap form-control"
             {% if af %}autofocus{% endif %}
             id="stroke-query" name="query" value="{{ query }}"
@@ -195,7 +200,7 @@
             </button>
           </div>
         </div>
-        <button type="submit" class="btn btn-primary mb-2">筆順を示す</button>
+        <button class="btn btn-primary mb-2">筆順を示す</button>
       </div>
     </form>
   </div>

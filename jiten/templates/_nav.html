@@ -72,10 +72,30 @@
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
-      <form class="modal-body form-inline justify-content-end"
-          action="javascript:void(0);">
-        <input type="text" id="romaji"
-          class="jap form-control flex-grow-1 mr-sm-2 mb-2 mb-lg-0" />
+      <form action="javascript:void(0);"
+          class="modal-body form-inline justify-content-end">
+        <div class="input-group flex-grow-1 mr-sm-2 mb-2 mb-lg-0">
+          <div class="input-group-prepend">
+            <button type="button" title="あ↔ア"
+                class="jap convert-kana input-group-text btn btn-dark"
+              >あ</button>
+          </div>
+          <input type="text" id="romaji" class="jap form-control" />
+          <div class="input-group-append">
+            <button type="button"
+                class="clear-input input-group-text btn btn-dark">
+              <!-- https://www.flaticon.com/free-icon/close-button_61155 -->
+              <svg xmlns="http://www.w3.org/2000/svg"
+                style="width: 0.7rem; height: 0.7rem;"
+                viewbox="0 0 357 357" focusable="false">
+                <title>clear</title>
+                <polygon
+                  points="357,35.7 321.3,0 178.5,142.8 35.7,0 0,35.7 142.8,178.5 0,321.3 35.7,357 178.5,214.2 321.3,357 357,321.3 214.2,178.5"
+                  fill="currentColor" />
+              </svg>
+            </button>
+          </div>
+        </div>
         <button id="romaji-convert" class="btn btn-primary">Convert</button>
       </form>
     </div>

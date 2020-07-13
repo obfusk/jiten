@@ -37,10 +37,10 @@ const romajiToHiragana = t => {                               //  {{{1
   const r = [], rx = RegExp(RORX, "uy")
   let m
   while (m = rx.exec(t)) {
-    if (m[5] || m[4]) {
-      r.push(m[5] || (m[4] == "-" ? "ー" : "ん"))
+    if (m[1] || m[5]) {
+      r.push(m[5] || ROSP[m[1] == "n" ? "nn" : m[1]])
     } else {
-      let s = "", x = m[3] ? ROMAP[m[3]] : m[0]
+      let s = "", x = m[2] ? ROMP[m[2]] : m[0]
       if (x.length == 1) {
         s = HIRAGANA[ROWS.indexOf(x)]
       } else if (x.length == 3 && x.slice(-2, -1) == "y") {
@@ -119,15 +119,17 @@ const KATAKANA = `
                                                               //  }}}1
 
 const ROWS  = "aiueo", COLS = "-xvkgsztd-nhbpfmy-rw"
-const ROMAP = {
+const ROMP  = {
   shi:  "si",  ji:  "zi", chi:  "ti", tsu: "tu",
   sha: "sya", sho: "syo", shu: "syu",
   cha: "tya", cho: "tyo", chu: "tyu",
    ja: "zya",  jo: "zyo",  ju: "zyu",
 }
-const RORX  = "(([" + COLS.replace(/-/g, "") + "])\\2?)?y?" +
-              "[" + ROWS + "]" +
-              "|(" + Object.keys(ROMAP).join("|") + ")|(nn|-)|(.)"
+const ROSP  = { nn: "ん", "-": "ー" }                         //  TODO
+const RORX  = "(" + Object.keys(ROSP).join("|") + "|n\\b)|" +
+              "(" + Object.keys(ROMP).join("|") + ")|" +
+              "(([" + COLS.replace(/-/g, "") + "])\\4?)?y?" +
+              "[" + ROWS + "]|(.)"
 
 window.JITEN = {
   convertKana, hiraganaToKatakana, katakanaToHiragana,
