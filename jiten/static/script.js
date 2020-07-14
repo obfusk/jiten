@@ -2,7 +2,7 @@
 //
 //  File        : static/script.js
 //  Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-//  Date        : 2020-07-13
+//  Date        : 2020-07-14
 //
 //  Copyright   : Copyright (C) 2020  Felix C. Stegerman
 //  Version     : v0.1.1
@@ -32,7 +32,7 @@ const katakanaToHiragana = t => {
   return [...t].map(c => HIRAGANA[KATAKANA.indexOf(c)] || c).join("")
 }
 
-// TODO: n vs nn, ヴャ, 。?!
+// TODO: n(n), ヴャ, punctuation?!
 const romajiToHiragana = t => {                               //  {{{1
   const r = [], rx = RegExp(RORX, "uy")
   let m
@@ -118,6 +118,8 @@ const KATAKANA = `
 `.split(/\s+/).filter(x => x)
                                                               //  }}}1
 
+const esc   = s => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+
 const ROWS  = "aiueo", COLS = "-xvkgsztd-nhbpfmy-rw"
 const ROMP  = {
   shi:  "si",  ji:  "zi", chi:  "ti", tsu: "tu",
@@ -125,11 +127,17 @@ const ROMP  = {
   cha: "tya", cho: "tyo", chu: "tyu",
    ja: "zya",  jo: "zyo",  ju: "zyu",
 }
-const ROSP  = { nn: "ん", "-": "ー" }                         //  TODO
-const RORX  = "(" + Object.keys(ROSP).join("|") + "|n\\b)|" +
+const ROSP  = { nn:"ん", "-":"ー", "~":"〜", ",":"、", ".":"。",
+                "?":"？", "!":"！", "(":"（", ")":"）" }      //  TODO
+const RORX  = "(" + Object.keys(ROSP).map(esc).join("|") + "|n\\b)|" +
               "(" + Object.keys(ROMP).join("|") + ")|" +
               "(([" + COLS.replace(/-/g, "") + "])\\4?)?y?" +
               "[" + ROWS + "]|(.)"
+
+const selection = i => {
+  const v = i.val(), a = i[0].selectionStart, b = i[0].selectionEnd
+  return a == b ? ["", v, ""] : [v.slice(0, a), v.slice(a, b), v.slice(b)]
+}
 
 window.JITEN = {
   convertKana, hiraganaToKatakana, katakanaToHiragana,
@@ -138,16 +146,22 @@ window.JITEN = {
 
 $(".convert-kana").each((i, e) => $(e).click(() => {
   const i = $("input", $(e).parents(".input-group"))
-  const v = i.val(), a = i[0].selectionStart, b = i[0].selectionEnd
-  const w = a == b ? convertKana(v)
-          : v.slice(0, a) + convertKana(v.slice(a, b)) + v.slice(b)
-  i.val(w).focus()
+  const [b, v, a] = selection(i)
+  i.val(b + convertKana(v) + a).focus()
 }))
 
 $(".clear-input").each((i, e) => $(e).click(() => {
   $(".clear-input-checked", $(e).parents("form")).prop("checked", true)
   $("input", $(e).parents(".input-group")).val("").focus()
 }))
+
+if (navigator.clipboard) {
+  $(".copy-input").each((i, e) => $(e).click(() => {
+    const i = $("input", $(e).parents(".input-group"))
+    navigator.clipboard.writeText(selection(i)[1])
+      .catch(r => console.error("clipboard.writeText() failed:", r))
+  }).show())
+}
 
 $("#romaji-convert").click(() =>
   $("#romaji").val(romajiToHiragana($("#romaji").val()))

@@ -1,3 +1,15 @@
+{# <!--
+
+  File        : templates/_nav.html
+  Maintainer  : Felix C. Stegerman <flx@obfusk.net>
+  Date        : 2020-07-14
+
+  Copyright   : Copyright (C) 2020  Felix C. Stegerman
+  Version     : v0.1.1
+  License     : AGPLv3+
+
+--> #}
+{% from "_macros.html" import input with context %}
 <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-primary">
   <a class="jap navbar-brand" href="/">辞典</a>
   <button class="navbar-toggler" type="button"
@@ -61,7 +73,6 @@
       href="{{ toggle }}">{{ "Light" if dark else "Dark" }} Mode</a>
   </div>
 </nav>
-
 <div class="modal" tabindex="-1" role="dialog" id="romaji-modal">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
@@ -74,28 +85,8 @@
       </div>
       <form action="javascript:void(0);"
           class="modal-body form-inline justify-content-end">
-        <div class="input-group flex-grow-1 mr-sm-2 mb-2 mb-lg-0">
-          <div class="input-group-prepend">
-            <button type="button" title="あ↔ア"
-                class="jap convert-kana input-group-text btn btn-dark"
-              >あ</button>
-          </div>
-          <input type="text" id="romaji" class="jap form-control" />
-          <div class="input-group-append">
-            <button type="button"
-                class="clear-input input-group-text btn btn-dark">
-              <!-- https://www.flaticon.com/free-icon/close-button_61155 -->
-              <svg xmlns="http://www.w3.org/2000/svg"
-                style="width: 0.7rem; height: 0.7rem;"
-                viewbox="0 0 357 357" focusable="false">
-                <title>clear</title>
-                <polygon
-                  points="357,35.7 321.3,0 178.5,142.8 35.7,0 0,35.7 142.8,178.5 0,321.3 35.7,357 178.5,214.2 321.3,357 357,321.3 214.2,178.5"
-                  fill="currentColor" />
-              </svg>
-            </button>
-          </div>
-        </div>
+        <label class="sr-only" for="romaji">Romaji</label>
+        {{ input("romaji", "_", "", "", False, True, "2 mb-lg-0") }}
         <button id="romaji-convert" class="btn btn-primary">Convert</button>
       </form>
     </div>

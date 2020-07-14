@@ -4,10 +4,10 @@
 
     File        : templates/index.html
     Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-    Date        : 2020-07-12
+    Date        : 2020-07-14
 
     Copyright   : Copyright (C) 2020  Felix C. Stegerman
-    Version     : v0.0.1
+    Version     : v0.1.1
     License     : AGPLv3+
 
   -->
@@ -16,14 +16,14 @@
     <title>jiten</title>
   </head>
   <body>
-    {% import "_search.html" as search %}
+    {% from "_search.html" import jmdict, kanji, stroke with context %}
     {% include "_nav.html" %}
     <div class="container">
-      {{ search.jmdict(LANGS, langs) }}
+      {{ jmdict(LANGS, langs) }}
       <br/>
-      {{ search.kanji(af = False) }}
+      {{ kanji(af = False) }}
       <br/>
-      {{ search.stroke(af = False) }}
+      {{ stroke(af = False) }}
     </div>
     {% include "_footer.html" %}
   </body>

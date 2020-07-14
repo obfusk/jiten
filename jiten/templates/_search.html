@@ -2,206 +2,120 @@
 
   File        : templates/_search.html
   Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-  Date        : 2020-07-13
+  Date        : 2020-07-14
 
   Copyright   : Copyright (C) 2020  Felix C. Stegerman
-  Version     : v0.0.1
+  Version     : v0.1.1
   License     : AGPLv3+
 
 --> #}
+{% from "_macros.html" import search with context %}
 {% macro jmdict(LANGS, langs, query = "", af = True) %}
-  <div class="card">
-    <form class="card-body" action="/jmdict">
-      <div class="form-group form-inline justify-content-end mb-0">
-        <label class="sr-only" for="jmdict-query">Query (Regex)</label>
-        <div class="input-group mr-sm-2 mb-2 flex-grow-1">
-          <div class="input-group-prepend">
-            <button type="button" title="あ↔ア"
-                class="jap convert-kana input-group-text btn btn-dark"
-              >あ</button>
-          </div>
-          <input type="text" class="jap form-control"
-            {% if af %}autofocus{% endif %}
-            id="jmdict-query" name="query" value="{{ query }}" required
-            placeholder="regex to match japanese/english/dutch/german" />
-          <div class="input-group-append">
-            <button type="button"
-                class="clear-input input-group-text btn btn-dark">
-              <!-- https://www.flaticon.com/free-icon/close-button_61155 -->
-              <svg xmlns="http://www.w3.org/2000/svg"
-                style="width: 0.7rem; height: 0.7rem;"
-                viewbox="0 0 357 357" focusable="false">
-                <title>clear</title>
-                <polygon
-                  points="357,35.7 321.3,0 178.5,142.8 35.7,0 0,35.7 142.8,178.5 0,321.3 35.7,357 178.5,214.2 321.3,357 357,321.3 214.2,178.5"
-                  fill="currentColor" />
-              </svg>
-            </button>
-          </div>
-        </div>
-        <button class="btn btn-primary mb-2">Search JMDict</button>
-      </div>
-      <div class="form-group mb-0">
-        <fieldset class="d-inline border p-2 pl-3">
-          <legend>options</legend>
-          <div class="nowrap">
-            <div class="form-check form-check-inline">
-              <input type="checkbox"
-                class="form-check-input clear-input-checked"
-                id="jmdict-word" name="word" value="yes"
-                {% if not query %}checked{% endif %} />
-              <label class="form-check-label" for="jmdict-word"
-                title="\b...\b">word</label>
-            </div>
-            <div class="form-check form-check-inline">
-              <input type="checkbox" class="form-check-input"
-                id="jmdict-1stword" name="1stword" value="yes" />
-              <label class="form-check-label" for="jmdict-1stword"
-                title="^...\b">1st word</label>
-            </div>
-            <div class="form-check form-check-inline">
-              <input type="checkbox" class="form-check-input"
-                id="jmdict-exact" name="exact" value="yes" />
-              <label class="form-check-label" for="jmdict-exact"
-                title="^...$">exact</label>
-            </div>
-          </div>
-          &nbsp; &nbsp;
-          <div class="nowrap">
-            <div class="form-check form-check-inline">
-              <input type="checkbox" class="form-check-input"
-                id="jmdict-noun" name="noun" value="yes"
-                {% if request.args.get("noun") == "yes" %}checked{% endif %} />
-              <label class="form-check-label" for="jmdict-noun"
-                title="select nouns">noun</label>
-            </div>
-            <div class="form-check form-check-inline">
-              <input type="checkbox" class="form-check-input"
-                id="jmdict-verb" name="verb" value="yes"
-                {% if request.args.get("verb") == "yes" %}checked{% endif %} />
-              <label class="form-check-label" for="jmdict-verb"
-                title="select verbs">verb</label>
-            </div>
-            <div class="form-check form-check-inline">
-              <input type="checkbox" class="form-check-input"
-                id="jmdict-prio" name="prio" value="yes"
-                {% if request.args.get("prio") == "yes" %}checked{% endif %} />
-              <label class="form-check-label" for="jmdict-prio"
-                title="select priority entries">prio</label>
-            </div>
-          </div>
-        </fieldset>
-        <fieldset class="d-inline border p-2 pl-3">
-          <legend>lang</legend>
-          {% for l in LANGS %}
-            <div class="form-check form-check-inline">
-              <input type="checkbox" class="form-check-input"
-                id="jmdict-{{ l }}" name="lang" value="{{ l }}"
-                {% if l in langs %}checked{% endif %} />
-              <label class="form-check-label"
-                for="jmdict-{{ l }}">{{ l }}</label>
-            </div>
-          {% endfor %}
-          &nbsp; &nbsp;
+  {% call search("/jmdict", "Query (Regex)", "Search JMDict",
+                 "jmdict-query", "query", query,
+                 "regex to match japanese/english/dutch/german", af) %}
+    <div class="form-group mb-0">
+      <fieldset class="d-inline border p-2 pl-3">
+        <legend>options</legend>
+        <div class="nowrap">
           <div class="form-check form-check-inline">
-            <input type="checkbox" class="form-check-input"
-              id="jmdict-save" name="save" value="yes" />
-            <label class="form-check-label"
-              for="jmdict-save">remember</label>
-          </div>
-        </fieldset>
-      </div>
-    </form>
-  </div>
-{% endmacro %}
-{% macro kanji(query = "", af = True) %}
-  <div class="card">
-    <form class="card-body" action="/kanji">
-      <div class="form-group form-inline justify-content-end mb-0">
-        <label class="sr-only" for="kanji-query">Query (Regex)</label>
-        <div class="input-group mr-sm-2 mb-2 flex-grow-1">
-          <div class="input-group-prepend">
-            <button type="button" title="あ↔ア"
-                class="jap convert-kana input-group-text btn btn-dark"
-              >あ</button>
-          </div>
-          <input type="text" class="jap form-control"
-            {% if af %}autofocus{% endif %}
-            id="kanji-query" name="query" value="{{ query }}"
-            placeholder="kanji or regex to match kana/english" required />
-          <div class="input-group-append">
-            <button type="button"
-                class="clear-input input-group-text btn btn-dark">
-              <!-- https://www.flaticon.com/free-icon/close-button_61155 -->
-              <svg xmlns="http://www.w3.org/2000/svg"
-                style="width: 0.7rem; height: 0.7rem;"
-                viewbox="0 0 357 357" focusable="false">
-                <title>clear</title>
-                <polygon
-                  points="357,35.7 321.3,0 178.5,142.8 35.7,0 0,35.7 142.8,178.5 0,321.3 35.7,357 178.5,214.2 321.3,357 357,321.3 214.2,178.5"
-                  fill="currentColor" />
-              </svg>
-            </button>
-          </div>
-        </div>
-        <button class="btn btn-primary mb-2">Search Kanji</button>
-      </div>
-      <div class="form-group mb-0">
-        <fieldset class="d-inline border p-2 pl-3">
-          <legend>options</legend>
-          <div class="form-check form-check-inline">
-            <input type="checkbox" class="form-check-input"
-              id="kanji-word" name="word" value="yes" />
-            <label class="form-check-label" for="kanji-word"
+            <input type="checkbox"
+              class="form-check-input clear-input-checked"
+              id="jmdict-word" name="word" value="yes"
+              {% if not query %}checked{% endif %} />
+            <label class="form-check-label" for="jmdict-word"
               title="\b...\b">word</label>
           </div>
           <div class="form-check form-check-inline">
             <input type="checkbox" class="form-check-input"
-              id="kanji-exact" name="exact" value="yes" />
-            <label class="form-check-label" for="kanji-exact"
+              id="jmdict-1stword" name="1stword" value="yes" />
+            <label class="form-check-label" for="jmdict-1stword"
+              title="^...\b">1st word</label>
+          </div>
+          <div class="form-check form-check-inline">
+            <input type="checkbox" class="form-check-input"
+              id="jmdict-exact" name="exact" value="yes" />
+            <label class="form-check-label" for="jmdict-exact"
               title="^...$">exact</label>
           </div>
-        </fieldset>
-      </div>
-      <br/>
-      <div>
-        To search by SKIP code use e.g. <code>+s 2-3-3</code>.
-      </div>
-    </form>
-  </div>
-{% endmacro %}
-{% macro stroke(query = "", af = True) %}
-  <div class="card">
-    <form class="card-body" action="/stroke">
-      <div class="form-group form-inline justify-content-end mb-0">
-        <label class="sr-only" for="stroke-query">Query (Regex)</label>
-        <div class="input-group mr-sm-2 mb-2 flex-grow-1">
-          <div class="input-group-prepend">
-            <button type="button" title="あ↔ア"
-                class="jap convert-kana input-group-text btn btn-dark"
-              >あ</button>
+        </div>
+        &nbsp; &nbsp;
+        <div class="nowrap">
+          <div class="form-check form-check-inline">
+            <input type="checkbox" class="form-check-input"
+              id="jmdict-noun" name="noun" value="yes"
+              {% if request.args.get("noun") == "yes" %}checked{% endif %} />
+            <label class="form-check-label" for="jmdict-noun"
+              title="select nouns">noun</label>
           </div>
-          <input type="text" class="jap form-control"
-            {% if af %}autofocus{% endif %}
-            id="stroke-query" name="query" value="{{ query }}"
-            placeholder="漢字か仮名を入力" required />
-          <div class="input-group-append">
-            <button type="button"
-                class="clear-input input-group-text btn btn-dark">
-              <!-- https://www.flaticon.com/free-icon/close-button_61155 -->
-              <svg xmlns="http://www.w3.org/2000/svg"
-                style="width: 0.7rem; height: 0.7rem;"
-                viewbox="0 0 357 357" focusable="false">
-                <title>clear</title>
-                <polygon
-                  points="357,35.7 321.3,0 178.5,142.8 35.7,0 0,35.7 142.8,178.5 0,321.3 35.7,357 178.5,214.2 321.3,357 357,321.3 214.2,178.5"
-                  fill="currentColor" />
-              </svg>
-            </button>
+          <div class="form-check form-check-inline">
+            <input type="checkbox" class="form-check-input"
+              id="jmdict-verb" name="verb" value="yes"
+              {% if request.args.get("verb") == "yes" %}checked{% endif %} />
+            <label class="form-check-label" for="jmdict-verb"
+              title="select verbs">verb</label>
+          </div>
+          <div class="form-check form-check-inline">
+            <input type="checkbox" class="form-check-input"
+              id="jmdict-prio" name="prio" value="yes"
+              {% if request.args.get("prio") == "yes" %}checked{% endif %} />
+            <label class="form-check-label" for="jmdict-prio"
+              title="select priority entries">prio</label>
           </div>
         </div>
-        <button class="btn btn-primary mb-2">筆順を示す</button>
-      </div>
-    </form>
-  </div>
+      </fieldset>
+      <fieldset class="d-inline border p-2 pl-3">
+        <legend>lang</legend>
+        {% for l in LANGS %}
+          <div class="form-check form-check-inline">
+            <input type="checkbox" class="form-check-input"
+              id="jmdict-{{ l }}" name="lang" value="{{ l }}"
+              {% if l in langs %}checked{% endif %} />
+            <label class="form-check-label"
+              for="jmdict-{{ l }}">{{ l }}</label>
+          </div>
+        {% endfor %}
+        &nbsp; &nbsp;
+        <div class="form-check form-check-inline">
+          <input type="checkbox" class="form-check-input"
+            id="jmdict-save" name="save" value="yes" />
+          <label class="form-check-label"
+            for="jmdict-save">remember</label>
+        </div>
+      </fieldset>
+    </div>
+  {% endcall %}
+{% endmacro %}
+{% macro kanji(query = "", af = True) %}
+  {% call search("/kanji", "Query (Regex)", "Search Kanji",
+                 "kanji-query", "query", query,
+                 "kanji or regex to match kana/english", af) %}
+    <div class="form-group mb-0">
+      <fieldset class="d-inline border p-2 pl-3">
+        <legend>options</legend>
+        <div class="form-check form-check-inline">
+          <input type="checkbox" class="form-check-input"
+            id="kanji-word" name="word" value="yes" />
+          <label class="form-check-label" for="kanji-word"
+            title="\b...\b">word</label>
+        </div>
+        <div class="form-check form-check-inline">
+          <input type="checkbox" class="form-check-input"
+            id="kanji-exact" name="exact" value="yes" />
+          <label class="form-check-label" for="kanji-exact"
+            title="^...$">exact</label>
+        </div>
+      </fieldset>
+    </div>
+    <br/>
+    <div>
+      To search by SKIP code use e.g. <code>+s 2-3-3</code>.
+    </div>
+  {% endcall %}
+{% endmacro %}
+{% macro stroke(query = "", af = True) %}
+  {% call search("/stroke", "Text", "筆順を示す",
+                 "stroke-query", "query", query,
+                 "漢字か仮名を入力", af) %}
+  {% endcall %}
 {% endmacro %}

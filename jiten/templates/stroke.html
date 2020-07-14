@@ -4,10 +4,10 @@
 
     File        : templates/stroke.html
     Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-    Date        : 2020-07-12
+    Date        : 2020-07-14
 
     Copyright   : Copyright (C) 2020  Felix C. Stegerman
-    Version     : v0.0.1
+    Version     : v0.1.1
     License     : AGPLv3+
 
   -->
@@ -19,7 +19,7 @@
     </style>
   </head>
   <body>
-    {% import "_search.html" as search %}
+    {% from "_search.html" import stroke with context %}
     {% include "_nav.html" %}
     <div class="container">
       <div class="card text-center">
@@ -32,7 +32,7 @@
         </div>
       </div>
       <br/>
-      {{ search.stroke(query) }}
+      {{ stroke(query) }}
       <br/>
       <div class="card">
         <div class="card-body p-0">
