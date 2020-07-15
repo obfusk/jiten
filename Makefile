@@ -12,10 +12,10 @@ H5VCMD  := html5validator --show-warnings --log INFO --no-langdetect
 .PHONY: all test ci-test clean cleanup validate-css tmp-html
 .PHONY: check-html validate-html validate-html-curl validate-html-py
 
-all:
+all: ext
 	python3 -m jiten.cli setup
 
-test:
+test: all
 	python3 -m jiten.app    --verbose --doctest
 	python3 -m jiten.cli    --verbose  _doctest
 	python3 -m jiten.freq   --verbose --doctest
@@ -72,11 +72,10 @@ validate-html-curl:
 validate-html-py:
 	$(H5VCMD) --root tmp-html/
 
-.PHONY: _ext _package _publish
+.PHONY: ext _package _publish
 
-_ext: cleanup
-	python3 setup.py build_ext
-	ln -sr "$$( find build -name '_sqlite3_pcre.*.so' | head -1 )" jiten/
+ext:
+	python3 setup.py build_ext -i
 
 _package:
 	python3 setup.py sdist bdist_wheel
