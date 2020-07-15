@@ -32,6 +32,7 @@ cleanup:
 	find -name '*~' -delete -print
 	rm -fr jiten/__pycache__/ tmp-html/
 	rm -fr build/ dist/ jiten.egg-info/
+	rm -f jiten/_sqlite3_pcre.*.so
 
 validate-css:
 	curl -sF "file=@jiten/static/style.css;type=text/css" \
@@ -71,7 +72,11 @@ validate-html-curl:
 validate-html-py:
 	$(H5VCMD) --root tmp-html/
 
-.PHONY: _package _publish
+.PHONY: _ext _package _publish
+
+_ext: cleanup
+	python3 setup.py build_ext
+	ln -sr "$$( find build -name '_sqlite3_pcre.*.so' | head -1 )" jiten/
 
 _package:
 	python3 setup.py sdist bdist_wheel
@@ -79,4 +84,4 @@ _package:
 
 _publish: cleanup _package
 	read -r -p "Are you sure? "; \
-	[[ "$$REPLY" == [Yy]* ]] && twine upload dist/*
+	[[ "$$REPLY" == [Yy]* ]] && twine upload dist/*.tar.gz

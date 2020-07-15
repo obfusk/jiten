@@ -6,6 +6,11 @@ import jiten.cli
 long_description    = Path(__file__).with_name("README.md") \
                       .read_text(encoding = "utf8")
 
+mod_sqlite3_pcre = setuptools.Extension(
+  "jiten._sqlite3_pcre", ["sqlite3-pcre.c"],
+  libraries = "pcre sqlite3".split()
+)
+
 setuptools.setup(
   name              = "jiten",
   url               = "https://github.com/obfusk/jiten",
@@ -49,4 +54,5 @@ setuptools.setup(
   scripts           = ["bin/jiten"],
   python_requires   = ">=3.5",
   install_requires  = ["Flask", "click>=6.0"],
+  ext_modules       = [mod_sqlite3_pcre],
 )

@@ -6,4 +6,5 @@ __pycache__
 /dist
 /jiten.egg-info
 
+/jiten/_sqlite3_pcre.*.so
 /tmp-html

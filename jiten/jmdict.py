@@ -5,10 +5,10 @@
 #
 # File        : jiten/jmdict.py
 # Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-# Date        : 2020-07-12
+# Date        : 2020-07-15
 #
 # Copyright   : Copyright (C) 2020  Felix C. Stegerman
-# Version     : v0.1.0
+# Version     : v0.1.1
 # License     : AGPLv3+
 #
 # --                                                            ; }}}1
@@ -161,7 +161,7 @@ import click
 
 from . import freq as F
 from . import misc as M
-from .sql import sqlite_do
+from .sql import sqlite_do, load_pcre_extension
 
 DBVERSION     = 2 # NB: update this when data/schema changes
 SQLITE_FILE   = M.resource_path("res/jmdict.sqlite3")
@@ -466,23 +466,21 @@ def search(q, langs = [LANGS[0]], max_results = None,           # {{{1
           {}
         """.format(fltr, limit), ("%"+q+"%",)*2)              # safe!
       else:
-        rx    = re.compile(q, re.I | re.M)
-        mat   = lambda x: rx.search(x) is not None
+        load_pcre_extension(c.connection)
         query = ("""
           SELECT rank, seq FROM (
-              SELECT entry FROM kanji WHERE matches(elem)
+              SELECT entry FROM kanji WHERE elem REGEXP :re
             UNION
-              SELECT entry FROM reading WHERE matches(elem)
+              SELECT entry FROM reading WHERE elem REGEXP :re
             UNION
               SELECT entry FROM sense WHERE
-                lang IN ({}) AND matches(gloss)
+                lang IN ({}) AND gloss REGEXP :re
           )
           INNER JOIN entry ON seq = entry
           {}
           ORDER BY prio DESC, rank ASC, seq ASC
           {}
-        """.format(lang, fltr, limit),)                       # safe!
-        c.connection.create_function("matches", 1, mat)
+        """.format(lang, fltr, limit), dict(re = M.q2rx(q)))  # safe!
       for r, seq in [ tuple(r) for r in c.execute(*query) ]:  # eager!
         yield load_entry(c, seq), fix_rank(r)
                                                                 # }}}1

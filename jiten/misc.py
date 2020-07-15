@@ -5,10 +5,10 @@
 #
 # File        : jiten/misc.py
 # Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-# Date        : 2020-07-12
+# Date        : 2020-07-15
 #
 # Copyright   : Copyright (C) 2020  Felix C. Stegerman
-# Version     : v0.0.1
+# Version     : v0.1.1
 # License     : AGPLv3+
 #
 # --                                                            ; }}}1
@@ -41,6 +41,8 @@ True
 """                                                             # }}}1
 
 import itertools, os, sys
+
+class RegexError(RuntimeError): pass
 
 OKPUNC      = "々"
 
@@ -78,6 +80,9 @@ def process_query(q, word, exact, fstwd):
   if fstwd: return "^"   + q + "\\b"
   if word : return "\\b" + q + "\\b"
   return q
+
+def q2rx(q):
+  return "(?im)" + q
 
 if __name__ == "__main__":
   if "--doctest" in sys.argv:

@@ -5,10 +5,10 @@
 #
 # File        : jiten/app.py
 # Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-# Date        : 2020-07-12
+# Date        : 2020-07-15
 #
 # Copyright   : Copyright (C) 2020  Felix C. Stegerman
-# Version     : v0.1.0
+# Version     : v0.1.1
 # License     : AGPLv3+
 #
 # --                                                            ; }}}1
@@ -20,7 +20,7 @@ Web interface.
 
 """                                                             # }}}1
 
-import os, re
+import os
 
 import jinja2
 
@@ -103,7 +103,7 @@ def r_jmdict():
   try:
     if query: data["results"] = J.search(query, **opts)
     return respond("jmdict.html", **data)
-  except re.error as e:
+  except M.RegexError as e:
     return "regex error: " + str(e)
 
 @app.route("/jmdict/by-freq")
@@ -130,7 +130,7 @@ def r_kanji():
       data["jmdict"]  = { k.char: J.search(k.char, max_results = MAXE)
                           for k in data["results"] }            # TODO
     return respond("kanji.html", **data)
-  except re.error as e:
+  except M.RegexError as e:
     return "regex error: " + str(e)
 
 @app.route("/kanji/by-freq")

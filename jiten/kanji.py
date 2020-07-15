@@ -5,10 +5,10 @@
 #
 # File        : jiten/kanji.py
 # Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-# Date        : 2020-07-12
+# Date        : 2020-07-15
 #
 # Copyright   : Copyright (C) 2020  Felix C. Stegerman
-# Version     : v0.1.0
+# Version     : v0.1.1
 # License     : AGPLv3+
 #
 # --                                                            ; }}}1
@@ -89,7 +89,7 @@ from collections import namedtuple
 import click
 
 from . import misc as M
-from .sql import sqlite_do
+from .sql import sqlite_do, load_pcre_extension
 
 SQLITE_FILE   = M.resource_path("res/kanji.sqlite3")
 KANJIDIC_FILE = M.resource_path("res/jmdict/kanjidic2.xml.gz")
@@ -214,20 +214,18 @@ def search(q, max_results = None, file = SQLITE_FILE):          # {{{1
           """.format(order, limit), (s,)):                    # safe!
         yield ent(r)
     else:
-      rx    = re.compile(q, re.I | re.M)
-      mat1  = lambda x: rx.search(x) is not None
-      mat2  = lambda x: rx.search(x.replace(".", "")
-                                   .replace("-", "")) is not None
-      c.connection.create_function("matches1", 1, mat1)
-      c.connection.create_function("matches2", 1, mat2)
+      load_pcre_extension(c.connection)
       for r in c.execute("""
-          SELECT * FROM entry
-            WHERE
-              matches1(on_) OR matches1(kun) OR matches1(nanori) OR
-              matches2(on_) OR matches2(kun) OR matches2(nanori) OR
-              matches1(meaning)
+          SELECT * FROM entry WHERE
+                            on_                        REGEXP :re OR
+                            kun                        REGEXP :re OR
+                            nanori                     REGEXP :re OR
+            replace(replace(on_   , '.', ''), '-', '') REGEXP :re OR
+            replace(replace(kun   , '.', ''), '-', '') REGEXP :re OR
+            replace(replace(nanori, '.', ''), '-', '') REGEXP :re OR
+                            meaning                    REGEXP :re
             {} {}
-          """.format(order, limit)):                          # safe!
+          """.format(order, limit), dict(re = M.q2rx(q))):    # safe!
         yield ent(r)
                                                                 # }}}1
 

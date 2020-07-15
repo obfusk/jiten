@@ -5,7 +5,7 @@
 #
 # File        : jiten/cli.py
 # Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-# Date        : 2020-07-12
+# Date        : 2020-07-15
 #
 # Copyright   : Copyright (C) 2020  Felix C. Stegerman
 # Version     : v0.1.1
@@ -391,6 +391,10 @@ def doctest(ctx):
   if doctest.testmod(verbose = ctx.obj["verbose"])[0]: ctx.exit(1)
 
 if __name__ == "__main__":
-  cli(prog_name = name)
+  try:
+    cli(prog_name = name)
+  except M.RegexError as e:
+    click.echo("regex error: " + str(e), err = True)
+    sys.exit(1)
 
 # vim: set tw=70 sw=2 sts=2 et fdm=marker :
