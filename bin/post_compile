@@ -1,2 +1,18 @@
 #!/bin/bash
+set -e
+
+PYTHON_VERSION="$(< runtime.txt)"
+export WORKSPACE_DIR="$(cd "$BIN_DIR"/.. || exit; pwd)/builds"
+
+if [ ! -e .heroku/python/_loadable-sqlite-extensions ]; then
+  touch   .heroku/python/_loadable-sqlite-extensions
+  rm -f   .heroku/python/bin/python
+  sed -i 's!figure --pre!figure --enable-loadable-sqlite-extensions --pre!' \
+    "$WORKSPACE_DIR"/runtimes/python3
+  "$WORKSPACE_DIR/runtimes/$PYTHON_VERSION" /app/.heroku/python/
+fi
+
+mkdir -p .heroku/vendor
+touch    .heroku/vendor/{jmdict,kanji}.sqlite3
+ln -srf  .heroku/vendor/{jmdict,kanji}.sqlite3 jiten/res/
 make
