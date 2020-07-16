@@ -2,7 +2,7 @@
 
     File        : README.md
     Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-    Date        : 2020-07-12
+    Date        : 2020-07-16
 
     Copyright   : Copyright (C) 2020  Felix C. Stegerman
     Version     : v0.1.1
@@ -78,6 +78,16 @@ $ jiten --help
 
 Python >= 3.5 + Flask + click.
 
+To build the (not yet optional) SQLite PCRE C extension: a C compiler
+(e.g. `gcc`/`clang`) and the `sqlite3` & `pcre` libraries & headers.
+
+### Debian/Ubuntu
+
+```bash
+$ apt install python3-dev build-essential libsqlite3-dev libpcre3-dev
+$ apt install python3-flask   # optional: Flask & click w/o pip
+```
+
 ## Installing
 
 ### Using pip
@@ -86,14 +96,28 @@ Python >= 3.5 + Flask + click.
 $ pip install jiten
 ```
 
-## Android
+### From git
 
-There's no app, but you can run the web interface locally (& off-line)
-on your android phone.  First, install [termux](https://termux.com/),
-then run:
+NB: this installs the latest development version, not the latest
+release.
 
 ```bash
-$ apt install python
+$ git clone https://github.com/obfusk/jiten.git
+$ cd jiten
+$ pip install -e .
+```
+
+NB: you may need to add e.g. `~/.local/bin` to your `$PATH` in order
+to run `jiten`.
+
+## Android
+
+There's no app (yet?), but you can run the web interface locally (&
+off-line) on your android phone.  First, install
+[termux](https://termux.com/), then run:
+
+```bash
+$ apt install clang python
 $ pip install jiten
 ```
 
