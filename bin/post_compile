@@ -1,18 +1,21 @@
 #!/bin/bash
 set -e
 
-PYTHON_VERSION="$(< runtime.txt)"
-export WORKSPACE_DIR="$(cd "$BIN_DIR"/.. || exit; pwd)/builds"
-
-if [ ! -e .heroku/python/_loadable-sqlite-extensions ]; then
-  touch   .heroku/python/_loadable-sqlite-extensions
-  rm -f   .heroku/python/bin/python
+# rebuild python if it's missing loadable sqlite extensions
+if  ! python3 -msysconfig | grep enable-loadable-sqlite-extensions \
+    > /dev/null; then
+  PYTHON_VERSION="$(< runtime.txt)"
+  export WORKSPACE_DIR="$(cd "$BIN_DIR"/.. || exit; pwd)/builds"
+  rm -f .heroku/python/bin/python   # prevent failing ln after build
   sed -i 's!figure --pre!figure --enable-loadable-sqlite-extensions --pre!' \
     "$WORKSPACE_DIR"/runtimes/python3
   "$WORKSPACE_DIR/runtimes/$PYTHON_VERSION" /app/.heroku/python/
 fi
 
+# cache DB
 mkdir -p .heroku/vendor
 touch    .heroku/vendor/{jmdict,kanji}.sqlite3
 ln -srf  .heroku/vendor/{jmdict,kanji}.sqlite3 jiten/res/
+
+# build .so & setup DB
 make
