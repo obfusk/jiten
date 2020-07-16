@@ -27,12 +27,12 @@ ci-test: test validate-css validate-html check-html
 
 clean: cleanup
 	rm -f jiten/res/*.sqlite3
+	rm -f jiten/_sqlite3_pcre.*.so
 
 cleanup:
 	find -name '*~' -delete -print
 	rm -fr jiten/__pycache__/ tmp-html/
 	rm -fr build/ dist/ jiten.egg-info/
-	rm -f jiten/_sqlite3_pcre.*.so
 
 validate-css:
 	curl -sF "file=@jiten/static/style.css;type=text/css" \
