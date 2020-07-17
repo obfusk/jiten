@@ -1,15 +1,18 @@
 from pathlib import Path
-import setuptools
+import os, setuptools, sys
 
 import jiten.cli
 
+android_build       = os.environ.get("JITEN_ANDROID") == "yes"
 long_description    = Path(__file__).with_name("README.md") \
                       .read_text(encoding = "utf8")
-
-mod_sqlite3_pcre = setuptools.Extension(
+mod_sqlite3_pcre    = setuptools.Extension(
   "jiten._sqlite3_pcre", ["sqlite3-pcre.c"],
   libraries = "pcre sqlite3".split()
 )
+
+if android_build:
+  jiten.cli.cli("-v setup".split(), standalone_mode = False)
 
 setuptools.setup(
   name              = "jiten",
@@ -46,7 +49,8 @@ setuptools.setup(
   package_data      = { "jiten":
     [ "res/freq/" + x for x in """SOURCES base_aggregates.txt.nobom
                                   wordfreq_ck.utf8""".split() ] +
-    [ "res/jmdict/*." + x for x in "xml.gz html".split() ] +
+    [ "res/jmdict/*.html" ] +
+   ([ "res/jmdict/*.xml.gz" ] if not android_build else [ "res/*.sqlite3" ]) +
     [ "static/*." + x for x in "svg css js".split() ] +
     [ "static/font/*." + x for x in "ttf txt".split() ] +
     [ "templates/*.html" ]
