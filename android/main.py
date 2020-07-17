@@ -1,1 +1,2 @@
-from jiten.app import app
+from jiten.cli import cli
+cli("-v serve".split())
