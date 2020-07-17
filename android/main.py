@@ -16,4 +16,4 @@ if isinstance(getattr(sys.stdout, "buffer", None), str):
   sys.stdout = sys.stderr = LogFile()
 
 from jiten.cli import cli
-cli("-v serve".split())
+cli("-v serve -p 29483".split())

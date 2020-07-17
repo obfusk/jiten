@@ -20,6 +20,7 @@ android.arch = armeabi-v7a
 p4a.branch = develop
 p4a.local_recipes = ./p4a-recipes
 p4a.bootstrap = webview
+p4a.port = 29483
 
 [buildozer]
 log_level = 2
