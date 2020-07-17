@@ -1,0 +1,13 @@
+name: Android CI
+on: [push, pull_request, workflow_dispatch]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Install dependencies
+      run: |
+        sudo make -C android _setup_root
+        make -C android _setup_user
+    - name: Build
+      run: make -C android
