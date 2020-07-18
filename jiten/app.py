@@ -5,7 +5,7 @@
 #
 # File        : jiten/app.py
 # Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-# Date        : 2020-07-15
+# Date        : 2020-07-18
 #
 # Copyright   : Copyright (C) 2020  Felix C. Stegerman
 # Version     : v0.1.1
@@ -20,7 +20,7 @@ Web interface.
 
 """                                                             # }}}1
 
-import os
+import json, os
 
 import jinja2
 
@@ -37,6 +37,27 @@ name    = "jiten"
 HTTPS   = name.upper() + "_HTTPS"
 DOMAIN  = name.upper() + "_DOMAIN"
 app     = Flask(__name__)
+
+if "ANDROID_PRIVATE" in os.environ:
+  CONF = os.path.join(os.environ["ANDROID_PRIVATE"], "jiten-prefs.json")
+  def load_prefs():
+    try:
+      with open(CONF) as f: return json.load(f)
+    except (OSError, ValueError):
+      return {}
+  def save_prefs(p):
+    with open(CONF, "w") as f:
+      json.dump(p, f, indent = 2, sort_keys = True)
+      f.write("\n")
+  def get_pref(k, d = None):
+    return load_prefs().get(k, d)
+  def set_pref(k, v, _resp):
+    save_prefs({ **load_prefs(), k: v })
+else:
+  def get_pref(k, d = None):
+    return request.cookies.get(k, d)
+  def set_pref(k, v, resp):
+    resp.set_cookie(k, v, max_age = 3600*24*365*10)
 
 if os.environ.get(HTTPS) == "force":
   @app.before_request
@@ -68,12 +89,12 @@ def dark_toggle_link(dark):
   return url_for(request.endpoint, **dict(targs.lists()))
 
 def respond(template, **data):
-  langs, dark = get_langs(), arg_bool("dark", request.cookies.get("dark"))
+  langs, dark = get_langs(), arg_bool("dark", get_pref("dark"))
   if arg_bool("save"):
     k, v = ("dark", "yes" if dark else "no") \
            if "dark" in request.args else ("lang", " ".join(langs))
     resp = redirect(request.url.replace("&save=yes", ""))       # TODO
-    resp.set_cookie(k, v, max_age = 3600*24*365*10)
+    set_pref(k, v, resp)
     return resp
   return make_response(render_template(
     template, dark = dark, LANGS = J.LANGS, langs = langs,
@@ -81,7 +102,7 @@ def respond(template, **data):
   ))
 
 def get_langs():
-  ls = request.args.getlist("lang") or request.cookies.get("lang", "").split()
+  ls = request.args.getlist("lang") or get_pref("lang", "").split()
   return [ l for l in ls if l in J.LANGS ] or [J.LANGS[0]]
 
 def get_query_max():
