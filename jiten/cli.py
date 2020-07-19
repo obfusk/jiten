@@ -5,7 +5,7 @@
 #
 # File        : jiten/cli.py
 # Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-# Date        : 2020-07-15
+# Date        : 2020-07-19
 #
 # Copyright   : Copyright (C) 2020  Felix C. Stegerman
 # Version     : v0.1.1
@@ -39,7 +39,7 @@ CLI
 <BLANKLINE>
 
 >>> run("-v jmdict -m1 -w cat")
-DB v2 up to date.
+DB v3 up to date.
 query: \bcat\b
 <BLANKLINE>
 猫
@@ -59,7 +59,7 @@ seq# 1467640, freq# 2201, prio
 <BLANKLINE>
 
 >>> run("-v jmdict -m1 -w kat -l dut")
-DB v2 up to date.
+DB v3 up to date.
 query: \bkat\b
 <BLANKLINE>
 猫
@@ -76,7 +76,7 @@ seq# 1467640, freq# 2201, prio
 <BLANKLINE>
 
 >>> run("-v jmdict -m1 -w idiot")
-DB v2 up to date.
+DB v3 up to date.
 query: \bidiot\b
 <BLANKLINE>
 馬鹿 | 莫迦 | 破家 | 馬稼
@@ -97,7 +97,7 @@ seq# 1601260, freq# 2472, prio
 <BLANKLINE>
 
 >>> run("-v jmdict -m1 -e 誤魔化す")
-DB v2 up to date.
+DB v3 up to date.
 query: ^誤魔化す$
 <BLANKLINE>
 誤魔化す | 誤摩化す | 胡麻化す | 誤魔かす | 胡魔化す
@@ -115,7 +115,7 @@ seq# 1271480, freq# 10495, prio
 <BLANKLINE>
 
 >>> run("-v jmdict -m1 -w まる")
-DB v2 up to date.
+DB v3 up to date.
 query: \bまる\b
 <BLANKLINE>
 丸 | 円
@@ -137,7 +137,7 @@ seq# 1216250, freq# 63, prio
 <BLANKLINE>
 
 >>> run("-v jmdict -m1 -w cat --verb")
-DB v2 up to date.
+DB v3 up to date.
 query: \bcat\b
 <BLANKLINE>
 逆撫で | 逆なで
@@ -152,7 +152,7 @@ seq# 1227180, freq# 30500
 <BLANKLINE>
 
 >>> run("-v jmdict -m1 -w みる --noun")
-DB v2 up to date.
+DB v3 up to date.
 query: \bみる\b
 <BLANKLINE>
 海松 | 水松
@@ -167,7 +167,7 @@ seq# 1772790, freq# 75
 <BLANKLINE>
 
 >>> run("-v jmdict -m1 -w みる --noun --prio")
-DB v2 up to date.
+DB v3 up to date.
 query: \bみる\b
 <BLANKLINE>
 <BLANKLINE>
@@ -185,7 +185,7 @@ query: \bみる\b
 <BLANKLINE>
 
 >>> run("-v kanji -m1 -e cat")
-DB v2 up to date.
+DB v3 up to date.
 query: ^cat$
 <BLANKLINE>
 猫
@@ -198,7 +198,7 @@ query: ^cat$
 <BLANKLINE>
 
 >>> run("-v kanji -m1 -w 日")
-DB v2 up to date.
+DB v3 up to date.
 query: \b日\b
 <BLANKLINE>
 日
