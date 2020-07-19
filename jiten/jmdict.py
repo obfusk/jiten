@@ -5,7 +5,7 @@
 #
 # File        : jiten/jmdict.py
 # Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-# Date        : 2020-07-15
+# Date        : 2020-07-19
 #
 # Copyright   : Copyright (C) 2020  Felix C. Stegerman
 # Version     : v0.1.1
@@ -19,7 +19,7 @@ r"""
 JMDict.
 
 >>> DBVERSION
-2
+3
 
 >>> jmdict = parse_jmdict()
 >>> len(jmdict)
@@ -163,7 +163,7 @@ from . import freq as F
 from . import misc as M
 from .sql import sqlite_do, load_pcre_extension
 
-DBVERSION     = 2 # NB: update this when data/schema changes
+DBVERSION     = 3 # NB: update this when data/schema changes
 SQLITE_FILE   = M.resource_path("res/jmdict.sqlite3")
 JMDICT_FILE   = M.resource_path("res/jmdict/jmdict.xml.gz")
 
@@ -331,6 +331,9 @@ def jmdict2sqldb(data, file = SQLITE_FILE):                     # {{{1
           c.execute("INSERT INTO kanji VALUES (?,?,?,?,?)",
                     (e.seq, k.elem, "".join(k.chars),
                      "\n".join(k.info), k.prio))
+        for k in e.chars():
+          c.execute("INSERT INTO kanji_code VALUES (?,?)",
+                    (e.seq, ord(k)))
         for r in e.reading:
           c.execute("INSERT INTO reading VALUES (?,?,?,?,?)",
                     (e.seq, r.elem, "\n".join(r.restr),
@@ -346,6 +349,7 @@ def jmdict2sqldb(data, file = SQLITE_FILE):                     # {{{1
 JMDICT_CREATE_SQL = """
   DROP TABLE IF EXISTS entry;
   DROP TABLE IF EXISTS kanji;
+  DROP TABLE IF EXISTS kanji_code;
   DROP TABLE IF EXISTS reading;
   DROP TABLE IF EXISTS sense;
   DROP TABLE IF EXISTS version;
@@ -364,6 +368,11 @@ JMDICT_CREATE_SQL = """
     chars TEXT,
     info TEXT,
     prio BOOLEAN,
+    FOREIGN KEY(entry) REFERENCES entry(seq)
+  );
+  CREATE TABLE kanji_code(
+    entry INTEGER,
+    code INTEGER,
     FOREIGN KEY(entry) REFERENCES entry(seq)
   );
   CREATE TABLE reading(
@@ -390,6 +399,7 @@ JMDICT_CREATE_SQL = """
   INSERT INTO version VALUES ({});
 
   CREATE INDEX idx_kanji ON kanji (entry);
+  CREATE INDEX idx_kanji_code ON kanji_code (code);
   CREATE INDEX idx_reading ON reading (entry);
   CREATE INDEX idx_sense ON sense (entry);
 """.format(DBVERSION)                                           # }}}1
@@ -453,18 +463,28 @@ def search(q, langs = [LANGS[0]], max_results = None,           # {{{1
       lang  = ",".join( "'" + l + "'" for l in langs if l in LANGS )
       limit = "LIMIT " + str(int(max_results)) if max_results else ""
       fltr  = nvp(noun, verb, prio)
-      if all( M.iscjk(c) for c in q ):
+      if len(q) == 1 and M.iskanji(q):
         query = ("""
           SELECT rank, seq FROM (
-              SELECT entry FROM kanji WHERE elem LIKE ?
-            UNION
-              SELECT entry FROM reading WHERE elem LIKE ?
+            SELECT entry FROM kanji_code WHERE code = ?
           )
           INNER JOIN entry ON seq = entry
           {}
           ORDER BY prio DESC, rank ASC, seq ASC
           {}
-        """.format(fltr, limit), ("%"+q+"%",)*2)              # safe!
+        """.format(fltr, limit), (ord(q),))                   # safe!
+      elif all( M.iscjk(c) for c in q ):
+        query = ("""
+          SELECT rank, seq FROM (
+              SELECT entry FROM kanji WHERE elem LIKE :q
+            UNION
+              SELECT entry FROM reading WHERE elem LIKE :q
+          )
+          INNER JOIN entry ON seq = entry
+          {}
+          ORDER BY prio DESC, rank ASC, seq ASC
+          {}
+        """.format(fltr, limit), dict(q = "%"+q+"%"))         # safe!
       else:
         load_pcre_extension(c.connection)
         query = ("""
