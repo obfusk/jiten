@@ -5,7 +5,7 @@
 #
 # File        : jiten/app.py
 # Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-# Date        : 2020-07-18
+# Date        : 2020-07-19
 #
 # Copyright   : Copyright (C) 2020  Felix C. Stegerman
 # Version     : v0.1.1
@@ -125,7 +125,7 @@ def r_jmdict():
     if query: data["results"] = J.search(query, **opts)
     return respond("jmdict.html", **data)
   except M.RegexError as e:
-    return "regex error: " + str(e)
+    return "regex error: " + str(e), 400
 
 @app.route("/jmdict/by-freq")
 def r_jmdict_by_freq():
@@ -152,7 +152,7 @@ def r_kanji():
                           for k in data["results"] }            # TODO
     return respond("kanji.html", **data)
   except M.RegexError as e:
-    return "regex error: " + str(e)
+    return "regex error: " + str(e), 400
 
 @app.route("/kanji/by-freq")
 def r_kanji_by_freq():
