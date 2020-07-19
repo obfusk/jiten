@@ -17,6 +17,8 @@ fullscreen = 0
 #android.sdk_path =
 android.accept_sdk_license = True
 android.arch = armeabi-v7a
+# !!! DON'T FORGET TO UPDATE THIS !!!
+android.numeric_version = 721000101
 p4a.branch = develop
 #p4a.source_dir =
 p4a.local_recipes = ./p4a-recipes
