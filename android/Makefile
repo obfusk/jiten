@@ -1,4 +1,6 @@
-SHELL := /bin/bash
+SHELL       := /bin/bash
+BUILDOZER   ?= buildozer
+PIP_INSTALL ?= pip install
 
 .PHONY: debug release clean
 
@@ -22,5 +24,5 @@ _setup_root:
 	apt-get install -y zlib1g-dev zip unzip pkg-config lld libffi-dev
 
 _setup_user:
-	pip install --upgrade buildozer
-	pip install --upgrade Cython==0.29.19 virtualenv
+	$(PIP_INSTALL) --upgrade $(BUILDOZER)
+	$(PIP_INSTALL) --upgrade Cython==0.29.19 virtualenv

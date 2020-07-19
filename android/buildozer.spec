@@ -18,6 +18,7 @@ fullscreen = 0
 android.accept_sdk_license = True
 android.arch = armeabi-v7a
 p4a.branch = develop
+#p4a.source_dir =
 p4a.local_recipes = ./p4a-recipes
 p4a.bootstrap = webview
 p4a.port = 29483

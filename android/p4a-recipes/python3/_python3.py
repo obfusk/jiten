@@ -1,1 +1,1 @@
-../../.buildozer/android/platform/python-for-android/pythonforandroid/recipes/python3/__init__.py
+../../.p4a/pythonforandroid/recipes/python3/__init__.py
