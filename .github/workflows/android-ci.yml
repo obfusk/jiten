@@ -19,7 +19,7 @@ jobs:
         path: ~/.buildozer
         key: ${{ runner.os }}
     - name: Build
-      run: make -C android ci
+      run: make -C android
     - uses: actions/upload-artifact@v2
       with:
         name: APK
