@@ -2,23 +2,35 @@ SHELL       := /bin/bash
 BUILDOZER   ?= buildozer
 PIP_INSTALL ?= pip install
 
-.PHONY: debug release clean ci
+_arm64a     := arm64-v8a
+_arm64n     := $(shell sed -n '/numeric_version/ s/.* 7/8/ p' buildozer.spec)
+_arm64      := APP_ANDROID_ARCH=$(_arm64a) APP_ANDROID_NUMERIC_VERSION=$(_arm64n)
 
-debug:
-	mkdir -p ../../_jiten_buildozer_
-	buildozer android debug
+.PHONY: debug clean _dir
 
-release:
-	mkdir -p ../../_jiten_buildozer_
-	buildozer android release
+debug: debug-armeabi-v7a debug-arm64-v8a
 
 clean:
 	buildozer android clean
 	rm -fr bin/
 
-ci:
-	$(MAKE) debug
-	APP_ANDROID_ARCH=arm64-v8a $(MAKE) debug
+_dir:
+	mkdir -p ../../_jiten_buildozer_
+
+.PHONY: debug-armeabi-v7a debug-arm64-v8a
+.PHONY: release-armeabi-v7a release-arm64-v8a
+
+debug-armeabi-v7a: _dir
+	buildozer android debug
+
+debug-arm64-v8a: _dir
+	$(_arm64) buildozer android debug
+
+release-armeabi-v7a: _dir
+	buildozer android release
+
+release-arm64-v8a: _dir
+	$(_arm64) buildozer android release
 
 .PHONY: _setup_root _setup_user
 
