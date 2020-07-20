@@ -5,10 +5,10 @@
 #
 # File        : jiten/cli.py
 # Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-# Date        : 2020-07-19
+# Date        : 2020-07-20
 #
 # Copyright   : Copyright (C) 2020  Felix C. Stegerman
-# Version     : v0.1.1
+# Version     : v0.2.0
 # License     : AGPLv3+
 #
 # --                                                            ; }}}1
@@ -215,7 +215,7 @@ query: \b日\b
 
 """                                                             # }}}1
 
-__version__ = "0.1.1"
+__version__ = "0.2.0"
 name        = "jiten"
 
 import os, sys

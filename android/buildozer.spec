@@ -23,7 +23,7 @@ android.arch = armeabi-v7a
 # !!! DON'T FORGET TO UPDATE THIS !!!
 # arch (7 = armeabi-v7a, 8 = arm64-v8a) + minapi + version (%02d%02d%02d)
 # e.g. armeabi-v7a + minapi 27 + v0.1.1 = 721000101
-android.numeric_version = 721000101
+android.numeric_version = 721000200
 p4a.branch = develop
 #p4a.source_dir =
 p4a.local_recipes = ./p4a-recipes
