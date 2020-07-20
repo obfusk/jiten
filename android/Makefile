@@ -2,7 +2,7 @@ SHELL       := /bin/bash
 BUILDOZER   ?= buildozer
 PIP_INSTALL ?= pip install
 
-.PHONY: debug release clean
+.PHONY: debug release clean ci
 
 debug:
 	mkdir -p ../../_jiten_buildozer_
@@ -15,6 +15,10 @@ release:
 clean:
 	buildozer android clean
 	rm -fr bin/
+
+ci:
+	$(MAKE) debug
+	APP_ANDROID_ARCH=arm64-v8a $(MAKE) debug
 
 .PHONY: _setup_root _setup_user
 
