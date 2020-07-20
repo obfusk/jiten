@@ -7,6 +7,7 @@ def _patch():
   mod   = IU.module_from_spec(spec)
   spec.loader.exec_module(mod)
   Sqlite3Recipe, recipe = mod.Sqlite3Recipe, mod.recipe
+  Sqlite3Recipe.name    = "sqlite3"
   Sqlite3Recipe.version = "3.32.3"
-  Sqlite3Recipe.url = "https://www.sqlite.org/2020/sqlite-amalgamation-3320300.zip"
+  Sqlite3Recipe.url     = "https://www.sqlite.org/2020/sqlite-amalgamation-3320300.zip"
 _patch()

@@ -6,7 +6,7 @@ def _patch():
   spec  = IU.spec_from_file_location(name, file)
   mod   = IU.module_from_spec(spec)
   spec.loader.exec_module(mod)
-  Python3Recipe, recipe = mod.Python3Recipe, mod.recipe
+  Python3Recipe, recipe         = mod.Python3Recipe, mod.recipe
   Python3Recipe.configure_args += ("--enable-loadable-sqlite-extensions",)
-  Python3Recipe.version = "3.8.4"
+  Python3Recipe.version         = "3.8.4"
 _patch()
