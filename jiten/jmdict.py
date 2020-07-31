@@ -5,10 +5,10 @@
 #
 # File        : jiten/jmdict.py
 # Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-# Date        : 2020-07-19
+# Date        : 2020-07-30
 #
 # Copyright   : Copyright (C) 2020  Felix C. Stegerman
-# Version     : v0.1.1
+# Version     : v0.2.0
 # License     : AGPLv3+
 #
 # --                                                            ; }}}1
@@ -19,7 +19,7 @@ r"""
 JMDict.
 
 >>> DBVERSION
-3
+4
 
 >>> jmdict = parse_jmdict()
 >>> len(jmdict)
@@ -163,7 +163,7 @@ from . import freq as F
 from . import misc as M
 from .sql import sqlite_do, load_pcre_extension
 
-DBVERSION     = 3 # NB: update this when data/schema changes
+DBVERSION     = 4 # NB: update this when data/schema changes
 SQLITE_FILE   = M.resource_path("res/jmdict.sqlite3")
 JMDICT_FILE   = M.resource_path("res/jmdict/jmdict.xml.gz")
 
@@ -329,7 +329,7 @@ def jmdict2sqldb(data, file = SQLITE_FILE):                     # {{{1
                    e.isprio(), e.isnoun(), e.isverb()))
         for k in e.kanji:
           c.execute("INSERT INTO kanji VALUES (?,?,?,?,?)",
-                    (e.seq, k.elem, "".join(k.chars),
+                    (e.seq, k.elem, "".join(sorted(k.chars)),
                      "\n".join(k.info), k.prio))
         for k in e.chars():
           c.execute("INSERT INTO kanji_code VALUES (?,?)",

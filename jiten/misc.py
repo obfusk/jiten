@@ -5,10 +5,10 @@
 #
 # File        : jiten/misc.py
 # Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-# Date        : 2020-07-15
+# Date        : 2020-07-30
 #
 # Copyright   : Copyright (C) 2020  Felix C. Stegerman
-# Version     : v0.1.1
+# Version     : v0.2.0
 # License     : AGPLv3+
 #
 # --                                                            ; }}}1
@@ -50,10 +50,13 @@ ispunc      = lambda c:  0x3000 <= ord(c) <=  0x303f
 ishiragana  = lambda c:  0x3040 <= ord(c) <=  0x309f
 iskatakana  = lambda c:  0x30a0 <= ord(c) <=  0x30ff
 
-iskanji     = lambda c:  0x4e00 <= ord(c) <=  0x9faf
+iskanji     = lambda c:  0x4e00 <= ord(c) <=  0x9fff
 iscompat    = lambda c:  0xf900 <= ord(c) <=  0xfaff
 isuniext    = lambda c:  0x3400 <= ord(c) <=  0x4dbf or \
                         0x20000 <= ord(c) <= 0x2ebef
+
+isradical   = lambda c:  0x2e80 <= ord(c) <=  0x2eff or \
+                         0x2f00 <= ord(c) <=  0x2fdf
 
 iskana      = lambda c: ishiragana(c) or iskatakana(c)
 isideo      = lambda c: iskanji(c) or iscompat(c) or isuniext(c)
