@@ -272,8 +272,8 @@ def setup(file = SQLITE_FILE):
 
 # TODO: +r(ad(ical))
 def search(q, max_results = None, file = SQLITE_FILE):          # {{{1
-  ent   = lambda r: Entry(*(list(r[1:8]) + [ tuple(x.splitlines())
-                                             for x in r[8:] ]))
+  ent   = lambda r: Entry(*(list(r[1:10]) + [ tuple(x.splitlines())
+                                              for x in r[10:] ]))
   ideo  = tuple(M.uniq(filter(M.isideo, q)))
   order = """ORDER BY IFNULL(freq, {}) ASC, level2int(level) ASC,
              code ASC""".format(NOFREQ)                       # safe!
