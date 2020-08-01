@@ -5,7 +5,7 @@
 #
 # File        : jiten/kanji.py
 # Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-# Date        : 2020-07-30
+# Date        : 2020-08-01
 #
 # Copyright   : Copyright (C) 2020  Felix C. Stegerman
 # Version     : v0.2.0
@@ -106,9 +106,9 @@ from .sql import sqlite_do, load_pcre_extension
 
 SQLITE_FILE   = M.resource_path("res/kanji.sqlite3")
 KANJIDIC_FILE = M.resource_path("res/jmdict/kanjidic2.xml.gz")
-KANJIVG_FILE  = M.resource_path("res/kanjivg/kanjivg.xml.gz")
-KRADFILE      = M.resource_path("res/jmdict/kradfile.utf8")
-KRADFILE2     = M.resource_path("res/jmdict/kradfile2.utf8")
+KANJIVG_FILE  = M.resource_path("res/radicals/kanjivg.xml.gz")
+KRADFILE      = M.resource_path("res/radicals/kradfile.utf8")
+KRADFILE2     = M.resource_path("res/radicals/kradfile2.utf8")
 
 NOFREQ = 9999
 LEVELS = "常用1 常用2 常用3 常用4 常用5 常用6 常用 人名 人名(常用)".split()
