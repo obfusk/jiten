@@ -11,10 +11,12 @@ mod_sqlite3_pcre    = setuptools.Extension(
   libraries = "pcre sqlite3".split()
 )
 
-if android_build:
-  jiten.cli.cli("-v setup".split(), standalone_mode = False)
-
+# "build" *.xml.gz
 subprocess.run("make patch", shell = True, check = True)
+
+if android_build:
+  # "build" *.sqlite3
+  jiten.cli.cli("-v setup".split(), standalone_mode = False)
 
 setuptools.setup(
   name              = "jiten",
