@@ -80,7 +80,8 @@ ext:
 	python3 setup.py build_ext -i
 
 patch:
-	$(MAKE) -C jiten/res/jmdict all cleanup
+	$(MAKE) -C jiten/res/jmdict all
+	$(MAKE) -C jiten/res/jmdict cleanup
 
 _package:
 	python3 setup.py sdist bdist_wheel
