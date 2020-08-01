@@ -1,0 +1,73 @@
+--- kanjidic2-unpatched.xml	2020-07-12 08:30:04.000000000 +0200
++++ kanjidic2.xml	2020-08-01 08:30:04.000000000 +0200
+@@ -332,8 +332,8 @@
+ 	and KANJD212 files plus the kanji from JIS X 0213.
+ -->
+ <file_version>4</file_version>
+-<database_version>2020-194</database_version>
+-<date_of_creation>2020-07-12</date_of_creation>
++<database_version>2020-214</database_version>
++<date_of_creation>2020-08-01</date_of_creation>
+ </header>
+ <!-- Entry for Kanji: 亜 -->
+ <character>
+@@ -130891,8 +130891,8 @@
+ <reading r_type="ja_on">チョウ</reading>
+ <reading r_type="ja_on">テイ</reading>
+ <reading r_type="ja_kun">ぬ.く</reading>
+-<meaning>counter for guns, inksticks, palanquins, rickshaws</meaning>
+ <meaning>bravely volunteer</meaning>
++<meaning>counter for guns, inksticks, palanquins, rickshaws</meaning>
+ </rmgroup>
+ </reading_meaning>
+ </character>
+@@ -158435,6 +158435,7 @@
+ <reading r_type="vietnam">Bình</reading>
+ <reading r_type="ja_on">ビン</reading>
+ <reading r_type="ja_kun">かめ</reading>
++<reading r_type="ja_kun">へい</reading>
+ <meaning>bottle</meaning>
+ <meaning>vial</meaning>
+ <meaning>jar</meaning>
+@@ -158459,7 +158460,6 @@
+ <meaning m_lang="pt">barril</meaning>
+ <meaning m_lang="pt">cântaro</meaning>
+ </rmgroup>
+-<nanori>へい</nanori>
+ <nanori>べ</nanori>
+ <nanori>ぺ</nanori>
+ </reading_meaning>
+@@ -236041,7 +236041,7 @@
+ <reading r_type="vietnam">Vựng</reading>
+ <reading r_type="ja_on">ウン</reading>
+ <reading r_type="ja_kun">ぼか.す</reading>
+-<reading r_type="ja_kun">ぼか.る</reading>
++<reading r_type="ja_kun">ぼけ.る</reading>
+ <reading r_type="ja_kun">かさ</reading>
+ <reading r_type="ja_kun">くま</reading>
+ <reading r_type="ja_kun">ぼかし</reading>
+@@ -249900,7 +249900,7 @@
+ <reading r_type="vietnam">Hoảng</reading>
+ <reading r_type="ja_on">コウ</reading>
+ <reading r_type="ja_kun">ひろ.い</reading>
+-<meaning>deep and broad</meaning>
++<meaning>deep and broad (water)</meaning>
+ <meaning m_lang="es">profundo y amplio</meaning>
+ </rmgroup>
+ </reading_meaning>
+@@ -533319,6 +533319,15 @@
+ <dic_number>
+ <dic_ref dr_type="halpern_kkd">691</dic_ref>
+ </dic_number>
++<reading_meaning>
++<rmgroup>
++<reading r_type="ja_on">キ</reading>
++<reading r_type="ja_kun">さき</reading>
++<meaning>cape</meaning>
++<meaning>spit</meaning>
++<meaning>promontory</meaning>
++</rmgroup>
++</reading_meaning>
+ </character>
+ <!-- Entry for Kanji: 﨓 -->
+ <character>

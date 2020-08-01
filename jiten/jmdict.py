@@ -5,7 +5,7 @@
 #
 # File        : jiten/jmdict.py
 # Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-# Date        : 2020-07-30
+# Date        : 2020-08-01
 #
 # Copyright   : Copyright (C) 2020  Felix C. Stegerman
 # Version     : v0.2.0
@@ -19,7 +19,7 @@ r"""
 JMDict.
 
 >>> DBVERSION
-4
+5
 
 >>> jmdict = parse_jmdict()
 >>> len(jmdict)
@@ -163,7 +163,7 @@ from . import freq as F
 from . import misc as M
 from .sql import sqlite_do, load_pcre_extension
 
-DBVERSION     = 4 # NB: update this when data/schema changes
+DBVERSION     = 5 # NB: update this when data/schema changes
 SQLITE_FILE   = M.resource_path("res/jmdict.sqlite3")
 JMDICT_FILE   = M.resource_path("res/jmdict/jmdict.xml.gz")
 

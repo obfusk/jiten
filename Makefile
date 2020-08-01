@@ -28,11 +28,13 @@ ci-test: test validate-css validate-html check-html
 clean: cleanup
 	rm -f jiten/res/*.sqlite3
 	rm -f jiten/_sqlite3_pcre.*.so
+	$(MAKE) -C jiten/res/jmdict clean
 
 cleanup:
 	find -name '*~' -delete -print
 	rm -fr jiten/__pycache__/ tmp-html/
 	rm -fr build/ dist/ jiten.egg-info/
+	$(MAKE) -C jiten/res/jmdict cleanup
 
 validate-css:
 	curl -sF "file=@jiten/static/style.css;type=text/css" \
@@ -72,10 +74,13 @@ validate-html-curl:
 validate-html-py:
 	$(H5VCMD) --root tmp-html/
 
-.PHONY: ext _package _publish
+.PHONY: ext patch _package _publish
 
 ext:
 	python3 setup.py build_ext -i
+
+patch:
+	$(MAKE) -C jiten/res/jmdict all cleanup
 
 _package:
 	python3 setup.py sdist bdist_wheel

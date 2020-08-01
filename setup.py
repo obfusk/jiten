@@ -1,5 +1,5 @@
 from pathlib import Path
-import os, setuptools, sys
+import os, setuptools, subprocess, sys
 
 import jiten.cli
 
@@ -13,6 +13,8 @@ mod_sqlite3_pcre    = setuptools.Extension(
 
 if android_build:
   jiten.cli.cli("-v setup".split(), standalone_mode = False)
+
+subprocess.run("make patch", shell = True, check = True)
 
 setuptools.setup(
   name              = "jiten",
