@@ -23,10 +23,10 @@ JMDict.
 
 >>> jmdict = parse_jmdict()
 >>> len(jmdict)
-188544
+188785
 
 >>> print(jmdict[-1].sense[0].gloss[0])
-Japanese-Multilingual Dictionary Project - Creation Date: 2020-07-11
+Japanese-Multilingual Dictionary Project - Creation Date: 2020-07-31
 
 >>> baka = [ x for x in jmdict if any( r.elem == "ばか" for r in x.reading ) ][0]
 >>> baka.seq

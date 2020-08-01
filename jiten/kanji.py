@@ -77,11 +77,11 @@ Entry(char='日', cat='KANJI', level='常用1', strokes=4, freq=1, jlpt=4, skip=
 >>> len([ x for x in kanjidic if len(x.nanori) ])
 1353
 >>> len([ x for x in kanjidic if not len(x.on) ])
-953
+952
 >>> len([ x for x in kanjidic if not len(x.kun) ])
-3289
+3288
 >>> len([ x for x in kanjidic if not len(x.meaning) ])
-2752
+2751
 
 >>> len(RADICALS)
 214
