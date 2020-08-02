@@ -5,7 +5,7 @@
 #
 # File        : jiten/kanji.py
 # Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-# Date        : 2020-08-01
+# Date        : 2020-08-02
 #
 # Copyright   : Copyright (C) 2020  Felix C. Stegerman
 # Version     : v0.2.0
@@ -29,10 +29,10 @@ KanjiDic.
 13108
 
 >>> [ x for x in kanjidic if x.char == "猫" ][0]
-Entry(char='猫', cat='KANJI', level='常用', strokes=11, freq=1702, jlpt=2, skip='1-3-8', rad=94, comp='⺨⽝⽥⾋犬犯猫田艸艹艾苗', on=('ビョウ',), kun=('ねこ',), nanori=(), meaning=('cat',))
+Entry(char='猫', cat='KANJI', level='常用', strokes=11, freq=1702, jlpt=2, skip='1-3-8', rad=94, comp='⺨⽝⽥⾋犬犯猫田艸艹艾苗', var='貓', on=('ビョウ',), kun=('ねこ',), nanori=(), meaning=('cat',))
 
 >>> [ x for x in kanjidic if x.char == "日" ][0]
-Entry(char='日', cat='KANJI', level='常用1', strokes=4, freq=1, jlpt=4, skip='3-3-1', rad=72, comp='⽇日', on=('ニチ', 'ジツ'), kun=('ひ', '-び', '-か'), nanori=('あ', 'あき', 'いる', 'く', 'くさ', 'こう', 'す', 'たち', 'に', 'にっ', 'につ', 'へ'), meaning=('day', 'sun', 'Japan', 'counter for days'))
+Entry(char='日', cat='KANJI', level='常用1', strokes=4, freq=1, jlpt=4, skip='3-3-1', rad=72, comp='⽇日', var='', on=('ニチ', 'ジツ'), kun=('ひ', '-び', '-か'), nanori=('あ', 'あき', 'いる', 'く', 'くさ', 'こう', 'す', 'たち', 'に', 'にっ', 'につ', 'へ'), meaning=('day', 'sun', 'Japan', 'counter for days'))
 
 >>> len([ x for x in kanjidic if x.level == "常用1" ])
 80
@@ -87,6 +87,8 @@ Entry(char='日', cat='KANJI', level='常用1', strokes=4, freq=1, jlpt=4, skip=
 214
 >>> all( M.iskanji(c) for c in KAN2RAD.keys() )
 True
+>>> all( M.isradical(c) for c in RAD2KAN.keys() )
+True
 >>> set( ord(c) - 0x2f00 for c in RAD2KAN.keys() ) == set(range(214))
 True
 >>> all( ord(x[0]) - 0x2f00 == i for i, x in enumerate(RADICALS) )
@@ -94,7 +96,7 @@ True
 
 """                                                             # }}}1
 
-import gzip, itertools, re, sys
+import gzip, itertools, re, sys, unicodedata as UD
 import xml.etree.ElementTree as ET
 
 from collections import namedtuple
@@ -113,19 +115,22 @@ KRADFILE2     = M.resource_path("res/radicals/kradfile2.utf8")
 NOFREQ = 9999
 LEVELS = "常用1 常用2 常用3 常用4 常用5 常用6 常用 人名 人名(常用)".split()
 
-Entry = namedtuple("Entry", """char cat level strokes freq jlpt skip
-                               rad comp on kun nanori meaning""".split())
-
-def radical(e):
-  return RADICALS[e.rad-1][1]
+Entry = namedtuple("Entry", """
+  char cat level strokes freq jlpt skip rad comp var
+  on kun nanori meaning
+""".split())
 
 def components(e):
   r = e.radical()
   return "".join( c for c in e.comp if c not in RAD2KAN and c != r
                                     and c != e.char )
 
-Entry.radical     = radical
 Entry.components  = components
+Entry.canonical   = lambda e: canonical(e.char)
+Entry.radical     = lambda e: RADICALS[e.rad-1][1]
+Entry.name        = lambda e: UD.name(e.char)
+
+def canonical(c): return UD.normalize("NFC", c)
 
 def level(l):
   if 1 <= l <= 6: return "常用" + str(l)
@@ -145,6 +150,22 @@ def category(c):
   if M.iscompat(c): return "CJK COMPATIBILITY IDEOGRAPH"
   if M.isuniext(c): return "CJK UNIFIED IDEOGRAPH"
   raise ValueError("unexpected category for: " + c)
+
+def variants(char, vs):
+  for v in vs:
+    t = v.get("var_type")
+    c = decode_variant(t, v.text)
+    if t == "jis213": assert char in "泰"                       # TODO
+    if c: yield c
+
+def decode_variant(t, x):
+  decode  = lambda b, x = "": b.decode("iso-2022-jp" + x)
+  dekuten = lambda: bytes( int(i) + 32 for i in x.split("-") )
+  if t == "jis208": return decode(b"\x1b$B"  + dekuten())
+  if t == "jis212": return decode(b"\x1b$(D" + dekuten(), "-2")
+  if t == "jis213": return decode(b"\x1b$(P" + dekuten(), "-2004")
+  if t == "ucs"   : return chr(int(x, 16))
+  return None
 
 def maybe(x, f, d = None):
   return d if x is None else f(x)
@@ -168,13 +189,15 @@ def parse_kanjidic(kanjivg = None, file = KANJIDIC_FILE):       # {{{1
                         lambda e: e.text.strip())
         rad     = int(e.find(".//rad_value[@rad_type='classical']").text)
         comp    = kanjivg.get(char, set())
+        var_    = set(variants(char, e.findall(".//variant")))
+        var     = "".join(sorted(var_ - set([char, canonical(char)])))
         on      = tuple( r.text.strip() for r in
                          e.findall(".//reading[@r_type='ja_on']") )
         kun     = tuple( r.text.strip() for r in
                          e.findall(".//reading[@r_type='ja_kun']") )
         nanori  = tuple( n.text.strip() for n in e.findall(".//nanori") )
         meaning = tuple( m.text.strip() for m in e.findall(".//meaning")
-                                if "m_lang" not in m.attrib )
+                                        if m.get("m_lang") is None )
         if comp and not set(RADICALS[rad-1]).issubset(comp):
           for x, y in "肉⽉ 白⽇ 曰⽇ 臼𦥑 匸⼕ 夊⼡ 夂久 人⼊ 入⼈".split():
             if x == RADICALS[rad-1][1] and y in comp: break
@@ -191,7 +214,7 @@ def parse_kanjidic(kanjivg = None, file = KANJIDIC_FILE):       # {{{1
         assert all( "\n" not in x for x in nanori )
         assert all( "\n" not in x for x in meaning )
         data.append(Entry(char, category(char), lvl, strokes, freq, jlpt,
-                          skip, rad, comp, on, kun, nanori, meaning))
+                          skip, rad, comp, var, on, kun, nanori, meaning))
       return data
                                                                 # }}}1
 
@@ -203,10 +226,10 @@ def parse_kanjivg(file = KANJIVG_FILE, kradfile = KRADFILE,     # {{{1
   with gzip.open(file) as f:
     for e in ET.parse(f).getroot():
       if e.tag != "kanji": continue
-      code  = int(e.attrib["id"].replace("kvg:kanji_", ""), 16)
+      code  = int(e.get("id").replace("kvg:kanji_", ""), 16)
       char  = chr(code)
-      elems = set( r.attrib[elem] for r in e.findall(".//g")
-                                  if elem in r.attrib )
+      elems = set( r.get(elem) for r in e.findall(".//g")
+                               if elem in r.keys() )
       if M.iskana(char) or M.ispunc(char): continue
       if not M.iscjk(char) and not M.isradical(char): continue
       elems.add(char)
@@ -237,9 +260,9 @@ def kanjidic2sqldb(data, file = SQLITE_FILE):                   # {{{1
     with click.progressbar(data, width = 0, label = "writing kanjidic") as bar:
       for e in bar:
         c.execute("INSERT INTO entry VALUES ({})"
-                  .format(",".join(["?"]*14)),
+                  .format(",".join("?"*(len(Entry._fields)+1))),
                   (ord(e.char), e.char, e.cat, e.level, e.strokes,
-                   e.freq, e.jlpt, e.skip, e.rad, e.comp,
+                   e.freq, e.jlpt, e.skip, e.rad, e.comp, e.var,
                    "\n".join(e.on), "\n".join(e.kun),
                    "\n".join(e.nanori), "\n".join(e.meaning)))
         for k in e.comp:
@@ -262,6 +285,7 @@ KANJIDIC_CREATE_SQL = """
     skip TEXT,
     rad INTEGER,
     comp TEXT,
+    var TEXT,
     on_ TEXT,
     kun TEXT,
     nanori TEXT,
@@ -281,9 +305,11 @@ def setup(file = SQLITE_FILE):
   kanjidic  = parse_kanjidic(kanjivg)
   kanjidic2sqldb(kanjidic, file)
 
+def row2entry(r):
+  i = r.keys().index("on_")
+  return Entry(*(list(r[1:i]) + [ tuple(x.splitlines()) for x in r[i:] ]))
+
 def search(q, max_results = None, file = SQLITE_FILE):          # {{{1
-  ent   = lambda r: Entry(*(list(r[1:10]) + [ tuple(x.splitlines())
-                                              for x in r[10:] ]))
   ideo  = tuple(M.uniq(filter(M.isideo, q)))
   order = """ORDER BY IFNULL(freq, {}) ASC, level2int(level) ASC,
              code ASC""".format(NOFREQ)                       # safe!
@@ -296,7 +322,7 @@ def search(q, max_results = None, file = SQLITE_FILE):          # {{{1
       for r in c.execute("""
           SELECT * FROM entry WHERE skip = ? {} {}
           """.format(order, limit), (ms[1],)):                # safe!
-        yield ent(r)
+        yield row2entry(r)
     elif mr:
       rads = [ VAR2RAD.get(c, c) for c in mr[1]
                if M.isideo(c) or M.iskana(c) or M.isradical(c) ]
@@ -309,11 +335,11 @@ def search(q, max_results = None, file = SQLITE_FILE):          # {{{1
           INNER JOIN entry ON code = entry
           {} {}
           """.format(isct, order, limit), radp):              # safe!
-        yield ent(r)
+        yield row2entry(r)
     elif ideo:
       for char in ideo:
         for r in c.execute("SELECT * FROM entry WHERE code = ?", (ord(char),)):
-          yield ent(r) # #=1
+          yield row2entry(r) # #=1
     else:
       load_pcre_extension(c.connection)
       for r in c.execute("""
@@ -327,7 +353,7 @@ def search(q, max_results = None, file = SQLITE_FILE):          # {{{1
                             meaning                    REGEXP :re
             {} {}
           """.format(order, limit), dict(re = M.q2rx(q))):    # safe!
-        yield ent(r)
+        yield row2entry(r)
                                                                 # }}}1
 
 def by_freq(file = SQLITE_FILE):
@@ -345,31 +371,13 @@ def by_level(level, file = SQLITE_FILE):
         """, (level,)):
       yield r["char"]
 
-                                                                # {{{1
-RADICALS = tuple("""⼀一 ⼁丨 ⼂丶 ⼃丿 ⼄乙 ⼅亅 ⼆二 ⼇亠 ⼈人 ⼉儿
-⼊入 ⼋八 ⼌冂 ⼍冖 ⼎冫 ⼏几 ⼐凵 ⼑刀 ⼒力 ⼓勹 ⼔匕 ⼕匚 ⼖匸 ⼗十
-⼘卜 ⼙卩 ⼚厂 ⼛厶 ⼜又 ⼝口 ⼞囗 ⼟土 ⼠士 ⼡夂 ⼢夊 ⼣夕 ⼤大 ⼥女
-⼦子 ⼧宀 ⼨寸 ⼩小 ⼪尢 ⼫尸 ⼬屮 ⼭山 ⼮巛 ⼯工 ⼰己 ⼱巾 ⼲干 ⼳幺
-⼴广 ⼵廴 ⼶廾 ⼷弋 ⼸弓 ⼹彐 ⼺彡 ⼻彳 ⼼心 ⼽戈 ⼾戶 ⼿手 ⽀支 ⽁攴
-⽂文 ⽃斗 ⽄斤 ⽅方 ⽆无 ⽇日 ⽈曰 ⽉月 ⽊木 ⽋欠 ⽌止 ⽍歹 ⽎殳 ⽏毋
-⽐比 ⽑毛 ⽒氏 ⽓气 ⽔水 ⽕火 ⽖爪 ⽗父 ⽘爻 ⽙爿 ⽚片 ⽛牙 ⽜牛 ⽝犬
-⽞玄 ⽟玉 ⽠瓜 ⽡瓦 ⽢甘 ⽣生 ⽤用 ⽥田 ⽦疋 ⽧疒 ⽨癶 ⽩白 ⽪皮 ⽫皿
-⽬目 ⽭矛 ⽮矢 ⽯石 ⽰示 ⽱禸 ⽲禾 ⽳穴 ⽴立 ⽵竹 ⽶米 ⽷糸 ⽸缶 ⽹网
-⽺羊 ⽻羽 ⽼老 ⽽而 ⽾耒 ⽿耳 ⾀聿 ⾁肉 ⾂臣 ⾃自 ⾄至 ⾅臼 ⾆舌 ⾇舛
-⾈舟 ⾉艮 ⾊色 ⾋艸 ⾌虍 ⾍虫 ⾎血 ⾏行 ⾐衣 ⾑襾 ⾒見 ⾓角 ⾔言 ⾕谷
-⾖豆 ⾗豕 ⾘豸 ⾙貝 ⾚赤 ⾛走 ⾜足 ⾝身 ⾞車 ⾟辛 ⾠辰 ⾡辵 ⾢邑 ⾣酉
-⾤釆 ⾥里 ⾦金 ⾧長 ⾨門 ⾩阜 ⾪隶 ⾫隹 ⾬雨 ⾭靑 ⾮非 ⾯面 ⾰革 ⾱韋
-⾲韭 ⾳音 ⾴頁 ⾵風 ⾶飛 ⾷食 ⾸首 ⾹香 ⾺馬 ⾻骨 ⾼高 ⾽髟 ⾾鬥 ⾿鬯
-⿀鬲 ⿁鬼 ⿂魚 ⿃鳥 ⿄鹵 ⿅鹿 ⿆麥 ⿇麻 ⿈黃 ⿉黍 ⿊黑 ⿋黹 ⿌黽 ⿍鼎
-⿎鼓 ⿏鼠 ⿐鼻 ⿑齊 ⿒齒 ⿓龍 ⿔龜 ⿕龠""".split())
+RADICALS      = tuple( chr(i) + UD.normalize("NFKC", chr(i))    # {{{1
+                       for i in range(0x2f00, 0x2fd6) )
+RAD2KAN       = { x[0]: x[1] for x in RADICALS }
+KAN2RAD       = { x[1]: x[0] for x in RADICALS }
 
-RAD2KAN = { x[0]: x[1] for x in RADICALS }
-KAN2RAD = { x[1]: x[0] for x in RADICALS }
-
-RADSTROKEGRPS = (
-  1, 7, 30, 61, 95, 118, 147, 167, 176, 187, 195, 201, 205, 209, 211,
-  212, 214
-)
+RADSTROKEGRPS = (1, 7, 30, 61, 95, 118, 147, 167, 176, 187, 195, 201,
+                 205, 209, 211, 212, 214)
 
 RADGROUPS = tuple(
   "".join( x[1] for x in RADICALS[m-1:n-1] )

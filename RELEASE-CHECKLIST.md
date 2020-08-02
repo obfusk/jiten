@@ -9,6 +9,15 @@
 - [ ] `version` (& `url`) in `p4a-recipes/*/__init__.py`
 - [ ] Python version in `runtime.txt`
 
+# DB
+
+- [ ] run `make update` in `jiten/res/jmdict`
+- [ ] tests in `jiten/jmdict.py`
+- [ ] tests in `jiten/kanji.py`
+- [ ] `Creation Date:` in `jiten/jmdict.py`
+- [ ] `DBVERSION++` in `jiten/jmdict.py` 2x
+- [ ] `DBVERSION++` in `jiten/cli.py`
+
 # Release
 
 - [ ] `vX.Y.Z` tag

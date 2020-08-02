@@ -5,7 +5,7 @@
 #
 # File        : jiten/jmdict.py
 # Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-# Date        : 2020-08-01
+# Date        : 2020-08-02
 #
 # Copyright   : Copyright (C) 2020  Felix C. Stegerman
 # Version     : v0.2.0
@@ -19,7 +19,7 @@ r"""
 JMDict.
 
 >>> DBVERSION
-5
+6
 
 >>> jmdict = parse_jmdict()
 >>> len(jmdict)
@@ -97,9 +97,9 @@ True
 False
 >>> any( s.isgodan() for s in iku.sense )
 True
->>> any( s.istransitive() for s in iku.sense )
+>>> any( s.istrans() for s in iku.sense )
 False
->>> any( s.isintransitive() for s in iku.sense )
+>>> any( s.isintrans() for s in iku.sense )
 True
 >>> print("\n".join(M.flatten(iku.meanings())))
 to go
@@ -163,7 +163,7 @@ from . import freq as F
 from . import misc as M
 from .sql import sqlite_do, load_pcre_extension
 
-DBVERSION     = 5 # NB: update this when data/schema changes
+DBVERSION     = 6 # NB: update this when data/schema changes
 SQLITE_FILE   = M.resource_path("res/jmdict.sqlite3")
 JMDICT_FILE   = M.resource_path("res/jmdict/jmdict.xml.gz")
 
@@ -195,8 +195,7 @@ def meaning(e, *a): return frozenset(M.flatten(e.meanings(*a)))
 
 def charsets(e): return frozenset( k.chars for k in e.kanji )
 
-def chars(e):
-  return frozenset(M.flatten( k.chars for k in e.kanji ))
+def chars(e): return frozenset(M.flatten( k.chars for k in e.kanji ))
 
 # TODO: load from DB
 def _freq(e): return sum( F.freq.get(w, 0) for w in e.definition() )
@@ -207,8 +206,7 @@ def _rank(e): return min( F.rank(w) for w in e.definition() )
 def isprio(e):
   return any( x.prio for x in M.flatten([e.kanji, e.reading]) )
 
-def usually_kana(e):
-  return any( USUKANA in s.info for s in e.sense )
+def usually_kana(e): return any( USUKANA in s.info for s in e.sense )
 
 def gloss_pos_info(e, langs):
   gloss, pos, info = {}, [], []
@@ -229,8 +227,7 @@ def xinfo(e):
   return M.uniq( z for x in [e.kanji, e.reading]
                    for y in x for z in y.info )
 
-def xrefs(e):
-  return M.uniq( x for s in e.sense for x in s.xref )
+def xrefs(e): return M.uniq( x for s in e.sense for x in s.xref )
 
 Entry.definition      = definition
 Entry.words           = words
@@ -249,16 +246,13 @@ Entry.xinfo           = xinfo
 Entry.xrefs           = xrefs
 Entry.__hash__        = lambda e: hash(e.seq)
 
-def isichidan(s): return any( "Ichidan verb" in x for x in s.pos )
-def isgodan(s):   return any(   "Godan verb" in x for x in s.pos )
+Sense.isichidan = lambda s: any( "Ichidan verb" in x for x in s.pos )
+Sense.isgodan   = lambda s: any(   "Godan verb" in x for x in s.pos )
+Sense.istrans   = lambda s:   "transitive verb" in s.pos
+Sense.isintrans = lambda s: "intransitive verb" in s.pos
 
-def istransitive(s):   return   "transitive verb" in s.pos
-def isintransitive(s): return "intransitive verb" in s.pos
-
-Sense.isichidan       = isichidan
-Sense.isgodan         = isgodan
-Sense.istransitive    = istransitive
-Sense.isintransitive  = isintransitive
+Sense.istransitive    = Sense.istrans
+Sense.isintransitive  = Sense.isintrans
 
 def _isprio_k(e):
   return any( x.text.strip() in PRIO for x in e.findall("ke_pri") )
@@ -300,9 +294,9 @@ def parse_jmdict(file = JMDICT_FILE):                           # {{{1
                   # part of speech, applies to following senses too
           lang, gloss = None, []
           for x in se.findall("gloss"):
-            if x.attrib[alang] in LANGS and x.text:
-              assert lang is None or lang == x.attrib[alang]
-              lang = x.attrib[alang]
+            if x.get(alang) in LANGS and x.text:
+              assert lang is None or lang == x.get(alang)
+              lang = x.get(alang)
               gloss.append(x.text.strip())
           if lang is None: continue
           s_inf = tuple( x.text.strip() for x in se.findall("s_inf") )
