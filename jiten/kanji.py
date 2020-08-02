@@ -94,7 +94,7 @@ True
 
 """                                                             # }}}1
 
-import gzip, re, sys
+import gzip, itertools, re, sys
 import xml.etree.ElementTree as ET
 
 from collections import namedtuple
@@ -115,6 +115,17 @@ LEVELS = "常用1 常用2 常用3 常用4 常用5 常用6 常用 人名 人名(�
 
 Entry = namedtuple("Entry", """char cat level strokes freq jlpt skip
                                rad comp on kun nanori meaning""".split())
+
+def radical(e):
+  return RADICALS[e.rad-1][1]
+
+def components(e):
+  r = e.radical()
+  return "".join( c for c in e.comp if c not in RAD2KAN and c != r
+                                    and c != e.char )
+
+Entry.radical     = radical
+Entry.components  = components
 
 def level(l):
   if 1 <= l <= 6: return "常用" + str(l)
@@ -270,7 +281,6 @@ def setup(file = SQLITE_FILE):
   kanjidic  = parse_kanjidic(kanjivg)
   kanjidic2sqldb(kanjidic, file)
 
-# TODO: +r(ad(ical))
 def search(q, max_results = None, file = SQLITE_FILE):          # {{{1
   ent   = lambda r: Entry(*(list(r[1:10]) + [ tuple(x.splitlines())
                                               for x in r[10:] ]))
@@ -280,31 +290,44 @@ def search(q, max_results = None, file = SQLITE_FILE):          # {{{1
   limit = "LIMIT " + str(int(max_results)) if max_results else ""
   with sqlite_do(file) as c:
     c.connection.create_function("level2int", 1, level2int)
-    if ideo:
+    ms = re.fullmatch(r"\+s(?:kip)?\s*([\d-]+)", q, re.I)
+    mr = re.fullmatch(r"\+r(?:ad(?:icals?)?)?\s*(\S+)", q, re.I)
+    if ms:
+      for r in c.execute("""
+          SELECT * FROM entry WHERE skip = ? {} {}
+          """.format(order, limit), (ms[1],)):                # safe!
+        yield ent(r)
+    elif mr:
+      rads = [ VAR2RAD.get(c, c) for c in mr[1]
+               if M.isideo(c) or M.iskana(c) or M.isradical(c) ]
+      if not rads: return                                       # TODO
+      radp = [ str(ord(c)) for c in rads ]
+      subq = "SELECT entry FROM comp WHERE code = ?"
+      isct = " INTERSECT ".join( subq for _ in radp )
+      for r in c.execute("""
+          SELECT entry.* FROM ({})
+          INNER JOIN entry ON code = entry
+          {} {}
+          """.format(isct, order, limit), radp):              # safe!
+        yield ent(r)
+    elif ideo:
       for char in ideo:
         for r in c.execute("SELECT * FROM entry WHERE code = ?", (ord(char),)):
           yield ent(r) # #=1
     else:
-      m = re.fullmatch(r"\+s(?:kip)?\s*([\d-]+)", q, re.I)
-      if m:
-        for r in c.execute("""
-            SELECT * FROM entry WHERE skip = ? {} {}
-            """.format(order, limit), (m[1],)):               # safe!
-          yield ent(r)
-      else:
-        load_pcre_extension(c.connection)
-        for r in c.execute("""
-            SELECT * FROM entry WHERE
-                              on_                        REGEXP :re OR
-                              kun                        REGEXP :re OR
-                              nanori                     REGEXP :re OR
-              replace(replace(on_   , '.', ''), '-', '') REGEXP :re OR
-              replace(replace(kun   , '.', ''), '-', '') REGEXP :re OR
-              replace(replace(nanori, '.', ''), '-', '') REGEXP :re OR
-                              meaning                    REGEXP :re
-              {} {}
-            """.format(order, limit), dict(re = M.q2rx(q))):    # safe!
-          yield ent(r)
+      load_pcre_extension(c.connection)
+      for r in c.execute("""
+          SELECT * FROM entry WHERE
+                            on_                        REGEXP :re OR
+                            kun                        REGEXP :re OR
+                            nanori                     REGEXP :re OR
+            replace(replace(on_   , '.', ''), '-', '') REGEXP :re OR
+            replace(replace(kun   , '.', ''), '-', '') REGEXP :re OR
+            replace(replace(nanori, '.', ''), '-', '') REGEXP :re OR
+                            meaning                    REGEXP :re
+            {} {}
+          """.format(order, limit), dict(re = M.q2rx(q))):    # safe!
+        yield ent(r)
                                                                 # }}}1
 
 def by_freq(file = SQLITE_FILE):
@@ -347,14 +370,9 @@ RADSTROKEGRPS = (
   1, 7, 30, 61, 95, 118, 147, 167, 176, 187, 195, 201, 205, 209, 211,
   212, 214
 )
-RADSTROKES = tuple(
-    k+1
-  for k, (m, n) in enumerate(zip(RADSTROKEGRPS,
-                                 RADSTROKEGRPS[1:]+(len(RADICALS)+1,)))
-  for i in range(m-1, n-1)
-)
+
 RADGROUPS = tuple(
-    tuple( x[1] for x in RADICALS[m-1:n-1] )
+  "".join( x[1] for x in RADICALS[m-1:n-1] )
   for m, n in zip(RADSTROKEGRPS, RADSTROKEGRPS[1:]+(len(RADICALS)+1,))
 )
 
@@ -373,6 +391,45 @@ RADVARS2 = tuple("""⺊卜 ⺮竹 ⺳网 ⺼肉 ⻊足 ⻗雨 〇囗 丬爿 乀�
 RADVARS3 = tuple("""𩙿食 歯齒""".split())
 
 VAR2RAD = { x[0]: x[1] for y in [RADVARS, RADVARS2, RADVARS3] for x in y }
+
+STROKEVARS = {                                                  # TODO
+  2: "亻刂", 3: "⺌⻌⻏⻖忄扌氵犭艹", 4: "攵灬王礻耂辶",
+  5: "氺玊罒衤", 6: "西", 7: "麦", 8: "斉鼡", 11: "黄黒", 12: "歯"
+}
+
+ALTRADS  = tuple("""ノ01 ハ02 マ02 ユ02 ヨ03 一01 世05 丨01 个02 丶01
+乃02 久03 乙01 九02 乞02 也03 亀11 亅01 二02 五04 井04 亠02 亡03 人02
+儿02 元04 免08 入02 冂02 冊05 冖02 冫02 几02 凵02 刀02 刈02 初05 力02
+勹02 勿04 匕02 化02 匚02 十02 卜02 卩02 厂02 厶02 又02 及03 口03 品09
+囗03 土03 士03 夂03 夕03 大03 奄08 女03 子03 宀03 寸03 小03 尚03 尢03
+尤04 尸03 屮03 屯04 山03 岡08 巛03 川03 工03 巨05 已03 巴04 巾03 干03
+并02 幺03 广03 廴03 廾03 弋03 弓03 彑03 彡03 彳03 心04 忙03 戈04 戸04
+手04 扎03 支04 攵04 文04 斉08 斗04 斤04 方04 无04 日04 曰04 月04 木04
+杰04 欠04 止04 歯12 歹04 殳04 毋04 母05 比04 毛04 氏04 气04 水04 汁03
+滴11 火04 無12 爪04 父04 爻04 爿04 片04 牙05 牛04 犬04 犯03 玄05 王04
+瓜06 瓦05 甘05 生05 用05 田05 疋05 疔05 癶05 白05 皮05 皿05 目05 矛05
+矢05 石05 示05 礼04 禹05 禾05 穴05 立05 竜10 竹06 米06 糸06 缶06 羊06
+羽06 老04 而06 耒06 耳06 聿06 肉06 臣07 自06 至06 臼06 舌06 舛07 舟06
+艮06 色06 艾03 虍06 虫06 血06 行06 衣06 西06 見07 角07 言07 谷07 豆07
+豕07 豸07 貝07 買05 赤07 走07 足07 身07 車07 辛07 辰07 込03 邦03 酉07
+釆07 里07 金08 長08 門08 阡03 隶08 隹08 雨08 青08 非08 面09 革09 韋10
+韭09 音09 頁09 風09 飛09 食09 首09 香09 馬10 骨10 高10 髟10 鬥10 鬯10
+鬲10 鬼10 魚11 鳥11 鹵11 鹿11 麦07 麻11 黄11 黍12 黒11 黹12 黽13 鼎13
+鼓13 鼠13 鼻14 齊14 龠17""".split())
+
+ALTSTROKES  = { x[0]: int(x[1:]) for x in ALTRADS }
+STROKEALTS  = { k: "".join(sorted( x[0] for x in g ))
+                for k, g in itertools.groupby(
+                  sorted(ALTSTROKES.items(), key = lambda x: x[1]),
+                  lambda x: x[1]) }
+
+RADTABLE = tuple(
+  tuple(sorted(itertools.chain(
+    ( (x, "rad") for x in g ),
+    ( (x, "alt") for x in STROKEALTS.get(i, ()) if not x in g ),
+    ( (x, "var") for x in STROKEVARS.get(i, ()) if not x in STROKEALTS[i] )
+  ))) for i, g in ( (i+1, set(g)) for i, g in enumerate(RADGROUPS) )
+)
 
 RADVARSPRIV = tuple("""穴 麻 舟 歹 言 巾 白 八 日 火 矛 骨
 方 石 至 糸 貝 金 片 牙 木 子 米 口 車 豆 目 身 耳

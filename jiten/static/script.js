@@ -2,10 +2,10 @@
 //
 //  File        : static/script.js
 //  Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-//  Date        : 2020-07-14
+//  Date        : 2020-08-01
 //
 //  Copyright   : Copyright (C) 2020  Felix C. Stegerman
-//  Version     : v0.1.1
+//  Version     : v0.2.0
 //  License     : AGPLv3+
 //
 //  --                                                          ; }}}1
@@ -168,6 +168,15 @@ $("#romaji-convert").click(() =>
 )
 
 $("#romaji-modal").on("shown.bs.modal", () => $("#romaji").focus())
+
+$(".radical").click(e => {
+  const q = $("#kanji-query"), v = q.val().trim() ? q.val() : "+r "
+  q.val(v + e.delegateTarget.innerText.trim())
+})
+
+$("#radical-modal").on("hidden.bs.modal", () =>
+  setTimeout(() => $("#kanji-query").focus())
+)
 
 })
 

@@ -4,10 +4,10 @@
 
     File        : templates/jmdict.html
     Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-    Date        : 2020-07-14
+    Date        : 2020-08-01
 
     Copyright   : Copyright (C) 2020  Felix C. Stegerman
-    Version     : v0.1.1
+    Version     : v0.2.0
     License     : AGPLv3+
 
   -->
@@ -19,7 +19,7 @@
     {% from "_search.html" import jmdict with context %}
     {% include "_nav.html" %}
     <div class="container">
-      {{ jmdict(LANGS, langs, query) }}
+      {{ jmdict(langs, query) }}
       {% if query %}
         {% for e, rank in results %}
           <br/>
@@ -33,7 +33,7 @@
                     {% for k in e.kanji %}
                       <span class="jap selbtn fakebtn btn btn-lg btn-warning py-1 mb-1">
                         {% for c in k.elem -%}
-                          {% if isideo(c) -%}
+                          {% if M.isideo(c) -%}
                             <a class="text-reset"
                               href="/kanji?query={{ c }}">{{ c }}</a>
                           {%- else -%}
@@ -79,7 +79,7 @@
                 {% if info %}
                   <li class="list-group-item pb-1 px-2 pt-2">
                     {% for i in info %}
-                      <span class="selbtn fakebtn btn btn-success btn-sm mb-1">
+                      <span class="selbtn notbtn btn btn-success btn-sm mb-1">
                         {{ i }}
                       </span>
                     {% endfor %}
@@ -89,7 +89,7 @@
                 {% if xi %}
                   <li class="list-group-item pb-1 px-2 pt-2">
                     {% for i in xi %}
-                      <span class="selbtn fakebtn btn btn-primary btn-sm mb-1">
+                      <span class="selbtn notbtn btn btn-primary btn-sm mb-1">
                         {{ i }}
                       </span>
                     {% endfor %}
@@ -105,7 +105,7 @@
                     {% endfor %}
                   </li>
                 {% endif %}
-                <li class="list-group-item pb-1 px-2 pt-2">
+                <li class="list-group-item pb-1 px-2 pt-2 d-flex flex-wrap">
                   <span class="nowrap">
                     seq#
                     <a class="badge badge-primary"
@@ -115,15 +115,20 @@
                   </span>
                   {% if rank %}
                     <span class="nowrap">
-                      » freq#
+                      &nbsp;» freq#
                       <span class="badge badge-info">
                         {{ rank }}
                       </span>
                     </span>
                   {% endif %}
                   {% if e.isprio() %}
-                    <span class="nowrap">» prio</span>
+                    <span class="nowrap">&nbsp;» prio</span>
                   {% endif %}
+                  <span class="nowrap ml-auto">
+                    <span class="badge badge-secondary">
+                      {{ loop.index }}
+                    </span>
+                  </span>
                 </li>
               </ul>
             </div>

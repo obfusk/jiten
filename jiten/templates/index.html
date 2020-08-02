@@ -4,7 +4,7 @@
 
     File        : templates/index.html
     Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-    Date        : 2020-07-14
+    Date        : 2020-08-01
 
     Copyright   : Copyright (C) 2020  Felix C. Stegerman
     Version     : v0.1.1
@@ -19,7 +19,7 @@
     {% from "_search.html" import jmdict, kanji, stroke with context %}
     {% include "_nav.html" %}
     <div class="container">
-      {{ jmdict(LANGS, langs) }}
+      {{ jmdict(langs) }}
       <br/>
       {{ kanji(af = False) }}
       <br/>

@@ -5,10 +5,10 @@
 #
 # File        : jiten/app.py
 # Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-# Date        : 2020-07-19
+# Date        : 2020-08-01
 #
 # Copyright   : Copyright (C) 2020  Felix C. Stegerman
-# Version     : v0.1.1
+# Version     : v0.2.0
 # License     : AGPLv3+
 #
 # --                                                            ; }}}1
@@ -97,8 +97,8 @@ def respond(template, **data):
     set_pref(k, v, resp)
     return resp
   return make_response(render_template(
-    template, dark = dark, LANGS = J.LANGS, langs = langs,
-    toggle = dark_toggle_link(dark), **data
+    template, dark = dark, langs = langs, J = J, K = K, M = M,
+    toggle = dark_toggle_link(dark), ord = ord, hex = hex, **data
   ))
 
 def get_langs():
@@ -120,7 +120,7 @@ def r_jmdict():
   query, max_r = get_query_max()
   opts = dict(langs = get_langs(), max_results = max_r,
               noun = arg_bool("noun"), verb = arg_bool("verb"))
-  data = dict(page = "jmdict", query = query, isideo = M.isideo)
+  data = dict(page = "jmdict", query = query)
   try:
     if query: data["results"] = J.search(query, **opts)
     return respond("jmdict.html", **data)
@@ -144,7 +144,7 @@ def r_jmdict_random():
 @app.route("/kanji")
 def r_kanji():
   query, max_r = get_query_max()
-  data = dict(page = "kanji", query = query, ord = ord, hex = hex)
+  data = dict(page = "kanji", query = query)
   try:
     if query:
       data["results"] = tuple(K.search(query, max_results = max_r))

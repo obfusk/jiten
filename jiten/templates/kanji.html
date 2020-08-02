@@ -4,10 +4,10 @@
 
     File        : templates/kanji.html
     Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-    Date        : 2020-07-14
+    Date        : 2020-08-01
 
     Copyright   : Copyright (C) 2020  Felix C. Stegerman
-    Version     : v0.1.1
+    Version     : v0.2.0
     License     : AGPLv3+
 
   -->
@@ -71,73 +71,94 @@
                       <span class="text-muted">no name readings</span>
                     {% endif %}
                   </li>
+                  <li class="list-group-item pb-1 px-2 pt-2"
+                    title="meanings">
+                    {% for m in e.meaning %}
+                      <span class="selbtn fakebtn btn btn-outline-primary text-reset py-1 mb-1">
+                        {{ m }}
+                      </span>
+                    {% endfor %}
                 </ul>
               </div>
-              <ul class="list-group my-1" title="meanings">
-                {% for m in e.meaning %}
-                  <li class="list-group-item p-2">{{ m }}</li>
-                {% endfor %}
-              </ul>
-              {% set js = jmdict[e.char]|list %}
-              {% if js %}
-                <!-- TODO: filter kanji containing char?! -->
-                <div title="jmdict">
-                  {% for e, r in js %}
-                    <a class="jap selbtn btn btn-warning mb-1"
-                      title="{{ "; ".join(e.meanings()|sum(start=())) }}"
-                      href="/jmdict?query={{ ("+#" + e.seq|string)|urlencode }}"
-                      >{{ e.kanji[0].elem }}
-                      【{{ e.reading[0].elem }}】</a>
+              <ul class="list-group my-1" title="miscellaneous">
+                {% set js = jmdict[e.char]|list %}
+                {% if js %}
+                  <!-- TODO: filter kanji containing char?! -->
+                  <li class="list-group-item pb-1 px-2 pt-2"
+                      title="jmdict">
+                    {% for e, r in js %}
+                      <a class="jap selbtn btn btn-warning btn-sm mb-1"
+                        title="{{ "; ".join(e.meanings()|sum(start=())) }}"
+                        href="/jmdict?query={{ ("+#" + e.seq|string)|urlencode }}"
+                        >{{ e.kanji[0].elem }}
+                        【{{ e.reading[0].elem }}】</a>
+                    {% endfor %}
+                  </li>
+                {% endif %}
+                <li class="list-group-item pb-1 px-2 pt-2"
+                    title="radical & components">
+                  <span class="jap selbtn fakebtn btn btn-outline-primary btn-sm text-reset py-1 mb-1">
+                    {{ e.radical() }} ({{ e.rad }})
+                  </span>
+                  {% for c in e.components() %}
+                    <span class="jap selbtn fakebtn btn btn-outline-primary btn-sm text-reset py-1 mb-1">
+                      {{ c }}
+                    </span>
                   {% endfor %}
-                </div>
-              {% endif %}
-              <div class="p-1" title="miscellaneous">
-                <span class="nowrap">
-                  <a class="badge badge-primary"
-                      href="/kanji?query={{ e.char }}">
-                    {{ hex(ord(e.char)) }}
-                  </a>
-                </span>
-                <span class="nowrap">
-                  »
-                  <span class="badge badge-warning">
-                    {{ e.strokes }}
-                  </span>
-                  strokes
-                </span>
-                {% if e.level %}
+                </li>
+                <li class="list-group-item pb-1 px-2 pt-2 d-flex flex-wrap">
                   <span class="nowrap">
-                    » level
-                    <span class="jap badge badge-info">
-                      {{ e.level }}
-                    </span>
+                    <a class="badge badge-primary"
+                        href="/kanji?query={{ e.char }}">
+                      {{ hex(ord(e.char)) }}
+                    </a>
                   </span>
-                {% endif %}
-                {% if e.freq %}
                   <span class="nowrap">
-                    » freq#
-                    <span class="badge badge-danger">
-                      {{ e.freq }}
-                    </span>
-                  </span>
-                {% endif %}
-                {% if e.jlpt %}
-                  <span class="nowrap">
-                    » old jlpt
-                    <span class="badge badge-primary">
-                      {{ e.jlpt }}
-                    </span>
-                  </span>
-                {% endif %}
-                {% if e.skip %}
-                  <span class="nowrap">
-                    » skip
+                    &nbsp;»
                     <span class="badge badge-warning">
-                      {{ e.skip }}
+                      {{ e.strokes }}
+                    </span>
+                    strokes
+                  </span>
+                  {% if e.level %}
+                    <span class="nowrap">
+                      &nbsp;» level
+                      <span class="jap badge badge-info">
+                        {{ e.level }}
+                      </span>
+                    </span>
+                  {% endif %}
+                  {% if e.freq %}
+                    <span class="nowrap">
+                      &nbsp;» freq#
+                      <span class="badge badge-danger">
+                        {{ e.freq }}
+                      </span>
+                    </span>
+                  {% endif %}
+                  {% if e.jlpt %}
+                    <span class="nowrap">
+                      &nbsp;» old jlpt
+                      <span class="badge badge-primary">
+                        {{ e.jlpt }}
+                      </span>
+                    </span>
+                  {% endif %}
+                  {% if e.skip %}
+                    <span class="nowrap">
+                      &nbsp;» skip
+                      <span class="badge badge-warning">
+                        {{ e.skip }}
+                      </span>
+                    </span>
+                  {% endif %}
+                  <span class="nowrap ml-auto">
+                    <span class="badge badge-secondary">
+                      {{ loop.index }}
                     </span>
                   </span>
-                {% endif %}
-              </div>
+                </li>
+              </ul>
             </div>
           </div>
         {% endfor %}

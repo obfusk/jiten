@@ -2,10 +2,10 @@
 
   File        : templates/_nav.html
   Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-  Date        : 2020-07-14
+  Date        : 2020-08-01
 
   Copyright   : Copyright (C) 2020  Felix C. Stegerman
-  Version     : v0.1.1
+  Version     : v0.2.0
   License     : AGPLv3+
 
 --> #}
@@ -69,6 +69,8 @@
     </ul>
     <button type="button" data-toggle="modal" data-target="#romaji-modal"
       class="jap btn btn-light btn-sm my-2 my-lg-0 ml-md-3">a→あ</button>
+    <button type="button" data-toggle="modal" data-target="#radical-modal"
+      class="jap btn btn-light btn-sm my-2 my-lg-0 ml-2">部</button>
     <a class="btn btn-light btn-sm my-2 my-lg-0 ml-2"
       href="{{ toggle }}">{{ "Light" if dark else "Dark" }} Mode</a>
   </div>
@@ -89,6 +91,37 @@
         {{ input("romaji", "_", "", "", False, True, "2 mb-lg-0") }}
         <button id="romaji-convert" class="btn btn-primary">Convert</button>
       </form>
+    </div>
+  </div>
+</div>
+<div class="modal" tabindex="-1" role="dialog" id="radical-modal">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">部 radicals</h5>
+        <button type="button" class="close" data-dismiss="modal"
+            aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p>
+          Click on a radical to add it to the kanji query input field.
+        </p>
+        <div>
+          {% set c = dict(rad = "primary", alt = "info", var = "secondary") %}
+          {% for g in K.RADTABLE %}
+            <span class="active notbtn btn btn-warning px-0 py-1 mb-1">
+              <span class="tworem">{{ loop.index }}</span>
+            </span>
+            {% for r, x in g %}
+              <button class="radical jap selbtn btn btn-{{ c[x] }} px-0 py-1 mb-1">
+                <span class="tworem">{{ r }}</span>
+              </button>
+            {% endfor %}
+          {% endfor %}
+        </div>
+      </div>
     </div>
   </div>
 </div>

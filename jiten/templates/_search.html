@@ -2,15 +2,15 @@
 
   File        : templates/_search.html
   Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-  Date        : 2020-07-14
+  Date        : 2020-08-01
 
   Copyright   : Copyright (C) 2020  Felix C. Stegerman
-  Version     : v0.1.1
+  Version     : v0.2.0
   License     : AGPLv3+
 
 --> #}
 {% from "_macros.html" import search with context %}
-{% macro jmdict(LANGS, langs, query = "", af = True) %}
+{% macro jmdict(langs, query = "", af = True) %}
   {% call search("/jmdict", "Query (Regex)", "Search JMDict",
                  "jmdict-query", "query", query,
                  "regex to match japanese/english/dutch/german", af) %}
@@ -66,7 +66,7 @@
       </fieldset>
       <fieldset class="d-inline border p-2 pl-3">
         <legend>lang</legend>
-        {% for l in LANGS %}
+        {% for l in J.LANGS %}
           <div class="form-check form-check-inline">
             <input type="checkbox" class="form-check-input"
               id="jmdict-{{ l }}" name="lang" value="{{ l }}"
@@ -109,7 +109,13 @@
     </div>
     <br/>
     <div>
-      To search by SKIP code use e.g. <code>+s 2-3-3</code>.
+      To search by SKIP code use e.g. <kbd>+s 2-3-3</kbd>.
+      <br/>
+      To search by
+      <a href="#" data-toggle="modal" data-target="#radical-modal">
+        radical
+      </a>
+      use e.g. <kbd>+r <span class="jap">犭艹田</span></kbd>.
     </div>
   {% endcall %}
 {% endmacro %}

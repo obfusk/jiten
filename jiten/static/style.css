@@ -58,12 +58,17 @@ legend {
   -ms-user-select: unset !important;
   user-select: unset !important;
 }
-.fakebtn {
+.fakebtn, .notbtn {
   cursor: unset !important;
 }
 .fakebtn:hover, .fakebtn:active {
   color: inherit !important;
   background-color: inherit !important;
+}
+
+#radical-modal .tworem {
+  display: inline-block;
+  width: 2rem; /* TODO */
 }
 
 .nowrap {
