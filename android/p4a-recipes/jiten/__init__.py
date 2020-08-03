@@ -45,7 +45,7 @@ def _patch_webview():
     cmd   = """
       set -e
       if ! grep -q ZoomControls {file}; then
-        sed '/setDomStorageEnabled/ s/$/\n{zoomc}\n{zoomd}/' -i {file}
+        sed '/setDomStorageEnabled/ s/$/\\n{zoomc}\\n{zoomd}/' -i {file}
         echo patched
       fi
     """.format(file = file, zoomc = zoomc, zoomd = zoomd)
