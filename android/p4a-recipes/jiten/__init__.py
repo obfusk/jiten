@@ -33,3 +33,23 @@ class JitenRecipe(CompiledComponentsPythonRecipe):
         return env
 
 recipe = JitenRecipe()
+
+# FIXME
+def _patch_webview():
+    import subprocess
+    file  = "pythonforandroid/bootstraps/webview/build/" \
+          + "src/main/java/org/kivy/android/PythonActivity.java"
+    sett  = " "*12 + "mWebView.getSettings()."
+    zoomc = sett + "setBuiltInZoomControls(true);"
+    zoomd = sett + "setDisplayZoomControls(false);"
+    cmd   = """
+      set -e
+      if ! grep -q ZoomControls {file}; then
+        sed '/setDomStorageEnabled/ s/$/\n{zoomc}\n{zoomd}/' -i {file}
+        echo patched
+      fi
+    """.format(file = file, zoomc = zoomc, zoomd = zoomd)
+    info("Patching webview to allow zoom...")
+    subprocess.run(cmd, shell = True, check = True)
+
+_patch_webview()
