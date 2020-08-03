@@ -3,6 +3,9 @@ BUILDOZER   ?= buildozer
 PIP_INSTALL ?= pip install
 
 export APP_VERSION := $(shell git describe | sed 's/^v//')
+ifndef APP_VERSION
+  $(error git describe failed)
+endif
 
 _arm64a     := arm64-v8a
 _arm64n     := $(shell sed -n '/numeric_version/ s/.* 7/8/ p' buildozer.spec)
