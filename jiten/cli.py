@@ -5,7 +5,7 @@
 #
 # File        : jiten/cli.py
 # Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-# Date        : 2020-08-02
+# Date        : 2020-08-03
 #
 # Copyright   : Copyright (C) 2020  Felix C. Stegerman
 # Version     : v0.2.0
@@ -232,6 +232,8 @@ from . import jmdict as J
 from . import kanji  as K
 from . import misc   as M
 
+MAXE = 25
+
 def setup_db(verbose):
   msg = "up to date"
   if J.setup():
@@ -285,9 +287,10 @@ def jmdict(ctx, query, **kw):
 def jmdict_search(q, verbose, word, exact, fstwd, langs, **kw): # {{{1
   langs = [ l for ls in langs for l in ls.split(",") ]
   q     = M.process_query(q, word, exact, fstwd)
+  w     = click.get_terminal_size()[0]
   if verbose:
     yield "query: " + click.style(q, fg = "bright_red") + "\n\n"
-  for e, rank in J.search(q, langs = langs, **kw):
+  for i, (e, rank) in enumerate(J.search(q, langs = langs, **kw)):
     yield (" | ".join(
       click.style(k.elem, fg = "bright_yellow") for k in e.kanji
     ) or "[no kanji]") + "\n"
@@ -298,29 +301,38 @@ def jmdict_search(q, verbose, word, exact, fstwd, langs, **kw): # {{{1
     for l in langs:
       yield click.style("[" + l + "]", fg = "cyan") + "\n"
       for g in gloss[l]:
-        yield indent_and_wrap(g, "* ", "magenta")
-    t = indent_and_wrap(info, "--> ", "green")
+        yield indent_and_wrap(w, g, "* ", "magenta")
+    t = indent_and_wrap(w, info, "--> ", "green")
     if t: yield t
     if verbose:
-      ti = indent_and_wrap(e.xinfo(), "~~> ", "blue")
+      ti = indent_and_wrap(w, e.xinfo(), "~~> ", "blue")
       if ti: yield ti
-      tx = indent_and_wrap(e.xrefs(), "see ", "yellow")
+      tx = indent_and_wrap(w, e.xrefs(), "see ", "yellow")
       if tx: yield tx
-      yield   "seq# " + click.style(str(e.seq), fg = "blue") \
+      yield  ("seq# " + click.style(str(e.seq), fg = "blue")
         + (", freq# " + click.style(str(rank ), fg = "cyan")
-                    if rank else "") \
-        + (", prio" if e.isprio() else "") + "\n"
+                    if rank else "")
+        + (", prio" if e.isprio() else "") + "; " + str(i+1) + "\n")
     yield "\n"
                                                                 # }}}1
 
-def indent_and_wrap(xs, pre, fg):
+# TODO: handle width properly!
+def indent_and_wrap(w, xs, pre, fg):
   xs = list(xs)
   if not xs: return None
-  t = click.wrap_text("| ".join(xs),
-    click.get_terminal_size()[0], initial_indent = pre,
+  t = click.wrap_text("| ".join(xs), w, initial_indent = pre,
     subsequent_indent = " " * len(pre)
   )[len(pre):].replace("|", click.style(" |", fg = fg))
   return click.style(pre, fg = fg) + t + "\n"
+
+# TODO: currently only works for "猫 【ねこ】 | ..." etc.
+def indent_and_wrap_jap(w, xs, pre, fg):
+  xs = list(xs)
+  if not xs: return None
+  n = (w - 1 - len(pre)) // 2       # space for wide chars
+  k = max(map(len, xs)) + 1         # width of longest word + sep
+  w = len(pre) + n + (n // k * 2)   # 2 extra chars per word per line
+  return indent_and_wrap(w, xs, pre, fg).replace("_【", " 【")
 
 @cli.command(help = "Search KanjiDic.")
 @click.option("-w", "--word", is_flag = True,
@@ -346,9 +358,10 @@ def kanji(ctx, query, **kw):
 
 def kanji_search(q, verbose, word, exact, fstwd, max_results):  # {{{1
   q = M.process_query(q, word, exact, fstwd)
+  w = click.get_terminal_size()[0]
   if verbose:
     yield "query: " + click.style(q, fg = "bright_red") + "\n\n"
-  for e in K.search(q, max_results):
+  for i, e in enumerate(K.search(q, max_results)):
     yield e.char + "\n"
     yield (" | ".join(
       click.style(r, fg = "bright_yellow") for r in e.on
@@ -359,11 +372,26 @@ def kanji_search(q, verbose, word, exact, fstwd, max_results):  # {{{1
     yield (" | ".join(
       click.style(r, fg = "cyan") for r in e.nanori
     ) or "[no name readings]") + "\n"
-    for m in e.meaning:
-      yield click.style("* ", fg = "magenta") + m + "\n"
+    yield (click.style(" | ", fg = "magenta").join(e.meaning)
+      or "[no meanings]") + "\n"
     if verbose:
+      js = ( "{}_【{}】".format(e.kanji[0].elem, e.reading[0].elem)
+             for e, r in J.search(e.char, max_results = MAXE) ) # TODO
+      tj = indent_and_wrap_jap(w, js, "--> ", "blue")
+      if tj: yield tj
+      co = " ".join(e.components())
+      yield "部: {} ({})".format(e.radical(), e.rad) \
+        + (co and " " + co) + "\n"
+      ca = e.canonical()
+      tv = ", ".join(
+        (["canonical: " + ca] if ca != e.char else []) +
+        (["variant(s): " + " ".join(e.var)] if e.var else [])
+      ) + "\n"
+      if tv: yield tv
       yield (click.style(hex(ord(e.char)), fg = "blue")
-        + ", " + click.style(str(e.strokes), fg = "yellow")
+        + " " + click.style(e.name(), fg = "cyan")
+        + "; " + str(i+1) + "\n"
+        + click.style(str(e.strokes), fg = "yellow")
         + " strokes"
         + (", level " + click.style(e.level, fg = "cyan")
            if e.level else "")
@@ -372,7 +400,7 @@ def kanji_search(q, verbose, word, exact, fstwd, max_results):  # {{{1
         + (", old jlpt " + click.style(str(e.jlpt), fg = "blue")
            if e.jlpt else "")
         + (", skip " + click.style(e.skip, fg = "yellow")
-           if e.skip else "")) + "\n"
+           if e.skip else "") + "\n")
     yield "\n"
                                                                 # }}}1
 
