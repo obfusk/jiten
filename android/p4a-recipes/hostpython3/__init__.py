@@ -7,5 +7,5 @@ def _patch():
   mod   = IU.module_from_spec(spec)
   spec.loader.exec_module(mod)
   HostPython3Recipe, recipe = mod.HostPython3Recipe, mod.recipe
-  HostPython3Recipe.version = "3.8.4"
+  HostPython3Recipe.version = "3.8.5"
 _patch()
