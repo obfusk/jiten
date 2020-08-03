@@ -6,8 +6,6 @@ source.dir = .
 source.include_exts = py
 source.exclude_dirs = bin,p4a-recipes
 source.exclude_patterns = Makefile,*.png
-version.regex = __version__ *= *['"](.*)['"]
-version.filename = ../jiten/cli.py
 requirements = python3,jiten
 requirements.source.jiten = ..
 icon.filename = %(source.dir)s/icon.png
