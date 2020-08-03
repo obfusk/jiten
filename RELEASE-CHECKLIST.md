@@ -2,7 +2,7 @@
 
 - [ ] `Version:` in `README.md`
 - [ ] `__version__` in `jiten/cli.py`
-- [ ] `numeric_version` in `android/buildozer.spec`
+- [ ] `version` & `numeric_version` in `android/buildozer.spec`
 
 # Dependencies
 
