@@ -54,7 +54,7 @@ query: \bcat\b
 --> noun (common) (futsuumeishi) | abbreviation | word usually written using
     kana alone | colloquialism
 see 猫車 | 猫火鉢
-seq# 1467640, freq# 2201, prio
+seq# 1467640, freq# 2201, prio; 1
 <BLANKLINE>
 <BLANKLINE>
 
@@ -71,7 +71,7 @@ query: \bkat\b
 * kruiwagen
 --> noun (common) (futsuumeishi)
 see 猫車 | 猫火鉢
-seq# 1467640, freq# 2201, prio
+seq# 1467640, freq# 2201, prio; 1
 <BLANKLINE>
 <BLANKLINE>
 
@@ -92,7 +92,7 @@ query: \bidiot\b
     abbreviation
 ~~> ateji (phonetic) reading
 see 馬鹿貝
-seq# 1601260, freq# 2472, prio
+seq# 1601260, freq# 2472, prio; 1
 <BLANKLINE>
 <BLANKLINE>
 
@@ -110,7 +110,7 @@ query: ^誤魔化す$
 --> Godan verb with `su' ending | transitive verb | word usually written using
     kana alone
 ~~> ateji (phonetic) reading
-seq# 1271480, freq# 10495, prio
+seq# 1271480, freq# 10495, prio; 1
 <BLANKLINE>
 <BLANKLINE>
 
@@ -132,7 +132,7 @@ query: \bまる\b
 --> noun (common) (futsuumeishi) | noun, used as a prefix | suffix | slang |
     esp. 丸
 see ○ | まる | スッポン | 麻呂
-seq# 1216250, freq# 63, prio
+seq# 1216250, freq# 63, prio; 1
 <BLANKLINE>
 <BLANKLINE>
 
@@ -147,7 +147,7 @@ query: \bcat\b
 --> noun (common) (futsuumeishi) | noun or participle which takes the aux. verb
     suru
 ~~> word containing irregular kana usage
-seq# 1227180, freq# 30500
+seq# 1227180, freq# 30500; 1
 <BLANKLINE>
 <BLANKLINE>
 
@@ -162,7 +162,7 @@ query: \bみる\b
   fingers | forked felt-alga | sponge seaweed | green sponge | green fleece |
   oyster thief
 --> noun (common) (futsuumeishi) | word usually written using kana alone
-seq# 1772790, freq# 75
+seq# 1772790, freq# 75; 1
 <BLANKLINE>
 <BLANKLINE>
 
@@ -180,7 +180,7 @@ query: \bみる\b
 ビョウ
 ねこ
 [no name readings]
-* cat
+cat
 <BLANKLINE>
 <BLANKLINE>
 
@@ -192,8 +192,20 @@ query: ^cat$
 ビョウ
 ねこ
 [no name readings]
-* cat
-0x732b, 11 strokes, level 常用, freq# 1702, old jlpt 2, skip 1-3-8
+cat
+--> 猫 【ねこ】 | 子猫 【こねこ】 | 猫背 【ねこぜ】 |
+    山猫 【やまねこ】 | 猫舌 【ねこじた】 | 猫 【ねこま】 |
+    野良猫 【のらねこ】 | 猫撫で声 【ねこなでごえ】 | 猫又 【ねこまた】 |
+    黒猫 【くろねこ】 | 飼い猫 【かいねこ】 | 招き猫 【まねきねこ】 |
+    猫足 【ねこあし】 | 斑猫 【はんみょう】 | 猫かぶり 【ねこかぶり】 |
+    海猫 【うみねこ】 | 猫柳 【ねこやなぎ】 | 猫板 【ねこいた】 |
+    トラ猫 【トラねこ】 | 猫可愛がり 【ねこかわいがり】 |
+    シャム猫 【シャムねこ】 | 猫娘 【ねこむすめ】 | どら猫 【どらねこ】 |
+    メス猫 【メスねこ】 | 猫じゃらし 【ねこじゃらし】
+部: 犬 (94) ⺨ 犯 田 艸 艹 艾 苗
+variant(s): 貓
+0x732b CJK UNIFIED IDEOGRAPH-732B; 1
+11 strokes, level 常用, freq# 1702, old jlpt 2, skip 1-3-8
 <BLANKLINE>
 <BLANKLINE>
 
@@ -205,11 +217,18 @@ query: \b日\b
 ニチ | ジツ
 ひ | -び | -か
 あ | あき | いる | く | くさ | こう | す | たち | に | にっ | につ | へ
-* day
-* sun
-* Japan
-* counter for days
-0x65e5, 4 strokes, level 常用1, freq# 1, old jlpt 4, skip 3-3-1
+day | sun | Japan | counter for days
+--> 日 【ひ】 | 日 【にち】 | 日本 【にほん】 | 今日 【きょう】 |
+    日本人 【にほんじん】 | 毎日 【まいにち】 | 日米 【にちべい】 |
+    同日 【どうじつ】 | 一日 【いちにち】 | 一日 【ついたち】 |
+    日夜 【にちや】 | 明日 【あした】 | 来日 【らいにち】 |
+    昨日 【きのう】 | 前日 【ぜんじつ】 | 日程 【にってい】 |
+    日本語 【にほんご】 | 日中 【にっちゅう】 | 全日 【ぜんじつ】 |
+    二十日 【はつか】 | 日常 【にちじょう】 | 翌日 【よくじつ】 |
+    訪日 【ほうにち】 | 三十日 【さんじゅうにち】 | 三十日 【みそか】
+部: 日 (72)
+0x65e5 CJK UNIFIED IDEOGRAPH-65E5; 1
+4 strokes, level 常用1, freq# 1, old jlpt 4, skip 3-3-1
 <BLANKLINE>
 <BLANKLINE>
 
@@ -383,11 +402,9 @@ def kanji_search(q, verbose, word, exact, fstwd, max_results):  # {{{1
       yield "部: {} ({})".format(e.radical(), e.rad) \
         + (co and " " + co) + "\n"
       ca = e.canonical()
-      tv = ", ".join(
-        (["canonical: " + ca] if ca != e.char else []) +
-        (["variant(s): " + " ".join(e.var)] if e.var else [])
-      ) + "\n"
-      if tv: yield tv
+      tv = (["canonical: " + ca] if ca != e.char else []) \
+         + (["variant(s): " + " ".join(e.var)] if e.var else [])
+      if tv: yield ", ".join(tv) + "\n"
       yield (click.style(hex(ord(e.char)), fg = "blue")
         + " " + click.style(e.name(), fg = "cyan")
         + "; " + str(i+1) + "\n"
