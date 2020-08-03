@@ -2,6 +2,8 @@ SHELL       := /bin/bash
 BUILDOZER   ?= buildozer
 PIP_INSTALL ?= pip install
 
+export APP_VERSION := $(shell git describe | sed 's/^v//')
+
 _arm64a     := arm64-v8a
 _arm64n     := $(shell sed -n '/numeric_version/ s/.* 7/8/ p' buildozer.spec)
 _arm64      := APP_ANDROID_ARCH=$(_arm64a) APP_ANDROID_NUMERIC_VERSION=$(_arm64n)

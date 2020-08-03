@@ -215,10 +215,16 @@ query: \b日\b
 
 """                                                             # }}}1
 
-__version__ = "0.2.0"
-name        = "jiten"
+import os, os.path as _pth, subprocess as _subp, sys
 
-import os, sys
+_cwd = _pth.dirname(__file__)
+if _pth.exists(_pth.join(_pth.dirname(_cwd), ".git")):
+  __version__ = _subp.run("git describe --always", shell = True,
+                  cwd = _cwd, check = True, capture_output = True) \
+                .stdout.decode().strip().replace("v", "", 1)
+else:
+  __version__ = "0.2.0"
+name = "jiten"
 
 import click
 
