@@ -54,7 +54,9 @@ setuptools.setup(
     [ "res/freq/" + x for x in """SOURCES base_aggregates.txt.nobom
                                   wordfreq_ck.utf8""".split() ] +
     [ "res/jmdict/*.html" ] +
-   ([ "res/jmdict/*.xml.gz" ] if not android_build else [ "res/*.sqlite3" ]) +
+   ([ "res/jmdict/"+x+".xml.gz" for x in "jmdict kanjidic2".split() ]
+      if not android_build else [ "res/*.sqlite3" ]) +
+    [ "res/radicals/*." + x for x in "xml.gz utf8".split() ] +
     [ "static/*." + x for x in "svg css js".split() ] +
     [ "static/font/*." + x for x in "ttf txt".split() ] +
     [ "templates/*.html" ]
