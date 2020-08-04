@@ -27,12 +27,12 @@ CLI
 猫
 ねこ | ネコ
 [eng]
-* cat (esp. the domestic cat, Felis catus)
-* shamisen
-* geisha
-* wheelbarrow
-* clay bed-warmer
-* bottom | submissive partner of a homosexual relationship
+= cat (esp. the domestic cat, Felis catus)
+= shamisen
+= geisha
+= wheelbarrow
+= clay bed-warmer
+= bottom | submissive partner of a homosexual relationship
 --> noun (common) (futsuumeishi) | abbreviation | word usually written using
     kana alone | colloquialism
 <BLANKLINE>
@@ -45,12 +45,12 @@ query: \bcat\b
 猫
 ねこ | ネコ
 [eng]
-* cat (esp. the domestic cat, Felis catus)
-* shamisen
-* geisha
-* wheelbarrow
-* clay bed-warmer
-* bottom | submissive partner of a homosexual relationship
+= cat (esp. the domestic cat, Felis catus)
+= shamisen
+= geisha
+= wheelbarrow
+= clay bed-warmer
+= bottom | submissive partner of a homosexual relationship
 --> noun (common) (futsuumeishi) | abbreviation | word usually written using
     kana alone | colloquialism
 see 猫車 | 猫火鉢
@@ -65,10 +65,10 @@ query: \bkat\b
 猫
 ねこ | ネコ
 [dut]
-* {dierk.} kat | poes | {Barg.} mauwerik | Felis ocreata domestica | {i.h.b.}
+= {dierk.} kat | poes | {Barg.} mauwerik | Felis ocreata domestica | {i.h.b.}
   katachtige
-* geisha | poes | {Barg.} minette
-* kruiwagen
+= geisha | poes | {Barg.} minette
+= kruiwagen
 --> noun (common) (futsuumeishi)
 see 猫車 | 猫火鉢
 seq# 1467640, freq# 2201, prio; 1
@@ -82,11 +82,11 @@ query: \bidiot\b
 馬鹿 | 莫迦 | 破家 | 馬稼
 ばか | バカ
 [eng]
-* idiot | moron | fool
-* trivial matter | folly | absurdity
-* stupid | foolish | dull | absurd | ridiculous
-* fervent enthusiast | nut | person singularly obsessed with something
-* Mactra chinensis (species of trough shell)
+= idiot | moron | fool
+= trivial matter | folly | absurdity
+= stupid | foolish | dull | absurd | ridiculous
+= fervent enthusiast | nut | person singularly obsessed with something
+= Mactra chinensis (species of trough shell)
 --> noun (common) (futsuumeishi) | adjectival nouns or quasi-adjectives
     (keiyodoshi) | word usually written using kana alone | usu. in compounds |
     abbreviation
@@ -103,10 +103,10 @@ query: ^誤魔化す$
 誤魔化す | 誤摩化す | 胡麻化す | 誤魔かす | 胡魔化す
 ごまかす
 [eng]
-* to deceive | to falsify | to misrepresent | to cheat | to swindle | to
+= to deceive | to falsify | to misrepresent | to cheat | to swindle | to
   tamper | to juggle | to manipulate
-* to dodge | to beg the question (issue, difficulties)
-* to varnish over | to gloss over
+= to dodge | to beg the question (issue, difficulties)
+= to varnish over | to gloss over
 --> Godan verb with `su' ending | transitive verb | word usually written using
     kana alone
 ~~> ateji (phonetic) reading
@@ -121,12 +121,12 @@ query: \bまる\b
 丸 | 円
 まる
 [eng]
-* circle
-* entirety | whole | full | complete
-* money | dough | moola
-* enclosure inside a castle's walls
-* soft-shelled turtle
-* suffix for ship names | suffix for names of people (esp. infants) | suffix for
+= circle
+= entirety | whole | full | complete
+= money | dough | moola
+= enclosure inside a castle's walls
+= soft-shelled turtle
+= suffix for ship names | suffix for names of people (esp. infants) | suffix for
   names of swords, armour, musical instruments, etc. | suffix for names of dogs,
   horses, etc.
 --> noun (common) (futsuumeishi) | noun, used as a prefix | suffix | slang |
@@ -143,7 +143,7 @@ query: \bcat\b
 逆撫で | 逆なで
 さかなで | ぎゃくなで
 [eng]
-* rubbing the wrong way (e.g. a cat) | irritating
+= rubbing the wrong way (e.g. a cat) | irritating
 --> noun (common) (futsuumeishi) | noun or participle which takes the aux. verb
     suru
 ~~> word containing irregular kana usage
@@ -158,7 +158,7 @@ query: \bみる\b
 海松 | 水松
 みる | すいしょう | ミル
 [eng]
-* stag seaweed (Codium fragile) | green sea fingers | dead man's fingers | felty
+= stag seaweed (Codium fragile) | green sea fingers | dead man's fingers | felty
   fingers | forked felt-alga | sponge seaweed | green sponge | green fleece |
   oyster thief
 --> noun (common) (futsuumeishi) | word usually written using kana alone
@@ -180,7 +180,7 @@ query: \bみる\b
 ビョウ
 ねこ
 [no name readings]
-cat
+= cat
 <BLANKLINE>
 <BLANKLINE>
 
@@ -192,7 +192,7 @@ query: ^cat$
 ビョウ
 ねこ
 [no name readings]
-cat
+= cat
 --> 猫 【ねこ】 | 子猫 【こねこ】 | 猫背 【ねこぜ】 |
     山猫 【やまねこ】 | 猫舌 【ねこじた】 | 猫 【ねこま】 |
     野良猫 【のらねこ】 | 猫撫で声 【ねこなでごえ】 | 猫又 【ねこまた】 |
@@ -217,7 +217,7 @@ query: \b日\b
 ニチ | ジツ
 ひ | -び | -か
 あ | あき | いる | く | くさ | こう | す | たち | に | にっ | につ | へ
-day | sun | Japan | counter for days
+= day | sun | Japan | counter for days
 --> 日 【ひ】 | 日 【にち】 | 日本 【にほん】 | 今日 【きょう】 |
     日本人 【にほんじん】 | 毎日 【まいにち】 | 日米 【にちべい】 |
     同日 【どうじつ】 | 一日 【いちにち】 | 一日 【ついたち】 |
@@ -320,7 +320,7 @@ def jmdict_search(q, verbose, word, exact, fstwd, langs, **kw): # {{{1
     for l in langs:
       yield click.style("[" + l + "]", fg = "cyan") + "\n"
       for g in gloss[l]:
-        yield indent_and_wrap(w, g, "* ", "magenta")
+        yield indent_and_wrap(w, g, "= ", "magenta")
     t = indent_and_wrap(w, info, "--> ", "green")
     if t: yield t
     if verbose:
@@ -391,8 +391,11 @@ def kanji_search(q, verbose, word, exact, fstwd, max_results):  # {{{1
     yield (" | ".join(
       click.style(r, fg = "cyan") for r in e.nanori
     ) or "[no name readings]") + "\n"
-    yield (click.style(" | ", fg = "magenta").join(e.meaning)
-      or "[no meanings]") + "\n"
+    if e.meaning:
+      yield click.style("= ", fg = "magenta") + \
+        click.style(" | ", fg = "magenta").join(e.meaning) + "\n"
+    else:
+      yield "[no meanings]\n"
     if verbose:
       js = ( "{}_【{}】".format(e.kanji[0].elem, e.reading[0].elem)
              for e, r in J.search(e.char, max_results = MAXE) ) # TODO
