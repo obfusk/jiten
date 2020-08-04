@@ -5,7 +5,7 @@
 #
 # File        : jiten/cli.py
 # Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-# Date        : 2020-08-03
+# Date        : 2020-08-04
 #
 # Copyright   : Copyright (C) 2020  Felix C. Stegerman
 # Version     : v0.2.0
@@ -203,7 +203,7 @@ query: ^cat$
     シャム猫 【シャムねこ】 | 猫娘 【ねこむすめ】 | どら猫 【どらねこ】 |
     メス猫 【メスねこ】 | 猫じゃらし 【ねこじゃらし】
 部: 犬 (94) ⺨ 犯 田 艸 艹 艾 苗
-variant(s): 貓
+variants: 貓
 0x732b CJK UNIFIED IDEOGRAPH-732B; 1
 11 strokes, level 常用, freq# 1702, old jlpt 2, skip 1-3-8
 <BLANKLINE>
@@ -406,7 +406,7 @@ def kanji_search(q, verbose, word, exact, fstwd, max_results):  # {{{1
         + (co and " " + co) + "\n"
       ca = e.canonical()
       tv = (["canonical: " + ca] if ca != e.char else []) \
-         + (["variant(s): " + " ".join(e.var)] if e.var else [])
+         + (["variants: " + " ".join(e.var)] if e.var else [])
       if tv: yield ", ".join(tv) + "\n"
       yield (click.style(hex(ord(e.char)), fg = "blue")
         + " " + click.style(e.name(), fg = "cyan")

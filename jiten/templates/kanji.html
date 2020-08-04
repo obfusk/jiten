@@ -4,7 +4,7 @@
 
     File        : templates/kanji.html
     Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-    Date        : 2020-08-03
+    Date        : 2020-08-04
 
     Copyright   : Copyright (C) 2020  Felix C. Stegerman
     Version     : v0.2.0
@@ -34,7 +34,7 @@
                 <ul class="list-group flex-grow-1">
                   <li class="list-group-item {{
                         "pb-1 px-2 pt-2" if e.on else "p-2"
-                      }}" title="on reading">
+                      }}" title="on readings">
                     {% if e.on %}
                       {% for r in e.on %}
                         {% set rc = r.replace("-", "").replace(".", "") %}
@@ -47,7 +47,7 @@
                   </li>
                   <li class="list-group-item {{
                         "pb-1 px-2 pt-2" if e.kun else "p-2"
-                      }}" title="kun reading">
+                      }}" title="kun readings">
                     {% if e.kun %}
                       {% for r in e.kun %}
                         {% set rc = r.replace("-", "").replace(".", "") %}
@@ -60,7 +60,7 @@
                   </li>
                   <li class="list-group-item {{
                         "pb-1 px-2 pt-2" if e.nanori else "p-2"
-                      }}" title="name reading">
+                      }}" title="name readings">
                     {% if e.nanori %}
                       {% for r in e.nanori %}
                         {% set rc = r.replace("-", "").replace(".", "") %}
@@ -91,7 +91,7 @@
                 {% if js %}
                   <!-- TODO: filter kanji containing char?! -->
                   <li class="list-group-item pb-1 px-2 pt-2"
-                      title="jmdict">
+                      title="top 25 jmdict entries">
                     {% for e, r in js %}
                       <a class="jap selbtn btn btn-primary px-2 py-1 mb-1"
                         title="{{ "; ".join(e.meanings()|sum(start=())) }}"
@@ -130,7 +130,7 @@
                       </a>
                     {% endif %}
                     {% if e.var %}
-                      variant(s):
+                      variants:
                       {% for v in e.var %}
                         <a class="jap selbtn btn btn-success px-2 py-1 mb-1"
                             href="/kanji?query={{ v }}">
