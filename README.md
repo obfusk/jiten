@@ -2,7 +2,7 @@
 
     File        : README.md
     Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-    Date        : 2020-08-04
+    Date        : 2020-08-05
 
     Copyright   : Copyright (C) 2020  Felix C. Stegerman
     Version     : v0.2.0
@@ -166,5 +166,30 @@ $ export JITEN_DOMAIN=jiten.obfusk.dev
 Development Group
 
 [![CC-BY-SA](https://licensebuttons.net/l/by-sa/2.0/88x31.png)](https://www.edrdg.org/edrdg/licence.html)
+
+### Wadoku (pitch)
+
+© Ulrich Apel & Wadoku.de contributors
+
+[Non-commercial](https://www.wadoku.de/wiki/display/WAD/Wadoku.de-Daten+Lizenz)
+
+### KanjiVG (radicals)
+
+© Ulrich Apel
+
+[![CC-BY-SA](https://licensebuttons.net/l/by-sa/3.0/88x31.png)](https://github.com/KanjiVG/kanjivg/blob/master/COPYING)
+
+### Stroke Order Font
+
+© Ulrich Apel, the AAAA project and the Wadoku project
+
+[BSD-3-Clause](https://www.nihilist.org.uk)
+
+### Kana Tables
+
+© Wikipedia contributors
+
+[![CC-BY-SA](https://licensebuttons.net/l/by-sa/3.0/88x31.png)](https://en.wikipedia.org/wiki/File:Table_hiragana.svg)
+[![CC-BY-SA](https://licensebuttons.net/l/by-sa/3.0/88x31.png)](https://en.wikipedia.org/wiki/File:Table_katakana.svg)
 
 <!-- vim: set tw=70 sw=2 sts=2 et fdm=marker : -->

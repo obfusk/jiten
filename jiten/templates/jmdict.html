@@ -4,7 +4,7 @@
 
     File        : templates/jmdict.html
     Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-    Date        : 2020-08-03
+    Date        : 2020-08-05
 
     Copyright   : Copyright (C) 2020  Felix C. Stegerman
     Version     : v0.2.0
@@ -29,34 +29,42 @@
                 <li class="list-group-item {{
                       "pb-1 px-2 pt-2" if e.kanji else "p-2"
                     }}" title="kanji">
-                  {% if e.kanji %}
-                    {% for k in e.kanji %}
-                      <span class="jap selbtn fakebtn btn btn-lg btn-warning py-1 mb-1">
-                        {% for c in k.elem -%}
-                          {% if M.isideo(c) -%}
-                            <a class="text-reset"
-                              href="/kanji?query={{ c }}">{{ c }}</a>
-                          {%- else -%}
-                            {{ c }}
-                          {%- endif %}
-                        {%- endfor %}
-                      </span>
-                    {% endfor %}
+                  {% for k in e.kanji %}
+                    <span class="jap selbtn fakebtn btn btn-lg btn-warning py-1 mb-1">
+                      {% for c in k.elem -%}
+                        {% if M.isideo(c) -%}
+                          <a class="text-reset"
+                            href="/kanji?query={{ c }}">{{ c }}</a>
+                        {%- else -%}
+                          {{ c }}
+                        {%- endif %}
+                      {%- endfor %}
+                    </span>
                   {% else %}
                     <span class="text-muted">no kanji</span>
-                  {% endif %}
+                  {% endfor %}
                 </li>
                 <li class="list-group-item {{
                       "pb-1 px-2 pt-2" if e.reading else "p-2"
                     }}" title="reading">
-                  {% if e.reading %}
-                    {% for r in e.reading %}
-                      <a class="jap selbtn btn btn-success py-1 mb-1"
-                        href="/jmdict?query={{ r.elem }}&exact=yes">{{ r.elem }}</a>
-                    {% endfor %}
+                  {% for r in e.reading %}
+                    <a class="jap selbtn btn btn-success py-1 mb-1"
+                      href="/jmdict?query={{ r.elem }}&exact=yes">{{ r.elem }}</a>
                   {% else %}
                     <span class="text-muted">no readings</span>
-                  {% endif %}
+                  {% endfor %}
+                </li>
+                {% set pitch = e.pitch()|list %}
+                <li class="list-group-item {{
+                      "pb-1 px-2 pt-2" if pitch else "p-2"
+                    }}" title="pitch">
+                  {% for p in pitch %}
+                    <span class="jap selbtn btn btn-info py-1 mb-1">
+                      {{ p }}
+                    </span>
+                  {% else %}
+                    <span class="text-muted">no pitch data</span>
+                  {% endfor %}
                 </li>
               </ul>
               {% set gloss, info = e.gloss_pos_info(langs) %}

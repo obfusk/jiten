@@ -24,7 +24,7 @@ body {
 
 @font-face {
   font-family: KanjiStrokeOrders;
-  src: url(/static/font/KanjiStrokeOrders_v4.001.ttf);
+  src: url(/static/font/KanjiStrokeOrders_v4.003.ttf);
 }
 .stroke {
   font-family: KanjiStrokeOrders;

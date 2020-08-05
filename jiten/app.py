@@ -5,7 +5,7 @@
 #
 # File        : jiten/app.py
 # Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-# Date        : 2020-08-01
+# Date        : 2020-08-05
 #
 # Copyright   : Copyright (C) 2020  Felix C. Stegerman
 # Version     : v0.2.0
@@ -32,7 +32,6 @@ from . import kanji  as K
 from . import misc   as M
 
 MAX     = 50
-MAXE    = 25
 name    = "jiten"
 HTTPS   = name.upper() + "_HTTPS"
 DOMAIN  = name.upper() + "_DOMAIN"
@@ -146,10 +145,7 @@ def r_kanji():
   query, max_r = get_query_max()
   data = dict(page = "kanji", query = query)
   try:
-    if query:
-      data["results"] = tuple(K.search(query, max_results = max_r))
-      data["jmdict"]  = { k.char: J.search(k.char, max_results = MAXE)
-                          for k in data["results"] }            # TODO
+    if query: data["results"] = K.search(query, max_results = max_r)
     return respond("kanji.html", **data)
   except M.RegexError as e:
     return "regex error: " + str(e), 400

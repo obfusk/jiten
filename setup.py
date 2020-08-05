@@ -56,6 +56,7 @@ setuptools.setup(
     [ "res/jmdict/*.html" ] +
    ([ "res/jmdict/"+x+".xml.gz" for x in "jmdict kanjidic2".split() ]
       if not android_build else [ "res/*.sqlite3" ]) +
+    [ "res/pitch/" + x for x in "PITCH SOURCES *.html *.py".split() ] +
     [ "res/radicals/*." + x for x in "xml.gz utf8".split() ] +
     [ "static/*." + x for x in "svg css js".split() ] +
     [ "static/font/*." + x for x in "ttf txt".split() ] +

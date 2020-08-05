@@ -22,6 +22,7 @@ test: all
 	python3 -m jiten.jmdict --verbose --doctest
 	python3 -m jiten.kanji  --verbose --doctest
 	python3 -m jiten.misc   --verbose --doctest
+	python3 -m jiten.pitch  --verbose --doctest
 
 ci-test: test validate-css validate-html check-html
 

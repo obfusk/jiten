@@ -4,7 +4,7 @@
 
     File        : templates/kanji.html
     Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-    Date        : 2020-08-04
+    Date        : 2020-08-05
 
     Copyright   : Copyright (C) 2020  Felix C. Stegerman
     Version     : v0.2.0
@@ -35,59 +35,51 @@
                   <li class="list-group-item {{
                         "pb-1 px-2 pt-2" if e.on else "p-2"
                       }}" title="on readings">
-                    {% if e.on %}
-                      {% for r in e.on %}
-                        {% set rc = r.replace("-", "").replace(".", "") %}
-                        <a class="jap selbtn btn btn-warning py-1 mb-1"
-                          href="/jmdict?query={{ rc }}&exact=yes">{{ r }}</a>
-                      {% endfor %}
+                    {% for r in e.on %}
+                      {% set rc = r.replace("-", "").replace(".", "") %}
+                      <a class="jap selbtn btn btn-warning py-1 mb-1"
+                        href="/jmdict?query={{ rc }}&exact=yes">{{ r }}</a>
                     {% else %}
                       <span class="text-muted">no on readings</span>
-                    {% endif %}
+                    {% endfor %}
                   </li>
                   <li class="list-group-item {{
                         "pb-1 px-2 pt-2" if e.kun else "p-2"
                       }}" title="kun readings">
-                    {% if e.kun %}
-                      {% for r in e.kun %}
-                        {% set rc = r.replace("-", "").replace(".", "") %}
-                        <a class="jap selbtn btn btn-success py-1 mb-1"
-                          href="/jmdict?query={{ rc }}&exact=yes">{{ r }}</a>
-                      {% endfor %}
+                    {% for r in e.kun %}
+                      {% set rc = r.replace("-", "").replace(".", "") %}
+                      <a class="jap selbtn btn btn-success py-1 mb-1"
+                        href="/jmdict?query={{ rc }}&exact=yes">{{ r }}</a>
                     {% else %}
                       <span class="text-muted">no kun readings</span>
-                    {% endif %}
+                    {% endfor %}
                   </li>
                   <li class="list-group-item {{
                         "pb-1 px-2 pt-2" if e.nanori else "p-2"
                       }}" title="name readings">
-                    {% if e.nanori %}
-                      {% for r in e.nanori %}
-                        {% set rc = r.replace("-", "").replace(".", "") %}
-                        <a class="jap selbtn btn btn-info py-1 mb-1"
-                          href="/jmdict?query={{ rc }}&exact=yes">{{ r }}</a>
-                      {% endfor %}
+                    {% for r in e.nanori %}
+                      {% set rc = r.replace("-", "").replace(".", "") %}
+                      <a class="jap selbtn btn btn-info py-1 mb-1"
+                        href="/jmdict?query={{ rc }}&exact=yes">{{ r }}</a>
                     {% else %}
                       <span class="text-muted">no name readings</span>
-                    {% endif %}
+                    {% endfor %}
                   </li>
                   <li class="list-group-item {{
                         "pb-1 px-2 pt-2" if e.meaning else "p-2"
                       }}" title="meanings">
-                    {% if e.meaning %}
-                      {% for m in e.meaning %}
-                        <span class="selbtn fakebtn btn btn-outline-primary text-reset py-1 mb-1">
-                          {{ m }}
-                        </span>
-                      {% endfor %}
+                    {% for m in e.meaning %}
+                      <span class="selbtn fakebtn btn btn-outline-primary text-reset py-1 mb-1">
+                        {{ m }}
+                      </span>
                     {% else %}
                       <span class="text-muted">no meanings</span>
-                    {% endif %}
+                    {% endfor %}
                   </li>
                 </ul>
               </div>
               <ul class="list-group my-1" title="miscellaneous">
-                {% set js = jmdict[e.char]|list %}
+                {% set js = e.jmdict()|list %}
                 {% if js %}
                   <!-- TODO: filter kanji containing char?! -->
                   <li class="list-group-item pb-1 px-2 pt-2"

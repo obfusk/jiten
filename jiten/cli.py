@@ -26,6 +26,7 @@ CLI
 >>> run("jmdict -m1 -w cat")
 猫
 ねこ | ネコ
+ねꜜこ
 [eng]
 = cat (esp. the domestic cat, Felis catus)
 = shamisen
@@ -39,11 +40,12 @@ CLI
 <BLANKLINE>
 
 >>> run("-v jmdict -m1 -w cat")
-DB v6 up to date.
+DB v7 up to date.
 query: \bcat\b
 <BLANKLINE>
 猫
 ねこ | ネコ
+ねꜜこ
 [eng]
 = cat (esp. the domestic cat, Felis catus)
 = shamisen
@@ -59,11 +61,12 @@ seq# 1467640, freq# 2201, prio; 1
 <BLANKLINE>
 
 >>> run("-v jmdict -m1 -w kat -l dut")
-DB v6 up to date.
+DB v7 up to date.
 query: \bkat\b
 <BLANKLINE>
 猫
 ねこ | ネコ
+ねꜜこ
 [dut]
 = {dierk.} kat | poes | {Barg.} mauwerik | Felis ocreata domestica | {i.h.b.}
   katachtige
@@ -76,11 +79,12 @@ seq# 1467640, freq# 2201, prio; 1
 <BLANKLINE>
 
 >>> run("-v jmdict -m1 -w idiot")
-DB v6 up to date.
+DB v7 up to date.
 query: \bidiot\b
 <BLANKLINE>
 馬鹿 | 莫迦 | 破家 | 馬稼
 ばか | バカ
+ばꜜか
 [eng]
 = idiot | moron | fool
 = trivial matter | folly | absurdity
@@ -97,11 +101,12 @@ seq# 1601260, freq# 2472, prio; 1
 <BLANKLINE>
 
 >>> run("-v jmdict -m1 -e 誤魔化す")
-DB v6 up to date.
+DB v7 up to date.
 query: ^誤魔化す$
 <BLANKLINE>
 誤魔化す | 誤摩化す | 胡麻化す | 誤魔かす | 胡魔化す
 ごまかす
+ごꜛまかꜜす
 [eng]
 = to deceive | to falsify | to misrepresent | to cheat | to swindle | to
   tamper | to juggle | to manipulate
@@ -115,11 +120,12 @@ seq# 1271480, freq# 10495, prio; 1
 <BLANKLINE>
 
 >>> run("-v jmdict -m1 -w まる")
-DB v6 up to date.
+DB v7 up to date.
 query: \bまる\b
 <BLANKLINE>
 丸 | 円
 まる
+まꜛる
 [eng]
 = circle
 = entirety | whole | full | complete
@@ -137,11 +143,12 @@ seq# 1216250, freq# 63, prio; 1
 <BLANKLINE>
 
 >>> run("-v jmdict -m1 -w cat --verb")
-DB v6 up to date.
+DB v7 up to date.
 query: \bcat\b
 <BLANKLINE>
 逆撫で | 逆なで
 さかなで | ぎゃくなで
+[no pitch data]
 [eng]
 = rubbing the wrong way (e.g. a cat) | irritating
 --> noun (common) (futsuumeishi) | noun or participle which takes the aux. verb
@@ -152,11 +159,12 @@ seq# 1227180, freq# 30500; 1
 <BLANKLINE>
 
 >>> run("-v jmdict -m1 -w みる --noun")
-DB v6 up to date.
+DB v7 up to date.
 query: \bみる\b
 <BLANKLINE>
 海松 | 水松
 みる | すいしょう | ミル
+みꜜる
 [eng]
 = stag seaweed (Codium fragile) | green sea fingers | dead man's fingers | felty
   fingers | forked felt-alga | sponge seaweed | green sponge | green fleece |
@@ -167,7 +175,7 @@ seq# 1772790, freq# 75; 1
 <BLANKLINE>
 
 >>> run("-v jmdict -m1 -w みる --noun --prio")
-DB v6 up to date.
+DB v7 up to date.
 query: \bみる\b
 <BLANKLINE>
 <BLANKLINE>
@@ -185,7 +193,7 @@ query: \bみる\b
 <BLANKLINE>
 
 >>> run("-v kanji -m1 -e cat")
-DB v6 up to date.
+DB v7 up to date.
 query: ^cat$
 <BLANKLINE>
 猫
@@ -210,7 +218,7 @@ variants: 貓
 <BLANKLINE>
 
 >>> run("-v kanji -m1 -w 日")
-DB v6 up to date.
+DB v7 up to date.
 query: \b日\b
 <BLANKLINE>
 日
@@ -250,14 +258,14 @@ import click
 from . import jmdict as J
 from . import kanji  as K
 from . import misc   as M
-
-MAXE = 25
+from . import pitch  as P
 
 def setup_db(verbose):
   msg = "up to date"
   if J.setup():
     msg = "set up"
     K.setup()
+    P.setup()
   if verbose:
     click.secho("DB v{} {}.".format(J.DBVERSION, msg), fg = "green")
 
@@ -316,9 +324,12 @@ def jmdict_search(q, verbose, word, exact, fstwd, langs, **kw): # {{{1
     yield (" | ".join(
       click.style(r.elem, fg = "bright_green") for r in e.reading
     ) or "[no readings]") + "\n"
+    yield (" | ".join(
+      click.style(p, fg = "cyan") for p in e.pitch()
+    ) or "[no pitch data]") + "\n"
     gloss, info = e.gloss_pos_info(langs)
     for l in langs:
-      yield click.style("[" + l + "]", fg = "cyan") + "\n"
+      yield click.style("[" + l + "]", fg = "blue") + "\n"
       for g in gloss[l]:
         yield indent_and_wrap(w, g, "= ", "magenta")
     t = indent_and_wrap(w, info, "--> ", "green")
@@ -398,7 +409,7 @@ def kanji_search(q, verbose, word, exact, fstwd, max_results):  # {{{1
       yield "[no meanings]\n"
     if verbose:
       js = ( "{}_【{}】".format(e.kanji[0].elem, e.reading[0].elem)
-             for e, r in J.search(e.char, max_results = MAXE) ) # TODO
+             for e, r in e.jmdict() )
       tj = indent_and_wrap_jap(w, js, "--> ", "blue")
       if tj: yield tj
       co = " ".join(e.components())

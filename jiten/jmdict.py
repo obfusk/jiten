@@ -19,7 +19,7 @@ r"""
 JMDict.
 
 >>> DBVERSION
-6
+7
 
 >>> jmdict = parse_jmdict()
 >>> len(jmdict)
@@ -159,11 +159,12 @@ from collections import namedtuple
 
 import click
 
-from . import freq as F
-from . import misc as M
+from . import freq  as F
+from . import misc  as M
+from . import pitch as P
 from .sql import sqlite_do, load_pcre_extension
 
-DBVERSION     = 6 # NB: update this when data/schema changes
+DBVERSION     = 7 # NB: update this when data/schema changes
 SQLITE_FILE   = M.resource_path("res/jmdict.sqlite3")
 JMDICT_FILE   = M.resource_path("res/jmdict/jmdict.xml.gz")
 
@@ -180,7 +181,7 @@ Sense         = namedtuple("Sense"  , """pos lang gloss info xref""".split())
 # TODO
 # * include all readings if usually_kana? or only frequent ones?
 def definition(e):
-  r, k  = [ list(x) for x in [e.reading, e.kanji] ]
+  r, k  = e.reading, e.kanji
   xs    = r + k if e.usually_kana() else k or r
   return tuple(M.uniq( x.elem for x in xs ))
 
@@ -229,6 +230,13 @@ def xinfo(e):
 
 def xrefs(e): return M.uniq( x for s in e.sense for x in s.xref )
 
+# TODO
+def pitch(e):
+  ks = tuple( x.elem for x in e.kanji or e.reading )
+  for r in e.reading:
+    p = P.get_pitch(r.elem, ks)
+    if p: yield p
+
 Entry.definition      = definition
 Entry.words           = words
 Entry.meanings        = meanings
@@ -244,6 +252,7 @@ Entry.isnoun          = isnoun
 Entry.isverb          = isverb
 Entry.xinfo           = xinfo
 Entry.xrefs           = xrefs
+Entry.pitch           = pitch
 Entry.__hash__        = lambda e: hash(e.seq)
 
 Sense.isichidan = lambda s: any( "Ichidan verb" in x for x in s.pos )
