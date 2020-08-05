@@ -13,6 +13,12 @@ if  ! python3 -msysconfig | grep enable-loadable-sqlite-extensions \
 fi
 
 # cache DB
+for x in .heroku/vendor/{kanji,pitch,sentences}.sqlite3; do
+  if [ ! -e "$x" -a -e .heroku/vendor/jmdict.sqlite3 ]; then
+    rm -fr .heroku/vendor/
+    break
+  fi
+done
 mkdir -p .heroku/vendor
 touch    .heroku/vendor/{jmdict,kanji,pitch,sentences}.sqlite3
 ln -srf  .heroku/vendor/{jmdict,kanji,pitch,sentences}.sqlite3 jiten/res/
