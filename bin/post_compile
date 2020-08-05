@@ -14,8 +14,8 @@ fi
 
 # cache DB
 mkdir -p .heroku/vendor
-touch    .heroku/vendor/{jmdict,kanji}.sqlite3
-ln -srf  .heroku/vendor/{jmdict,kanji}.sqlite3 jiten/res/
+touch    .heroku/vendor/{jmdict,kanji,pitch,sentences}.sqlite3
+ln -srf  .heroku/vendor/{jmdict,kanji,pitch,sentences}.sqlite3 jiten/res/
 
 # build .so & setup DB
 make
