@@ -2,7 +2,7 @@
 //
 //  File        : static/script.js
 //  Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-//  Date        : 2020-08-01
+//  Date        : 2020-08-05
 //
 //  Copyright   : Copyright (C) 2020  Felix C. Stegerman
 //  Version     : v0.2.0
@@ -139,9 +139,13 @@ const selection = i => {
   return a == b ? ["", v, ""] : [v.slice(0, a), v.slice(a, b), v.slice(b)]
 }
 
+// TODO
+const playAudio = url =>
+  new Audio(url).addEventListener("canplay", e => e.target.play())
+
 window.JITEN = {
   convertKana, hiraganaToKatakana, katakanaToHiragana,
-  romajiToHiragana, romajiToKatakana
+  romajiToHiragana, romajiToKatakana, playAudio
 }
 
 $(".convert-kana").each((i, e) => $(e).click(() => {
@@ -177,6 +181,11 @@ $(".radical").click(e => {
 $("#radical-modal").on("hidden.bs.modal", () =>
   setTimeout(() => $("#kanji-query").focus())
 )
+
+$(".play-audio").click(e => {
+  playAudio(e.delegateTarget.href)
+  return false
+})
 
 })
 

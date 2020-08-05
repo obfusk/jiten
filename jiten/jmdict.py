@@ -5,7 +5,7 @@
 #
 # File        : jiten/jmdict.py
 # Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-# Date        : 2020-08-02
+# Date        : 2020-08-05
 #
 # Copyright   : Copyright (C) 2020  Felix C. Stegerman
 # Version     : v0.2.0
@@ -19,7 +19,7 @@ r"""
 JMDict.
 
 >>> DBVERSION
-7
+8
 
 >>> jmdict = parse_jmdict()
 >>> len(jmdict)
@@ -164,7 +164,7 @@ from . import misc  as M
 from . import pitch as P
 from .sql import sqlite_do, load_pcre_extension
 
-DBVERSION     = 7 # NB: update this when data/schema changes
+DBVERSION     = 8 # NB: update this when data/schema changes
 SQLITE_FILE   = M.resource_path("res/jmdict.sqlite3")
 JMDICT_FILE   = M.resource_path("res/jmdict/jmdict.xml.gz")
 
@@ -458,6 +458,7 @@ def search(q, langs = [LANGS[0]], max_results = None,           # {{{1
            file = SQLITE_FILE):
   fix_rank = lambda r: (r if r != F.NOFREQ else None)
   with sqlite_do(file) as c:
+    if q.lower() == "+random": q = "+#{}".format(random_seq())
     if re.fullmatch(r"\+#\s*\d+", q):
       seq = int(q[2:].strip())
       for r in c.execute("SELECT rank FROM entry WHERE seq = ?", (seq,)):

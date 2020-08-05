@@ -16,13 +16,14 @@ all: ext
 	python3 -m jiten.cli setup
 
 test: all
-	python3 -m jiten.app    --verbose --doctest
-	python3 -m jiten.cli    --verbose  _doctest
-	python3 -m jiten.freq   --verbose --doctest
-	python3 -m jiten.jmdict --verbose --doctest
-	python3 -m jiten.kanji  --verbose --doctest
-	python3 -m jiten.misc   --verbose --doctest
-	python3 -m jiten.pitch  --verbose --doctest
+	python3 -m jiten.app       --verbose --doctest
+	python3 -m jiten.cli       --verbose  _doctest
+	python3 -m jiten.freq      --verbose --doctest
+	python3 -m jiten.jmdict    --verbose --doctest
+	python3 -m jiten.kanji     --verbose --doctest
+	python3 -m jiten.misc      --verbose --doctest
+	python3 -m jiten.pitch     --verbose --doctest
+	python3 -m jiten.sentences --verbose --doctest
 
 ci-test: test validate-css validate-html check-html
 

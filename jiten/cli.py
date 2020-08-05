@@ -5,7 +5,7 @@
 #
 # File        : jiten/cli.py
 # Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-# Date        : 2020-08-04
+# Date        : 2020-08-05
 #
 # Copyright   : Copyright (C) 2020  Felix C. Stegerman
 # Version     : v0.2.0
@@ -40,7 +40,7 @@ CLI
 <BLANKLINE>
 
 >>> run("-v jmdict -m1 -w cat")
-DB v7 up to date.
+DB v8 up to date.
 query: \bcat\b
 <BLANKLINE>
 猫
@@ -61,7 +61,7 @@ seq# 1467640, freq# 2201, prio; 1
 <BLANKLINE>
 
 >>> run("-v jmdict -m1 -w kat -l dut")
-DB v7 up to date.
+DB v8 up to date.
 query: \bkat\b
 <BLANKLINE>
 猫
@@ -79,7 +79,7 @@ seq# 1467640, freq# 2201, prio; 1
 <BLANKLINE>
 
 >>> run("-v jmdict -m1 -w idiot")
-DB v7 up to date.
+DB v8 up to date.
 query: \bidiot\b
 <BLANKLINE>
 馬鹿 | 莫迦 | 破家 | 馬稼
@@ -101,7 +101,7 @@ seq# 1601260, freq# 2472, prio; 1
 <BLANKLINE>
 
 >>> run("-v jmdict -m1 -e 誤魔化す")
-DB v7 up to date.
+DB v8 up to date.
 query: ^誤魔化す$
 <BLANKLINE>
 誤魔化す | 誤摩化す | 胡麻化す | 誤魔かす | 胡魔化す
@@ -120,7 +120,7 @@ seq# 1271480, freq# 10495, prio; 1
 <BLANKLINE>
 
 >>> run("-v jmdict -m1 -w まる")
-DB v7 up to date.
+DB v8 up to date.
 query: \bまる\b
 <BLANKLINE>
 丸 | 円
@@ -143,7 +143,7 @@ seq# 1216250, freq# 63, prio; 1
 <BLANKLINE>
 
 >>> run("-v jmdict -m1 -w cat --verb")
-DB v7 up to date.
+DB v8 up to date.
 query: \bcat\b
 <BLANKLINE>
 逆撫で | 逆なで
@@ -159,7 +159,7 @@ seq# 1227180, freq# 30500; 1
 <BLANKLINE>
 
 >>> run("-v jmdict -m1 -w みる --noun")
-DB v7 up to date.
+DB v8 up to date.
 query: \bみる\b
 <BLANKLINE>
 海松 | 水松
@@ -175,7 +175,7 @@ seq# 1772790, freq# 75; 1
 <BLANKLINE>
 
 >>> run("-v jmdict -m1 -w みる --noun --prio")
-DB v7 up to date.
+DB v8 up to date.
 query: \bみる\b
 <BLANKLINE>
 <BLANKLINE>
@@ -193,7 +193,7 @@ query: \bみる\b
 <BLANKLINE>
 
 >>> run("-v kanji -m1 -e cat")
-DB v7 up to date.
+DB v8 up to date.
 query: ^cat$
 <BLANKLINE>
 猫
@@ -218,7 +218,7 @@ variants: 貓
 <BLANKLINE>
 
 >>> run("-v kanji -m1 -w 日")
-DB v7 up to date.
+DB v8 up to date.
 query: \b日\b
 <BLANKLINE>
 日
@@ -255,10 +255,11 @@ name = "jiten"
 
 import click
 
-from . import jmdict as J
-from . import kanji  as K
-from . import misc   as M
-from . import pitch  as P
+from . import jmdict    as J
+from . import kanji     as K
+from . import misc      as M
+from . import pitch     as P
+from . import sentences as S
 
 def setup_db(verbose):
   msg = "up to date"
@@ -266,6 +267,7 @@ def setup_db(verbose):
     msg = "set up"
     K.setup()
     P.setup()
+    S.setup()
   if verbose:
     click.secho("DB v{} {}.".format(J.DBVERSION, msg), fg = "green")
 
@@ -364,7 +366,7 @@ def indent_and_wrap_jap(w, xs, pre, fg):
   w = len(pre) + n + (n // k * 2)   # 2 extra chars per word per line
   return indent_and_wrap(w, xs, pre, fg).replace("_【", " 【")
 
-@cli.command(help = "Search KanjiDic.")
+@cli.command(help = "Search Kanji.")
 @click.option("-w", "--word", is_flag = True,
               help = "Match whole word (same as \\b...\\b).")
 @click.option("-1", "--1stword", "--first-word", "fstwd", is_flag = True,
@@ -432,6 +434,40 @@ def kanji_search(q, verbose, word, exact, fstwd, max_results):  # {{{1
            if e.jlpt else "")
         + (", skip " + click.style(e.skip, fg = "yellow")
            if e.skip else "") + "\n")
+    yield "\n"
+                                                                # }}}1
+
+@cli.command(help = "Search Example Sentences.")
+@click.option("-l", "--lang", "langs", multiple = True,
+              default = [], metavar = "LANG",
+              envvar = name.upper() + "_LANGS",
+              help = "Filter language(s) ("+", ".join(S.LANGS)+").")
+@click.option("-m", "--max", "max_results", default = None,
+              type = click.INT, help = "Maximum number of results.")
+@click.argument("query", required = False, metavar = "STRING")
+@click.pass_context
+def sentences(ctx, query, **kw):
+  setup_db(ctx.obj["verbose"])
+  ctx.obj.update(kw)
+  if query:
+    click.echo_via_pager(sentence_search(query, **ctx.obj))
+  else:
+    while True:
+      q = click.prompt("query", "", show_default = False).strip()
+      if not q: break
+      click.echo_via_pager(sentence_search(q, **ctx.obj))
+
+# TODO: audio
+def sentence_search(q, verbose, langs, max_results):            # {{{1
+  q = q.strip()
+  if verbose:
+    yield "query: " + click.style(q, fg = "bright_red") + "\n\n"
+  for i, e in enumerate(S.search(q, langs, max_results)):
+    yield click.style("jap", "bright_yellow") + ": " + e.jap + "\n"
+    for l in S.LANGS:
+      x = getattr(e, l)
+      yield (click.style(l, fg = "bright_green") + ": " + x if x
+             else "[no "+l+"]") + "\n"
     yield "\n"
                                                                 # }}}1
 

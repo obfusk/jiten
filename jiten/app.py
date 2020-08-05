@@ -27,9 +27,10 @@ import jinja2
 from flask import Flask, make_response, redirect, request, \
                   render_template, url_for
 
-from . import jmdict as J
-from . import kanji  as K
-from . import misc   as M
+from . import jmdict    as J
+from . import kanji     as K
+from . import misc      as M
+from . import sentences as S
 
 MAX     = 50
 name    = "jiten"
@@ -165,5 +166,14 @@ def r_kanji_by_level():
 def r_stroke():
   return respond("stroke.html", page = "stroke",
                  query = arg("query", "").strip())
+
+# TODO: langs
+@app.route("/sentences")
+def r_sentences():
+  query, max_r = arg("query", "").strip(), arg("max", MAX, type = int)
+  opts = dict(max_results = max_r, audio = arg_bool("audio"))
+  data = dict(page = "sentences", query = query)
+  if query: data["results"] = S.search(query, **opts)
+  return respond("sentences.html", **data)
 
 # vim: set tw=70 sw=2 sts=2 et fdm=marker :

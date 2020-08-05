@@ -2,7 +2,7 @@
 
   File        : templates/_search.html
   Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-  Date        : 2020-08-01
+  Date        : 2020-08-05
 
   Copyright   : Copyright (C) 2020  Felix C. Stegerman
   Version     : v0.2.0
@@ -123,5 +123,22 @@
   {% call search("/stroke", "Text", "筆順を示す",
                  "stroke-query", "query", query,
                  "漢字か仮名を入力", af) %}
+  {% endcall %}
+{% endmacro %}
+{% macro sentences(query = "", af = True) %}
+  {% call search("/sentences", "Query", "Search Example Sentences",
+                 "sentences-query", "query", query,
+                 "substring to match japanese", af) %}
+    <div class="form-group mb-0">
+      <fieldset class="d-inline border p-2 pl-3">
+        <legend>options</legend>
+        <div class="form-check form-check-inline">
+          <input type="checkbox" class="form-check-input"
+            id="sentences-audio" name="audio" value="yes" />
+          <label class="form-check-label" for="sentences-audio"
+            title="with audio">audio</label>
+        </div>
+      </fieldset>
+    </div>
   {% endcall %}
 {% endmacro %}

@@ -32,12 +32,14 @@ jiten - japanese cli&web dictionary based on jmdict/kanjidic
   (regular expressions)
 * JMDict multilingual japanese dictionary
   - kanji, readings, meanings (eng, dut, ger) & more
+  - pitch accent (from Wadoku)
   - by frequency
   - random entry
 * Kanji dictionary
-  - readings, meanings (eng) & more
+  - readings, meanings (eng), jmdict entries, radicals & more
   - search using
     [SKIP codes](https://en.wikipedia.org/wiki/Kodansha_Kanji_Learner%27s_Dictionary#SKIP)
+  - search by radical
   - by frequency/level
 * Stroke order
 * Web interface
@@ -53,6 +55,7 @@ jiten - japanese cli&web dictionary based on jmdict/kanjidic
 $ jiten -v jmdict --max 1 --word cat
 $ jiten -v jmdict --max 1 --word kat --lang dut
 $ jiten -v jmdict --max 1 --exact 誤魔化す
+$ jiten -v jmdict +random   # random entry
 ```
 
 ### Kanji
@@ -172,6 +175,15 @@ Development Group
 © Ulrich Apel & Wadoku.de contributors
 
 [Non-commercial](https://www.wadoku.de/wiki/display/WAD/Wadoku.de-Daten+Lizenz)
+
+### Tatoeba (sentences & audio)
+
+© Tatoeba contributors
+
+[![CC-BY](https://licensebuttons.net/l/by/2.0/88x31.png)](https://tatoeba.org/eng/downloads)
+
+The audio files are a combination of CC BY 4.0, CC BY-NC 4.0, CC
+BY-NC-ND 3.0, and CC BY-SA 4.0.
 
 ### KanjiVG (radicals)
 

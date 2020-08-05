@@ -11,6 +11,7 @@ mod_sqlite3_pcre    = setuptools.Extension(
   libraries = "pcre sqlite3".split()
 )
 data    = [ "static/*." + x for x in "svg css js".split() ] \
+        + [ "static/audio/*.mp3" ] \
         + [ "static/font/*." + x for x in "ttf txt".split() ] \
         + [ "templates/*.html" ]
 
@@ -28,7 +29,8 @@ else:
         + [ "res/jmdict/*.html" ] \
         + [ "res/jmdict/"+x+".xml.gz" for x in "jmdict kanjidic2".split() ] \
         + [ "res/pitch/" + x for x in "PITCH SOURCES *.html *.py".split() ] \
-        + [ "res/radicals/*." + x for x in "xml.gz utf8".split() ]
+        + [ "res/radicals/*." + x for x in "xml.gz utf8".split() ] \
+        + [ "res/sentences/" + x for x in "Makefile SENTENCES *.py".split() ]
 
 setuptools.setup(
   name              = "jiten",
