@@ -134,7 +134,8 @@
         <legend>options</legend>
         <div class="form-check form-check-inline">
           <input type="checkbox" class="form-check-input"
-            id="sentences-audio" name="audio" value="yes" />
+            id="sentences-audio" name="audio" value="yes"
+            {% if request.args.get("audio") == "yes" %}checked{% endif %} />
           <label class="form-check-label" for="sentences-audio"
             title="with audio">audio</label>
         </div>
