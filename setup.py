@@ -10,6 +10,9 @@ mod_sqlite3_pcre    = setuptools.Extension(
   "jiten._sqlite3_pcre", ["sqlite3-pcre.c"],
   libraries = "pcre sqlite3".split()
 )
+data    = [ "static/*." + x for x in "svg css js".split() ] \
+        + [ "static/font/*." + x for x in "ttf txt".split() ] \
+        + [ "templates/*.html" ]
 
 # "build" *.xml.gz
 subprocess.run("make patch", shell = True, check = True)
@@ -17,6 +20,15 @@ subprocess.run("make patch", shell = True, check = True)
 if android_build:
   # "build" *.sqlite3
   jiten.cli.cli("-v setup".split(), standalone_mode = False)
+
+  data += [ "res/*.sqlite3" ]
+else:
+  data += [ "res/freq/" + x for x in """SOURCES base_aggregates.txt.nobom
+                                        wordfreq_ck.utf8""".split() ] \
+        + [ "res/jmdict/*.html" ] \
+        + [ "res/jmdict/"+x+".xml.gz" for x in "jmdict kanjidic2".split() ] \
+        + [ "res/pitch/" + x for x in "PITCH SOURCES *.html *.py".split() ] \
+        + [ "res/radicals/*." + x for x in "xml.gz utf8".split() ]
 
 setuptools.setup(
   name              = "jiten",
@@ -50,18 +62,7 @@ setuptools.setup(
   ],
   keywords          = "japanese kanji dictionary cli web jmdict kanjidic",
   packages          = setuptools.find_packages(),
-  package_data      = { "jiten":
-    [ "res/freq/" + x for x in """SOURCES base_aggregates.txt.nobom
-                                  wordfreq_ck.utf8""".split() ] +
-    [ "res/jmdict/*.html" ] +
-   ([ "res/jmdict/"+x+".xml.gz" for x in "jmdict kanjidic2".split() ]
-      if not android_build else [ "res/*.sqlite3" ]) +
-    [ "res/pitch/" + x for x in "PITCH SOURCES *.html *.py".split() ] +
-    [ "res/radicals/*." + x for x in "xml.gz utf8".split() ] +
-    [ "static/*." + x for x in "svg css js".split() ] +
-    [ "static/font/*." + x for x in "ttf txt".split() ] +
-    [ "templates/*.html" ]
-  },
+  package_data      = { "jiten": data },
   scripts           = ["bin/jiten"],
   python_requires   = ">=3.5",
   install_requires  = ["Flask", "click>=6.0"],

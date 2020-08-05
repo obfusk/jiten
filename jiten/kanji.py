@@ -245,7 +245,7 @@ def parse_kanjivg(file = KANJIVG_FILE, kradfile = KRADFILE,     # {{{1
       for line in ( line for f in [f1, f2] for line in f ):
         if re.match(r"^$|^#", line): continue
         char, rest = line.split(" : ")
-        elems = set( "丨" if c == "｜" else c for c in rest.split() )
+        elems = set( rest.replace("｜", "丨").split() )
         assert M.iskanji(char)
         assert char in data[char]
         assert all( M.iskanji(c) or M.iskana(c) for c in elems )
