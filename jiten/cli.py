@@ -263,11 +263,12 @@ from . import sentences as S
 
 def setup_db(verbose):
   msg = "up to date"
-  if J.setup():
+  if not J.up2date():
     msg = "set up"
     K.setup()
     P.setup()
     S.setup()
+    J.setup() # last
   if verbose:
     click.secho("DB v{} {}.".format(J.DBVERSION, msg), fg = "green")
 
@@ -482,6 +483,7 @@ def serve(ctx, host, port):
 
 @cli.command(help = "Create sqlite databases from XML files.")
 def setup():
+  click.echo("Creating databases...")
   setup_db(True)
 
 @cli.command("_doctest", hidden = True)

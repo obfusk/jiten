@@ -31,6 +31,7 @@ clean: cleanup
 	rm -f jiten/res/*.sqlite3
 	rm -f jiten/_sqlite3_pcre.*.so
 	$(MAKE) -C jiten/res/jmdict clean
+	$(MAKE) -C jiten/res/sentences clean
 
 cleanup:
 	find -name '*~' -delete -print

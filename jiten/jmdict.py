@@ -346,6 +346,7 @@ def jmdict2sqldb(data, file = SQLITE_FILE):                     # {{{1
                     (e.seq, "\n".join(s.pos), s.lang,
                      "\n".join(s.gloss), "\n".join(s.info),
                      "\n".join(s.xref)))
+    c.execute("INSERT INTO version VALUES (?)", (DBVERSION,))
                                                                 # }}}1
 
                                                                 # {{{1
@@ -395,29 +396,29 @@ JMDICT_CREATE_SQL = """
     xref TEXT,
     FOREIGN KEY(entry) REFERENCES entry(seq)
   );
-
   CREATE TABLE version(
     version INTEGER
   );
-  INSERT INTO version VALUES ({});
 
   CREATE INDEX idx_kanji ON kanji (entry);
   CREATE INDEX idx_kanji_code ON kanji_code (code);
   CREATE INDEX idx_reading ON reading (entry);
   CREATE INDEX idx_sense ON sense (entry);
-""".format(DBVERSION)                                           # }}}1
+"""                                                             # }}}1
 
-def setup(file = SQLITE_FILE):                                  # {{{1
+def up2date(file = SQLITE_FILE):
   if os.path.exists(file):
     with sqlite_do(file) as c:
       if c.execute("SELECT name FROM sqlite_master WHERE" +
                    " type = 'table' AND name = 'version'").fetchone():
         v = c.execute("SELECT version FROM version").fetchone()[0]
-        if v == DBVERSION: return False # up to date
+        if v == DBVERSION: return True
+  return False
+
+def setup(file = SQLITE_FILE):                                  # {{{1
   F.setup()
   jmdict = parse_jmdict()
   jmdict2sqldb(jmdict, file)
-  return True
                                                                 # }}}1
 
 def nvp(noun, verb, prio):
