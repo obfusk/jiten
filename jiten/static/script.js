@@ -169,16 +169,20 @@ const saveHistory = (max = 500) => {
     const link = location.pathname + "?" + params.toString()
     const hist = uniq([[query, link], ...getHistory()]).slice(0, max)
     localStorage.setItem("history", JSON.stringify(hist))
-    for (const [q, l] of hist) {
-      const li  = $('<li class="jap list-group-item p-2"></li>')
-      const a   = $('<a></a>')
-      a.text(l.split("?")[0].slice(1) + ": " + q); a.attr("href", l)
-      li.append(a); $("#history").append(li)
-    }
+  }
+}
+
+const populateHistoryList = () => {
+  for (const [q, l] of getHistory()) {
+    const li  = $('<li class="jap list-group-item p-2"></li>')
+    const a   = $('<a></a>')
+    a.text(l.split("?")[0].slice(1) + ": " + q); a.attr("href", l)
+    li.append(a); $("#history").append(li)
   }
 }
 
 saveHistory()
+populateHistoryList()
 
 // === window.JITEN ===
 
@@ -229,9 +233,7 @@ $(".play-audio").click(e => {
   return false
 })
 
-$("#history-clear").click(() => {
-  if (window.confirm("Are you sure?")) { clearHistory() }
-})
+$("#history-clear").click(() => clearHistory())
 
 })
 
