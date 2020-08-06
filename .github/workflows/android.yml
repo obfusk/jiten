@@ -3,6 +3,13 @@ on: [push, pull_request, workflow_dispatch]
 jobs:
   build:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        target:
+        - debug-armeabi-v7a
+        - debug-arm64-v8a
+        - release-armeabi-v7a
+        - release-arm64-v8a
     steps:
     - uses: actions/checkout@v2
       with:
@@ -21,7 +28,7 @@ jobs:
         path: ~/.buildozer
         key: ${{ runner.os }}
     - name: Build
-      run: make -C android
+      run: make -C android ${{ matrix.target }}
     - uses: actions/upload-artifact@v2
       with:
         name: APK
