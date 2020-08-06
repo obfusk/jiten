@@ -2,7 +2,7 @@
 
     File        : README.md
     Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-    Date        : 2020-08-05
+    Date        : 2020-08-06
 
     Copyright   : Copyright (C) 2020  Felix C. Stegerman
     Version     : v0.2.0
@@ -31,16 +31,19 @@ jiten - japanese cli&web dictionary based on jmdict/kanjidic
   [regexes](https://docs.python.org/3/library/re.html#regular-expression-syntax)
   (regular expressions)
 * JMDict multilingual japanese dictionary
-  - kanji, readings, meanings (eng, dut, ger) & more
+  - kanji, readings, meanings (english, dutch, german) & more
   - pitch accent (from Wadoku)
   - by frequency
   - random entry
 * Kanji dictionary
-  - readings, meanings (eng), jmdict entries, radicals & more
+  - readings, meanings (english), jmdict entries, radicals & more
   - search using
     [SKIP codes](https://en.wikipedia.org/wiki/Kodansha_Kanji_Learner%27s_Dictionary#SKIP)
   - search by radical
   - by frequency/level
+* Example sentences (from Tatoeba)
+  - with english, dutch and/or german translation
+  - some with audio
 * Stroke order
 * Web interface
   - can be run on your own computer or android phone
