@@ -24,28 +24,28 @@
         <a class="nav-link" href="/">Home</a>
       </li>
       <li class="nav-item {{ "active" if page == "jmdict" else "" }}">
-        <a class="nav-link" href="/jmdict"><strong>Search JMDict</strong></a>
+        <a class="nav-link" href="/jmdict"><strong>JMDict</strong></a>
       </li>
       <li class="nav-item {{ "active" if page == "kanji" else "" }}">
-        <a class="nav-link" href="/kanji"><strong>Search Kanji</strong></a>
+        <a class="nav-link" href="/kanji"><strong>Kanji</strong></a>
       </li>
       <li class="nav-item {{ "active" if page == "sentences" else "" }}">
-        <a class="nav-link" href="/sentences"><strong>Example Sentences</strong></a>
+        <a class="nav-link" href="/sentences"><strong>Sentences</strong></a>
       </li>
       <li class="nav-item {{ "active" if page == "stroke" else "" }}">
         <a class="nav-link" href="/stroke"><strong>Stroke Order</strong></a>
       </li>
       <li class="nav-item {{ "active" if page == "kanji/by-freq" else "" }}">
-        <a class="nav-link" href="/kanji/by-freq">Kanji by Frequency</a>
+        <a class="nav-link" href="/kanji/by-freq">Kanji by Freq.</a>
       </li>
       <li class="nav-item {{ "active" if page == "kanji/by-level" else "" }}">
         <a class="nav-link" href="/kanji/by-level">Kanji by Level</a>
       </li>
       <li class="nav-item {{ "active" if page == "jmdict/by-freq" else "" }}">
-        <a class="nav-link" href="/jmdict/by-freq">JMDict by Frequency</a>
+        <a class="nav-link" href="/jmdict/by-freq">JMDict by Freq.</a>
       </li>
       <li class="nav-item">
-        <a class="nav-link" href="/jmdict/random">Random JMDict Entry</a>
+        <a class="nav-link" href="/jmdict/random">Random JMDict</a>
       </li>
     </ul>
     <ul class="navbar-nav">
@@ -71,9 +71,14 @@
       </li>
     </ul>
     <button type="button" data-toggle="modal" data-target="#romaji-modal"
-      class="jap btn btn-light btn-sm my-2 my-lg-0 ml-md-3">a→あ</button>
+      class="jap btn btn-light btn-sm my-2 my-lg-0 ml-md-3"
+      title="romaji" style="white-space: nowrap;">a→あ</button>
     <button type="button" data-toggle="modal" data-target="#radical-modal"
-      class="jap btn btn-light btn-sm my-2 my-lg-0 ml-2">部</button>
+      class="jap btn btn-light btn-sm my-2 my-lg-0 ml-2"
+      title="radicals">部</button>
+    <button type="button" data-toggle="modal" data-target="#history-modal"
+      class="jap btn btn-light btn-sm my-2 my-lg-0 ml-2"
+      title="search history">履歴</button>
     <a class="btn btn-light btn-sm my-2 my-lg-0 ml-2"
       href="{{ toggle }}">{{ "Light" if dark else "Dark" }} Mode</a>
   </div>
@@ -123,6 +128,28 @@
               </button>
             {% endfor %}
           {% endfor %}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="modal" tabindex="-1" role="dialog" id="history-modal">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="jap modal-title">検索履歴 search history</h5>
+        <button type="button" class="close" data-dismiss="modal"
+            aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <ul class="list-group" id="history"></ul>
+        <br/>
+        <div class="d-flex justify-content-end">
+          <button id="history-clear" class="btn btn-danger">
+            Clear History
+          </button>
         </div>
       </div>
     </div>

@@ -126,7 +126,7 @@
   {% endcall %}
 {% endmacro %}
 {% macro sentences(query = "", af = True) %}
-  {% call search("/sentences", "Query", "Search Example Sentences",
+  {% call search("/sentences", "Query", "Search Sentences",
                  "sentences-query", "query", query,
                  "substring to match japanese", af) %}
     <div class="form-group mb-0">

@@ -2,7 +2,7 @@
 //
 //  File        : static/script.js
 //  Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-//  Date        : 2020-08-05
+//  Date        : 2020-08-06
 //
 //  Copyright   : Copyright (C) 2020  Felix C. Stegerman
 //  Version     : v0.2.0
@@ -12,6 +12,8 @@
 
 "use strict";
 $(document).ready(() => {
+
+// === kana conversion ===
 
 const convertKana = t =>
   ([...t].findIndex(c => HIRAGANA.indexOf(c) != -1) != -1 ?
@@ -134,19 +136,59 @@ const RORX  = "(" + Object.keys(ROSP).map(esc).join("|") + "|n\\b)|" +
               "(([" + COLS.replace(/-/g, "") + "])\\4?)?y?" +
               "[" + ROWS + "]|(.)"
 
+// === miscellaneous ===
+
+const uniq = a => a.filter((v, i, a) =>
+  a.findIndex(x => x.toString() == v.toString()) === i
+)
+
 const selection = i => {
   const v = i.val(), a = i[0].selectionStart, b = i[0].selectionEnd
   return a == b ? ["", v, ""] : [v.slice(0, a), v.slice(a, b), v.slice(b)]
 }
 
-// TODO
 const playAudio = url =>
   new Audio(url).addEventListener("canplay", e => e.target.play())
 
+// === history ===
+
+const getHistory = () =>
+  JSON.parse(localStorage.getItem("history") || "[]")
+
+const clearHistory = () => {
+  localStorage.removeItem("history")
+  $("#history").empty()
+}
+
+// TODO
+const saveHistory = (max = 500) => {
+  const params  = new URLSearchParams(location.search)
+  const query   = params.get("query")
+  if (query) {
+    params.delete("save"); params.delete("dark")
+    const link = location.pathname + "?" + params.toString()
+    const hist = uniq([[query, link], ...getHistory()]).slice(0, max)
+    localStorage.setItem("history", JSON.stringify(hist))
+    for (const [q, l] of hist) {
+      const li  = $('<li class="jap list-group-item p-2"></li>')
+      const a   = $('<a></a>')
+      a.text(l.split("?")[0].slice(1) + ": " + q); a.attr("href", l)
+      li.append(a); $("#history").append(li)
+    }
+  }
+}
+
+saveHistory()
+
+// === window.JITEN ===
+
 window.JITEN = {
   convertKana, hiraganaToKatakana, katakanaToHiragana,
-  romajiToHiragana, romajiToKatakana, playAudio
+  romajiToHiragana, romajiToKatakana, playAudio,
+  getHistory, clearHistory, saveHistory
 }
+
+// === event handlers ===
 
 $(".convert-kana").each((i, e) => $(e).click(() => {
   const i = $("input", $(e).parents(".input-group"))
@@ -185,6 +227,10 @@ $("#radical-modal").on("hidden.bs.modal", () =>
 $(".play-audio").click(e => {
   playAudio(e.delegateTarget.href)
   return false
+})
+
+$("#history-clear").click(() => {
+  if (window.confirm("Are you sure?")) { clearHistory() }
 })
 
 })
