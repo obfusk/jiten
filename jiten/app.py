@@ -5,7 +5,7 @@
 #
 # File        : jiten/app.py
 # Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-# Date        : 2020-08-05
+# Date        : 2020-08-06
 #
 # Copyright   : Copyright (C) 2020  Felix C. Stegerman
 # Version     : v0.2.0
@@ -162,11 +162,6 @@ def r_kanji_by_level():
   return respond("kanji-by-level.html", page = "kanji/by-level",
                  levels = levels)
 
-@app.route("/stroke")
-def r_stroke():
-  return respond("stroke.html", page = "stroke",
-                 query = arg("query", "").strip())
-
 # TODO: langs
 @app.route("/sentences")
 def r_sentences():
@@ -175,5 +170,10 @@ def r_sentences():
   data = dict(page = "sentences", query = query)
   if query: data["results"] = S.search(query, **opts)
   return respond("sentences.html", **data)
+
+@app.route("/stroke")
+def r_stroke():
+  return respond("stroke.html", page = "stroke",
+                 query = arg("query", "").strip())
 
 # vim: set tw=70 sw=2 sts=2 et fdm=marker :
