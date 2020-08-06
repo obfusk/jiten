@@ -4,7 +4,7 @@
 
     File        : templates/sentences.html
     Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-    Date        : 2020-08-05
+    Date        : 2020-08-06
 
     Copyright   : Copyright (C) 2020  Felix C. Stegerman
     Version     : v0.2.0
@@ -63,9 +63,14 @@
               </ul>
               <br/>
               <div class="d-flex">
-                »&nbsp;
+                <span>
+                  <span class="badge badge-secondary">
+                    {{ loop.index }}
+                  </span>
+                </span>
+                &nbsp;»&nbsp;
                 <a href="https://tatoeba.org/eng/sentences/show/{{ e.id }}"
-                  target="_blank" rel="noopener">tatoeba</a>
+                  target="_blank" rel="noopener">tatoeba #{{ e.id }}</a>
                 {% if e.audio %}
                   &nbsp;
                   <a class="play-audio btn btn-primary btn-lg px-2 py-1 ml-auto"

@@ -464,11 +464,13 @@ def sentence_search(q, verbose, langs, max_results):            # {{{1
   if verbose:
     yield "query: " + click.style(q, fg = "bright_red") + "\n\n"
   for i, e in enumerate(S.search(q, langs, max_results)):
-    yield click.style("jap", "bright_yellow") + ": " + e.jap + "\n"
+    yield click.style("[jap] ", "bright_yellow") + e.jap + "\n"
     for l in S.LANGS:
       x = getattr(e, l)
-      yield (click.style(l, fg = "bright_green") + ": " + x if x
+      yield (click.style("["+l+"] ", fg = "bright_green") + x if x
              else "[no "+l+"]") + "\n"
+    if verbose:
+      yield "tatoeba #" + str(e.id) + "; " + str(i+1) + "\n"
     yield "\n"
                                                                 # }}}1
 
