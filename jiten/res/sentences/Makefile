@@ -22,7 +22,7 @@ download: clean
 	tar xf links.tar.bz2 links.csv
 	rm -f  links.tar.bz2
 	tar xf sentences_with_audio.tar.bz2 sentences_with_audio.csv
-	rm -f  sentences_with_audio.tar
+	rm -f  sentences_with_audio.tar.bz2
 	bunzip2 "$$(basename "$(ENG)")"
 	bunzip2 "$$(basename "$(DUT)")"
 	bunzip2 "$$(basename "$(GER)")"
