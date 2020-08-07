@@ -5,7 +5,7 @@
 #
 # File        : jiten/app.py
 # Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-# Date        : 2020-08-06
+# Date        : 2020-08-07
 #
 # Copyright   : Copyright (C) 2020  Felix C. Stegerman
 # Version     : v0.2.0
@@ -117,6 +117,8 @@ def r_index():
 # * --max
 @app.route("/jmdict")
 def r_jmdict():
+  if arg("query", "").strip().lower() == "+random":
+    return redirect(url_for("r_jmdict_random"))
   query, max_r = get_query_max()
   opts = dict(langs = get_langs(), max_results = max_r,
               noun = arg_bool("noun"), verb = arg_bool("verb"))
