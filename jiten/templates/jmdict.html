@@ -30,7 +30,7 @@
                       "pb-1 px-2 pt-2" if e.kanji else "p-2"
                     }}" title="kanji">
                   {% for k in e.kanji %}
-                    <span class="jap selbtn fakebtn btn btn-lg btn-warning py-1 mb-1">
+                    <span class="entry jap selbtn fakebtn btn btn-lg btn-warning py-1 mb-1">
                       {% for c in k.elem -%}
                         {% if M.isideo(c) -%}
                           <a class="text-reset"
@@ -48,7 +48,7 @@
                       "pb-1 px-2 pt-2" if e.reading else "p-2"
                     }}" title="reading">
                   {% for r in e.reading %}
-                    <a class="jap selbtn btn btn-success py-1 mb-1"
+                    <a class="entry jap selbtn btn btn-success py-1 mb-1"
                       href="/jmdict?query={{ r.elem }}&exact=yes">{{ r.elem }}</a>
                   {% else %}
                     <span class="text-muted">no readings</span>

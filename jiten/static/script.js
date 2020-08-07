@@ -138,8 +138,7 @@ const RORX  = "(" + Object.keys(ROSP).map(esc).join("|") + "|n\\b)|" +
 
 // === miscellaneous ===
 
-// NB: compares .toString()
-const uniq = (a, key = x => x.toString()) => a.filter((v, i, a) =>
+const uniq = (a, key = x => x) => a.filter((v, i, a) =>
   a.findIndex(x => key(x) == key(v)) === i
 )
 
@@ -165,12 +164,18 @@ const updateHistory = f =>
 // TODO
 const saveHistory = (max = 500) => {
   const params  = new URLSearchParams(location.search)
-  const query   = params.get("query")
+  let query     = params.get("query")
   if (query) {
+    if (query.trim().startsWith("+#")) {
+      const entry = $($(".entry")[0]).text().trim()
+      if (entry) query += " (" + entry + ")"
+    }
     params.delete("save"); params.delete("dark")
     const link = location.pathname + "?" + params.toString()
     console.log("updating history...")
-    updateHistory(hist => uniq([[query, link], ...hist]).slice(0, max))
+    updateHistory(hist =>
+      uniq([[query, link], ...hist], x => x[1]).slice(0, max)
+    )
   }
 }
 
