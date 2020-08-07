@@ -5,7 +5,7 @@
 #
 # File        : jiten/sentences.py
 # Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-# Date        : 2020-08-05
+# Date        : 2020-08-07
 #
 # Copyright   : Copyright (C) 2020  Felix C. Stegerman
 # Version     : v0.2.0
@@ -45,7 +45,7 @@ Entry(id=2260050, jap='最後にあの猫を見たのはいつですか？', eng
 
 """                                                             # }}}1
 
-import sys
+import re, sys
 
 from collections import namedtuple
 
@@ -102,10 +102,20 @@ def search(q, langs = [], max_results = None, audio = False,
   aud   = "AND audio IS NOT NULL" if audio else ""
   limit = "LIMIT " + str(int(max_results)) if max_results else ""
   with sqlite_do(file) as c:
-    for r in c.execute("""
-        SELECT * FROM entry WHERE jap LIKE ? {} {} ORDER BY id {}
-        """.format(lang, aud, limit), ("%"+q+"%",)):          # safe!
-      yield Entry(*r)
+    if q.lower() == "+random":
+      for r in c.execute("""
+          SELECT * FROM entry WHERE 1=1 {} {} ORDER BY RANDOM() {}
+          """.format(lang, aud, limit)):                      # safe!
+        yield Entry(*r)
+    elif re.fullmatch(r"\+#\s*\d+", q):
+      id = int(q[2:].strip())
+      for r in c.execute("SELECT * FROM entry WHERE id = ?", (id,)):
+        yield Entry(*r) # #=1
+    else:
+      for r in c.execute("""
+          SELECT * FROM entry WHERE jap LIKE ? {} {} ORDER BY id {}
+          """.format(lang, aud, limit), ("%"+q+"%",)):        # safe!
+        yield Entry(*r)
 
 if __name__ == "__main__":
   if "--doctest" in sys.argv:
