@@ -84,7 +84,8 @@
               {% endfor %}
               <ul class="list-group mt-2 mb-1" title="miscellaneous">
                 {% if info %}
-                  <li class="list-group-item pb-1 px-2 pt-2">
+                  <li class="list-group-item pb-1 px-2 pt-2"
+                      title="sense info">
                     {% for i in info %}
                       <span class="selbtn notbtn btn btn-success btn-sm mb-1">
                         {{ i }}
@@ -94,7 +95,8 @@
                 {% endif %}
                 {% set xi = e.xinfo()|list %}
                 {% if xi %}
-                  <li class="list-group-item pb-1 px-2 pt-2">
+                  <li class="list-group-item pb-1 px-2 pt-2"
+                      title="orthography/reading info">
                     {% for i in xi %}
                       <span class="selbtn notbtn btn btn-primary btn-sm mb-1">
                         {{ i }}
@@ -104,7 +106,8 @@
                 {% endif %}
                 {% set xr = e.xrefs()|list %}
                 {% if xr %}
-                  <li class="list-group-item pb-1 px-2 pt-2">
+                  <li class="list-group-item pb-1 px-2 pt-2"
+                      title="cross-references">
                     see
                     {% for i in xr %}
                       <a class="jap selbtn btn btn-warning px-2 py-1 mb-1"
