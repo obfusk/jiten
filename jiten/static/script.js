@@ -2,7 +2,7 @@
 //
 //  File        : static/script.js
 //  Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-//  Date        : 2020-08-06
+//  Date        : 2020-08-07
 //
 //  Copyright   : Copyright (C) 2020  Felix C. Stegerman
 //  Version     : v0.2.0
@@ -138,8 +138,9 @@ const RORX  = "(" + Object.keys(ROSP).map(esc).join("|") + "|n\\b)|" +
 
 // === miscellaneous ===
 
-const uniq = a => a.filter((v, i, a) =>
-  a.findIndex(x => x.toString() == v.toString()) === i
+// NB: compares .toString()
+const uniq = (a, key = x => x.toString()) => a.filter((v, i, a) =>
+  a.findIndex(x => key(x) == key(v)) === i
 )
 
 const selection = i => {
@@ -152,13 +153,14 @@ const playAudio = url =>
 
 // === history ===
 
+const clearHistory = () => localStorage.removeItem("history")
+
 const getHistory = () =>
   JSON.parse(localStorage.getItem("history") || "[]")
 
-const clearHistory = () => {
-  localStorage.removeItem("history")
-  $("#history").empty()
-}
+// NB: not atomic :(
+const updateHistory = f =>
+  localStorage.setItem("history", JSON.stringify(f(getHistory())))
 
 // TODO
 const saveHistory = (max = 500) => {
@@ -167,12 +169,13 @@ const saveHistory = (max = 500) => {
   if (query) {
     params.delete("save"); params.delete("dark")
     const link = location.pathname + "?" + params.toString()
-    const hist = uniq([[query, link], ...getHistory()]).slice(0, max)
-    localStorage.setItem("history", JSON.stringify(hist))
+    console.log("updating history...")
+    updateHistory(hist => uniq([[query, link], ...hist]).slice(0, max))
   }
 }
 
 const populateHistoryList = () => {
+  $("#history").empty()
   for (const [q, l] of getHistory()) {
     const li  = $('<li class="jap list-group-item p-2"></li>')
     const a   = $('<a></a>')
@@ -181,36 +184,34 @@ const populateHistoryList = () => {
   }
 }
 
-saveHistory()
-populateHistoryList()
-
 // === window.JITEN ===
 
 window.JITEN = {
   convertKana, hiraganaToKatakana, katakanaToHiragana,
   romajiToHiragana, romajiToKatakana, playAudio,
-  getHistory, clearHistory, saveHistory
+  clearHistory, getHistory
 }
 
 // === event handlers ===
 
-$(".convert-kana").each((i, e) => $(e).click(() => {
-  const i = $("input", $(e).parents(".input-group"))
+$(".convert-kana").click(e => {
+  const i = $("input", $(e.delegateTarget).parents(".input-group"))
   const [b, v, a] = selection(i)
   i.val(b + convertKana(v) + a).focus()
-}))
+})
 
-$(".clear-input").each((i, e) => $(e).click(() => {
-  $(".clear-input-checked", $(e).parents("form")).prop("checked", true)
-  $("input", $(e).parents(".input-group")).val("").focus()
-}))
+$(".clear-input").click(evt => {
+  const e = $(evt.delegateTarget)
+  $(".clear-input-checked", e.parents("form")).prop("checked", true)
+  $("input", e.parents(".input-group")).val("").focus()
+})
 
 if (navigator.clipboard) {
-  $(".copy-input").each((i, e) => $(e).click(() => {
-    const i = $("input", $(e).parents(".input-group"))
+  $(".copy-input").click(e => {
+    const i = $("input", $(e.delegateTarget).parents(".input-group"))
     navigator.clipboard.writeText(selection(i)[1])
       .catch(r => console.error("clipboard.writeText() failed:", r))
-  }).show())
+  }).show()
 }
 
 $("#romaji-convert").click(() =>
@@ -233,7 +234,22 @@ $(".play-audio").click(e => {
   return false
 })
 
-$("#history-clear").click(() => clearHistory())
+$("#history-modal").on("shown.bs.modal", () => populateHistoryList())
+
+$("#history-clear").click(() => {
+  $("#history").empty(); clearHistory()
+})
+
+$(".query-example").on("click", evt => {
+  const e = $(evt.delegateTarget)
+  const i = $("input[type=text]", e.parents("form"))
+  i.val(e.text().trim()).focus()
+  return false
+})
+
+// === save history ===
+
+saveHistory()
 
 })
 

@@ -4,7 +4,7 @@
 
     File        : templates/jmdict.html
     Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-    Date        : 2020-08-05
+    Date        : 2020-08-07
 
     Copyright   : Copyright (C) 2020  Felix C. Stegerman
     Version     : v0.2.0
@@ -69,8 +69,7 @@
               </ul>
               {% set gloss, info = e.gloss_pos_info(langs) %}
               {% for l in langs if gloss[l] %}
-                <br/>
-                <h4>{{ l }}</h4>
+                <h4 class="mt-2 mb-1">{{ l }}</h4>
                 <ul class="list-group my-1" title="meanings">
                   {% for g in gloss[l] %}
                     <li class="list-group-item pb-1 px-2 pt-2">
@@ -83,7 +82,7 @@
                   {% endfor %}
                 </ul>
               {% endfor %}
-              <ul class="list-group my-1" title="miscellaneous">
+              <ul class="list-group mt-2 mb-1" title="miscellaneous">
                 {% if info %}
                   <li class="list-group-item pb-1 px-2 pt-2">
                     {% for i in info %}
@@ -132,7 +131,7 @@
                   {% if e.isprio() %}
                     <span class="nowrap">&nbsp;» prio</span>
                   {% endif %}
-                  <span class="nowrap ml-auto">
+                  <span class="nowrap ml-auto mb-1">
                     <span class="badge badge-secondary">
                       {{ loop.index }}
                     </span>

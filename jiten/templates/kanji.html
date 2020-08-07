@@ -4,7 +4,7 @@
 
     File        : templates/kanji.html
     Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-    Date        : 2020-08-05
+    Date        : 2020-08-07
 
     Copyright   : Copyright (C) 2020  Felix C. Stegerman
     Version     : v0.2.0
@@ -78,7 +78,7 @@
                   </li>
                 </ul>
               </div>
-              <ul class="list-group my-1" title="miscellaneous">
+              <ul class="list-group mt-2 mb-1" title="miscellaneous">
                 {% set js = e.jmdict()|list %}
                 {% if js %}
                   <!-- TODO: filter kanji containing char?! -->
@@ -188,7 +188,7 @@
                       wiktionary
                     </a>
                   </span>
-                  <span class="nowrap ml-auto">
+                  <span class="nowrap ml-auto mb-1">
                     <span class="badge badge-secondary">
                       {{ loop.index }}
                     </span>

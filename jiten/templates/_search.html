@@ -2,7 +2,7 @@
 
   File        : templates/_search.html
   Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-  Date        : 2020-08-05
+  Date        : 2020-08-07
 
   Copyright   : Copyright (C) 2020  Felix C. Stegerman
   Version     : v0.2.0
@@ -84,6 +84,12 @@
         </div>
       </fieldset>
     </div>
+    <br/>
+    <div>
+      For a random entry use
+      <a class="query-example"
+        href="/jmdict?query=%2Brandom"><kbd>+random</kbd></a>.
+    </div>
   {% endcall %}
 {% endmacro %}
 {% macro kanji(query = "", af = True) %}
@@ -109,13 +115,18 @@
     </div>
     <br/>
     <div>
-      To search by SKIP code use e.g. <kbd>+s 2-3-3</kbd>.
+      To search by SKIP code use e.g.
+      <a class="query-example"
+        href="/kanji?query=%2Bs+2-3-3"><kbd>+s 2-3-3</kbd></a>.
       <br/>
       To search by
-      <a class="btn btn-outline-success btn-sm py-0" href="#" data-toggle="modal" data-target="#radical-modal">
+      <a class="btn btn-outline-success btn-sm py-0"
+          href="#" data-toggle="modal" data-target="#radical-modal">
         radical
       </a>
-      use e.g. <kbd>+r <span class="jap">犭艹田</span></kbd>.
+      use e.g.
+      <a class="query-example" href="/kanji?query=%2Br+犭艹田"
+        ><kbd>+r <span class="jap">犭艹田</span></kbd></a>.
     </div>
   {% endcall %}
 {% endmacro %}
@@ -140,6 +151,12 @@
             title="with audio">audio</label>
         </div>
       </fieldset>
+    </div>
+    <br/>
+    <div>
+      For random sentences use
+      <a class="query-example"
+        href="/sentences?query=%2Brandom"><kbd>+random</kbd></a>.
     </div>
   {% endcall %}
 {% endmacro %}
