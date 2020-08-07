@@ -5,7 +5,7 @@
 #
 # File        : jiten/misc.py
 # Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-# Date        : 2020-07-30
+# Date        : 2020-08-07
 #
 # Copyright   : Copyright (C) 2020  Felix C. Stegerman
 # Version     : v0.2.0
@@ -78,7 +78,8 @@ def resource_path(path):
 
 def process_query(q, word, exact, fstwd):
   if not q: return ""
-  else: q = q.strip()
+  q = q.strip()
+  if q.startswith("+"): return q
   if exact: return "^"   + q +   "$"
   if fstwd: return "^"   + q + "\\b"
   if word : return "\\b" + q + "\\b"
