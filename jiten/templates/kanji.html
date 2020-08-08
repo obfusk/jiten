@@ -32,46 +32,66 @@
                 <a class="entry kanji text-reset text-decoration-none mr-3"
                   href="/jmdict?query={{ e.char }}">{{ e.char }}</a>
                 <ul class="list-group flex-grow-1">
-                  <li class="list-group-item {{
+                  <li class="list-group-item d-flex flex-wrap {{
                         "pb-1 px-2 pt-2" if e.on else "p-2"
                       }}" title="on readings">
                     {% for r in e.on %}
                       {% set rc = r.replace("-", "").replace(".", "") %}
-                      <a class="jap selbtn btn btn-warning py-1 mb-1"
+                      <a class="jap selbtn btn btn-warning py-1 mb-1 mr-1"
                         href="/jmdict?query={{ rc }}&exact=yes">{{ r }}</a>
+                      {% if loop.last %}
+                        <span class="ml-auto align-self-end">
+                          <small class="text-muted">音</small>
+                        </span>
+                      {% endif %}
                     {% else %}
                       <span class="text-muted">no on readings</span>
                     {% endfor %}
                   </li>
-                  <li class="list-group-item {{
+                  <li class="list-group-item d-flex flex-wrap {{
                         "pb-1 px-2 pt-2" if e.kun else "p-2"
                       }}" title="kun readings">
                     {% for r in e.kun %}
                       {% set rc = r.replace("-", "").replace(".", "") %}
-                      <a class="jap selbtn btn btn-success py-1 mb-1"
+                      <a class="jap selbtn btn btn-success py-1 mb-1 mr-1"
                         href="/jmdict?query={{ rc }}&exact=yes">{{ r }}</a>
+                      {% if loop.last %}
+                        <span class="ml-auto align-self-end">
+                          <small class="text-muted">訓</small>
+                        </span>
+                      {% endif %}
                     {% else %}
                       <span class="text-muted">no kun readings</span>
                     {% endfor %}
                   </li>
-                  <li class="list-group-item {{
+                  <li class="list-group-item d-flex flex-wrap {{
                         "pb-1 px-2 pt-2" if e.nanori else "p-2"
                       }}" title="name readings">
                     {% for r in e.nanori %}
                       {% set rc = r.replace("-", "").replace(".", "") %}
-                      <a class="jap selbtn btn btn-info py-1 mb-1"
+                      <a class="jap selbtn btn btn-info py-1 mb-1 mr-1"
                         href="/jmdict?query={{ rc }}&exact=yes">{{ r }}</a>
+                      {% if loop.last %}
+                        <span class="ml-auto align-self-end">
+                          <small class="text-muted">名</small>
+                        </span>
+                      {% endif %}
                     {% else %}
                       <span class="text-muted">no name readings</span>
                     {% endfor %}
                   </li>
-                  <li class="list-group-item {{
+                  <li class="list-group-item d-flex flex-wrap {{
                         "pb-1 px-2 pt-2" if e.meaning else "p-2"
                       }}" title="meanings">
                     {% for m in e.meaning %}
-                      <span class="selbtn fakebtn btn btn-outline-primary text-reset py-1 mb-1">
+                      <span class="selbtn fakebtn btn btn-outline-primary text-reset py-1 mb-1 mr-1">
                         {{ m }}
                       </span>
+                      {% if loop.last %}
+                        <span class="ml-auto align-self-end">
+                          <small class="text-muted">意味</small>
+                        </span>
+                      {% endif %}
                     {% else %}
                       <span class="text-muted">no meanings</span>
                     {% endfor %}
@@ -82,20 +102,23 @@
                 {% set js = e.jmdict()|list %}
                 {% if js %}
                   <!-- TODO: filter kanji containing char?! -->
-                  <li class="list-group-item pb-1 px-2 pt-2"
+                  <li class="list-group-item pb-1 px-2 pt-2 d-flex flex-wrap"
                       title="top 25 jmdict entries">
                     {% for e, r in js %}
-                      <a class="jap selbtn btn btn-primary px-2 py-1 mb-1"
+                      <a class="jap selbtn btn btn-primary px-2 py-1 mb-1 mr-1"
                         title="{{ "; ".join(e.meanings()|sum(start=())) }}"
                         href="/jmdict?query={{ ("+#" + e.seq|string)|urlencode }}"
                         >{{ e.kanji[0].elem }}
                         【{{ e.reading[0].elem }}】</a>
                     {% endfor %}
+                    <span class="ml-auto align-self-end">
+                      <small class="text-muted">言葉</small>
+                    </span>
                   </li>
                 {% endif %}
-                <li class="list-group-item pb-1 px-2 pt-2"
+                <li class="list-group-item pb-1 px-2 pt-2 d-flex flex-wrap"
                     title="radical & components">
-                  <span class="jap selbtn fakebtn btn btn-outline-primary btn-sm text-reset mb-1">
+                  <span class="jap selbtn fakebtn btn btn-outline-primary btn-sm text-reset mb-1 mr-1">
                     <a class="text-reset"
                         href="/kanji?query={{ e.radical() }}">
                       {{ e.radical() }}
@@ -103,12 +126,15 @@
                     ({{ e.rad }})
                   </span>
                   {% for c in e.components() %}
-                    <span class="jap selbtn fakebtn btn btn-outline-primary btn-sm text-reset mb-1">
+                    <span class="jap selbtn fakebtn btn btn-outline-primary btn-sm text-reset mb-1 mr-1">
                       <a class="text-reset" href="/kanji?query={{ c }}">
                         {{ c }}
                       </a>
                     </span>
                   {% endfor %}
+                  <span class="ml-auto align-self-end">
+                    <small class="text-muted">部</small>
+                  </span>
                 </li>
                 {% set can = e.canonical() %}
                 {% if can != e.char or e.var %}

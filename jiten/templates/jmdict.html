@@ -4,7 +4,7 @@
 
     File        : templates/jmdict.html
     Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-    Date        : 2020-08-07
+    Date        : 2020-08-08
 
     Copyright   : Copyright (C) 2020  Felix C. Stegerman
     Version     : v0.2.0
@@ -44,24 +44,34 @@
                     <span class="text-muted">no kanji</span>
                   {% endfor %}
                 </li>
-                <li class="list-group-item {{
+                <li class="list-group-item d-flex flex-wrap {{
                       "pb-1 px-2 pt-2" if e.reading else "p-2"
                     }}" title="reading">
                   {% for r in e.reading %}
-                    <a class="entry jap selbtn btn btn-success py-1 mb-1"
+                    <a class="entry jap selbtn btn btn-success py-1 mb-1 mr-1"
                       href="/jmdict?query={{ r.elem }}&exact=yes">{{ r.elem }}</a>
+                    {% if loop.last %}
+                      <span class="ml-auto align-self-end">
+                        <small class="text-muted">読み</small>
+                      </span>
+                    {% endif %}
                   {% else %}
                     <span class="text-muted">no readings</span>
                   {% endfor %}
                 </li>
                 {% set pitch = e.pitch()|list %}
-                <li class="list-group-item {{
+                <li class="list-group-item d-flex flex-wrap {{
                       "pb-1 px-2 pt-2" if pitch else "p-2"
                     }}" title="pitch">
                   {% for p in pitch %}
-                    <span class="jap selbtn btn btn-info py-1 mb-1">
+                    <span class="jap selbtn btn btn-info py-1 mb-1 mr-1">
                       {{ p }}
                     </span>
+                    {% if loop.last %}
+                      <span class="ml-auto align-self-end">
+                        <small class="text-muted">高低</small>
+                      </span>
+                    {% endif %}
                   {% else %}
                     <span class="text-muted">no pitch data</span>
                   {% endfor %}
