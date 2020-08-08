@@ -230,8 +230,13 @@ $(".clear-input").click(evt => {
 if (navigator.clipboard) {
   $(".copy-input").click(e => {
     const i = $("input", $(e.delegateTarget).parents(".input-group"))
-    navigator.clipboard.writeText(selection(i)[1])
-      .catch(r => console.error("clipboard.writeText() failed:", r))
+    navigator.clipboard.writeText(selection(i)[1]).catch(r => {
+      console.error("clipboard.writeText() failed:", r)
+      try {
+        if (i[0].selectionStart == i[0].selectionEnd) i[0].select()
+        document.execCommand("copy")
+      } catch {}
+    })
   }).show()
 }
 
