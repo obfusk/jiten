@@ -5,7 +5,7 @@
 #
 # File        : jiten/app.py
 # Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-# Date        : 2020-08-07
+# Date        : 2020-08-08
 #
 # Copyright   : Copyright (C) 2020  Felix C. Stegerman
 # Version     : v0.2.0
@@ -145,6 +145,8 @@ def r_jmdict_random():
 # * --max
 @app.route("/kanji")
 def r_kanji():
+  if arg("query", "").strip().lower() == "+random":
+    return redirect(url_for("r_kanji_random"))
   query, max_r = get_query_max()
   data = dict(page = "kanji", query = query)
   try:
@@ -163,6 +165,14 @@ def r_kanji_by_level():
   levels = [ (l, list(K.by_level(l))) for l in K.LEVELS ]
   return respond("kanji-by-level.html", page = "kanji/by-level",
                  levels = levels)
+
+@app.route("/kanji/by-jlpt")
+def r_kanji_by_jlpt():
+  return respond("kanji-by-jlpt.html", page = "kanji/by-jlpt")
+
+@app.route("/kanji/random")
+def r_kanji_random():
+  return redirect(url_for("r_kanji", query = K.random().char))
 
 # TODO: langs
 @app.route("/sentences")

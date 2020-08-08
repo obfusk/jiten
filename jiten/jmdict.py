@@ -5,7 +5,7 @@
 #
 # File        : jiten/jmdict.py
 # Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-# Date        : 2020-08-05
+# Date        : 2020-08-08
 #
 # Copyright   : Copyright (C) 2020  Felix C. Stegerman
 # Version     : v0.2.0
@@ -459,7 +459,7 @@ def search(q, langs = [LANGS[0]], max_results = None,           # {{{1
            file = SQLITE_FILE):
   fix_rank = lambda r: (r if r != F.NOFREQ else None)
   with sqlite_do(file) as c:
-    if q.lower() == "+random": q = "+#{}".format(random_seq())
+    if q.lower() == "+random": q = "+#{}".format(random_seq(file))
     if re.fullmatch(r"\+#\s*\d+", q):
       seq = int(q[2:].strip())
       for r in c.execute("SELECT rank FROM entry WHERE seq = ?", (seq,)):

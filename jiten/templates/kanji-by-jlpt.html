@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en">
+  <!--
+
+    File        : templates/kanji-by-jlpt.html
+    Maintainer  : Felix C. Stegerman <flx@obfusk.net>
+    Date        : 2020-08-08
+
+    Copyright   : Copyright (C) 2020  Felix C. Stegerman
+    Version     : v0.2.0
+    License     : AGPLv3+
+
+  -->
+  <head>
+    {% include "_meta.html" %}
+    <title>jiten - kanji by jlpt</title>
+  </head>
+  <body>
+    {% include "_nav.html" %}
+    <div class="container">
+      {% for level, chars in K.by_jlpt() %}
+        <div class="card">
+          <div class="card-body">
+            <h4 class="card-title">JLPT N{{ level }}</h4>
+            <h6 class="card-subtitle text-muted mb-3">{{ chars|length }}</h6>
+            {% for c in chars %}
+              <a class="jap selbtn btn btn-primary btn-lg px-2 py-1 mb-1"
+                href="/kanji?query={{ c }}">{{ c }}</a>
+            {% endfor %}
+          </div>
+        </div>
+        {% if not loop.last %}<br/>{% endif %}
+      {% endfor %}
+    </div>
+    {% include "_footer.html" %}
+  </body>
+</html>

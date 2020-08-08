@@ -2,7 +2,7 @@
 
   File        : templates/_search.html
   Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-  Date        : 2020-08-07
+  Date        : 2020-08-08
 
   Copyright   : Copyright (C) 2020  Felix C. Stegerman
   Version     : v0.2.0
@@ -115,18 +115,26 @@
     </div>
     <br/>
     <div>
-      To search by SKIP code use e.g.
-      <a class="query-example"
-        href="/kanji?query=%2Bs+2-3-3"><kbd>+s 2-3-3</kbd></a>.
-      <br/>
-      To search by
-      <a class="btn btn-outline-success btn-sm py-0"
-          href="#" data-toggle="modal" data-target="#radical-modal">
-        radical
-      </a>
-      use e.g.
-      <a class="query-example" href="/kanji?query=%2Br+犭艹田"
-        ><kbd>+r <span class="jap">犭艹田</span></kbd></a>.
+      <span class="nowrap">
+        To search by SKIP code use e.g.
+        <a class="query-example"
+          href="/kanji?query=%2Bs+2-3-3"><kbd>+s 2-3-3</kbd></a>.
+      </span>
+      <span class="nowrap">
+        To search by
+        <a class="btn btn-outline-success btn-sm py-0"
+            href="#" data-toggle="modal" data-target="#radical-modal">
+          radical
+        </a>
+        use e.g.
+        <a class="query-example" href="/kanji?query=%2Br+犭艹田"
+          ><kbd>+r <span class="jap">犭艹田</span></kbd></a>.
+      </span>
+      <span class="nowrap">
+        For a random kanji use
+        <a class="query-example"
+          href="/kanji?query=%2Brandom"><kbd>+random</kbd></a>.
+      </span>
     </div>
   {% endcall %}
 {% endmacro %}

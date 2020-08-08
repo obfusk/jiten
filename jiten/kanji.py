@@ -337,7 +337,9 @@ def search(q, max_results = None, file = SQLITE_FILE):          # {{{1
     c.connection.create_function("level2int", 1, level2int)
     ms = re.fullmatch(r"\+s(?:kip)?\s*([\d-]+)", q, re.I)
     mr = re.fullmatch(r"\+r(?:ad(?:icals?)?)?\s*(\S+)", q, re.I)
-    if ms:
+    if q.lower() == "+random":
+      yield random(file)
+    elif ms:
       for r in c.execute("""
           SELECT * FROM entry WHERE skip = ? {} {}
           """.format(order, limit), (ms[1],)):                # safe!
@@ -389,6 +391,18 @@ def by_level(level, file = SQLITE_FILE):
         SELECT char FROM entry WHERE level = ? ORDER BY code ASC
         """, (level,)):
       yield r["char"]
+
+def by_jlpt():
+  data = { int(l): [] for l in "12345" }
+  for char, level in JLPT.items():
+    data[level].append(char)
+  for level in "54321":
+    yield int(level), "".join(sorted(data[int(level)]))
+
+def random(file = SQLITE_FILE):
+  with sqlite_do(file) as c:
+    q = "SELECT * FROM entry ORDER BY RANDOM() LIMIT 1"
+    return row2entry(c.execute(q).fetchone())
 
 RADICALS      = tuple( chr(i) + UD.normalize("NFKC", chr(i))    # {{{1
                        for i in range(0x2f00, 0x2fd6) )
