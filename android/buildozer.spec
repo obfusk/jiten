@@ -18,11 +18,10 @@ android.ndk = 20b
 #android.ndk_path =
 #android.sdk_path =
 android.accept_sdk_license = True
-android.arch = armeabi-v7a
+android.arch = arm64-v8a
 # !!! DON'T FORGET TO UPDATE THIS !!!
-# arch (7 = armeabi-v7a, 8 = arm64-v8a) + minapi + version (%02d%02d%02d)
-# e.g. armeabi-v7a + minapi 27 + v0.1.1 = 721000101
-android.numeric_version = 721000200
+# 0.2.0 -------------------vvvvvv
+android.numeric_version = 1000200002
 p4a.branch = develop
 #p4a.source_dir =
 p4a.local_recipes = ./p4a-recipes

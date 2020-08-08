@@ -7,9 +7,10 @@ ifndef APP_VERSION
   $(error git describe failed)
 endif
 
-_arm64a     := arm64-v8a
-_arm64n     := $(shell sed -n '/numeric_version/ s/.* 7/8/ p' buildozer.spec)
-_arm64      := APP_ANDROID_ARCH=$(_arm64a) APP_ANDROID_NUMERIC_VERSION=$(_arm64n)
+NUMERIC := $(shell python3 -c 'import sys,functools; print(10*functools.reduce(lambda x,y: x*100+int(y),([1]+sys.argv[1].replace("-",".").split(".")+[0])[:5],0))' $(APP_VERSION))
+ifndef NUMERIC
+  $(error numeric version command failed)
+endif
 
 .PHONY: debug clean _dir
 
@@ -26,16 +27,22 @@ _dir:
 .PHONY: release-armeabi-v7a release-arm64-v8a
 
 debug-armeabi-v7a: _dir
+	APP_ANDROID_ARCH=armeabi-v7a \
+	APP_ANDROID_NUMERIC_VERSION=$$(( $(NUMERIC) + 1 )) \
 	buildozer android debug
 
 debug-arm64-v8a: _dir
-	$(_arm64) buildozer android debug
+	APP_ANDROID_NUMERIC_VERSION=$$(( $(NUMERIC) + 2 )) \
+	buildozer android debug
 
 release-armeabi-v7a: _dir
+	APP_ANDROID_ARCH=armeabi-v7a \
+	APP_ANDROID_NUMERIC_VERSION=$$(( $(NUMERIC) + 1 )) \
 	buildozer android release
 
 release-arm64-v8a: _dir
-	$(_arm64) buildozer android release
+	APP_ANDROID_NUMERIC_VERSION=$$(( $(NUMERIC) + 2 )) \
+	buildozer android release
 
 .PHONY: _setup_root _setup_user
 
