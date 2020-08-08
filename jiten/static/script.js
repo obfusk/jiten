@@ -2,7 +2,7 @@
 //
 //  File        : static/script.js
 //  Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-//  Date        : 2020-08-07
+//  Date        : 2020-08-08
 //
 //  Copyright   : Copyright (C) 2020  Felix C. Stegerman
 //  Version     : v0.2.0
@@ -189,12 +189,28 @@ const populateHistoryList = () => {
   }
 }
 
+// === confirm ===
+
+const confirm = msg => {
+  const c = $("#confirm-modal"), o = $(".modal:visible")
+  return new Promise((resolve, reject) => {
+    $(".modal-title", c).text(msg)
+    $("#confirm").off().click(() => {
+      c.off().modal("hide"); o.modal("show"); resolve(true)
+    })
+    o.modal("hide")
+    c.on("hidden.bs.modal", () => {
+      c.off(); o.modal("show"); resolve(false)
+    }).modal()
+  })
+}
+
 // === window.JITEN ===
 
 window.JITEN = {
   convertKana, hiraganaToKatakana, katakanaToHiragana,
   romajiToHiragana, romajiToKatakana, playAudio,
-  clearHistory, getHistory
+  clearHistory, getHistory, confirm
 }
 
 // === event handlers ===
@@ -241,8 +257,10 @@ $(".play-audio").click(e => {
 
 $("#history-modal").on("shown.bs.modal", () => populateHistoryList())
 
-$("#history-clear").click(() => {
-  $("#history").empty(); clearHistory()
+$("#history-clear").click(async () => {
+  if (await confirm("Clear search history?")) {
+    $("#history").empty(); clearHistory()
+  }
 })
 
 $(".query-example").on("click", evt => {
