@@ -4,7 +4,7 @@
 
     File        : templates/kanji.html
     Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-    Date        : 2020-08-07
+    Date        : 2020-08-08
 
     Copyright   : Copyright (C) 2020  Felix C. Stegerman
     Version     : v0.2.0
@@ -170,6 +170,14 @@
                       &nbsp;» old jlpt
                       <span class="badge badge-primary">
                         {{ e.jlpt }}
+                      </span>
+                    </span>
+                  {% endif %}
+                  {% if e.new_jlpt() %}
+                    <span class="nowrap">
+                      &nbsp;» jlpt
+                      <span class="badge badge-info">
+                        {{ e.new_jlpt() }}
                       </span>
                     </span>
                   {% endif %}

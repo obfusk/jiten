@@ -5,7 +5,7 @@
 #
 # File        : jiten/kanji.py
 # Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-# Date        : 2020-08-05
+# Date        : 2020-08-08
 #
 # Copyright   : Copyright (C) 2020  Felix C. Stegerman
 # Version     : v0.2.0
@@ -59,6 +59,8 @@ Entry(char='日', cat='KANJI', level='常用1', strokes=4, freq=1, jlpt=4, skip=
 2501
 >>> len([ x for x in kanjidic if x.jlpt is not None ])
 2230
+>>> len([ x for x in kanjidic if x.new_jlpt() is not None ])
+2211
 >>> len([ x for x in kanjidic if x.skip is None ])
 952
 >>> len([ x for x in kanjidic if x.skip is None and x.cat == "KANJI" ])
@@ -107,11 +109,12 @@ from . import jmdict as J
 from . import misc   as M
 from .sql import sqlite_do, load_pcre_extension
 
-SQLITE_FILE   = M.resource_path("res/kanji.sqlite3")
-KANJIDIC_FILE = M.resource_path("res/jmdict/kanjidic2.xml.gz")
-KANJIVG_FILE  = M.resource_path("res/radicals/kanjivg.xml.gz")
-KRADFILE      = M.resource_path("res/radicals/kradfile.utf8")
-KRADFILE2     = M.resource_path("res/radicals/kradfile2.utf8")
+SQLITE_FILE     = M.resource_path("res/kanji.sqlite3")
+KANJIDIC_FILE   = M.resource_path("res/jmdict/kanjidic2.xml.gz")
+KANJIVG_FILE    = M.resource_path("res/radicals/kanjivg.xml.gz")
+KRADFILE        = M.resource_path("res/radicals/kradfile.utf8")
+KRADFILE2       = M.resource_path("res/radicals/kradfile2.utf8")
+JLPT_FILE_BASE  = M.resource_path("res/jlpt/N")
 
 MAXE   = 25                                                     # TODO
 NOFREQ = 9999
@@ -132,6 +135,7 @@ Entry.canonical   = lambda e: canonical(e.char)
 Entry.radical     = lambda e: RADICALS[e.rad-1][1]
 Entry.name        = lambda e: UD.name(e.char)
 Entry.jmdict      = lambda e: J.search(e.char, max_results = MAXE)
+Entry.new_jlpt    = lambda e: JLPT.get(e.char)
 
 def canonical(c): return UD.normalize("NFC", c)
 
@@ -256,6 +260,18 @@ def parse_kanjivg(file = KANJIVG_FILE, kradfile = KRADFILE,     # {{{1
     elems.update(set( RAD2KAN[x] for x in elems if x in RAD2KAN ))
   return data
                                                                 # }}}1
+
+def load_jlpt(base = JLPT_FILE_BASE):
+  data = {}
+  for level in "12345":
+    with open(base + level) as f:
+      for c in f.readline().strip():
+        assert M.iskanji(c)
+        assert c not in data
+        data[c] = int(level)
+  return data
+
+JLPT = load_jlpt()
 
 def kanjidic2sqldb(data, file = SQLITE_FILE):                   # {{{1
   with sqlite_do(file) as c:

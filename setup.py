@@ -22,7 +22,7 @@ if android_build:
   # "build" *.sqlite3
   jiten.cli.cli("-v setup".split(), standalone_mode = False)
 
-  data += [ "res/*.sqlite3" ]
+  data += [ "res/*.sqlite3" ] + [ "res/jlpt/N" + l for l in "12345" ]
 else:
   data += [ "res/freq/" + x for x in """SOURCES base_aggregates.txt.nobom
                                         wordfreq_ck.utf8""".split() ] \

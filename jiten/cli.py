@@ -5,7 +5,7 @@
 #
 # File        : jiten/cli.py
 # Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-# Date        : 2020-08-05
+# Date        : 2020-08-08
 #
 # Copyright   : Copyright (C) 2020  Felix C. Stegerman
 # Version     : v0.2.0
@@ -213,7 +213,7 @@ query: ^cat$
 部: 犬 (94) ⺨ 犯 田 艸 艹 艾 苗
 variants: 貓
 0x732b CJK UNIFIED IDEOGRAPH-732B; 1
-11 strokes, level 常用, freq# 1702, old jlpt 2, skip 1-3-8
+11 strokes, level 常用, freq# 1702, old jlpt 2, jlpt 3, skip 1-3-8
 <BLANKLINE>
 <BLANKLINE>
 
@@ -236,7 +236,7 @@ query: \b日\b
     訪日 【ほうにち】 | 三十日 【さんじゅうにち】 | 三十日 【みそか】
 部: 日 (72)
 0x65e5 CJK UNIFIED IDEOGRAPH-65E5; 1
-4 strokes, level 常用1, freq# 1, old jlpt 4, skip 3-3-1
+4 strokes, level 常用1, freq# 1, old jlpt 4, jlpt 5, skip 3-3-1
 <BLANKLINE>
 <BLANKLINE>
 
@@ -433,6 +433,8 @@ def kanji_search(q, verbose, word, exact, fstwd, max_results):  # {{{1
            if e.freq else "")
         + (", old jlpt " + click.style(str(e.jlpt), fg = "blue")
            if e.jlpt else "")
+        + (", jlpt " + click.style(str(e.new_jlpt()), fg = "cyan")
+           if e.new_jlpt() else "")
         + (", skip " + click.style(e.skip, fg = "yellow")
            if e.skip else "") + "\n")
     yield "\n"
