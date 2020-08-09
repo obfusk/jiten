@@ -5,7 +5,7 @@
 #
 # File        : jiten/app.py
 # Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-# Date        : 2020-08-08
+# Date        : 2020-08-09
 #
 # Copyright   : Copyright (C) 2020  Felix C. Stegerman
 # Version     : v0.2.0
@@ -20,7 +20,7 @@ Web interface.
 
 """                                                             # }}}1
 
-import json, os
+import json, os, time
 
 import jinja2
 
@@ -32,6 +32,7 @@ from . import kanji     as K
 from . import misc      as M
 from . import sentences as S
 
+START   = int(time.time())
 MAX     = 50
 name    = "jiten"
 HTTPS   = name.upper() + "_HTTPS"
@@ -98,7 +99,8 @@ def respond(template, **data):
     return resp
   return make_response(render_template(
     template, dark = dark, langs = langs, J = J, K = K, M = M,
-    toggle = dark_toggle_link(dark), ord = ord, hex = hex, **data
+    toggle = dark_toggle_link(dark), ord = ord, hex = hex,
+    START = START, **data
   ))
 
 def get_langs():
