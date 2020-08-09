@@ -49,7 +49,9 @@ release-arm64-v8a: _dir
 _setup_root:
 	apt-get install -y build-essential git
 	apt-get install -y openjdk-11-jdk-headless
-	apt-get install -y zlib1g-dev zip unzip pkg-config lld libffi-dev
+	apt-get install -y zlib1g-dev zip unzip pkg-config libffi-dev
+	apt-get install -y libltdl-dev
+	apt-get install -y lld
 
 _setup_user:
 	$(PIP_INSTALL) --upgrade $(BUILDOZER)
