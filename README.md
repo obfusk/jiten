@@ -2,7 +2,7 @@
 
     File        : README.md
     Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-    Date        : 2020-08-06
+    Date        : 2020-08-10
 
     Copyright   : Copyright (C) 2020  Felix C. Stegerman
     Version     : v0.2.0
@@ -10,11 +10,13 @@
 
 <!-- }}}1 -->
 
-[![PyPI Version](https://img.shields.io/pypi/v/jiten.svg)](https://pypi.python.org/pypi/jiten)
 [![GitHub Release](https://img.shields.io/github/release/obfusk/jiten.svg?logo=github)](https://github.com/obfusk/jiten/releases)
+[![PyPI Version](https://img.shields.io/pypi/v/jiten.svg)](https://pypi.python.org/pypi/jiten)
+[![Python Versions](https://img.shields.io/pypi/pyversions/jiten.svg)](https://pypi.python.org/pypi/jiten)
 [![CI](https://github.com/obfusk/jiten/workflows/CI/badge.svg)](https://github.com/obfusk/jiten/actions?query=workflow%3ACI)
 [![Android Build](https://github.com/obfusk/jiten/workflows/Android/badge.svg)](https://github.com/obfusk/jiten/actions?query=workflow%3AAndroid)
 [![AGPLv3+](https://img.shields.io/badge/license-AGPLv3+-blue.svg)](https://www.gnu.org/licenses/agpl-3.0.html)
+[![Sponsor](https://img.shields.io/badge/%E2%99%A5-support-violet.svg)](https://ko-fi.com/obfusk)
 
 ## Description
 
