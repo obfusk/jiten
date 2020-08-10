@@ -56,13 +56,18 @@ def _patch_webview():
         if ! grep -q ZoomControls {file}; then echo failed; exit 1; fi
         echo patched zoom
       fi
+      if ! grep -qF android.net.Uri {file}; then
+        sed '/import.*WebView;/ s/$/\\nimport android.net.Uri;/' -i {file}
+        if ! grep -qF android.net.Uri {file}; then echo failed; exit 1; fi
+        echo patched uri
+      fi
       if ! grep -qF url.startsWith {file}; then
         sed '/shouldOverrideUrlLoading/ s/$/\\n{ext}/' -i {file}
         if ! grep -qF url.startsWith {file}; then echo failed; exit 1; fi
-        echo patched open
+        echo patched load
       fi
     """.format(file = file, zoomc = zoomc, zoomd = zoomd, ext = ext)
-    info("Patching webview to allow zoom & open ...")
+    info("Patching webview ...")
     subprocess.run(cmd, shell = True, check = True)
 
 _patch_webview()
