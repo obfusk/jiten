@@ -42,15 +42,27 @@ def _patch_webview():
     sett  = " "*12 + "mWebView.getSettings()."
     zoomc = sett + "setBuiltInZoomControls(true);"
     zoomd = sett + "setDisplayZoomControls(false);"
+    ext   = "\\n".join( " "*18 + x for x in """
+      if(!(url.startsWith("file:") || url.startsWith("http://127.0.0.1:"))) {
+        Intent i = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+        startActivity(i);
+        return true;
+      }
+    """.splitlines()[1:-1] ).replace("/", "\\/")
     cmd   = """
       set -e
       if ! grep -q ZoomControls {file}; then
         sed '/setDomStorageEnabled/ s/$/\\n{zoomc}\\n{zoomd}/' -i {file}
         if ! grep -q ZoomControls {file}; then echo failed; exit 1; fi
-        echo patched
+        echo patched zoom
       fi
-    """.format(file = file, zoomc = zoomc, zoomd = zoomd)
-    info("Patching webview to allow zoom...")
+      if ! grep -qF url.startsWith {file}; then
+        sed '/shouldOverrideUrlLoading/ s/$/\\n{ext}/' -i {file}
+        if ! grep -qF url.startsWith {file}; then echo failed; exit 1; fi
+        echo patched open
+      fi
+    """.format(file = file, zoomc = zoomc, zoomd = zoomd, ext = ext)
+    info("Patching webview to allow zoom & open ...")
     subprocess.run(cmd, shell = True, check = True)
 
 _patch_webview()
