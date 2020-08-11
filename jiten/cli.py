@@ -5,7 +5,7 @@
 #
 # File        : jiten/cli.py
 # Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-# Date        : 2020-11-17
+# Date        : 2020-12-01
 #
 # Copyright   : Copyright (C) 2020  Felix C. Stegerman
 # Version     : v0.3.5
@@ -256,9 +256,9 @@ from . import pitch     as P
 from . import sentences as S
 
 from .kana import with_romaji
+from .misc import SERVER
 
 MODS          = [K, P, S, J] # J last!
-SERVER        = "https://jiten.obfusk.dev"
 ANDROID_PRIV  = os.environ.get("ANDROID_PRIVATE") or None
 
 def setup_db(verbose, dl = False):

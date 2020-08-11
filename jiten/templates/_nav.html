@@ -2,7 +2,7 @@
 
   File        : templates/_nav.html
   Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-  Date        : 2020-11-15
+  Date        : 2020-12-01
 
   Copyright   : Copyright (C) 2020  Felix C. Stegerman
   Version     : v0.3.5
@@ -72,7 +72,7 @@
       </li>
     </ul>
     <button type="button" data-toggle="modal" data-target="#regex-modal"
-      class="btn btn-light btn-sm my-2 my-lg-0 ml-md-2">Regex Help</button>
+      class="btn btn-light btn-sm my-2 my-lg-0 ml-md-2">Help</button>
     <button type="button" data-toggle="modal" data-target="#romaji-modal"
       class="jap btn btn-light btn-sm my-2 my-lg-0 ml-2"
       title="romaji" style="white-space: nowrap;">a→あ</button>
@@ -80,11 +80,18 @@
       class="jap btn btn-light btn-sm my-2 my-lg-0 ml-2"
       title="radicals">部</button>
     <button type="button" data-toggle="modal" data-target="#history-modal"
-      class="btn btn-light btn-sm my-2 my-lg-0 ml-2"
-      title="search history">History</button>
+      class="btn btn-light btn-sm my-2 my-lg-0 ml-2">History</button>
     <button type="button" data-toggle="modal" data-target="#settings-modal"
-      class="btn btn-light btn-sm my-2 my-lg-0 ml-2"
-      title="settings">Settings</button>
+      class="btn btn-light btn-sm my-2 my-lg-0 ml-2">Settings</button>
+    <button type="button" data-toggle="modal" data-target="#share-modal"
+        class="btn btn-light btn-sm my-2 my-lg-0 ml-2" title="share">
+      <!-- https://www.flaticon.com/free-icon/share-button_61020 -->
+      <svg xmlns="http://www.w3.org/2000/svg"
+          style="height: 0.85rem; width: 0.85rem;"
+          viewBox="0 0 507.45 507.45" focusable="false">
+        <path d="M408,178.5c-20.4,0-38.25,7.65-51,20.4L175.95,94.35c2.55-5.1,2.55-12.75,2.55-17.85C178.5,33.15,145.35,0,102,0 S25.5,33.15,25.5,76.5S58.65,153,102,153c20.4,0,38.25-7.65,51-20.4l181.05,104.55c-2.55,5.1-2.55,12.75-2.55,17.85 c0,5.1,0,12.75,2.55,17.85L153,379.95c-12.75-12.75-30.6-20.4-51-20.4c-40.8,0-73.95,33.15-73.95,73.95S61.2,507.45,102,507.45 s73.95-33.15,73.95-73.95c0-5.1,0-10.2-2.55-17.85L354.45,308.55c12.75,12.75,30.6,20.4,51,20.4c43.35,0,76.5-33.15,76.5-76.5 C481.95,209.1,451.35,178.5,408,178.5z" fill="currentColor" />
+      </svg>
+    </button>
   </div>
 </nav>
 <div class="modal" tabindex="-1" role="dialog" id="regex-modal">
@@ -359,6 +366,26 @@
           </div>
         </div>
       </form>
+    </div>
+  </div>
+</div>
+<div class="modal" tabindex="-1" role="dialog" id="share-modal">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Share Link</h5>
+        <button type="button" class="close" data-dismiss="modal"
+            aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body form-inline justify-content-end">
+        {% set link = M.SERVER + request.full_path %}
+        <input type="text" value="{{ link }}" readonly
+          class="form-control mr-sm-2 mb-2 mb-lg-0 flex-grow-1" />
+        <a href="{{ link }}" class="btn btn-primary"
+          target="_blank" rel="noopener">Open</a>
+      </div>
     </div>
   </div>
 </div>

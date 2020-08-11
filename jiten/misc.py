@@ -5,7 +5,7 @@
 #
 # File        : jiten/misc.py
 # Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-# Date        : 2020-10-05
+# Date        : 2020-12-01
 #
 # Copyright   : Copyright (C) 2020  Felix C. Stegerman
 # Version     : v0.3.5
@@ -173,6 +173,7 @@ def download_file(url, file, sha512 = None, tmp = ".tmp"):
   os.replace(file + tmp, file)
   return sha.hexdigest()
 
+SERVER        = "https://jiten.obfusk.dev"
 DB_URLFMT     = "https://github.com/obfusk/jiten/releases/download/{}/{}.sqlite3"
 DB_URLS       = {
   8: { k: DB_URLFMT.format("v0.3.5", k)
