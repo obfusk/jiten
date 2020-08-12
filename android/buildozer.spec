@@ -6,7 +6,7 @@ source.dir = .
 source.include_exts = py
 source.exclude_dirs = bin,p4a-recipes
 source.exclude_patterns = Makefile,*.png
-version = 0.2.0-58-g1851932
+version = 0.3.0
 requirements = python3,jiten
 requirements.source.jiten = ..
 icon.filename = %(source.dir)s/icon.png
@@ -20,8 +20,8 @@ android.ndk = 20b
 android.accept_sdk_license = True
 android.arch = arm64-v8a
 # !!! DON'T FORGET TO UPDATE THIS !!!
-# 0.2.0 -------------------vvvvvv
-android.numeric_version = 1000200582
+# 0.3.0 -------------------vvvvvv
+android.numeric_version = 1000300002
 p4a.branch = develop
 #p4a.source_dir =
 p4a.local_recipes = ./p4a-recipes
