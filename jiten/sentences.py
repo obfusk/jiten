@@ -43,6 +43,9 @@ Entry(id=74794, jap='「お前、どこの子だ？」足に纏わりついて�
 >>> [ x for x in sentences if "猫" in x.jap and x.ger and x.audio ][0]
 Entry(id=2260050, jap='最後にあの猫を見たのはいつですか？', eng='When was the last time you saw the cat?', dut=None, ger='Wann hast du die Katze zum letzten Mal gesehen?', audio='Mizu (CC BY-NC 4.0)')
 
+>>> sorted(set( x.audio for x in sentences if x.audio ))
+['Mizu (CC BY-NC 4.0)', 'huizi99 (CC BY-NC 4.0)', 'yomi (CC BY-NC 4.0)']
+
 """                                                             # }}}1
 
 import re, sys
