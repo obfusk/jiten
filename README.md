@@ -196,8 +196,7 @@ Development Group
 
 [![CC-BY](https://licensebuttons.net/l/by/2.0/88x31.png)](https://tatoeba.org/eng/downloads)
 
-The audio files are a combination of CC BY 4.0, CC BY-NC 4.0, CC
-BY-NC-ND 3.0, and CC BY-SA 4.0.
+Audio by huizi99, Mizu & yomi (CC BY-NC 4.0).
 
 ### KanjiVG (radicals)
 

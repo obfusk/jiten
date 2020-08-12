@@ -59,19 +59,28 @@
                 {% endfor %}
                 <li class="list-group-item p-2 d-flex align-items-center"
                     title="miscellaneous">
-                  <span class="nowrap">
-                    <a class="badge badge-primary"
-                        href="/sentences?query={{ ("+#" + e.id|string)|urlencode }}">
-                      #{{ e.id }}
-                    </a>
-                  </span>
-                  &nbsp;»&nbsp;
-                  <a href="https://tatoeba.org/eng/sentences/show/{{ e.id }}"
-                    target="_blank" rel="noopener">tatoeba</a>
-                  &nbsp;»&nbsp;
                   <span>
-                    <span class="badge badge-secondary">
-                      {{ loop.index }}
+                    <span class="nowrap">
+                      <a class="badge badge-primary"
+                          href="/sentences?query={{ ("+#" + e.id|string)|urlencode }}">
+                        #{{ e.id }}
+                      </a>
+                    </span>
+                    <span class="nowrap">
+                      »
+                      <a href="https://tatoeba.org/eng/sentences/show/{{ e.id }}"
+                        target="_blank" rel="noopener">tatoeba</a>
+                    </span>
+                    {% if e.audio %}
+                      <span class="nowrap">
+                        » audio by {{ e.audio.split(" (")[0] }}
+                      </span>
+                    {% endif %}
+                    <span class="nowrap">
+                      »
+                      <span class="badge badge-secondary">
+                        {{ loop.index }}
+                      </span>
                     </span>
                   </span>
                   {% if e.audio %}
@@ -82,7 +91,7 @@
                       <!-- https://www.flaticon.com/free-icon/volume_565296 -->
                       <svg xmlns="http://www.w3.org/2000/svg"
                           viewbox="0 0 384 384" focusable="false">
-                        <title>Play Audio by {{ e.audio }}</title>
+                        <title>Play Audio</title>
                         <g fill="currentColor">
                           <path d="M288,192c0-37.653-21.76-70.187-53.333-85.867v171.84C266.24,262.187,288,229.653,288,192z"/>
                           <polygon points="0,128 0,256 85.333,256 192,362.667 192,21.333 85.333,128"/>
