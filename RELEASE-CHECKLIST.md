@@ -24,3 +24,4 @@
 - [ ] GitHub release
 - [ ] upload to PyPi
 - [ ] update F-Droid (automatic)
+- [ ] update Play Store
