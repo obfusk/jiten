@@ -10,7 +10,8 @@ mod_sqlite3_pcre    = setuptools.Extension(
   "jiten._sqlite3_pcre", ["sqlite3-pcre.c"],
   libraries = "pcre sqlite3".split()
 )
-data    = [ "static/*." + x for x in "svg css js".split() ] \
+data    = [ "res/jlpt/N" + l for l in "12345" ] \
+        + [ "static/*." + x for x in "svg css js".split() ] \
         + [ "static/audio/*.mp3" ] \
         + [ "static/font/*." + x for x in "ttf txt".split() ] \
         + [ "templates/*.html" ]
@@ -22,7 +23,7 @@ if android_build:
   # "build" *.sqlite3
   jiten.cli.cli("-v setup".split(), standalone_mode = False)
 
-  data += [ "res/*.sqlite3" ] + [ "res/jlpt/N" + l for l in "12345" ]
+  data += [ "res/*.sqlite3" ]
 else:
   data += [ "res/freq/" + x for x in """SOURCES base_aggregates.txt.nobom
                                         wordfreq_ck.utf8""".split() ] \
