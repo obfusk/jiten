@@ -2,7 +2,7 @@
 
     File        : README.md
     Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-    Date        : 2020-08-10
+    Date        : 2020-08-12
 
     Copyright   : Copyright (C) 2020  Felix C. Stegerman
     Version     : v0.2.0
@@ -18,11 +18,20 @@
 [![AGPLv3+](https://img.shields.io/badge/license-AGPLv3+-blue.svg)](https://www.gnu.org/licenses/agpl-3.0.html)
 [![Sponsor](https://img.shields.io/badge/%E2%99%A5-support-violet.svg)](https://ko-fi.com/obfusk)
 
+<!--
+[![F-Droid Version](https://img.shields.io/f-droid/v/dev.obfusk.jiten.svg)](https://f-droid.org/app/dev.obfusk.jiten)
+-->
+
 ## Description
 
 jiten - japanese cli&web dictionary based on jmdict/kanjidic
 
 → https://jiten.obfusk.dev
+
+[<img src="badges/google-play.png" alt="Get it on Google Play" height="60">](https://play.google.com/store/apps/details?id=dev.obfusk.jiten)
+<!--
+[<img src="badges/fdroid.png" alt="Get it on F-Droid" height="60">](https://f-droid.org/app/dev.obfusk.jiten)
+-->
 
 ![CLI screenshot](screenshot-cli.png)
 
@@ -120,11 +129,12 @@ $ pip install -e .
 NB: you may need to add e.g. `~/.local/bin` to your `$PATH` in order
 to run `jiten`.
 
-## Android
+## Miscellaneous
 
-There's no app (yet?), but you can run the web interface locally (&
-off-line) on your android phone.  First, install
-[termux](https://termux.com/), then run:
+### Web Interface on Android
+
+You can also run the web interface locally (& offline) on your android
+phone.  First, install [termux](https://termux.com/), then run:
 
 ```bash
 $ apt install clang python
@@ -140,8 +150,6 @@ $ jiten serve
 and open http://localhost:5000 in your browser.
 
 The web interface will keep running until you close termux or reboot.
-
-## Miscellaneous
 
 ### Generating the DB
 
