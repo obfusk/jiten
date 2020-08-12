@@ -2,7 +2,7 @@
 
   File        : templates/_nav.html
   Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-  Date        : 2020-08-08
+  Date        : 2020-08-12
 
   Copyright   : Copyright (C) 2020  Felix C. Stegerman
   Version     : v0.2.0
@@ -61,17 +61,14 @@
       </li>
       <li class="nav-item">
         <a class="nav-link"
-          href="https://docs.python.org/3/library/re.html#regular-expression-syntax"
-          target="_blank" rel="noopener">Regex Syntax</a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link"
           href="https://en.wikipedia.org/wiki/Kodansha_Kanji_Learner%27s_Dictionary#SKIP"
           target="_blank" rel="noopener">SKIP Codes</a>
       </li>
     </ul>
+    <button type="button" data-toggle="modal" data-target="#regex-modal"
+      class="btn btn-light btn-sm my-2 my-lg-0 ml-md-2">Regex Help</button>
     <button type="button" data-toggle="modal" data-target="#romaji-modal"
-      class="jap btn btn-light btn-sm my-2 my-lg-0 ml-md-3"
+      class="jap btn btn-light btn-sm my-2 my-lg-0 ml-2"
       title="romaji" style="white-space: nowrap;">a→あ</button>
     <button type="button" data-toggle="modal" data-target="#radical-modal"
       class="jap btn btn-light btn-sm my-2 my-lg-0 ml-2"
@@ -169,6 +166,134 @@
         <button class="btn btn-secondary mr-1"
           data-dismiss="modal">Cancel</button>
         <button id="confirm" class="btn btn-primary">OK</button>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="modal" tabindex="-1" role="dialog" id="regex-modal">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Regex Help</h5>
+        <button type="button" class="close" data-dismiss="modal"
+            aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        For beginners:
+        <a href="https://docs.python.org/3/howto/regex.html#regex-howto"
+          target="_blank" rel="noopener">Python Regex HOWTO</a>
+        &amp;
+        <a href="https://docs.python.org/3/library/re.html#regular-expression-syntax"
+          target="_blank" rel="noopener">Python Regex Syntax</a>.
+        <br/>
+        For when the details matter:
+        <a href="https://www.pcre.org/original/doc/html/pcresyntax.html"
+          target="_blank" rel="noopener">PCRE Syntax</a>
+        (what jiten actually uses).
+        <hr/>
+        <h6>Quick Reference</h6>
+        <ul class="pl-4 mb-2"><li>
+          Most letters and characters will simply match themselves;
+          e.g. <code>foo</code> matches "foo".
+        </li><li>
+          The metacharacters <code>. ^ $ * + ? { } [ ] \ | ( )</code>
+          allow matching using sophisticated patterns and rules; they
+          are escaped by preceding them with a backslash; e.g.
+          <code>\\</code> matches an actual backslash.
+        </li></ul>
+        <ul class="pl-4 mb-2"><li>
+          <code>.</code> matches any character (except newline); e.g.
+          <code>ba.</code> matches "bar", "baz", etc.
+        </li></ul>
+        <ul class="pl-4 mb-2"><li>
+          <code>^</code> matches at the start of a line; e.g.
+          <code>^foo</code> matches "foo" at the start of a line.
+        </li><li>
+          <code>$</code> matches at the end of a line; e.g.
+          <code>foo$</code> matches "foo" at the end of a line.
+        </li><li>
+          <code>\b</code> matches at a "word boundary" (the start or
+          end of a "word"); e.g. <code>\bbar\b</code> matches "bar" in
+          "foo bar baz", but not in "foobarbaz"; <code>\B</code> is
+          its complement.
+        </li></ul>
+        <ul class="pl-4 mb-2"><li>
+          <code>*</code> matches the preceding thing zero or more
+          times; e.g. <code>fo*</code> matches "f", "fo", "foo", etc.
+        </li><li>
+          <code>+</code> matches the preceding thing one or more
+          times; e.g. <code>fo+</code> matches "fo", "foo", etc.
+        </li><li>
+          <code>?</code> matches the preceding thing optionally; e.g.
+          <code>fo?</code> matches "f" or "fo".
+        </li><li>
+          <code>{m,n}</code> (or just <code>{m}</code> instead of
+          <code>{m,m}</code>) matches the preceding thing
+          <code>m</code> to <code>n</code> times; e.g.
+          <code>fo{2,4}</code> matches "foo", "fooo", or "foooo".
+        </li></ul>
+        <ul class="pl-4 mb-2"><li>
+          <code>[...]</code> is a character class; e.g.
+          <code>[a-z]</code> matches "a" through "z";
+          <code>[あいうえお]</code> matches "あ", "い", "う", "え", or
+          "お".
+        </li><li>
+          <code>[^...]</code> is a complementing character class; e.g.
+          <code>[^a-z]</code> matches anything but "a" through "z".
+        </li></ul>
+        <ul class="pl-4 mb-2"><li>
+          <code>\d</code> matches any decimal digit (equivalent to
+          <code>[0-9]</code>); <code>\D</code> is its complement
+          (equivalent to <code>[^0-9]</code>).
+        </li><li>
+          <code>\s</code> matches any whitespace character;
+          <code>\S</code> is its complement.
+        </li><li>
+          <code>\w</code> matches any alphanumeric (i.e. "word" or
+          "letter") character; <code>\W</code> is its complement.
+        </li></ul>
+        <ul class="pl-4 mb-2"><li>
+          <code>|</code> is alternation; e.g. <code>foo|bar|baz</code>
+          matches "foo", "bar", or "baz".
+        </li><li>
+          <code>(...)</code> is grouping; e.g. <code>ab*</code>
+          matches "a", "ab", "abb", etc. whereas <code>(ab)*</code>
+          matches "", "ab", "abab", etc.; <code>^foo|bar$</code>
+          matches "foo" at the beginning of a line or "bar" at the
+          end, whereas <code>^(foo|bar)$</code> matches either "foo"
+          or "bar" as a whole line; a backslash followed by the number
+          of the group (starting from 1) can be used later in the
+          pattern to refer back to what it (actually) matched; e.g.
+          <code>[a-z]{2}</code> matches "aa", "ab", "za", etc. whereas
+          <code>([a-z])\1</code> matches "aa", "bb", etc. (but not
+          "ab" or "za").
+        </li></ul>
+        <ul class="pl-4 mb-2"><li>
+          <code>\p{...}</code> matches a unicode property; e.g.
+          <code>\p{Han}</code> matches kanji,
+          <code>\p{Hiragana}</code> matches hiragana, and
+          <code>\p{Katakana}</code> matches katakana; <code>\P</code>
+          is its complement.
+        </li></ul>
+        <hr/>
+        <h6>Examples</h6>
+        <ul class="pl-4 mb-2"><li>
+          <code>\bcat\b</code> matches "cat" in "the cat" (but not in
+          e.g. "indicates").
+        </li><li>
+          <code>^cat\b</code> matches "cat" in "cat" or "cat (esp. the
+          domestic cat, Felis catus)" (but not in e.g. "category").
+        </li><li>
+          <code>^cat$</code> matches "cat" exactly.
+        </li></ul>
+        <ul class="pl-4 mb-2"><li>
+          <code>^猫\p{Han}$</code> matches "猫" followed by exactly
+          one other kanji.
+        </li><li>
+          <code>^(\p{Han})\1$</code> matches e.g. "人人".
+        </li></ul>
       </div>
     </div>
   </div>

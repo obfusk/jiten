@@ -71,7 +71,7 @@ legend {
   width: 2rem; /* TODO */
 }
 
-.nowrap {
+code, .nowrap {
   display: inline-block;
 }
 
