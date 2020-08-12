@@ -2,7 +2,7 @@
 
   File        : templates/_search.html
   Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-  Date        : 2020-08-08
+  Date        : 2020-08-12
 
   Copyright   : Copyright (C) 2020  Felix C. Stegerman
   Version     : v0.2.0
@@ -147,7 +147,7 @@
 {% macro sentences(query = "", af = True) %}
   {% call search("/sentences", "Query", "Search Sentences",
                  "sentences-query", "query", query,
-                 "substring to match japanese", af) %}
+                 "substring to match japanese/english/dutch/german", af) %}
     <div class="form-group mb-0">
       <fieldset class="d-inline border p-2 pl-3">
         <legend>options</legend>
@@ -158,6 +158,18 @@
           <label class="form-check-label" for="sentences-audio"
             title="with audio">audio</label>
         </div>
+      </fieldset>
+      <fieldset class="d-inline border p-2 pl-3">
+        <legend>lang</legend>
+        {% for l in S.LANGS %}
+          <div class="form-check form-check-inline">
+            <input type="checkbox" class="form-check-input"
+              id="sentences-{{ l }}" name="lang" value="{{ l }}"
+              {% if l in request.args.getlist("lang") %}checked{% endif %} />
+            <label class="form-check-label"
+              for="sentences-{{ l }}">{{ l }}</label>
+          </div>
+        {% endfor %}
       </fieldset>
     </div>
     <br/>

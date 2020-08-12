@@ -5,7 +5,7 @@
 #
 # File        : jiten/sentences.py
 # Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-# Date        : 2020-08-07
+# Date        : 2020-08-12
 #
 # Copyright   : Copyright (C) 2020  Felix C. Stegerman
 # Version     : v0.2.0
@@ -100,21 +100,23 @@ def search(q, langs = [], max_results = None, audio = False,
   lang  = " ".join( "AND " + l + " IS NOT NULL"
                     for l in langs if l in LANGS )
   aud   = "AND audio IS NOT NULL" if audio else ""
-  limit = "LIMIT " + str(int(max_results)) if max_results else ""
+  lim   = "LIMIT " + str(int(max_results)) if max_results else ""
   with sqlite_do(file) as c:
     if q.lower() == "+random":
       for r in c.execute("""
           SELECT * FROM entry WHERE 1=1 {} {} ORDER BY RANDOM() {}
-          """.format(lang, aud, limit)):                      # safe!
+          """.format(lang, aud, lim)):                        # safe!
         yield Entry(*r)
     elif re.fullmatch(r"\+#\s*\d+", q):
       id = int(q[2:].strip())
       for r in c.execute("SELECT * FROM entry WHERE id = ?", (id,)):
         yield Entry(*r) # #=1
     else:
+      sel = ["jap"] + ([] if all( M.iscjk(c) for c in q ) else LANGS)
+      s   = " OR ".join( x + " LIKE :q" for x in sel )
       for r in c.execute("""
-          SELECT * FROM entry WHERE jap LIKE ? {} {} ORDER BY id {}
-          """.format(lang, aud, limit), ("%"+q+"%",)):        # safe!
+          SELECT * FROM entry WHERE ({}) {} {} ORDER BY id {}
+          """.format(s, lang, aud, lim), dict(q="%"+q+"%")):  # safe!
         yield Entry(*r)
 
 if __name__ == "__main__":

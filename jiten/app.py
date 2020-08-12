@@ -5,7 +5,7 @@
 #
 # File        : jiten/app.py
 # Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-# Date        : 2020-08-09
+# Date        : 2020-08-12
 #
 # Copyright   : Copyright (C) 2020  Felix C. Stegerman
 # Version     : v0.2.0
@@ -98,7 +98,7 @@ def respond(template, **data):
     set_pref(k, v, resp)
     return resp
   return make_response(render_template(
-    template, dark = dark, langs = langs, J = J, K = K, M = M,
+    template, dark = dark, langs = langs, J = J, K = K, M = M, S = S,
     toggle = dark_toggle_link(dark), ord = ord, hex = hex,
     START = START, **data
   ))
@@ -106,6 +106,10 @@ def respond(template, **data):
 def get_langs():
   ls = request.args.getlist("lang") or get_pref("lang", "").split()
   return [ l for l in ls if l in J.LANGS ] or [J.LANGS[0]]
+
+def get_sentence_langs():
+  ls = request.args.getlist("lang")
+  return [ l for l in ls if l in S.LANGS ]
 
 def get_query_max():
   w, e, f = arg_bool("word"), arg_bool("exact"), arg_bool("1stword")
@@ -180,7 +184,8 @@ def r_kanji_random():
 @app.route("/sentences")
 def r_sentences():
   query, max_r = arg("query", "").strip(), arg("max", MAX, type = int)
-  opts = dict(max_results = max_r, audio = arg_bool("audio"))
+  opts = dict(langs = get_sentence_langs(), max_results = max_r,
+              audio = arg_bool("audio"))
   data = dict(page = "sentences", query = query)
   if query: data["results"] = S.search(query, **opts)
   return respond("sentences.html", **data)
