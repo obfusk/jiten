@@ -65,7 +65,7 @@ check-html:
 	grep -qF 0x732b tmp-html/neko.html
 	grep -qF "counter for days" tmp-html/hi.html
 
-validate-html: tmp-html validate-html-curl validate-html-py
+validate-html: tmp-html validate-html-py
 
 validate-html-curl:
 	for file in $$( find tmp-html/ -name '*.html' | sort ); do \
