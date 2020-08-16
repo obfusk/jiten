@@ -5,10 +5,10 @@
 #
 # File        : jiten/jmdict.py
 # Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-# Date        : 2020-08-08
+# Date        : 2020-08-16
 #
 # Copyright   : Copyright (C) 2020  Felix C. Stegerman
-# Version     : v0.2.0
+# Version     : v0.3.0
 # License     : AGPLv3+
 #
 # --                                                            ; }}}1
@@ -27,6 +27,11 @@ JMDict.
 
 >>> print(jmdict[-1].sense[0].gloss[0])
 Japanese-Multilingual Dictionary Project - Creation Date: 2020-07-31
+
+>>> len([ x for x in jmdict if x.isprio() ])
+22437
+>>> len([ x for x in jmdict if x.isprio() and list(x.pitch()) ])
+14714
 
 >>> baka = [ x for x in jmdict if any( r.elem == "ばか" for r in x.reading ) ][0]
 >>> baka.seq
