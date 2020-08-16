@@ -497,7 +497,7 @@ def search(q, langs = [LANGS[0]], max_results = None,           # {{{1
         """.format(fltr, limit), dict(q = "%"+q+"%"))         # safe!
       elif M.likeable(q):
         load_pcre_extension(c.connection)
-        q2    = "".join( "_" if not M.iscjk(c) and not c.isascii()
+        q2    = "".join( "_" if not M.iscjk(c) and not M.isascii(c)
                              else c for c in M.without_e1w(q) )
         prms  = dict(q = "%"+q2+"%", re = M.q2rx(q))
         query = ("""

@@ -64,6 +64,9 @@ isjap       = lambda c: iskanji(c) or iskana(c)                 # TODO
 isokjap     = lambda c: isjap(c) or c in OKPUNC                 # TODO
 iscjk       = lambda c: isideo(c) or iskana(c) or ispunc(c)     # TODO
 
+isascii     = getattr(str, "isascii",
+                lambda s: all( ord(c) < 128 for c in s ))
+
 flatten     = itertools.chain.from_iterable
 
 def uniq(xs):
