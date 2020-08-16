@@ -5,10 +5,10 @@
 #
 # File        : jiten/misc.py
 # Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-# Date        : 2020-08-07
+# Date        : 2020-08-16
 #
 # Copyright   : Copyright (C) 2020  Felix C. Stegerman
-# Version     : v0.2.0
+# Version     : v0.3.0
 # License     : AGPLv3+
 #
 # --                                                            ; }}}1
@@ -79,13 +79,43 @@ def resource_path(path):
 def process_query(q, word, exact, fstwd):
   if not q: return ""
   q = q.strip()
-  if q.startswith("+"): return q
-  if exact: return "^"   + q +   "$"
-  if fstwd: return "^"   + q + "\\b"
-  if word : return "\\b" + q + "\\b"
+  if (word or exact or fstwd) and \
+    any( q.startswith("+" + x) for x in "=1w" ): q = q[2:].lstrip()
+  elif q.startswith("+"): return q
+  if exact: return "+= " + q
+  if fstwd: return "+1 " + q
+  if word : return "+w " + q
   return q
 
+def q2like(q, fld, multi = False):
+  spec = None
+  if any( q.startswith("+" + x) for x in "=1w" ):
+    spec, q = q[1], q[2:].lstrip()
+  if any( c in ".^$*+?{}[]\\|()%_" for c in q ): return None
+  f, q, v = "lower({})".format(fld), q.lower(), fld + "_q"
+  if spec == "=":
+    return ("{} LIKE :{}".format(f, v), { v: "%\n"+q+"\n%" }) if multi \
+      else ("{} = :{}".format(f, v), { v: q })
+  if spec == "1":
+    return ("{0} LIKE :{1}1 OR {0} LIKE :{1}2".format(f, v),
+            { v+"1": "%\n"+q+"\n%", v+"2": "%\n"+q+" %" }) if multi \
+      else ("{0} = :{1}1 OR {0} LIKE :{1}2".format(f, v),
+            { v+"1": q, v+"2": q+" %" })
+  if spec == "w":
+    return ("""{0} LIKE :{1}1 OR {0} LIKE :{1}2 OR
+               {0} LIKE :{1}3 OR {0} LIKE :{1}4""".format(f, v),
+            { v+"1": "%\n"+q+"\n%", v+"2": "%\n"+q+" %",
+              v+"3":  "% "+q+"\n%", v+"4":  "% "+q+" %" }) if multi \
+      else ("""{0} =    :{1}1 OR {0} LIKE :{1}2 OR
+               {0} LIKE :{1}3 OR {0} LIKE :{1}4""".format(f, v),
+            { v+"1": q, v+"2": q+" %",
+              v+"3": "% "+q, v+"4": "% "+q+" %" })
+  return ("{} LIKE :{}".format(f, v), { v: "%"+q+"%" })
+
 def q2rx(q):
+  if   q.startswith("+="): q = "^"   + q[2:].lstrip() +   "$"
+  elif q.startswith("+1"): q = "^"   + q[2:].lstrip() + "\\b"
+  elif q.startswith("+w"): q = "\\b" + q[2:].lstrip() + "\\b"
   return "(?im)" + q
 
 if __name__ == "__main__":

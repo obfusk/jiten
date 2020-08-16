@@ -19,7 +19,7 @@ r"""
 JMDict.
 
 >>> DBVERSION
-8
+9
 
 >>> jmdict = parse_jmdict()
 >>> len(jmdict)
@@ -169,7 +169,7 @@ from . import misc  as M
 from . import pitch as P
 from .sql import sqlite_do, load_pcre_extension
 
-DBVERSION     = 8 # NB: update this when data/schema changes
+DBVERSION     = 9 # NB: update this when data/schema changes
 SQLITE_FILE   = M.resource_path("res/jmdict.sqlite3")
 JMDICT_FILE   = M.resource_path("res/jmdict/jmdict.xml.gz")
 
@@ -326,6 +326,12 @@ def parse_jmdict(file = JMDICT_FILE):                           # {{{1
       return data
                                                                 # }}}1
 
+def _join(xs):
+  return "\n" + "\n".join(xs) + "\n" if xs else ""
+
+def _split(x):
+  return tuple( l for l in x.splitlines() if l )
+
 # NB: kanji/reading/sense are retrieved in insertion (i.e. rowid) order!
 def jmdict2sqldb(data, file = SQLITE_FILE):                     # {{{1
   with sqlite_do(file) as c:
@@ -349,7 +355,7 @@ def jmdict2sqldb(data, file = SQLITE_FILE):                     # {{{1
         for s in e.sense:
           c.execute("INSERT INTO sense VALUES (?,?,?,?,?,?)",
                     (e.seq, "\n".join(s.pos), s.lang,
-                     "\n".join(s.gloss), "\n".join(s.info),
+                     _join(s.gloss), "\n".join(s.info),
                      "\n".join(s.xref)))
     c.execute("INSERT INTO version VALUES (?)", (DBVERSION,))
                                                                 # }}}1
@@ -450,7 +456,7 @@ def load_entry(c, seq):                                         # {{{1
   )
   s = tuple(
       Sense(tuple(r["pos"].splitlines()), r["lang"],
-            tuple(r["gloss"].splitlines()),
+            _split(r["gloss"]),
             tuple(r["info"].splitlines()),
             tuple(r["xref"].splitlines()))
     for r in c.execute("SELECT * FROM sense WHERE entry = ?" +
@@ -473,6 +479,7 @@ def search(q, langs = [LANGS[0]], max_results = None,           # {{{1
       lang  = ",".join( "'" + l + "'" for l in langs if l in LANGS )
       limit = "LIMIT " + str(int(max_results)) if max_results else ""
       fltr  = nvp(noun, verb, prio)
+      like  = M.q2like(q, "elem")
       if len(q) == 1 and M.iskanji(q):
         query = ("""
           SELECT rank, seq FROM (
@@ -495,6 +502,22 @@ def search(q, langs = [LANGS[0]], max_results = None,           # {{{1
           ORDER BY prio DESC, rank ASC, seq ASC
           {}
         """.format(fltr, limit), dict(q = "%"+q+"%"))         # safe!
+      elif like:
+        like2 = M.q2like(q, "gloss", True)
+        query = ("""
+          SELECT rank, seq FROM (
+              SELECT entry FROM kanji WHERE {}
+            UNION
+              SELECT entry FROM reading WHERE {}
+            UNION
+              SELECT entry FROM sense WHERE lang IN ({}) AND ({})
+          )
+          INNER JOIN entry ON seq = entry
+          {}
+          ORDER BY prio DESC, rank ASC, seq ASC
+          {}
+        """.format(like[0], like[0], lang, like2[0], fltr, limit),
+            { **like[1], **like2[1] })                        # safe!
       else:
         load_pcre_extension(c.connection)
         query = ("""
