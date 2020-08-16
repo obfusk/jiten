@@ -5,10 +5,10 @@
 #
 # File        : jiten/sentences.py
 # Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-# Date        : 2020-08-12
+# Date        : 2020-08-19
 #
 # Copyright   : Copyright (C) 2020  Felix C. Stegerman
-# Version     : v0.2.0
+# Version     : v0.3.0
 # License     : AGPLv3+
 #
 # --                                                            ; }}}1
@@ -115,7 +115,7 @@ def search(q, langs = [], max_results = None, audio = False,
       for r in c.execute("SELECT * FROM entry WHERE id = ?", (id,)):
         yield Entry(*r) # #=1
     else:
-      sel = ["jap"] + ([] if all( M.iscjk(c) for c in q ) else LANGS)
+      sel = ["jap"] + ([] if M.iscjk(q) else LANGS)
       s   = " OR ".join( x + " LIKE :q" for x in sel )
       for r in c.execute("""
           SELECT * FROM entry WHERE ({}) {} {} ORDER BY id {}

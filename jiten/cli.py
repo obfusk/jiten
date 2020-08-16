@@ -5,7 +5,7 @@
 #
 # File        : jiten/cli.py
 # Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-# Date        : 2020-08-12
+# Date        : 2020-08-16
 #
 # Copyright   : Copyright (C) 2020  Felix C. Stegerman
 # Version     : v0.3.0
@@ -41,7 +41,7 @@ CLI
 
 >>> run("-v jmdict -m1 -w cat")
 DB v8 up to date.
-query: \bcat\b
+query: +w cat
 <BLANKLINE>
 猫
 ねこ | ネコ
@@ -62,7 +62,7 @@ seq# 1467640, freq# 2201, prio; 1
 
 >>> run("-v jmdict -m1 -w kat -l dut")
 DB v8 up to date.
-query: \bkat\b
+query: +w kat
 <BLANKLINE>
 猫
 ねこ | ネコ
@@ -80,7 +80,7 @@ seq# 1467640, freq# 2201, prio; 1
 
 >>> run("-v jmdict -m1 -w idiot")
 DB v8 up to date.
-query: \bidiot\b
+query: +w idiot
 <BLANKLINE>
 馬鹿 | 莫迦 | 破家 | 馬稼
 ばか | バカ
@@ -102,7 +102,7 @@ seq# 1601260, freq# 2472, prio; 1
 
 >>> run("-v jmdict -m1 -e 誤魔化す")
 DB v8 up to date.
-query: ^誤魔化す$
+query: += 誤魔化す
 <BLANKLINE>
 誤魔化す | 誤摩化す | 胡麻化す | 誤魔かす | 胡魔化す
 ごまかす
@@ -121,7 +121,7 @@ seq# 1271480, freq# 10495, prio; 1
 
 >>> run("-v jmdict -m1 -w まる")
 DB v8 up to date.
-query: \bまる\b
+query: +w まる
 <BLANKLINE>
 丸 | 円
 まる
@@ -144,7 +144,7 @@ seq# 1216250, freq# 63, prio; 1
 
 >>> run("-v jmdict -m1 -w cat --verb")
 DB v8 up to date.
-query: \bcat\b
+query: +w cat
 <BLANKLINE>
 逆撫で | 逆なで
 さかなで | ぎゃくなで
@@ -160,7 +160,7 @@ seq# 1227180, freq# 30500; 1
 
 >>> run("-v jmdict -m1 -w みる --noun")
 DB v8 up to date.
-query: \bみる\b
+query: +w みる
 <BLANKLINE>
 海松 | 水松
 みる | すいしょう | ミル
@@ -176,7 +176,7 @@ seq# 1772790, freq# 75; 1
 
 >>> run("-v jmdict -m1 -w みる --noun --prio")
 DB v8 up to date.
-query: \bみる\b
+query: +w みる
 <BLANKLINE>
 <BLANKLINE>
 
@@ -194,7 +194,7 @@ query: \bみる\b
 
 >>> run("-v kanji -m1 -e cat")
 DB v8 up to date.
-query: ^cat$
+query: += cat
 <BLANKLINE>
 猫
 ビョウ
@@ -219,7 +219,7 @@ variants: 貓
 
 >>> run("-v kanji -m1 -w 日")
 DB v8 up to date.
-query: \b日\b
+query: +w 日
 <BLANKLINE>
 日
 ニチ | ジツ

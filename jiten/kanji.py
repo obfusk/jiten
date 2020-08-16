@@ -5,10 +5,10 @@
 #
 # File        : jiten/kanji.py
 # Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-# Date        : 2020-08-08
+# Date        : 2020-08-19
 #
 # Copyright   : Copyright (C) 2020  Felix C. Stegerman
-# Version     : v0.2.0
+# Version     : v0.3.0
 # License     : AGPLv3+
 #
 # --                                                            ; }}}1
@@ -87,9 +87,9 @@ Entry(char='日', cat='KANJI', level='常用1', strokes=4, freq=1, jlpt=4, skip=
 
 >>> len(RADICALS)
 214
->>> all( M.iskanji(c) for c in KAN2RAD.keys() )
+>>> M.iskanji(KAN2RAD.keys())
 True
->>> all( M.isradical(c) for c in RAD2KAN.keys() )
+>>> M.isradical(RAD2KAN.keys())
 True
 >>> set( ord(c) - 0x2f00 for c in RAD2KAN.keys() ) == set(range(214))
 True
@@ -215,7 +215,7 @@ def parse_kanjidic(kanjivg = None, file = KANJIDIC_FILE):       # {{{1
         assert 1 <= rad <= 214
         assert all( M.iskatakana(c) or c in ".-" for x in on for c in x )
         assert all( all( M.ishiragana(c) or c in ".-ー" for c in x ) or
-                    all( M.iskatakana(c) for c in x ) for x in kun )
+                         M.iskatakana(x) for x in kun )
         assert all( "\n" not in x for x in on )
         assert all( "\n" not in x for x in kun )
         assert all( "\n" not in x for x in nanori )
