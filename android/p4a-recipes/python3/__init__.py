@@ -9,4 +9,10 @@ def _patch():
   Python3Recipe, recipe         = mod.Python3Recipe, mod.recipe
   Python3Recipe.configure_args += ("--enable-loadable-sqlite-extensions",)
   Python3Recipe.version         = "3.8.5"
+  old_get_recipe_env = Python3Recipe.get_recipe_env
+  def new_get_recipe_env(*a, **kw):
+    env = old_get_recipe_env(*a, **kw)
+    env["CFLAGS"] += " -O3"
+    return env
+  Python3Recipe.get_recipe_env = new_get_recipe_env
 _patch()
