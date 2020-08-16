@@ -19,7 +19,7 @@ r"""
 JMDict.
 
 >>> DBVERSION
-9
+8
 
 >>> jmdict = parse_jmdict()
 >>> len(jmdict)
@@ -169,7 +169,7 @@ from . import misc  as M
 from . import pitch as P
 from .sql import sqlite_do, load_pcre_extension
 
-DBVERSION     = 9 # NB: update this when data/schema changes
+DBVERSION     = 8 # NB: update this when data/schema changes
 SQLITE_FILE   = M.resource_path("res/jmdict.sqlite3")
 JMDICT_FILE   = M.resource_path("res/jmdict/jmdict.xml.gz")
 
@@ -326,12 +326,6 @@ def parse_jmdict(file = JMDICT_FILE):                           # {{{1
       return data
                                                                 # }}}1
 
-def _join(xs):
-  return "\n" + "\n".join(xs) + "\n" if xs else ""
-
-def _split(x):
-  return tuple( l for l in x.splitlines() if l )
-
 # NB: kanji/reading/sense are retrieved in insertion (i.e. rowid) order!
 def jmdict2sqldb(data, file = SQLITE_FILE):                     # {{{1
   with sqlite_do(file) as c:
@@ -355,7 +349,7 @@ def jmdict2sqldb(data, file = SQLITE_FILE):                     # {{{1
         for s in e.sense:
           c.execute("INSERT INTO sense VALUES (?,?,?,?,?,?)",
                     (e.seq, "\n".join(s.pos), s.lang,
-                     _join(s.gloss), "\n".join(s.info),
+                     "\n".join(s.gloss), "\n".join(s.info),
                      "\n".join(s.xref)))
     c.execute("INSERT INTO version VALUES (?)", (DBVERSION,))
                                                                 # }}}1
@@ -456,7 +450,7 @@ def load_entry(c, seq):                                         # {{{1
   )
   s = tuple(
       Sense(tuple(r["pos"].splitlines()), r["lang"],
-            _split(r["gloss"]),
+            tuple(r["gloss"].splitlines()),
             tuple(r["info"].splitlines()),
             tuple(r["xref"].splitlines()))
     for r in c.execute("SELECT * FROM sense WHERE entry = ?" +
