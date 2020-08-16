@@ -479,7 +479,6 @@ def search(q, langs = [LANGS[0]], max_results = None,           # {{{1
       lang  = ",".join( "'" + l + "'" for l in langs if l in LANGS )
       limit = "LIMIT " + str(int(max_results)) if max_results else ""
       fltr  = nvp(noun, verb, prio)
-      like  = M.q2like(q, "elem")
       if len(q) == 1 and M.iskanji(q):
         query = ("""
           SELECT rank, seq FROM (
@@ -502,22 +501,25 @@ def search(q, langs = [LANGS[0]], max_results = None,           # {{{1
           ORDER BY prio DESC, rank ASC, seq ASC
           {}
         """.format(fltr, limit), dict(q = "%"+q+"%"))         # safe!
-      elif like:
-        like2 = M.q2like(q, "gloss", True)
+      elif M.likeable(q):
+        load_pcre_extension(c.connection)
+        prms  = dict(q = "%"+M.without_e1w(q)+"%", re = M.q2rx(q))
         query = ("""
           SELECT rank, seq FROM (
-              SELECT entry FROM kanji WHERE {}
+              SELECT entry FROM kanji WHERE
+                elem LIKE :q AND elem REGEXP :re
             UNION
-              SELECT entry FROM reading WHERE {}
+              SELECT entry FROM reading WHERE
+                elem LIKE :q AND elem REGEXP :re
             UNION
-              SELECT entry FROM sense WHERE lang IN ({}) AND ({})
+              SELECT entry FROM sense WHERE
+                lang IN ({}) AND gloss LIKE :q AND gloss REGEXP :re
           )
           INNER JOIN entry ON seq = entry
           {}
           ORDER BY prio DESC, rank ASC, seq ASC
           {}
-        """.format(like[0], like[0], lang, like2[0], fltr, limit),
-            { **like[1], **like2[1] })                        # safe!
+        """.format(lang, fltr, limit), prms)                  # safe!
       else:
         load_pcre_extension(c.connection)
         query = ("""

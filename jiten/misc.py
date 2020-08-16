@@ -79,38 +79,18 @@ def resource_path(path):
 def process_query(q, word, exact, fstwd):
   if not q: return ""
   q = q.strip()
-  if (word or exact or fstwd) and \
-    any( q.startswith("+" + x) for x in "=1w" ): q = q[2:].lstrip()
-  elif q.startswith("+"): return q
+  if word or exact or fstwd: q = without_e1w(q)
+  if q.startswith("+"): return q
   if exact: return "+= " + q
   if fstwd: return "+1 " + q
   if word : return "+w " + q
   return q
 
-def q2like(q, fld, multi = False):
-  spec = None
-  if any( q.startswith("+" + x) for x in "=1w" ):
-    spec, q = q[1], q[2:].lstrip()
-  if any( c in ".^$*+?{}[]\\|()%_" for c in q ): return None
-  f, q, v = "lower({})".format(fld), q.lower(), fld + "_q"
-  if spec == "=":
-    return ("{} LIKE :{}".format(f, v), { v: "%\n"+q+"\n%" }) if multi \
-      else ("{} = :{}".format(f, v), { v: q })
-  if spec == "1":
-    return ("{0} LIKE :{1}1 OR {0} LIKE :{1}2".format(f, v),
-            { v+"1": "%\n"+q+"\n%", v+"2": "%\n"+q+" %" }) if multi \
-      else ("{0} = :{1}1 OR {0} LIKE :{1}2".format(f, v),
-            { v+"1": q, v+"2": q+" %" })
-  if spec == "w":
-    return ("""{0} LIKE :{1}1 OR {0} LIKE :{1}2 OR
-               {0} LIKE :{1}3 OR {0} LIKE :{1}4""".format(f, v),
-            { v+"1": "%\n"+q+"\n%", v+"2": "%\n"+q+" %",
-              v+"3":  "% "+q+"\n%", v+"4":  "% "+q+" %" }) if multi \
-      else ("""{0} =    :{1}1 OR {0} LIKE :{1}2 OR
-               {0} LIKE :{1}3 OR {0} LIKE :{1}4""".format(f, v),
-            { v+"1": q, v+"2": q+" %",
-              v+"3": "% "+q, v+"4": "% "+q+" %" })
-  return ("{} LIKE :{}".format(f, v), { v: "%"+q+"%" })
+def without_e1w(q):
+  return q[2:].lstrip() if any( q.startswith("+"+x) for x in "=1w" ) else q
+
+def likeable(q):
+  return all( c not in ".^$*+?{}[]\\|()%_" for c in without_e1w(q) )
 
 def q2rx(q):
   if   q.startswith("+="): q = "^"   + q[2:].lstrip() +   "$"

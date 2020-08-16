@@ -142,9 +142,9 @@ seq# 1216250, freq# 63, prio; 1
 <BLANKLINE>
 <BLANKLINE>
 
->>> run("-v jmdict -m1 \\bcat\\b --verb")
+>>> run("-v jmdict -m1 -w cat --verb")
 DB v9 up to date.
-query: \bcat\b
+query: +w cat
 <BLANKLINE>
 逆撫で | 逆なで
 さかなで | ぎゃくなで
