@@ -503,7 +503,9 @@ def search(q, langs = [LANGS[0]], max_results = None,           # {{{1
         """.format(fltr, limit), dict(q = "%"+q+"%"))         # safe!
       elif M.likeable(q):
         load_pcre_extension(c.connection)
-        prms  = dict(q = "%"+M.without_e1w(q)+"%", re = M.q2rx(q))
+        q2    = "".join( "_" if not M.iscjk(c) and not c.isascii()
+                             else c for c in M.without_e1w(q) )
+        prms  = dict(q = "%"+q2+"%", re = M.q2rx(q))
         query = ("""
           SELECT rank, seq FROM (
               SELECT entry FROM kanji WHERE
@@ -511,15 +513,17 @@ def search(q, langs = [LANGS[0]], max_results = None,           # {{{1
             UNION
               SELECT entry FROM reading WHERE
                 elem LIKE :q AND elem REGEXP :re
+        """ + ("" if all( M.iscjk(c) for c in q2 ) else """
             UNION
               SELECT entry FROM sense WHERE
                 lang IN ({}) AND gloss LIKE :q AND gloss REGEXP :re
+        """.format(lang)) + """
           )
           INNER JOIN entry ON seq = entry
           {}
           ORDER BY prio DESC, rank ASC, seq ASC
           {}
-        """.format(lang, fltr, limit), prms)                  # safe!
+        """.format(fltr, limit), prms)                        # safe!
       else:
         load_pcre_extension(c.connection)
         query = ("""
