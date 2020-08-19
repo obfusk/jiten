@@ -5,10 +5,10 @@
 #
 # File        : jiten/freq.py
 # Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-# Date        : 2020-06-19
+# Date        : 2020-08-19
 #
 # Copyright   : Copyright (C) 2020  Felix C. Stegerman
-# Version     : v0.0.1
+# Version     : v0.3.0
 # License     : AGPLv3+
 #
 # --                                                            ; }}}1
@@ -59,7 +59,7 @@ def parse_freq(file, word_first):                               # {{{1
       fields      = line.split("\t")[:2]
       word, freq  = fields if word_first else fields[::-1]
       freq        = int(freq)
-      if word and (word in EXCEPTIONS or all(map(M.isokjap, word))):
+      if word and (word in EXCEPTIONS or M.isokjap(word)):
         assert word not in data or data[word] == freq
         data[word] = freq
   return data

@@ -5,7 +5,7 @@
 #
 # File        : jiten/jmdict.py
 # Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-# Date        : 2020-08-16
+# Date        : 2020-08-19
 #
 # Copyright   : Copyright (C) 2020  Felix C. Stegerman
 # Version     : v0.3.0
@@ -459,6 +459,7 @@ def load_entry(c, seq):                                         # {{{1
   return Entry(seq, *( tuple(x) for x in [k, r, s] ))
                                                                 # }}}1
 
+# TODO
 def search(q, langs = [LANGS[0]], max_results = None,           # {{{1
            noun = False, verb = False, prio = False,
            file = SQLITE_FILE):
@@ -483,7 +484,7 @@ def search(q, langs = [LANGS[0]], max_results = None,           # {{{1
           ORDER BY prio DESC, rank ASC, seq ASC
           {}
         """.format(fltr, limit), (ord(q),))                   # safe!
-      elif all( M.iscjk(c) for c in q ):
+      elif M.iscjk(q):
         query = ("""
           SELECT rank, seq FROM (
               SELECT entry FROM kanji WHERE elem LIKE :q
@@ -495,11 +496,9 @@ def search(q, langs = [LANGS[0]], max_results = None,           # {{{1
           ORDER BY prio DESC, rank ASC, seq ASC
           {}
         """.format(fltr, limit), dict(q = "%"+q+"%"))         # safe!
-      elif M.likeable(q):
+      elif M.q2like(q):
         load_pcre_extension(c.connection)
-        q2    = "".join( "_" if not M.iscjk(c) and not M.isascii(c)
-                             else c for c in M.without_e1w(q) )
-        prms  = dict(q = "%"+q2+"%", re = M.q2rx(q))
+        prms  = dict(q = M.q2like(q), re = M.q2rx(q))
         query = ("""
           SELECT rank, seq FROM (
               SELECT entry FROM kanji WHERE
@@ -507,7 +506,7 @@ def search(q, langs = [LANGS[0]], max_results = None,           # {{{1
             UNION
               SELECT entry FROM reading WHERE
                 elem LIKE :q AND elem REGEXP :re
-        """ + ("" if all( M.iscjk(c) for c in q2 ) else """
+        """ + ("" if M.iscjk(M.without_e1w(q)) else """
             UNION
               SELECT entry FROM sense WHERE
                 lang IN ({}) AND gloss LIKE :q AND gloss REGEXP :re

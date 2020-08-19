@@ -2,10 +2,10 @@
 
   File        : templates/_nav.html
   Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-  Date        : 2020-08-12
+  Date        : 2020-08-19
 
   Copyright   : Copyright (C) 2020  Felix C. Stegerman
-  Version     : v0.2.0
+  Version     : v0.3.0
   License     : AGPLv3+
 
 --> #}
@@ -193,6 +193,17 @@
           target="_blank" rel="noopener">PCRE Syntax</a>
         (what jiten actually uses).
         <hr/>
+        <h6>Prefix "Commands"</h6>
+        Queries support prefix "commands" unrelated to regex syntax:
+        e.g. <code>+w foo</code> (word) should give the same results
+        as <code>\bfoo\b</code>, <code>+1 foo</code> (1st word) as
+        <code>^foo\b</code>, and <code>+= foo</code> (exact) as
+        <code>^foo$</code>.  Using these "commands" is often
+        significantly faster because they are handled separately,
+        which allows for certain optimisations.  The <code>+</code>
+        prefix was chosen because no valid regex can start with a
+        <code>+</code>.
+        <hr/>
         <h6>Quick Reference</h6>
         <ul class="pl-4 mb-2"><li>
           Most letters and characters will simply match themselves;
@@ -274,25 +285,34 @@
           <code>\p{...}</code> matches a unicode property; e.g.
           <code>\p{Han}</code> matches kanji,
           <code>\p{Hiragana}</code> matches hiragana, and
-          <code>\p{Katakana}</code> matches katakana; <code>\P</code>
-          is its complement.
+          <code>\p{Katakana}</code> matches katakana;
+          <code>\P{...}</code> is its complement.
+        </li><li>
+          For easy matching of Japanese, jiten supports these
+          non-standard aliases: <code>\pK</code> for
+          <code>\p{Han}</code>, <code>\ph</code> for
+          <code>\p{Hiragana}</code>, and <code>\pk</code> for
+          <code>\p{Katakana}</code>.
         </li></ul>
         <hr/>
         <h6>Examples</h6>
         <ul class="pl-4 mb-2"><li>
-          <code>\bcat\b</code> matches "cat" in "the cat" (but not in
-          e.g. "indicates").
+          <code>+w cat</code> (<code>\bcat\b</code>) matches "cat" in
+          "the cat" (but not in e.g. "indicates").
         </li><li>
-          <code>^cat\b</code> matches "cat" in "cat" or "cat (esp. the
-          domestic cat, Felis catus)" (but not in e.g. "category").
+          <code>+1 cat</code> (<code>^cat\b</code>) matches "cat" in
+          "cat" or "cat (esp. the domestic cat, Felis catus)" (but not
+          in e.g. "category").
         </li><li>
-          <code>^cat$</code> matches "cat" exactly.
+          <code>+= cat</code> (<code>^cat$</code>) matches "cat"
+          exactly.
         </li></ul>
         <ul class="pl-4 mb-2"><li>
-          <code>^猫\p{Han}$</code> matches "猫" followed by exactly
-          one other kanji.
+          <code>+= 猫\pK</code> (<code>^猫\pK$</code>) matches "猫"
+          followed by exactly one other kanji.
         </li><li>
-          <code>^(\p{Han})\1$</code> matches e.g. "人人".
+          <code>+= (\pK)\1</code> (<code>^(\pK)\1$</code>) matches
+          e.g. "人人".
         </li></ul>
       </div>
     </div>
