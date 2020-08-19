@@ -75,7 +75,7 @@ validate-html-curl:
 	done
 
 validate-html-py:
-	$(H5VCMD) --root tmp-html/
+	unset JAVA_TOOL_OPTIONS && $(H5VCMD) --root tmp-html/
 
 .PHONY: ext patch _package _publish
 
