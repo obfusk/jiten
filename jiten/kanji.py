@@ -342,10 +342,10 @@ def search(q, max_results = None, file = SQLITE_FILE):          # {{{1
     elif ms:
       for r in c.execute("""
           SELECT * FROM entry WHERE skip = ? {} {}
-          """.format(order, limit), (ms[1],)):                # safe!
+          """.format(order, limit), (ms.group(1),)):          # safe!
         yield row2entry(r)
     elif mr:
-      rads = [ VAR2RAD.get(c, c) for c in mr[1]
+      rads = [ VAR2RAD.get(c, c) for c in mr.group(1)
                if M.isideo(c) or M.iskana(c) or M.isradical(c) ]
       if not rads: return                                       # TODO
       radp = [ str(ord(c)) for c in rads ]

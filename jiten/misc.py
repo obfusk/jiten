@@ -118,7 +118,7 @@ def q2like(q):
   while q:
     m = LIKERX.match(q)
     if not m: return None
-    p += "%" if m[2] else "_" if m[1] else f(m[0])
+    p += "%" if m.group(2) else "_" if m.group(1) else f(m.group(0))
     q = q[m.end():]
   return re.sub(r"%%+", "%", "%" + p + "%")
 
