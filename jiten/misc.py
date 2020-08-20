@@ -46,6 +46,8 @@ True
 '%_%'
 >>> q2like(r"猫\pK{2}\d\S")
 '%猫%__%'
+>>> q2like(r"\bfoo\b") is None
+True
 
 """                                                             # }}}1
 
@@ -112,6 +114,7 @@ LIKERX = re.compile("(" + "|".join([
   r"\\[pP]\{\w+\}"
 ]) + r")(([+*]|\{\d+(,\d+)?\})?)|[^^$*+?{}\\|()%_]")
 
+# TODO: ^foo, foo$, \b, ...
 def q2like(q):
   f = lambda c: "_" if not isascii(c) and c.upper() != c.lower() else c
   q, p = without_e1w(q), ""
