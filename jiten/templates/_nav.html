@@ -2,10 +2,10 @@
 
   File        : templates/_nav.html
   Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-  Date        : 2020-08-19
+  Date        : 2020-08-20
 
   Copyright   : Copyright (C) 2020  Felix C. Stegerman
-  Version     : v0.3.0
+  Version     : v0.3.2
   License     : AGPLv3+
 
 --> #}
@@ -194,15 +194,12 @@
         (what jiten actually uses).
         <hr/>
         <h6>Prefix "Commands"</h6>
-        Queries support prefix "commands" unrelated to regex syntax:
+        Queries support prefix "commands" (unrelated to regex syntax):
         e.g. <code>+w foo</code> (word) should give the same results
         as <code>\bfoo\b</code>, <code>+1 foo</code> (1st word) as
         <code>^foo\b</code>, and <code>+= foo</code> (exact) as
-        <code>^foo$</code>.  Using these "commands" is often
-        significantly faster because they are handled separately,
-        which allows for certain optimisations.  The <code>+</code>
-        prefix was chosen because no valid regex can start with a
-        <code>+</code>.
+        <code>^foo$</code>.  (The <code>+</code> prefix was chosen
+        because no valid regex can start with it.)
         <hr/>
         <h6>Quick Reference</h6>
         <ul class="pl-4 mb-2"><li>
