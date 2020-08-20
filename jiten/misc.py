@@ -5,10 +5,10 @@
 #
 # File        : jiten/misc.py
 # Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-# Date        : 2020-08-19
+# Date        : 2020-08-20
 #
 # Copyright   : Copyright (C) 2020  Felix C. Stegerman
-# Version     : v0.3.0
+# Version     : v0.3.2
 # License     : AGPLv3+
 #
 # --                                                            ; }}}1
@@ -46,7 +46,11 @@ True
 '%_%'
 >>> q2like(r"猫\pK{2}\d\S")
 '%猫%__%'
->>> q2like(r"\bfoo\b") is None
+>>> q2like(r"\bfoo\b")
+'%foo%'
+>>> q2like(r"^foo*bar?baz$")
+'%fo%ba%baz%'
+>>> q2like(r"\\") is None
 True
 
 """                                                             # }}}1
@@ -109,19 +113,27 @@ def process_query(q, word, exact, fstwd):
 def without_e1w(q):
   return q[2:].lstrip() if any( q.startswith("+"+x) for x in "=1w" ) else q
 
-LIKERX = re.compile("(" + "|".join([
+LIKERX = re.compile("(?P<one>" + "|".join([
   r"\.", r"\[\^?\]?[^]]*\]", r"\\[dDsSwW]", r"\\p[khK]",
   r"\\[pP]\{\w+\}"
-]) + r")(([+*]|\{\d+(,\d+)?\})?)|[^^$*+?{}\\|()%_]")
+]) + r")" + "|".join([
+  r"(?P<many>([*+?]|\{\d+(,\d+)?\})?)", r"(?P<zero>\\b)",
+  r"[^^$*+?{}\\|()](?P<quant>([*+?]|\{\d+(,\d+)?\})?)"
+]))
 
-# TODO: ^foo, foo$, \b, ...
+# TODO
 def q2like(q):
-  f = lambda c: "_" if not isascii(c) and c.upper() != c.lower() else c
+  f = lambda c: "_" if c in "%_" or (not isascii(c)
+                       and c.upper() != c.lower()) else c
   q, p = without_e1w(q), ""
+  if q.startswith("^"): q = q[1:]
+  if q.endswith("$"): q = q[:-1]
   while q:
     m = LIKERX.match(q)
     if not m: return None
-    p += "%" if m.group(2) else "_" if m.group(1) else f(m.group(0))
+    if not m.group("zero"):
+      if m.group("many") or m.group("quant"): p += "%"
+      else: p += "_" if m.group("one") else f(m.group(0))
     q = q[m.end():]
   return re.sub(r"%%+", "%", "%" + p + "%")
 
