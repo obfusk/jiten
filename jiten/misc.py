@@ -110,7 +110,7 @@ def without_e1w(q):
 LIKERX = re.compile("(" + "|".join([
   r"\.", r"\[\^?\]?[^]]*\]", r"\\[dDsSwW]", r"\\p[khK]",
   r"\\[pP]\{\w+\}"
-]) + r")(([+*]|\{\d+(,\d+)?\})?)|[^^$*+?{}\|()%_]")
+]) + r")(([+*]|\{\d+(,\d+)?\})?)|[^^$*+?{}\\|()%_]")
 
 def q2like(q):
   f = lambda c: "_" if not isascii(c) and c.upper() != c.lower() else c
