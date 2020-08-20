@@ -5,7 +5,7 @@
     Date        : 2020-08-19
 
     Copyright   : Copyright (C) 2020  Felix C. Stegerman
-    Version     : v0.3.1
+    Version     : v0.3.2
     License     : AGPLv3+
 
 <!-- }}}1 -->
