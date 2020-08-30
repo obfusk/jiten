@@ -5,10 +5,10 @@
 #
 # File        : jiten/pitch.py
 # Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-# Date        : 2020-08-05
+# Date        : 2020-08-30
 #
 # Copyright   : Copyright (C) 2020  Felix C. Stegerman
-# Version     : v0.2.0
+# Version     : v0.3.2
 # License     : AGPLv3+
 #
 # --                                                            ; }}}1
@@ -104,7 +104,7 @@ def get_pitch(reading, kanjis, file = SQLITE_FILE):
       for r in c.execute("SELECT * FROM entry WHERE kanji = ?", (k,)):
         if r["reading"].replace("—", "") != rd: continue
         ra = zip(r["reading"].split("—"), r["accent"].split("—"))
-        return "".join( with_accent(r, int(a)) for r, a in ra )
+        return "･".join( with_accent(r, int(a)) for r, a in ra )
   return None
 
 if __name__ == "__main__":
