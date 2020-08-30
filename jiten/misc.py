@@ -5,7 +5,7 @@
 #
 # File        : jiten/misc.py
 # Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-# Date        : 2020-08-20
+# Date        : 2020-08-30
 #
 # Copyright   : Copyright (C) 2020  Felix C. Stegerman
 # Version     : v0.3.2
@@ -117,8 +117,8 @@ LIKERX = re.compile("(?P<one>" + "|".join([
   r"\.", r"\[\^?\]?[^]]*\]", r"\\[dDsSwW]", r"\\p[khK]",
   r"\\[pP]\{\w+\}"
 ]) + r")" + "|".join([
-  r"(?P<many>([*+?]|\{\d+(,\d+)?\})?)", r"(?P<zero>\\b)",
-  r"[^^$*+?{}\\|()](?P<quant>([*+?]|\{\d+(,\d+)?\})?)"
+  r"(?P<many>([*+?]|\{\d+(,\d*)?\})?)", r"(?P<zero>\\b)",
+  r"[^^$*+?{}\\|()](?P<quant>([*+?]|\{\d+(,\d*)?\})?)"
 ]))
 
 # TODO
