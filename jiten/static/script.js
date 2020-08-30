@@ -270,6 +270,13 @@ $(".query-example").on("click", evt => {
   return false
 })
 
+$("#expand-all").on("click", () =>
+  $(".container .collapse").collapse("show")
+)
+$("#collapse-all").on("click", () =>
+  $(".container .collapse").collapse("hide")
+)
+
 // === save history ===
 
 saveHistory()

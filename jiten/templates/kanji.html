@@ -19,19 +19,26 @@
     </style>
   </head>
   <body>
-    {% from "_macros.html" import topbtn with context %}
+    {% from "_macros.html" import topbtn, collapsebtn, collapseallbtn
+                           with context %}
     {% from "_search.html" import kanji with context %}
     {% include "_nav.html" %}
     <div class="container">
       {{ kanji(query) }}
       {% if query %}
+        {{ collapseallbtn() }}
         {% for e in results %}
-          <br/>
           <div class="card">
             <div class="card-body">
               <div class="d-flex">
-                <a class="entry kanji text-reset text-decoration-none mr-3"
-                  href="/jmdict?query={{ e.char }}">{{ e.char }}</a>
+                <div class="d-flex flex-column">
+                  <a class="entry kanji text-reset text-decoration-none mr-3"
+                    href="/jmdict?query={{ e.char }}">{{ e.char }}</a>
+                  <div class="mt-auto">
+                    {{ collapsebtn("collapse-" + loop.index|string) }}
+                    {{ topbtn("btn btn-sm btn-outline-primary") }}
+                  </div>
+                </div>
                 <ul class="list-group flex-grow-1">
                   <li class="list-group-item d-flex flex-wrap {{
                         "pb-1 px-2 pt-2" if e.on else "p-2"
@@ -99,7 +106,8 @@
                   </li>
                 </ul>
               </div>
-              <ul class="list-group mt-2 mb-1" title="miscellaneous">
+              <ul class="collapse show list-group mt-2 mb-1"
+                  id="collapse-{{ loop.index }}" title="miscellaneous">
                 {% set js = e.jmdict()|list %}
                 {% if js %}
                   <!-- TODO: filter kanji containing char?! -->
@@ -227,12 +235,12 @@
                     <span class="badge badge-secondary">
                       {{ loop.index }}
                     </span>
-                    {{ topbtn() }}
                   </span>
                 </li>
               </ul>
             </div>
           </div>
+          {% if not loop.last %}<br/>{% endif %}
         {% else %}
           <br/>
           <div class="alert alert-primary mb-0 text-center" role="alert">

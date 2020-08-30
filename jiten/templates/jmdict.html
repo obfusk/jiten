@@ -16,14 +16,15 @@
     <title>jiten - jmdict</title>
   </head>
   <body>
-    {% from "_macros.html" import topbtn with context %}
+    {% from "_macros.html" import topbtn, collapsebtn, collapseallbtn
+                           with context %}
     {% from "_search.html" import jmdict with context %}
     {% include "_nav.html" %}
     <div class="container">
       {{ jmdict(langs, query) }}
       {% if query %}
+        {{ collapseallbtn() }}
         {% for e, rank in results %}
-          <br/>
           <div class="card">
             <div class="card-body">
               <ul class="list-group">
@@ -78,83 +79,102 @@
                   {% endfor %}
                 </li>
               </ul>
-              {% set gloss, info = e.gloss_pos_info(langs) %}
-              {% for l in langs if gloss[l] %}
-                <h4 class="mt-2 mb-1">{{ l }}</h4>
-                <ul class="list-group my-1" title="meanings">
-                  {% for g in gloss[l] %}
-                    <li class="list-group-item pb-1 px-2 pt-2">
+              <div class="float-right mt-1">
+                {{ collapsebtn("collapse-" + loop.index|string) }}
+                {{ topbtn("btn btn-sm btn-outline-primary") }}
+              </div>
+              <div class="collapse show" id="collapse-{{ loop.index }}">
+                {% set gloss, info = e.gloss_pos_info(langs) %}
+                {% for l in langs if gloss[l] %}
+                  <h4 class="mt-2 mb-1">{{ l }}</h4>
+                  <ul class="list-group my-1" title="meanings">
+                    {% for g in gloss[l] %}
+                      <li class="list-group-item pb-1 px-2 pt-2">
+                        {% for x in g %}
+                          <span class="selbtn fakebtn btn btn-outline-primary text-reset py-1 mb-1">
+                            {{ x }}
+                          </span>
+                        {% endfor %}
+                      </li>
+                    {% endfor %}
+                  </ul>
+                {% endfor %}
+                <ul class="list-group mt-2 mb-1" title="miscellaneous">
+                  {% if info %}
+                    <li class="list-group-item pb-1 px-2 pt-2"
+                        title="sense info">
+                      {% for i in info %}
+                        <span class="selbtn notbtn btn btn-success btn-sm mb-1">
+                          {{ i }}
+                        </span>
+                      {% endfor %}
+                    </li>
+                  {% endif %}
+                  {% set xi = e.xinfo()|list %}
+                  {% if xi %}
+                    <li class="list-group-item pb-1 px-2 pt-2"
+                        title="orthography/reading info">
+                      {% for i in xi %}
+                        <span class="selbtn notbtn btn btn-primary btn-sm mb-1">
+                          {{ i }}
+                        </span>
+                      {% endfor %}
+                    </li>
+                  {% endif %}
+                  {% set xr = e.xrefs()|list %}
+                  {% if xr %}
+                    <li class="list-group-item pb-1 px-2 pt-2"
+                        title="cross-references">
+                      see
+                      {% for i in xr %}
+                        <a class="jap selbtn btn btn-warning px-2 py-1 mb-1"
+                          href="/jmdict?query={{ i }}&exact=yes">{{ i }}</a>
+                      {% endfor %}
+                    </li>
+                  {% endif %}
+                  <li class="list-group-item pb-1 px-2 pt-2 d-flex flex-wrap">
+                    <span class="nowrap">
+                      seq#
+                      <a class="badge badge-primary"
+                          href="/jmdict?query={{ ("+#" + e.seq|string)|urlencode }}">
+                        {{ e.seq }}
+                      </a>
+                    </span>
+                    {% if rank %}
+                      <span class="nowrap">
+                        &nbsp;» freq#
+                        <span class="badge badge-info">
+                          {{ rank }}
+                        </span>
+                      </span>
+                    {% endif %}
+                    {% if e.isprio() %}
+                      <span class="nowrap">&nbsp;» prio</span>
+                    {% endif %}
+                    <span class="nowrap ml-auto mb-1">
+                      <span class="badge badge-secondary">
+                        {{ loop.index }}
+                      </span>
+                    </span>
+                  </li>
+                </ul>
+              </div>
+              <ul class="collapse-alt list-group pt-1 pr-1" title="meanings">
+                <li class="list-group-item ellipsis pb-1 px-2 pt-2">
+                  {% for l in langs if gloss[l] %}
+                    {% for g in gloss[l] %}
                       {% for x in g %}
                         <span class="selbtn fakebtn btn btn-outline-primary text-reset py-1 mb-1">
                           {{ x }}
                         </span>
                       {% endfor %}
-                    </li>
+                    {% endfor %}
                   {% endfor %}
-                </ul>
-              {% endfor %}
-              <ul class="list-group mt-2 mb-1" title="miscellaneous">
-                {% if info %}
-                  <li class="list-group-item pb-1 px-2 pt-2"
-                      title="sense info">
-                    {% for i in info %}
-                      <span class="selbtn notbtn btn btn-success btn-sm mb-1">
-                        {{ i }}
-                      </span>
-                    {% endfor %}
-                  </li>
-                {% endif %}
-                {% set xi = e.xinfo()|list %}
-                {% if xi %}
-                  <li class="list-group-item pb-1 px-2 pt-2"
-                      title="orthography/reading info">
-                    {% for i in xi %}
-                      <span class="selbtn notbtn btn btn-primary btn-sm mb-1">
-                        {{ i }}
-                      </span>
-                    {% endfor %}
-                  </li>
-                {% endif %}
-                {% set xr = e.xrefs()|list %}
-                {% if xr %}
-                  <li class="list-group-item pb-1 px-2 pt-2"
-                      title="cross-references">
-                    see
-                    {% for i in xr %}
-                      <a class="jap selbtn btn btn-warning px-2 py-1 mb-1"
-                        href="/jmdict?query={{ i }}&exact=yes">{{ i }}</a>
-                    {% endfor %}
-                  </li>
-                {% endif %}
-                <li class="list-group-item pb-1 px-2 pt-2 d-flex flex-wrap">
-                  <span class="nowrap">
-                    seq#
-                    <a class="badge badge-primary"
-                        href="/jmdict?query={{ ("+#" + e.seq|string)|urlencode }}">
-                      {{ e.seq }}
-                    </a>
-                  </span>
-                  {% if rank %}
-                    <span class="nowrap">
-                      &nbsp;» freq#
-                      <span class="badge badge-info">
-                        {{ rank }}
-                      </span>
-                    </span>
-                  {% endif %}
-                  {% if e.isprio() %}
-                    <span class="nowrap">&nbsp;» prio</span>
-                  {% endif %}
-                  <span class="nowrap ml-auto mb-1">
-                    <span class="badge badge-secondary">
-                      {{ loop.index }}
-                    </span>
-                    {{ topbtn() }}
-                  </span>
                 </li>
               </ul>
             </div>
           </div>
+          {% if not loop.last %}<br/>{% endif %}
         {% else %}
           <br/>
           <div class="alert alert-primary mb-0 text-center" role="alert">

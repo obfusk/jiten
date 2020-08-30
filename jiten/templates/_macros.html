@@ -59,8 +59,8 @@
     </form>
   </div>
 {% endmacro %}
-{% macro topbtn() %}
-  <a href="#" class="badge badge-secondary">
+{% macro topbtn(cls = "badge badge-secondary") %}
+  <a href="#" class="{{ cls }}">
     <!-- https://www.flaticon.com/free-icon/top_565737 -->
     <svg xmlns="http://www.w3.org/2000/svg" class="icon"
         viewbox="0 0 384 384" focusable="false">
@@ -71,4 +71,38 @@
       </g>
     </svg>
   </a>
+{% endmacro %}
+{% macro collapseopen() %}
+  <!-- https://www.flaticon.com/free-icon/expand-button_60781 -->
+  <svg xmlns="http://www.w3.org/2000/svg" class="icon collapse-open"
+      viewbox="0 0 306 306" focusable="false">
+    <title>expand</title>
+    <polygon points="270.3,58.65 153,175.95 35.7,58.65 0,94.35 153,247.35 306,94.35" fill="currentColor"/>
+  </svg>
+{% endmacro %}
+{% macro collapseclose() %}
+  <!-- https://www.flaticon.com/free-icon/expand-arrow_60799 -->
+  <svg xmlns="http://www.w3.org/2000/svg" class="icon collapse-close"
+      viewbox="0 0 306 306" focusable="false">
+    <title>collapse</title>
+    <polygon points="153,58.65 0,211.65 35.7,247.35 153,130.05 270.3,247.35 306,211.65" fill="currentColor"/>
+  </svg>
+{% endmacro %}
+{% macro collapsebtn(target) %}
+  <a class="btn btn-sm btn-outline-primary" href="#{{target }}"
+      data-toggle="collapse" data-target="#{{ target }}"
+      aria-expanded="true" aria-controls="{{ target }}">
+    {{ collapseopen() }}
+    {{ collapseclose() }}
+  </a>
+{% endmacro %}
+{% macro collapseallbtn() %}
+  <div class="text-right pt-2 pb-3">
+    <a class="btn btn-sm btn-outline-primary" href="#" id="expand-all">
+      {{ collapseopen() }} Expand All
+    </a>
+    <a class="btn btn-sm btn-outline-primary" href="#" id="collapse-all">
+      {{ collapseclose() }} Collapse All
+    </a>
+  </div>
 {% endmacro %}

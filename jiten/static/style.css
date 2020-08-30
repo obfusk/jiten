@@ -17,6 +17,24 @@ body {
   width: 0.7rem;
 }
 
+a[aria-expanded=true] .collapse-open {
+  display: none;
+}
+
+a[aria-expanded=false] .collapse-close {
+  display: none;
+}
+
+.collapse.show + .collapse-alt {
+  display: none;
+}
+
+.ellipsis {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 @font-face {
   font-family: KanjiStrokeOrders;
   src: url(/static/font/KanjiStrokeOrders_v4.003.ttf);
