@@ -2,10 +2,10 @@
 
   File        : templates/_search.html
   Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-  Date        : 2020-08-12
+  Date        : 2020-08-30
 
   Copyright   : Copyright (C) 2020  Felix C. Stegerman
-  Version     : v0.2.0
+  Version     : v0.3.2
   License     : AGPLv3+
 
 --> #}
@@ -13,7 +13,8 @@
 {% macro jmdict(langs, query = "", af = True) %}
   {% call search("/jmdict", "Query (Regex)", "Search JMDict",
                  "jmdict-query", "query", query,
-                 "regex to match japanese/english/dutch/german", af) %}
+                 "regex to match japanese/english/dutch/german", af,
+                 btn = "info") %}
     <div class="form-group mb-0">
       <fieldset class="d-inline border p-2 pl-3">
         <legend>options</legend>

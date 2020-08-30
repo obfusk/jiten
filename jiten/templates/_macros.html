@@ -48,13 +48,13 @@
     </div>
   </div>
 {% endmacro %}
-{% macro search(action, label, go, id, name, value, ph, af = True) %}
+{% macro search(action, label, go, id, name, value, ph, af = True, btn = "primary") %}
   <div class="card">
     <form class="card-body" action="{{ action }}">
       <div class="form-group form-inline justify-content-end mb-0">
         <label class="sr-only" for="{{ id }}">{{ label }}</label>
         {{ input(id, name, value, ph, af) }}
-        <button class="btn btn-primary mb-2">{{ go }}</button>
+        <button class="btn btn-{{ btn }} mb-2">{{ go }}</button>
       </div>
       {{ caller() }}
     </form>
