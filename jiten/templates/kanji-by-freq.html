@@ -4,10 +4,10 @@
 
     File        : templates/kanji-by-freq.html
     Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-    Date        : 2020-08-04
+    Date        : 2020-08-30
 
     Copyright   : Copyright (C) 2020  Felix C. Stegerman
-    Version     : v0.2.0
+    Version     : v0.3.2
     License     : AGPLv3+
 
   -->
@@ -16,14 +16,18 @@
     <title>jiten - kanji by frequency</title>
   </head>
   <body>
+    {% from "_macros.html" import topbtn with context %}
     {% include "_nav.html" %}
     <div class="container">
       {% for row in kanji|batch(100) %}
         <div class="card">
-          <div class="card-body">
+          <div class="card-header d-flex flex-wrap">
             <h6 class="card-title text-muted">
               {{ row[0][1] }} - {{ row[-1][1] }}
             </h6>
+            <span class="ml-auto">{{ topbtn() }}</span>
+          </div>
+          <div class="card-body">
             {% for c, f in row %}
               <a class="jap selbtn btn btn-primary btn-lg px-2 py-1 mb-1"
                 title="{{ f }}" href="/kanji?query={{ c }}">{{ c }}</a>

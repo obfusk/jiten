@@ -2,10 +2,10 @@
 
   File        : templates/_macros.html
   Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-  Date        : 2020-08-05
+  Date        : 2020-08-30
 
   Copyright   : Copyright (C) 2020  Felix C. Stegerman
-  Version     : v0.2.0
+  Version     : v0.3.2
   License     : AGPLv3+
 
 --> #}
@@ -59,4 +59,17 @@
       {{ caller() }}
     </form>
   </div>
+{% endmacro %}
+{% macro topbtn() %}
+  <a href="#" class="badge badge-secondary">
+    <!-- https://www.flaticon.com/free-icon/top_565737 -->
+    <svg xmlns="http://www.w3.org/2000/svg" class="icon"
+        viewbox="0 0 384 384" focusable="false">
+      <title>go to top</title>
+      <g fill="currentColor">
+        <rect x="21.333" y="0" width="341.333" height="42.667"/>
+        <polygon points="106.667,170.667 170.667,170.667 170.667,384 213.333,384 213.333,170.667 277.333,170.667 192,85.333"/>
+      </g>
+    </svg>
+  </a>
 {% endmacro %}

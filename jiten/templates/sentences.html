@@ -4,10 +4,10 @@
 
     File        : templates/sentences.html
     Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-    Date        : 2020-08-07
+    Date        : 2020-08-30
 
     Copyright   : Copyright (C) 2020  Felix C. Stegerman
-    Version     : v0.2.0
+    Version     : v0.3.2
     License     : AGPLv3+
 
   -->
@@ -19,9 +19,13 @@
         height: 1.5rem; width: 1.5rem;
         margin-top: 0.2rem; margin-bottom: 0.2rem;
       }
+      .minmax {
+        min-width: max-content;
+      }
     </style>
   </head>
   <body>
+    {% from "_macros.html" import topbtn with context %}
     {% from "_search.html" import sentences with context %}
     {% include "_nav.html" %}
     <div class="container">
@@ -76,30 +80,32 @@
                         » audio by {{ e.audio.split(" (")[0] }}
                       </span>
                     {% endif %}
+                  </span>
+                  <span class="ml-auto minmax">
                     <span class="nowrap">
-                      »
                       <span class="badge badge-secondary">
                         {{ loop.index }}
                       </span>
+                      {{ topbtn() }}
+                      {% if e.audio %}
+                        »
+                        <a class="play-audio btn btn-primary btn-lg px-2 py-1"
+                            aria-label="Play Audio"
+                            href="/static/audio/{{ e.id }}.mp3">
+                          <!-- https://www.flaticon.com/free-icon/volume_565296 -->
+                          <svg xmlns="http://www.w3.org/2000/svg"
+                              viewbox="0 0 384 384" focusable="false">
+                            <title>Play Audio</title>
+                            <g fill="currentColor">
+                              <path d="M288,192c0-37.653-21.76-70.187-53.333-85.867v171.84C266.24,262.187,288,229.653,288,192z"/>
+                              <polygon points="0,128 0,256 85.333,256 192,362.667 192,21.333 85.333,128"/>
+                              <path d="M234.667,4.907V48.96C296.32,67.307,341.333,124.373,341.333,192S296.32,316.693,234.667,335.04v44.053 C320.107,359.68,384,283.413,384,192S320.107,24.32,234.667,4.907z"/>
+                            </g>
+                          </svg>
+                        </a>
+                      {% endif %}
                     </span>
                   </span>
-                  {% if e.audio %}
-                    &nbsp;
-                    <a class="play-audio btn btn-primary btn-lg px-2 py-1 ml-auto"
-                        aria-label="Play Audio"
-                        href="/static/audio/{{ e.id }}.mp3">
-                      <!-- https://www.flaticon.com/free-icon/volume_565296 -->
-                      <svg xmlns="http://www.w3.org/2000/svg"
-                          viewbox="0 0 384 384" focusable="false">
-                        <title>Play Audio</title>
-                        <g fill="currentColor">
-                          <path d="M288,192c0-37.653-21.76-70.187-53.333-85.867v171.84C266.24,262.187,288,229.653,288,192z"/>
-                          <polygon points="0,128 0,256 85.333,256 192,362.667 192,21.333 85.333,128"/>
-                          <path d="M234.667,4.907V48.96C296.32,67.307,341.333,124.373,341.333,192S296.32,316.693,234.667,335.04v44.053 C320.107,359.68,384,283.413,384,192S320.107,24.32,234.667,4.907z"/>
-                        </g>
-                      </svg>
-                    </a>
-                  {% endif %}
                 </li>
               </ul>
             </div>

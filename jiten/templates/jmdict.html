@@ -4,10 +4,10 @@
 
     File        : templates/jmdict.html
     Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-    Date        : 2020-08-08
+    Date        : 2020-08-30
 
     Copyright   : Copyright (C) 2020  Felix C. Stegerman
-    Version     : v0.2.0
+    Version     : v0.3.2
     License     : AGPLv3+
 
   -->
@@ -16,6 +16,7 @@
     <title>jiten - jmdict</title>
   </head>
   <body>
+    {% from "_macros.html" import topbtn with context %}
     {% from "_search.html" import jmdict with context %}
     {% include "_nav.html" %}
     <div class="container">
@@ -148,6 +149,7 @@
                     <span class="badge badge-secondary">
                       {{ loop.index }}
                     </span>
+                    {{ topbtn() }}
                   </span>
                 </li>
               </ul>

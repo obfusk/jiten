@@ -4,10 +4,10 @@
 
     File        : templates/jmdict-by-freq.html
     Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-    Date        : 2020-08-04
+    Date        : 2020-08-30
 
     Copyright   : Copyright (C) 2020  Felix C. Stegerman
-    Version     : v0.2.0
+    Version     : v0.3.2
     License     : AGPLv3+
 
   -->
@@ -16,10 +16,18 @@
     <title>jiten - jmdict by frequency</title>
   </head>
   <body>
+    {% from "_macros.html" import topbtn with context %}
     {% include "_nav.html" %}
     <div class="container">
       {% for row in results|batch(100) %}
         <div class="card">
+          <div class="card-header d-flex flex-wrap">
+            <h6 class="card-title text-muted">
+              {{ offset + loop.index0 * 100 + 1 }} -
+              {{ offset + loop.index0 * 100 + row|length }}
+            </h6>
+            <span class="ml-auto">{{ topbtn() }}</span>
+          </div>
           <div class="card-body">
             {% for e, r in row %}
               <!--
@@ -27,12 +35,17 @@
                 * show title on mobile?!
                 * langs for meanings()?!
               -->
-              <a class="jap selbtn btn btn-primary mb-1"
+              <a class="jap selbtn btn btn-primary px-2 py-1 mb-1"
                 title="{{ r }} | {{ "; ".join(e.meanings()|sum(start=())) }}"
                 href="/jmdict?query={{ ("+#" + e.seq|string)|urlencode }}"
                 >{{ "、".join(e.definition()) }}</a>
             {% endfor %}
           </div>
+          {% if loop.last %}
+            <div class="card-footer text-right">
+              {{ topbtn() }}
+            </div>
+          {% endif %}
         </div>
         <br/>
       {% endfor %}
