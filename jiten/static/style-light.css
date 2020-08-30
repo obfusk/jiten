@@ -1,0 +1,7 @@
+.form-control, .form-control:focus, .input-group-text {
+  color: #495057 !important;
+}
+
+.card {
+  background-color: #f7f7f7;
+}

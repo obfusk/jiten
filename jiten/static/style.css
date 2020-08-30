@@ -17,11 +17,6 @@ body {
   width: 0.7rem;
 }
 
-.light-mode .form-control, .light-mode .form-control:focus,
-.light-mode .input-group-text {
-  color: #495057 !important;
-}
-
 @font-face {
   font-family: KanjiStrokeOrders;
   src: url(/static/font/KanjiStrokeOrders_v4.003.ttf);

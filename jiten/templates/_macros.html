@@ -10,8 +10,7 @@
 
 --> #}
 {% macro input(id, name, value, ph, af = True, copy = False, mb = 2) %}
-  {% set m = "dark" if dark else "light" %}
-  <div class="{{ m }}-mode input-group mr-sm-2 mb-{{ mb }} flex-grow-1">
+  <div class="input-group mr-sm-2 mb-{{ mb }} flex-grow-1">
     <div class="input-group-prepend">
       <button type="button" title="あ↔ア"
           class="jap convert-kana input-group-text btn btn-dark"
