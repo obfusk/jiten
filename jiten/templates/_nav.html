@@ -2,7 +2,7 @@
 
   File        : templates/_nav.html
   Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-  Date        : 2020-08-20
+  Date        : 2020-08-31
 
   Copyright   : Copyright (C) 2020  Felix C. Stegerman
   Version     : v0.3.2
@@ -76,8 +76,8 @@
     <button type="button" data-toggle="modal" data-target="#history-modal"
       class="jap btn btn-light btn-sm my-2 my-lg-0 ml-2"
       title="search history">履歴</button>
-    <a class="btn btn-light btn-sm my-2 my-lg-0 ml-2"
-      href="{{ toggle }}">{{ "Light" if dark else "Dark" }} Mode</a>
+    <a class="btn btn-light btn-sm my-2 my-lg-0 ml-2" href="{{ toggle }}"
+      >{{ "Light" if mode == "dark" else "Dark" }} Mode</a>
   </div>
 </nav>
 <div class="modal" tabindex="-1" role="dialog" id="romaji-modal">

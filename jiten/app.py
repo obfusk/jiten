@@ -5,10 +5,10 @@
 #
 # File        : jiten/app.py
 # Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-# Date        : 2020-08-12
+# Date        : 2020-08-31
 #
 # Copyright   : Copyright (C) 2020  Felix C. Stegerman
-# Version     : v0.2.0
+# Version     : v0.3.2
 # License     : AGPLv3+
 #
 # --                                                            ; }}}1
@@ -98,9 +98,9 @@ def respond(template, **data):
     set_pref(k, v, resp)
     return resp
   return make_response(render_template(
-    template, dark = dark, langs = langs, J = J, K = K, M = M, S = S,
+    template, mode = "dark" if dark else "light", langs = langs,
     toggle = dark_toggle_link(dark), ord = ord, hex = hex,
-    START = START, **data
+    J = J, K = K, M = M, S = S, START = START, **data
   ))
 
 def get_langs():

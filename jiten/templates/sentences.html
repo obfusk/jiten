@@ -19,8 +19,8 @@
         height: 1.5rem; width: 1.5rem;
         margin-top: 0.2rem; margin-bottom: 0.2rem;
       }
-      .minmax {
-        min-width: max-content;
+      h6.jap {
+        font-weight: normal;
       }
     </style>
   </head>
@@ -117,7 +117,7 @@
           </div>
         {% else %}
           <br/>
-          <div class="alert alert-primary mb-0 text-center" role="alert">
+          <div class="alert alert-{{ mode }} mb-0 text-center">
             no results
           </div>
         {% endfor %}

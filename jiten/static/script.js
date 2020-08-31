@@ -2,10 +2,10 @@
 //
 //  File        : static/script.js
 //  Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-//  Date        : 2020-08-08
+//  Date        : 2020-08-31
 //
 //  Copyright   : Copyright (C) 2020  Felix C. Stegerman
-//  Version     : v0.2.0
+//  Version     : v0.3.2
 //  License     : AGPLv3+
 //
 //  --                                                          ; }}}1
@@ -270,12 +270,14 @@ $(".query-example").on("click", evt => {
   return false
 })
 
-$("#expand-all").on("click", () =>
+$("#expand-all").on("click", () => {
   $(".container .collapse").collapse("show")
-)
-$("#collapse-all").on("click", () =>
+  return false
+})
+$("#collapse-all").on("click", () => {
   $(".container .collapse").collapse("hide")
-)
+  return false
+})
 
 // === save history ===
 

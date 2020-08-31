@@ -1,7 +1,7 @@
 <meta charset="UTF-8"/>
 <meta name="viewport"
   content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
-{% if dark %}
+{% if mode == "dark" %}
   <link rel="stylesheet" href="/static/bootstrap-darkly.min.css" />
   <link rel="stylesheet" href="/static/style-dark.css?s={{ START }}" />
 {% else %}
