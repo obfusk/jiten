@@ -5,10 +5,10 @@
 #
 # File        : jiten/jmdict.py
 # Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-# Date        : 2020-08-19
+# Date        : 2020-08-31
 #
 # Copyright   : Copyright (C) 2020  Felix C. Stegerman
-# Version     : v0.3.0
+# Version     : v0.3.2
 # License     : AGPLv3+
 #
 # --                                                            ; }}}1
@@ -221,7 +221,7 @@ def gloss_pos_info(e, langs):
       if not s.lang == l: continue
       pos.extend(s.pos); info.extend(s.info)
       gloss.setdefault(l, []).append(s.gloss)
-  return gloss, M.uniq(pos + info)
+  return gloss, tuple(M.uniq(pos + info))
 
 def isnoun(e):
   return any( "noun" in p.split() for s in e.sense for p in s.pos )

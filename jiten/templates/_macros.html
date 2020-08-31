@@ -2,7 +2,7 @@
 
   File        : templates/_macros.html
   Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-  Date        : 2020-08-30
+  Date        : 2020-08-31
 
   Copyright   : Copyright (C) 2020  Felix C. Stegerman
   Version     : v0.3.2
@@ -59,8 +59,8 @@
     </form>
   </div>
 {% endmacro %}
-{% macro topbtn(cls = "badge badge-secondary") %}
-  <a href="#" class="{{ cls }}">
+{% macro topbtn() %}
+  <a href="#" class="btn btn-sm btn-outline-primary">
     <!-- https://www.flaticon.com/free-icon/top_565737 -->
     <svg xmlns="http://www.w3.org/2000/svg" class="icon"
         viewbox="0 0 384 384" focusable="false">

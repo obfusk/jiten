@@ -4,7 +4,7 @@
 
     File        : templates/jmdict.html
     Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-    Date        : 2020-08-30
+    Date        : 2020-08-31
 
     Copyright   : Copyright (C) 2020  Felix C. Stegerman
     Version     : v0.3.2
@@ -79,11 +79,12 @@
                   {% endfor %}
                 </li>
               </ul>
-              <div class="float-right mt-1">
+              <div class="float-right mt-1 ml-1">
                 {{ collapsebtn("collapse-" + loop.index|string) }}
-                {{ topbtn("btn btn-sm btn-outline-primary") }}
+                {{ topbtn() }}
               </div>
               <div class="collapse show" id="collapse-{{ loop.index }}">
+                {% set ns = namespace(has_meanings = false) %}
                 {% set gloss, info = e.gloss_pos_info(langs) %}
                 {% for l in langs if gloss[l] %}
                   <h4 class="mt-2 mb-1">{{ l }}</h4>
@@ -91,6 +92,7 @@
                     {% for g in gloss[l] %}
                       <li class="list-group-item pb-1 px-2 pt-2">
                         {% for x in g %}
+                          {% set ns.has_meanings = true %}
                           <span class="selbtn fakebtn btn btn-outline-primary text-reset py-1 mb-1">
                             {{ x }}
                           </span>
@@ -99,6 +101,9 @@
                     {% endfor %}
                   </ul>
                 {% endfor %}
+                {% if not ns.has_meanings %}
+                  <div class="text-muted my-2">no meanings</div>
+                {% endif %}
                 <ul class="list-group mt-2 mb-1" title="miscellaneous">
                   {% if info %}
                     <li class="list-group-item pb-1 px-2 pt-2"
@@ -159,17 +164,20 @@
                   </li>
                 </ul>
               </div>
-              <ul class="collapse-alt list-group pt-1 pr-1" title="meanings">
+              <ul class="collapse-alt list-group mt-1" title="meanings">
                 <li class="list-group-item ellipsis pb-1 px-2 pt-2">
                   {% for l in langs if gloss[l] %}
                     {% for g in gloss[l] %}
                       {% for x in g %}
-                        <span class="selbtn fakebtn btn btn-outline-primary text-reset py-1 mb-1">
+                        <span class="ellipsis selbtn fakebtn btn btn-outline-primary text-reset py-1 mb-1">
                           {{ x }}
                         </span>
                       {% endfor %}
                     {% endfor %}
                   {% endfor %}
+                  {% if not ns.has_meanings %}
+                    <div class="text-muted mb-1">no meanings</div>
+                  {% endif %}
                 </li>
               </ul>
             </div>

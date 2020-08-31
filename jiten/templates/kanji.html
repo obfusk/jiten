@@ -4,7 +4,7 @@
 
     File        : templates/kanji.html
     Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-    Date        : 2020-08-30
+    Date        : 2020-08-31
 
     Copyright   : Copyright (C) 2020  Felix C. Stegerman
     Version     : v0.3.2
@@ -36,7 +36,7 @@
                     href="/jmdict?query={{ e.char }}">{{ e.char }}</a>
                   <div class="mt-auto">
                     {{ collapsebtn("collapse-" + loop.index|string) }}
-                    {{ topbtn("btn btn-sm btn-outline-primary") }}
+                    {{ topbtn() }}
                   </div>
                 </div>
                 <ul class="list-group flex-grow-1">
