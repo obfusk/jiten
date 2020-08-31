@@ -5,10 +5,10 @@
 #
 # File        : jiten/cli.py
 # Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-# Date        : 2020-08-19
+# Date        : 2020-08-31
 #
 # Copyright   : Copyright (C) 2020  Felix C. Stegerman
-# Version     : v0.3.2
+# Version     : v0.3.3
 # License     : AGPLv3+
 #
 # --                                                            ; }}}1
@@ -250,7 +250,7 @@ if _pth.exists(_pth.join(_pth.dirname(_cwd), ".git")):
                   shell = True, cwd = _cwd) \
                 .decode().strip().replace("v", "", 1)
 else:
-  __version__ = "0.3.2"
+  __version__ = "0.3.3"
 name = "jiten"
 
 import click
