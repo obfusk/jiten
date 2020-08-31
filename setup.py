@@ -14,6 +14,7 @@ data    = [ "res/jlpt/N" + l for l in "12345" ] \
         + [ "static/*." + x for x in "svg css js".split() ] \
         + [ "static/audio/*.mp3" ] \
         + [ "static/font/*." + x for x in "ttf txt".split() ] \
+        + [ "static/licenses/*.txt" ] \
         + [ "templates/*.html" ]
 
 # "build" *.xml.gz

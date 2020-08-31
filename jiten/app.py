@@ -100,7 +100,8 @@ def respond(template, **data):
   return make_response(render_template(
     template, mode = "dark" if dark else "light", langs = langs,
     toggle = dark_toggle_link(dark), ord = ord, hex = hex,
-    J = J, K = K, M = M, S = S, START = START, **data
+    J = J, K = K, M = M, S = S, START = START,
+    DEPS = DEPENDENCIES, **data
   ))
 
 def get_langs():
@@ -194,5 +195,28 @@ def r_sentences():
 def r_stroke():
   return respond("stroke.html", page = "stroke",
                  query = arg("query", "").strip())
+
+DEPENDENCIES = dict(                                            # {{{1
+  p4a = dict(
+    name  = "python-for-android",
+    url   = "https://github.com/kivy/python-for-android"
+  ),
+
+  libffi        = dict(url = "https://github.com/libffi/libffi"),
+  libpcre       = dict(url = "https://www.pcre.org"),
+  openssl       = dict(url = "https://www.openssl.org"),
+  pyjnius       = dict(url = "https://github.com/kivy/pyjnius"),
+  python3       = dict(url = "https://www.python.org"),
+  sqlite3       = dict(url = "https://www.sqlite.org"),
+
+  click         = dict(url = "https://github.com/pallets/click"),
+  flask         = dict(url = "https://github.com/pallets/flask"),
+  itsdangerous  = dict(url = "https://github.com/pallets/itsdangerous"),
+  jinja2        = dict(url = "https://github.com/pallets/jinja"),
+  markupsafe    = dict(url = "https://github.com/pallets/markupsafe"),
+  setuptools    = dict(url = "https://github.com/pypa/setuptools"),
+  six           = dict(url = "https://github.com/benjaminp/six"),
+  werkzeug      = dict(url = "https://github.com/pallets/werkzeug"),
+)                                                               # }}}1
 
 # vim: set tw=70 sw=2 sts=2 et fdm=marker :

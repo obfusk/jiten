@@ -2,7 +2,7 @@
 
     File        : README.md
     Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-    Date        : 2020-08-19
+    Date        : 2020-08-31
 
     Copyright   : Copyright (C) 2020  Felix C. Stegerman
     Version     : v0.3.2
@@ -216,5 +216,11 @@ Audio by huizi99, Mizu & yomi (CC BY-NC 4.0).
 
 [![CC-BY-SA](https://licensebuttons.net/l/by-sa/3.0/88x31.png)](https://en.wikipedia.org/wiki/File:Table_hiragana.svg)
 [![CC-BY-SA](https://licensebuttons.net/l/by-sa/3.0/88x31.png)](https://en.wikipedia.org/wiki/File:Table_katakana.svg)
+
+### Material Design Icons
+
+© Google
+
+[![CC-BY](https://licensebuttons.net/l/by/3.0/88x31.png)](https://creativecommons.org/licenses/by/3.0/)
 
 <!-- vim: set tw=70 sw=2 sts=2 et fdm=marker : -->
