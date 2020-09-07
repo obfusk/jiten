@@ -1,0 +1,29 @@
+Jiten is a Japanese dictionary based on JMDict/Kanjidic
+
+This is the offline android version of https://jiten.obfusk.dev.
+
+The large download size is because it includes all the dictionary data, including audio.
+
+Features:
+
+Fine-grained search using regexes (regular expressions)
+
+JMDict multilingual japanese dictionary
+• kanji, readings, meanings (english, dutch, german) & more
+• pitch accent (from Wadoku)
+• by frequency
+• random entry
+
+Kanji dictionary
+• readings, meanings (english), jmdict entries, radicals & more
+• search using SKIP codes
+• search by radical
+• by frequency/level
+
+Example sentences (from Tatoeba)
+• with english, dutch and/or german translation
+• some with audio
+
+Stroke order
+
+Dark mode
