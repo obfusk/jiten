@@ -3,7 +3,7 @@ from pythonforandroid.logger import info
 
 class JitenRecipe(CompiledComponentsPythonRecipe):
     # name = 'jiten'
-    # version = '0.3.3'
+    # version = '0.3.4'
     # url = 'https://github.com/obfusk/jiten/archive/v{version}.tar.gz'
 
     depends = ['setuptools', 'flask', 'click', 'sqlite3', 'libpcre']
