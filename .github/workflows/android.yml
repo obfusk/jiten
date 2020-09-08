@@ -29,7 +29,11 @@ jobs:
         key: ${{ runner.os }}
     - name: Build
       run: make -C android ${{ matrix.target }}
+    - name: Version
+      run: touch VERSION_"$(git describe --always)"
     - uses: actions/upload-artifact@v2
       with:
         name: APK
-        path: android/bin/*.apk
+        path: |
+          android/bin/*.apk
+          VERSION_*
