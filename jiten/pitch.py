@@ -19,7 +19,7 @@ r"""
 Pitch Accent from Wadoku.
 
 >>> pitch = parse_pitch()
->>> len(pitch)
+>>> len(pitch) + len(BLACKLIST)
 141798
 
 >>> [ x for x in pitch if x[0] == "小猫" ][0]
@@ -47,11 +47,15 @@ Pitch Accent from Wadoku.
 >>> with_pitch(dict(reading = r[1], accent = r[2]))
 'いꜜしん･でんしん'
 
+>>> r = [ x for x in pitch if x[0] == "精一杯" ][0]
+>>> r
+['精一杯', 'せい—いっぱい', '3']
+>>> with_pitch(dict(reading = r[1], accent = r[2]))
+'せꜛい･いꜜっぱい'
+
 """                                                             # }}}1
 
 import re, sys
-
-from itertools import zip_longest
 
 import click
 
@@ -61,11 +65,15 @@ from .sql import sqlite_do
 SQLITE_FILE = M.resource_path("res/pitch.sqlite3")
 PITCH_FILE  = M.resource_path("res/pitch/PITCH")
 
-MORASPLIT   = re.compile(r"(.[ぁぃぅぇぉゃょゅァィゥェォャュョ]?)")
+# NB: skip ･ for e.g. せꜛい･いꜜっぱい
+MORASPLIT   = re.compile(r"(･?.[ぁぃぅぇぉゃょゅァィゥェォャュョ]?)")
+
+# TODO
+BLACKLIST   = """ぎっこんばっこん ぎっこんばったん ぎったんばったん
+                 電子マネー対応自販機 電子マネー自販機""".split()
 
 # TODO
 def with_accent(text, pos):
-  if pos is None: return text
   moras = [ x for x in re.split(MORASPLIT, text) if x ]
   if pos == 0:
     return moras[0] + "ꜛ" + "".join(moras[1:])
@@ -80,7 +88,10 @@ def parse_pitch(file = PITCH_FILE):
   with open(file) as f:
     with click.progressbar(f, width = 0, label = "reading pitch") as bar:
       for line in bar:
-        data.append(line.split())
+        kanji, reading, accent = row = line.split()
+        if kanji in BLACKLIST: continue
+        assert len(reading.split("—")) >= len(accent.split("—"))
+        data.append(row)
   return data
 
 def pitch2sqldb(data, file = SQLITE_FILE):
@@ -116,9 +127,10 @@ def get_pitch(reading, kanjis, file = SQLITE_FILE):
   return None
 
 def with_pitch(r):
-  ra = zip_longest(r["reading"].split("—"), r["accent"].split("—"))
+  sr, sa  = r["reading"].split("—"), r["accent"].split("—")
+  rs      = sr[:len(sa)-1] + ["･".join(sr[len(sa)-1:])]
   return "･".join( with_accent(r, a if a is None else int(a))
-                   for r, a in ra )
+                   for r, a in zip(rs, sa) )
 
 if __name__ == "__main__":
   if "--doctest" in sys.argv:
