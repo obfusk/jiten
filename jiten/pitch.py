@@ -5,10 +5,10 @@
 #
 # File        : jiten/pitch.py
 # Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-# Date        : 2020-08-30
+# Date        : 2020-09-17
 #
 # Copyright   : Copyright (C) 2020  Felix C. Stegerman
-# Version     : v0.3.2
+# Version     : v0.3.4
 # License     : AGPLv3+
 #
 # --                                                            ; }}}1
@@ -41,9 +41,17 @@ Pitch Accent from Wadoku.
 >>> with_accent("はし", 2)
 'はꜛしꜜ'
 
+>>> r = [ x for x in pitch if x[0] == "以心伝心" ][0]
+>>> r
+['以心伝心', 'いしん—でんしん', '1']
+>>> with_pitch(dict(reading = r[1], accent = r[2]))
+'いꜜしん･でんしん'
+
 """                                                             # }}}1
 
 import re, sys
+
+from itertools import zip_longest
 
 import click
 
@@ -57,6 +65,7 @@ MORASPLIT   = re.compile(r"(.[ぁぃぅぇぉゃょゅァィゥェォャュョ]?
 
 # TODO
 def with_accent(text, pos):
+  if pos is None: return text
   moras = [ x for x in re.split(MORASPLIT, text) if x ]
   if pos == 0:
     return moras[0] + "ꜛ" + "".join(moras[1:])
@@ -103,9 +112,13 @@ def get_pitch(reading, kanjis, file = SQLITE_FILE):
     for k in ( k.replace("・", "") for k in kanjis ):
       for r in c.execute("SELECT * FROM entry WHERE kanji = ?", (k,)):
         if r["reading"].replace("—", "") != rd: continue
-        ra = zip(r["reading"].split("—"), r["accent"].split("—"))
-        return "･".join( with_accent(r, int(a)) for r, a in ra )
+        return with_pitch(r)
   return None
+
+def with_pitch(r):
+  ra = zip_longest(r["reading"].split("—"), r["accent"].split("—"))
+  return "･".join( with_accent(r, a if a is None else int(a))
+                   for r, a in ra )
 
 if __name__ == "__main__":
   if "--doctest" in sys.argv:
