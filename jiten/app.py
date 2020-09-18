@@ -5,10 +5,10 @@
 #
 # File        : jiten/app.py
 # Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-# Date        : 2020-08-31
+# Date        : 2020-09-18
 #
 # Copyright   : Copyright (C) 2020  Felix C. Stegerman
-# Version     : v0.3.2
+# Version     : v0.3.4
 # License     : AGPLv3+
 #
 # --                                                            ; }}}1
@@ -128,7 +128,8 @@ def r_jmdict():
     return redirect(url_for("r_jmdict_random"))
   query, max_r = get_query_max()
   opts = dict(langs = get_langs(), max_results = max_r,
-              noun = arg_bool("noun"), verb = arg_bool("verb"))
+              noun = arg_bool("noun"), verb = arg_bool("verb"),
+              prio = arg_bool("prio"))
   data = dict(page = "jmdict", query = query)
   try:
     if query: data["results"] = J.search(query, **opts)
