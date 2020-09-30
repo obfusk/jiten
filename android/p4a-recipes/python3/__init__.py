@@ -8,5 +8,5 @@ def _patch():
   spec.loader.exec_module(mod)
   Python3Recipe, recipe         = mod.Python3Recipe, mod.recipe
   Python3Recipe.configure_args += ("--enable-loadable-sqlite-extensions",)
-  Python3Recipe.version         = "3.8.5"
+  Python3Recipe.version         = "3.8.6"
 _patch()
