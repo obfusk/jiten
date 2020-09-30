@@ -4,10 +4,10 @@
 
     File        : templates/kanji-by-level.html
     Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-    Date        : 2020-08-30
+    Date        : 2020-09-30
 
     Copyright   : Copyright (C) 2020  Felix C. Stegerman
-    Version     : v0.3.2
+    Version     : v0.3.4
     License     : AGPLv3+
 
   -->
@@ -29,8 +29,10 @@
             <span class="ml-auto">{{ topbtn() }}</span>
           </div>
           <div class="card-body">
-            {% for c in chars %}
+            {% for c, m in chars %}
               <a class="jap selbtn btn btn-primary btn-lg px-2 py-1 mb-1"
+                title="{{ "; ".join(m) }}"
+                data-toggle="tooltip" data-placement="top"
                 href="/kanji?query={{ c }}">{{ c }}</a>
             {% endfor %}
           </div>

@@ -5,10 +5,10 @@
 #
 # File        : jiten/kanji.py
 # Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-# Date        : 2020-08-19
+# Date        : 2020-09-30
 #
 # Copyright   : Copyright (C) 2020  Felix C. Stegerman
-# Version     : v0.3.0
+# Version     : v0.3.4
 # License     : AGPLv3+
 #
 # --                                                            ; }}}1
@@ -380,24 +380,27 @@ def search(q, max_results = None, file = SQLITE_FILE):          # {{{1
 def by_freq(file = SQLITE_FILE):
   with sqlite_do(file) as c:
     for r in c.execute("""
-        SELECT char, freq FROM entry
+        SELECT char, freq, meaning FROM entry
           WHERE freq IS NOT NULL ORDER BY freq ASC
         """):
-      yield r["char"], r["freq"]
+      yield r["char"], r["freq"], tuple(r["meaning"].splitlines())
 
 def by_level(level, file = SQLITE_FILE):
   with sqlite_do(file) as c:
     for r in c.execute("""
-        SELECT char FROM entry WHERE level = ? ORDER BY code ASC
+        SELECT char, meaning FROM entry WHERE level = ? ORDER BY code ASC
         """, (level,)):
-      yield r["char"]
+      yield r["char"], tuple(r["meaning"].splitlines())
 
-def by_jlpt():
+def by_jlpt(file = SQLITE_FILE):
   data = { int(l): [] for l in "12345" }
-  for char, level in JLPT.items():
-    data[level].append(char)
+  with sqlite_do(file) as c:
+    for char, level in JLPT.items():
+      m = c.execute("SELECT meaning FROM entry WHERE code = ?",
+                    (ord(char),)).fetchone()["meaning"].splitlines()
+      data[level].append((char, tuple(m)))
   for level in "54321":
-    yield int(level), "".join(sorted(data[int(level)]))
+    yield int(level), tuple(sorted(data[int(level)]))
 
 def random(file = SQLITE_FILE):
   with sqlite_do(file) as c:

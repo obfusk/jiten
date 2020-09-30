@@ -4,10 +4,10 @@
 
     File        : templates/jmdict-by-freq.html
     Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-    Date        : 2020-08-30
+    Date        : 2020-09-30
 
     Copyright   : Copyright (C) 2020  Felix C. Stegerman
-    Version     : v0.3.2
+    Version     : v0.3.4
     License     : AGPLv3+
 
   -->
@@ -30,13 +30,10 @@
           </div>
           <div class="card-body">
             {% for e, r in row %}
-              <!--
-                TODO:
-                * show title on mobile?!
-                * langs for meanings()?!
-              -->
+              <!-- TODO: langs for meanings()?! -->
               <a class="jap selbtn btn btn-primary px-2 py-1 mb-1"
                 title="{{ r }} | {{ "; ".join(e.meanings()|sum(start=())) }}"
+                data-toggle="tooltip" data-placement="top"
                 href="/jmdict?query={{ ("+#" + e.seq|string)|urlencode }}"
                 >{{ "、".join(e.definition()) }}</a>
             {% endfor %}

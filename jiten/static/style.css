@@ -29,6 +29,11 @@ a[aria-expanded=false] .collapse-close {
   display: none;
 }
 
+.collapsing {
+ -webkit-transition: height 0.1s ease;
+ transition:         height 0.1s ease;
+}
+
 .ellipsis {
   max-width: 100%;
   white-space: nowrap;

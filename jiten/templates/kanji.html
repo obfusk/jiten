@@ -4,10 +4,10 @@
 
     File        : templates/kanji.html
     Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-    Date        : 2020-08-31
+    Date        : 2020-09-30
 
     Copyright   : Copyright (C) 2020  Felix C. Stegerman
-    Version     : v0.3.2
+    Version     : v0.3.4
     License     : AGPLv3+
 
   -->
@@ -116,6 +116,7 @@
                     {% for e, r in js %}
                       <a class="jap selbtn btn btn-primary px-2 py-1 mb-1 mr-1"
                         title="{{ "; ".join(e.meanings()|sum(start=())) }}"
+                        data-toggle="tooltip" data-placement="top"
                         href="/jmdict?query={{ ("+#" + e.seq|string)|urlencode }}"
                         >{{ e.kanji[0].elem }}
                         【{{ e.reading[0].elem }}】</a>

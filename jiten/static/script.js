@@ -2,10 +2,10 @@
 //
 //  File        : static/script.js
 //  Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-//  Date        : 2020-08-31
+//  Date        : 2020-09-30
 //
 //  Copyright   : Copyright (C) 2020  Felix C. Stegerman
-//  Version     : v0.3.2
+//  Version     : v0.3.4
 //  License     : AGPLv3+
 //
 //  --                                                          ; }}}1
@@ -278,6 +278,10 @@ $("#collapse-all").on("click", () => {
   $(".container .collapse").collapse("hide")
   return false
 })
+
+$("[data-toggle='tooltip']").tooltip().click(evt =>
+  $(evt.delegateTarget).tooltip("hide")
+)
 
 // === save history ===
 
