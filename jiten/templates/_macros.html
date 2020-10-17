@@ -2,7 +2,7 @@
 
   File        : templates/_macros.html
   Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-  Date        : 2020-09-30
+  Date        : 2020-10-17
 
   Copyright   : Copyright (C) 2020  Felix C. Stegerman
   Version     : v0.3.4
@@ -101,11 +101,9 @@
 {% endmacro %}
 {% macro collapseallbtn() %}
   <div class="text-right pt-2 pb-3">
-    <a class="btn btn-sm btn-outline-primary" href="#" id="expand-all">
-      {{ collapseopen() }} Expand All
-    </a>
-    <a class="btn btn-sm btn-outline-primary" href="#" id="collapse-all">
-      {{ collapseclose() }} Collapse All
-    </a>
+    <a class="disabled btn btn-sm btn-outline-primary" href="#"
+      id="expand-all">{{ collapseopen() }} Expand All</a>
+    <a class="disabled btn btn-sm btn-outline-primary" href="#"
+      id="collapse-all">{{ collapseclose() }} Collapse All</a>
   </div>
 {% endmacro %}

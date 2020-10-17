@@ -2,7 +2,7 @@
 //
 //  File        : static/script.js
 //  Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-//  Date        : 2020-09-30
+//  Date        : 2020-10-17
 //
 //  Copyright   : Copyright (C) 2020  Felix C. Stegerman
 //  Version     : v0.3.4
@@ -273,11 +273,11 @@ $(".query-example").on("click", evt => {
 $("#expand-all").on("click", () => {
   $(".container .collapse").collapse("show")
   return false
-})
+}).removeClass("disabled")
 $("#collapse-all").on("click", () => {
   $(".container .collapse").collapse("hide")
   return false
-})
+}).removeClass("disabled")
 
 $("[data-toggle='tooltip']").tooltip().click(evt =>
   $(evt.delegateTarget).tooltip("hide")
