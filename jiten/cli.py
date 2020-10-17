@@ -5,7 +5,7 @@
 #
 # File        : jiten/cli.py
 # Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-# Date        : 2020-09-08
+# Date        : 2020-10-17
 #
 # Copyright   : Copyright (C) 2020  Felix C. Stegerman
 # Version     : v0.3.4
@@ -242,15 +242,9 @@ query: +w 日
 
 """                                                             # }}}1
 
-import os, os.path as _pth, subprocess as _subp, sys
+import os, sys
 
-_cwd = _pth.dirname(__file__)
-if _pth.exists(_pth.join(_pth.dirname(_cwd), ".git")):
-  __version__ = _subp.check_output("git describe --always",
-                  shell = True, cwd = _cwd) \
-                .decode().strip().replace("v", "", 1)
-else:
-  __version__ = "0.3.4"
+from .version import __version__
 name = "jiten"
 
 import click

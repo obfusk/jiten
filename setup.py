@@ -1,7 +1,7 @@
 from pathlib import Path
 import os, setuptools, subprocess, sys
 
-import jiten.cli
+import jiten.version
 
 android_build       = os.environ.get("JITEN_ANDROID") == "yes"
 long_description    = Path(__file__).with_name("README.md") \
@@ -22,9 +22,12 @@ subprocess.run("make patch", shell = True, check = True)
 
 if android_build:
   # "build" *.sqlite3
+  import jiten.cli
   jiten.cli.cli("-v setup".split(), standalone_mode = False)
 
-  data += [ "res/*.sqlite3" ]
+  subprocess.run("make _version", shell = True, check = True)
+
+  data += [ "res/*.sqlite3" ] + [ ".version" ]
 else:
   data += [ "res/freq/" + x for x in """SOURCES base_aggregates.txt.nobom
                                         wordfreq_ck.utf8""".split() ] \
@@ -40,7 +43,7 @@ setuptools.setup(
   description       = "japanese cli&web dictionary based on jmdict/kanjidic",
   long_description  = long_description,
   long_description_content_type = "text/markdown",
-  version           = jiten.cli.__version__,
+  version           = jiten.version.__version__,
   author            = "Felix C. Stegerman",
   author_email      = "flx@obfusk.net",
   license           = "AGPLv3+",

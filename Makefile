@@ -37,6 +37,7 @@ cleanup:
 	find -name '*~' -delete -print
 	rm -fr jiten/__pycache__/ tmp-html/
 	rm -fr build/ dist/ jiten.egg-info/
+	rm -fr jiten/.version
 	$(MAKE) -C jiten/res/jmdict cleanup
 
 validate-css:
@@ -77,7 +78,7 @@ validate-html-curl:
 validate-html-py:
 	unset JAVA_TOOL_OPTIONS && $(H5VCMD) --root tmp-html/
 
-.PHONY: ext patch _package _publish
+.PHONY: ext patch _version _package _publish
 
 ext:
 	python3 setup.py build_ext -i
@@ -85,6 +86,9 @@ ext:
 patch:
 	$(MAKE) -C jiten/res/jmdict all
 	$(MAKE) -C jiten/res/jmdict cleanup
+
+_version:
+	git describe --always > jiten/.version
 
 _package:
 	python3 setup.py sdist bdist_wheel
