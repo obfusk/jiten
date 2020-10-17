@@ -51,9 +51,9 @@ def _patch_webview():
     """.splitlines()[1:-1] ).replace("/", "\\/")
     cmd   = """
       set -e
-      if ! grep -q ZoomControls {file}; then
+      if ! grep -qF ZoomControls {file}; then
         sed '/setDomStorageEnabled/ s/$/\\n{zoomc}\\n{zoomd}/' -i {file}
-        if ! grep -q ZoomControls {file}; then echo failed; exit 1; fi
+        if ! grep -qF ZoomControls {file}; then echo failed; exit 1; fi
         echo patched zoom
       fi
       if ! grep -qF android.net.Uri {file}; then
@@ -70,4 +70,21 @@ def _patch_webview():
     info("Patching webview ...")
     subprocess.run(cmd, shell = True, check = True)
 
+# FIXME
+def _patch_python():
+    import subprocess
+    file  = "pythonforandroid/bootstraps/common/build/" \
+          + "src/main/java/org/kivy/android/PythonUtil.java"
+    cmd   = """
+      set -e
+      if ! grep -qF python3.9 {file}; then
+        sed 's/python3\\.8/python3.9/g' -i {file}
+        if ! grep -qF python3.9 {file}; then echo failed; exit 1; fi
+        echo patched python3.9
+      fi
+    """.format(file = file)
+    info("Patching python ...")
+    subprocess.run(cmd, shell = True, check = True)
+
 _patch_webview()
+_patch_python()
