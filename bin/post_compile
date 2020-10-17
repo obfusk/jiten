@@ -24,6 +24,7 @@ ln -srf  .heroku/vendor/{jmdict,kanji,pitch,sentences}.sqlite3 jiten/res/
 make
 
 # get .version (FIXME: is there no better way?)
-git clone -b "$SOURCE_VERSION" https://github.com/obfusk/jiten.git _jiten
-( cd _jiten && git describe --always ) > jiten/.version
+git clone https://github.com/obfusk/jiten.git _jiten
+( cd _jiten && git checkout "$SOURCE_VERSION" && make _version )
+mv -v _jiten/jiten/.version jiten/
 rm -fr _jiten
