@@ -60,8 +60,8 @@ def patch_android():
   file2 = "pythonforandroid/recipes/android/src/setup.py"
   cmd   = r"""
     set -e
-    if ! grep -qF WebView_AndroidGetJNIEnv {file1}; then
-      patch {file1} <<-EOF
+    if ! grep -qF WebView_AndroidGetJNIEnv __FILE1__; then
+      patch __FILE1__ <<-EOF
 	--- a/pythonforandroid/recipes/android/__init__.py
 	+++ b/pythonforandroid/recipes/android/__init__.py
 	@@ -77,6 +77,11 @@ class AndroidRecipe(IncludedFilesBehaviour, CythonRecipe):
@@ -77,8 +77,8 @@ def patch_android():
 
 	 recipe = AndroidRecipe()
 	EOF
-    if ! grep -qF main {file2}; then
-      patch {file2} <<-EOF
+    if ! grep -qF main __FILE2__; then
+      patch __FILE2__ <<-EOF
 	--- a/pythonforandroid/recipes/android/src/setup.py
 	+++ b/pythonforandroid/recipes/android/src/setup.py
 	@@ -5,7 +5,7 @@ library_dirs = ['libs/' + os.environ['ARCH']]
@@ -92,7 +92,7 @@ def patch_android():
 	                      ['android/_android.c', 'android/_android_jni.c'],
 	EOF
     fi
-  """.format(file1 = file1, file2 = file2)
+  """.replace("__FILE1__", file1).replace("__FILE2__", file2)
   print("Patching android recipe ...")
   run(cmd)
 
