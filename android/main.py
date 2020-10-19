@@ -15,5 +15,14 @@ if isinstance(getattr(sys.stdout, "buffer", None), str):
       return
   sys.stdout = sys.stderr = LogFile()
 
-from jiten.cli import cli
-cli("-v serve -p 29483".split())
+import os
+if os.path.exists(os.path.join(os.environ["ANDROID_PRIVATE"], "__debug__")):
+  print("*** DEBUG MODE ***")
+  os.environ["FLASK_ENV"] = "development"
+
+  from jiten.app import app
+  @app.route("/__debug__")
+  def r_debug(): raise RuntimeError
+
+from jiten.cli import serve_app
+serve_app(True, "localhost", 29483, use_reloader = False)
