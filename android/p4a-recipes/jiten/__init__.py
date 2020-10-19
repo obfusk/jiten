@@ -67,7 +67,7 @@ def _patch_webview():
         echo patched load
       fi
     """.format(file = file, zoomc = zoomc, zoomd = zoomd, ext = ext)
-    info("Patching webview ...")
+    info("Patching webview activity ...")
     subprocess.run(cmd, shell = True, check = True)
 
 # FIXME
@@ -83,8 +83,37 @@ def _patch_python():
         echo patched python3.9
       fi
     """.format(file = file)
-    info("Patching python ...")
+    info("Patching python util ...")
+    subprocess.run(cmd, shell = True, check = True)
+
+# FIXME
+def _patch_android():
+    import subprocess
+    file  = "pythonforandroid/recipes/android/__init__.py"
+    cmd   = r"""
+      set -e
+      if ! grep -qF WebView_AndroidGetJNIEnv {file}; then
+        patch {file} <<-EOF
+	--- a/pythonforandroid/recipes/android/__init__.py
+	+++ b/pythonforandroid/recipes/android/__init__.py
+	@@ -77,6 +77,11 @@ class AndroidRecipe(IncludedFilesBehaviour, CythonRecipe):
+	                 fh.write(
+	                     '#define SDL_ANDROID_GetJNIEnv SDL_AndroidGetJNIEnv\n'
+	                 )
+	+            else:
+	+                fh.write('JNIEnv *WebView_AndroidGetJNIEnv(void);\n')
+	+                fh.write(
+	+                    '#define SDL_ANDROID_GetJNIEnv WebView_AndroidGetJNIEnv\n'
+	+                )
+
+
+	 recipe = AndroidRecipe()
+	EOF
+      fi
+    """.format(file = file)
+    info("Patching android recipe ...")
     subprocess.run(cmd, shell = True, check = True)
 
 _patch_webview()
 _patch_python()
+_patch_android()
