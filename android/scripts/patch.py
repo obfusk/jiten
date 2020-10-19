@@ -1,6 +1,9 @@
 #!/usr/bin/env python3
 import subprocess
 
+def run(cmd):
+  subprocess.run(cmd, shell = True, check = True, cwd = ".p4a")
+
 # FIXME
 def patch_webview():
   file  = "pythonforandroid/bootstraps/webview/build/" \
@@ -34,7 +37,7 @@ def patch_webview():
     fi
   """.format(file = file, zoomc = zoomc, zoomd = zoomd, ext = ext)
   print("Patching webview activity ...")
-  subprocess.run(cmd, shell = True, check = True)
+  run(cmd)
 
 # FIXME
 def patch_python():
@@ -49,7 +52,7 @@ def patch_python():
     fi
   """.format(file = file)
   print("Patching python util ...")
-  subprocess.run(cmd, shell = True, check = True)
+  run(cmd)
 
 # FIXME
 def patch_android():
@@ -76,7 +79,7 @@ def patch_android():
     fi
   """.format(file = file)
   print("Patching android recipe ...")
-  subprocess.run(cmd, shell = True, check = True)
+  run(cmd)
 
 patch_webview()
 patch_python()
