@@ -12,7 +12,7 @@ ifndef NUMERIC
   $(error numeric version command failed)
 endif
 
-.PHONY: debug clean _dir
+.PHONY: debug clean
 
 debug: debug-armeabi-v7a debug-arm64-v8a
 
@@ -20,29 +20,26 @@ clean:
 	buildozer android clean
 	rm -fr bin/
 
-_dir:
-	mkdir -p ../../_jiten_buildozer_
-
 .PHONY: debug-armeabi-v7a debug-arm64-v8a
 .PHONY: release-armeabi-v7a release-arm64-v8a
 
-debug-armeabi-v7a: _dir
+debug-armeabi-v7a:
 	APP_ANDROID_ARCH=armeabi-v7a \
 	APP_ANDROID_NUMERIC_VERSION=$$(( $(NUMERIC) + 1 )) \
-	buildozer android debug
+	./scripts/buildozer.sh debug
 
-debug-arm64-v8a: _dir
+debug-arm64-v8a:
 	APP_ANDROID_NUMERIC_VERSION=$$(( $(NUMERIC) + 2 )) \
-	buildozer android debug
+	./scripts/buildozer.sh debug
 
-release-armeabi-v7a: _dir
+release-armeabi-v7a:
 	APP_ANDROID_ARCH=armeabi-v7a \
 	APP_ANDROID_NUMERIC_VERSION=$$(( $(NUMERIC) + 1 )) \
-	buildozer android release
+	./scripts/buildozer.sh release
 
-release-arm64-v8a: _dir
+release-arm64-v8a:
 	APP_ANDROID_NUMERIC_VERSION=$$(( $(NUMERIC) + 2 )) \
-	buildozer android release
+	./scripts/buildozer.sh release
 
 .PHONY: _setup_root _setup_user
 
