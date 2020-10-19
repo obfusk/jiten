@@ -77,6 +77,7 @@ def patch_android():
 
 	 recipe = AndroidRecipe()
 	EOF
+    fi
     if ! grep -qF main __FILE2__; then
       patch __FILE2__ <<-EOF
 	--- a/pythonforandroid/recipes/android/src/setup.py
