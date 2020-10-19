@@ -56,11 +56,12 @@ def patch_python():
 
 # FIXME
 def patch_android():
-  file  = "pythonforandroid/recipes/android/__init__.py"
+  file1 = "pythonforandroid/recipes/android/__init__.py"
+  file2 = "pythonforandroid/recipes/android/src/setup.py"
   cmd   = r"""
     set -e
-    if ! grep -qF WebView_AndroidGetJNIEnv {file}; then
-      patch {file} <<-EOF
+    if ! grep -qF WebView_AndroidGetJNIEnv {file1}; then
+      patch {file1} <<-EOF
 	--- a/pythonforandroid/recipes/android/__init__.py
 	+++ b/pythonforandroid/recipes/android/__init__.py
 	@@ -77,6 +77,11 @@ class AndroidRecipe(IncludedFilesBehaviour, CythonRecipe):
@@ -76,8 +77,22 @@ def patch_android():
 
 	 recipe = AndroidRecipe()
 	EOF
+    if ! grep -qF main {file2}; then
+      patch {file2} <<-EOF
+	--- a/pythonforandroid/recipes/android/src/setup.py
+	+++ b/pythonforandroid/recipes/android/src/setup.py
+	@@ -5,7 +5,7 @@ library_dirs = ['libs/' + os.environ['ARCH']]
+	 lib_dict = {
+	     'sdl2': ['SDL2', 'SDL2_image', 'SDL2_mixer', 'SDL2_ttf']
+	 }
+	-sdl_libs = lib_dict.get(os.environ['BOOTSTRAP'], [])
+	+sdl_libs = lib_dict.get(os.environ['BOOTSTRAP'], ['main'])
+
+	 modules = [Extension('android._android',
+	                      ['android/_android.c', 'android/_android_jni.c'],
+	EOF
     fi
-  """.format(file = file)
+  """.format(file1 = file1, file2 = file2)
   print("Patching android recipe ...")
   run(cmd)
 
