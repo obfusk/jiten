@@ -5,7 +5,7 @@
 #
 # File        : jiten/cli.py
 # Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-# Date        : 2020-10-19
+# Date        : 2020-10-20
 #
 # Copyright   : Copyright (C) 2020  Felix C. Stegerman
 # Version     : v0.3.4
@@ -475,9 +475,13 @@ def sentence_search(q, verbose, langs, max_results):            # {{{1
 @click.option("-p", "--port", default = 5000, metavar = "PORT", type = click.INT)
 @click.pass_context
 def serve(ctx, host, port):
-  serve_app(ctx.obj["verbose"], host, port)
+  serve_app(host, port, ctx.obj["verbose"])
 
-def serve_app(verbose, host, port, **opts):
+_serve_params = { p.name: p for p in serve.params }
+
+def serve_app(host = _serve_params["host"].default,
+              port = _serve_params["port"].default,
+              verbose = True, **opts):
   setup_db(verbose)
   from .app import app
   app.run(host = host, port = port, load_dotenv = False, **opts)

@@ -1,3 +1,4 @@
+# FIXME: workaround for bug in older versions of p4a
 import sys
 if isinstance(getattr(sys.stdout, "buffer", None), str):
   print("Fixing stdout/stderr...")
@@ -15,14 +16,22 @@ if isinstance(getattr(sys.stdout, "buffer", None), str):
       return
   sys.stdout = sys.stderr = LogFile()
 
+
+# "debug mode"
 import os
-if os.path.exists(os.path.join(os.environ["ANDROID_PRIVATE"], "__debug__")):
-  print("*** DEBUG MODE ***")
-  os.environ["FLASK_ENV"] = "development"
+if "ANDROID_PRIVATE" in os.environ:
+  import android, jnius
+  activ = jnius.autoclass(android.config.ACTIVITY_CLASS_NAME)
+  info  = activ.getApplicationInfo()
+  debug = os.path.join(os.environ["ANDROID_PRIVATE"], "__debug__")
+  if info.flags & type(info).FLAG_DEBUGGABLE and os.path.exists(debug):
+    print("*** DEBUG MODE ***")
+    os.environ["FLASK_ENV"] = "development"
+    from jiten.app import app
+    @app.route("/__debug__")
+    def r_debug(): raise RuntimeError
 
-  from jiten.app import app
-  @app.route("/__debug__")
-  def r_debug(): raise RuntimeError
 
+# serve app
 from jiten.cli import serve_app
-serve_app(True, "localhost", 29483, use_reloader = False)
+serve_app(port = 29483, use_reloader = False)
