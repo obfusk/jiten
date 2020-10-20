@@ -20,7 +20,7 @@ if isinstance(getattr(sys.stdout, "buffer", None), str):
 # "debug mode"
 import os
 if "ANDROID_PRIVATE" in os.environ:
-  import android, jnius
+  import android.config, jnius
   activ = jnius.autoclass(android.config.ACTIVITY_CLASS_NAME)
   info  = activ.getApplicationInfo()
   debug = os.path.join(os.environ["ANDROID_PRIVATE"], "__debug__")
