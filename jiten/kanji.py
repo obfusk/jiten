@@ -5,7 +5,7 @@
 #
 # File        : jiten/kanji.py
 # Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-# Date        : 2020-09-30
+# Date        : 2020-10-20
 #
 # Copyright   : Copyright (C) 2020  Felix C. Stegerman
 # Version     : v0.3.4
@@ -102,6 +102,7 @@ import gzip, itertools, re, sys, unicodedata as UD
 import xml.etree.ElementTree as ET
 
 from collections import namedtuple
+from contextlib import contextmanager
 
 import click
 
@@ -396,11 +397,18 @@ def by_jlpt(file = SQLITE_FILE):
   data = { int(l): [] for l in "12345" }
   with sqlite_do(file) as c:
     for char, level in JLPT.items():
-      m = c.execute("SELECT meaning FROM entry WHERE code = ?",
-                    (ord(char),)).fetchone()["meaning"].splitlines()
-      data[level].append((char, tuple(m)))
+      data[level].append((char, meaning(char, c)))
   for level in "54321":
     yield int(level), tuple(sorted(data[int(level)]))
+
+def meaning(char, c):
+  r = c.execute("SELECT meaning FROM entry WHERE code = ?", (ord(char),))
+  return tuple(r.fetchone()["meaning"].splitlines())
+
+@contextmanager
+def meanings(file = SQLITE_FILE):
+  with sqlite_do(file) as c:
+    yield lambda char: meaning(char, c)
 
 def random(file = SQLITE_FILE):
   with sqlite_do(file) as c:

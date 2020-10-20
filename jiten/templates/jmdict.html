@@ -4,10 +4,10 @@
 
     File        : templates/jmdict.html
     Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-    Date        : 2020-08-31
+    Date        : 2020-10-20
 
     Copyright   : Copyright (C) 2020  Felix C. Stegerman
-    Version     : v0.3.2
+    Version     : v0.3.4
     License     : AGPLv3+
 
   -->
@@ -36,6 +36,8 @@
                       {% for c in k.elem -%}
                         {% if M.isideo(c) -%}
                           <a class="text-reset"
+                            title="{{ "; ".join(kmeaning(c)) }}"
+                            data-toggle="tooltip" data-placement="top"
                             href="/kanji?query={{ c }}">{{ c }}</a>
                         {%- else -%}
                           {{ c }}

@@ -5,7 +5,7 @@
 #
 # File        : jiten/app.py
 # Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-# Date        : 2020-10-17
+# Date        : 2020-10-20
 #
 # Copyright   : Copyright (C) 2020  Felix C. Stegerman
 # Version     : v0.3.4
@@ -135,7 +135,8 @@ def r_jmdict():
   data = dict(page = "jmdict", query = query)
   try:
     if query: data["results"] = J.search(query, **opts)
-    return respond("jmdict.html", **data)
+    with K.meanings() as f:
+      return respond("jmdict.html", kmeaning = f, **data)
   except M.RegexError as e:
     return "regex error: " + str(e), 400
 
