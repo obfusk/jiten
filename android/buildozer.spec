@@ -6,7 +6,7 @@ source.dir = .
 source.include_exts = py
 source.exclude_dirs = bin,patches,p4a-recipes,scripts
 source.exclude_patterns = makefile,*.png
-requirements = python3,jiten
+requirements = python3,jiten,pyjnius==1.2.1
 requirements.source.jiten = ..
 icon.filename = %(source.dir)s/icon.png
 orientation = portrait
