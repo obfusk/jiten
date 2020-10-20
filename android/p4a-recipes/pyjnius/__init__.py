@@ -7,5 +7,5 @@ def _patch():
   mod   = IU.module_from_spec(spec)
   spec.loader.exec_module(mod)
   PyjniusRecipe, recipe = mod.PyjniusRecipe, mod.recipe
-  PyjniusRecipe.version = "1.2.1"
+  PyjniusRecipe.version = "1.3.0"
 _patch()
