@@ -308,9 +308,10 @@ def parse_jmdict(file = JMDICT_FILE):                           # {{{1
                   # part of speech, applies to following senses too
           lang, gloss = None, []
           for x in se.findall("gloss"):
-            if x.get(alang) in LANGS and x.text:
-              assert lang is None or lang == x.get(alang)
-              lang = x.get(alang)
+            l = x.get(alang, "eng")
+            if l in LANGS and x.text:
+              assert lang is None or lang == l
+              lang = l
               gloss.append(x.text.strip())
           if lang is None: continue
           s_inf = tuple( x.text.strip() for x in se.findall("s_inf") )
