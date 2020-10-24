@@ -5,7 +5,7 @@
 #
 # File        : jiten/version.py
 # Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-# Date        : 2020-10-17
+# Date        : 2020-10-24
 #
 # Copyright   : Copyright (C) 2020  Felix C. Stegerman
 # Version     : v0.3.4
@@ -13,7 +13,7 @@
 #
 # --                                                            ; }}}1
 
-import os.path as _pth, subprocess as _subp
+import os.path as _pth, subprocess as _subp, sys
 
 _dir = _pth.dirname(__file__)
 _vsn = _pth.join(_dir, ".version")
@@ -26,5 +26,11 @@ elif _pth.exists(_vsn):
     __version__ = f.readline().strip().replace("v", "", 1)
 else:
   __version__ = "0.3.4"
+
+py_version = "Python " + sys.version.split()[0]
+if "PyPy" in sys.version:
+  py_version += ", PyPy {}".format(
+    sys.version[sys.version.index("PyPy"):].split()[1]
+  )
 
 # vim: set tw=70 sw=2 sts=2 et fdm=marker :

@@ -5,10 +5,10 @@
 #
 # File        : jiten/sql.py
 # Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-# Date        : 2020-07-15
+# Date        : 2020-10-24
 #
 # Copyright   : Copyright (C) 2020  Felix C. Stegerman
-# Version     : v0.1.1
+# Version     : v0.3.4
 # License     : AGPLv3+
 #
 # --                                                            ; }}}1
@@ -43,7 +43,10 @@ def load_pcre_extension(conn):
   spec = importlib.util.find_spec("jiten._sqlite3_pcre")
   if spec is None: raise RuntimeError("jiten._sqlite3_pcre not found")
   conn.enable_load_extension(True)
-  conn.load_extension(spec.origin)
+  if hasattr(conn, "load_extension"):
+    conn.load_extension(spec.origin)
+  else:
+    conn.execute("SELECT load_extension(?)", (spec.origin,))
   conn.enable_load_extension(False)
 
 # vim: set tw=70 sw=2 sts=2 et fdm=marker :

@@ -5,7 +5,7 @@
 #
 # File        : jiten/app.py
 # Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-# Date        : 2020-10-20
+# Date        : 2020-10-24
 #
 # Copyright   : Copyright (C) 2020  Felix C. Stegerman
 # Version     : v0.3.4
@@ -20,14 +20,14 @@ Web interface.
 
 """                                                             # }}}1
 
-import json, os, time, sys
+import json, os, time
 
 import jinja2
 
 from flask import Flask, make_response, redirect, request, \
                   render_template, url_for
 
-from .version import __version__
+from .version import __version__, py_version
 
 from . import jmdict    as J
 from . import kanji     as K
@@ -103,7 +103,7 @@ def respond(template, **data):
     template, mode = "dark" if dark else "light", langs = langs,
     toggle = dark_toggle_link(dark), ord = ord, hex = hex,
     J = J, K = K, M = M, S = S, START = START, VERSION = __version__,
-    PY_VERSION = sys.version.split()[0], DEPS = DEPENDENCIES, **data
+    PY_VERSION = py_version, DEPS = DEPENDENCIES, **data
   ))
 
 def get_langs():
