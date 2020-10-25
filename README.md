@@ -2,7 +2,7 @@
 
     File        : README.md
     Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-    Date        : 2020-09-08
+    Date        : 2020-10-25
 
     Copyright   : Copyright (C) 2020  Felix C. Stegerman
     Version     : v0.3.4
@@ -24,7 +24,7 @@
 
 ## Description
 
-jiten - japanese cli&web dictionary based on jmdict/kanjidic
+jiten - japanese android/cli/web dictionary based on jmdict/kanjidic
 
 → https://jiten.obfusk.dev
 
@@ -42,24 +42,30 @@ jiten - japanese cli&web dictionary based on jmdict/kanjidic
 * Fine-grained search using
   [regexes](https://docs.python.org/3/library/re.html#regular-expression-syntax)
   (regular expressions)
+  - simple searches don't require knowledge of regexes
+  - quick reference available in the web interface and android app
 * JMDict multilingual japanese dictionary
-  - kanji, readings, meanings (english, dutch, german) & more
+  - kanji, readings, meanings (english, dutch and/or german) & more
   - pitch accent (from Wadoku)
-  - by frequency
-  - random entry
+  - browse by frequency
 * Kanji dictionary
   - readings, meanings (english), jmdict entries, radicals & more
   - search using
     [SKIP codes](https://en.wikipedia.org/wiki/Kodansha_Kanji_Learner%27s_Dictionary#SKIP)
   - search by radical
-  - by frequency/level
+  - browse by frequency/level
 * Example sentences (from Tatoeba)
   - with english, dutch and/or german translation
   - some with audio
 * Stroke order
+* Android app
+  - wraps the web interface (running locally on your device) in a webview
+  - completely offline, no internet access required
 * Web interface
-  - can be run on your own computer or android phone
+  - available online at https://jiten.obfusk.dev
   - light/dark mode
+  - search history (stored locally)
+  - can be run on your own computer (or e.g. android phone)
 * Command-line interface
 
 ## CLI
