@@ -65,6 +65,7 @@ jiten - japanese android/cli/web dictionary based on jmdict/kanjidic
   - available online at https://jiten.obfusk.dev
   - light/dark mode
   - search history (stored locally)
+  - use long press for tooltips on mobile
   - can be run on your own computer (or e.g. android phone)
 * Command-line interface
 
