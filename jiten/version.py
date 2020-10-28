@@ -5,10 +5,10 @@
 #
 # File        : jiten/version.py
 # Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-# Date        : 2020-10-24
+# Date        : 2020-10-28
 #
 # Copyright   : Copyright (C) 2020  Felix C. Stegerman
-# Version     : v0.3.4
+# Version     : v0.3.5
 # License     : AGPLv3+
 #
 # --                                                            ; }}}1
@@ -25,7 +25,7 @@ elif _pth.exists(_vsn):
   with open(_vsn) as f:
     __version__ = f.readline().strip().replace("v", "", 1)
 else:
-  __version__ = "0.3.4"
+  __version__ = "0.3.5"
 
 py_version = "Python " + sys.version.split()[0]
 if "PyPy" in sys.version:
