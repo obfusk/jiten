@@ -31,7 +31,7 @@ if android_build:
 else:
   data += [ "res/freq/" + x for x in """SOURCES base_aggregates.txt.nobom
                                         wordfreq_ck.utf8""".split() ] \
-        + [ "res/jmdict/*.html" ] \
+        + [ "res/jmdict/" + x for x in "*.html Makefile".split() ] \
         + [ "res/jmdict/"+x+".xml.gz" for x in "jmdict kanjidic2".split() ] \
         + [ "res/pitch/" + x for x in "PITCH SOURCES *.html *.py".split() ] \
         + [ "res/radicals/*." + x for x in "xml.gz utf8".split() ] \
