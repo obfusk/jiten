@@ -6,19 +6,16 @@ The large download size is because it includes all the dictionary data, includin
 
 Features:
 
-Fine-grained search using regexes (regular expressions)
-
 JMDict multilingual japanese dictionary
-• kanji, readings, meanings (english, dutch, german) & more
+• kanji, readings, meanings (english, dutch and/or german) & more
 • pitch accent (from Wadoku)
-• by frequency
-• random entry
+• browse by frequency
 
 Kanji dictionary
 • readings, meanings (english), jmdict entries, radicals & more
 • search using SKIP codes
 • search by radical
-• by frequency/level
+• browse by frequency/level
 
 Example sentences (from Tatoeba)
 • with english, dutch and/or german translation
@@ -26,4 +23,20 @@ Example sentences (from Tatoeba)
 
 Stroke order
 
+Fine-grained search using regexes (regular expressions)
+• simple searches don't require knowledge of regexes
+• quick reference available
+
 Dark mode
+
+Search history (stored locally)
+
+Use long press for tooltips
+
+
+To report bugs and request features, please use the issue tracker at
+https://github.com/obfusk/jiten/issues
+
+Questions and feedback are welcome at jiten@obfusk.dev
+
+Donations are welcome at https://ko-fi.com/obfusk

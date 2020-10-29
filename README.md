@@ -2,7 +2,7 @@
 
     File        : README.md
     Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-    Date        : 2020-10-28
+    Date        : 2020-10-29
 
     Copyright   : Copyright (C) 2020  Felix C. Stegerman
     Version     : v0.3.5
@@ -77,7 +77,8 @@ jiten - japanese android/cli/web dictionary based on jmdict/kanjidic
 $ jiten -v jmdict --max 1 --word cat
 $ jiten -v jmdict --max 1 --word kat --lang dut
 $ jiten -v jmdict --max 1 --exact 誤魔化す
-$ jiten -v jmdict +random   # random entry
+$ jiten -v jmdict +random         # random entry
+$ jiten -v jmdict --prio +random  # random "priority" entry"
 ```
 
 ### Kanji
@@ -100,12 +101,22 @@ $ jiten -v serve
 $ jiten --help
 ```
 
+## Bugs & Feature Requests
+
+→ [Issue Tracker](https://github.com/obfusk/jiten/issues).
+
+## Questions & Feedback
+
+→ jiten@obfusk.dev
+
 ## Requirements
 
 Python >= 3.5 + Flask + click.
 
 To build the (not yet optional) SQLite PCRE C extension: a C compiler
 (e.g. `gcc`/`clang`) and the `sqlite3` & `pcre` libraries & headers.
+
+Basic build tools like `make` and `patch`.
 
 ### Debian/Ubuntu
 
@@ -135,6 +146,13 @@ $ pip install -e .
 
 NB: you may need to add e.g. `~/.local/bin` to your `$PATH` in order
 to run `jiten`.
+
+To update to the latest development version:
+
+```bash
+$ cd jiten
+$ git pull --rebase
+```
 
 ## Miscellaneous
 
