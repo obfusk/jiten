@@ -4,10 +4,10 @@
 
     File        : templates/kanji-by-freq.html
     Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-    Date        : 2020-09-30
+    Date        : 2020-10-29
 
     Copyright   : Copyright (C) 2020  Felix C. Stegerman
-    Version     : v0.3.4
+    Version     : v0.3.5
     License     : AGPLv3+
 
   -->
@@ -28,9 +28,9 @@
             <span class="ml-auto">{{ topbtn() }}</span>
           </div>
           <div class="card-body">
-            {% for c, f, m in row %}
+            {% for c, f, r, m in row %}
               <a class="jap selbtn btn btn-primary btn-lg px-2 py-1 mb-1"
-                title="{{ f }} | {{ "; ".join(m) }}"
+                title="{{ f }} | {{ "; ".join(m) }} 【{{ "、".join(r) }}】"
                 data-toggle="tooltip" data-placement="top"
                 href="/kanji?query={{ c }}">{{ c }}</a>
             {% endfor %}

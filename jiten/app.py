@@ -5,10 +5,10 @@
 #
 # File        : jiten/app.py
 # Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-# Date        : 2020-10-24
+# Date        : 2020-10-29
 #
 # Copyright   : Copyright (C) 2020  Felix C. Stegerman
-# Version     : v0.3.4
+# Version     : v0.3.5
 # License     : AGPLv3+
 #
 # --                                                            ; }}}1
@@ -135,8 +135,8 @@ def r_jmdict():
   data = dict(page = "jmdict", query = query)
   try:
     if query: data["results"] = J.search(query, **opts)
-    with K.meanings() as f:
-      return respond("jmdict.html", kmeaning = f, **data)
+    with K.readmeans() as f:
+      return respond("jmdict.html", krm = f, **data)
   except M.RegexError as e:
     return "regex error: " + str(e), 400
 
@@ -193,7 +193,8 @@ def r_sentences():
               audio = arg_bool("audio"))
   data = dict(page = "sentences", query = query)
   if query: data["results"] = S.search(query, **opts)
-  return respond("sentences.html", **data)
+  with K.readmeans() as f:
+    return respond("sentences.html", krm = f, **data)
 
 @app.route("/stroke")
 def r_stroke():

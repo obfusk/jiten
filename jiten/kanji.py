@@ -5,10 +5,10 @@
 #
 # File        : jiten/kanji.py
 # Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-# Date        : 2020-10-20
+# Date        : 2020-10-29
 #
 # Copyright   : Copyright (C) 2020  Felix C. Stegerman
-# Version     : v0.3.4
+# Version     : v0.3.5
 # License     : AGPLv3+
 #
 # --                                                            ; }}}1
@@ -381,34 +381,40 @@ def search(q, max_results = None, file = SQLITE_FILE):          # {{{1
 def by_freq(file = SQLITE_FILE):
   with sqlite_do(file) as c:
     for r in c.execute("""
-        SELECT char, freq, meaning FROM entry
+        SELECT char, freq, on_, kun, meaning FROM entry
           WHERE freq IS NOT NULL ORDER BY freq ASC
         """):
-      yield r["char"], r["freq"], tuple(r["meaning"].splitlines())
+      yield (r["char"], r["freq"]) + _readmean(r)
 
 def by_level(level, file = SQLITE_FILE):
   with sqlite_do(file) as c:
     for r in c.execute("""
-        SELECT char, meaning FROM entry WHERE level = ? ORDER BY code ASC
+        SELECT char, on_, kun, meaning FROM entry
+          WHERE level = ? ORDER BY code ASC
         """, (level,)):
-      yield r["char"], tuple(r["meaning"].splitlines())
+      yield (r["char"],) + _readmean(r)
 
 def by_jlpt(file = SQLITE_FILE):
   data = { int(l): [] for l in "12345" }
   with sqlite_do(file) as c:
     for char, level in JLPT.items():
-      data[level].append((char, meaning(char, c)))
+      data[level].append((char,) + readmean(char, c))
   for level in "54321":
     yield int(level), tuple(sorted(data[int(level)]))
 
-def meaning(char, c):
-  r = c.execute("SELECT meaning FROM entry WHERE code = ?", (ord(char),))
-  return tuple(r.fetchone()["meaning"].splitlines())
-
 @contextmanager
-def meanings(file = SQLITE_FILE):
+def readmeans(file = SQLITE_FILE):
   with sqlite_do(file) as c:
-    yield lambda char: meaning(char, c)
+    yield lambda char: readmean(char, c)
+
+def readmean(char, c):
+  r = c.execute("SELECT on_, kun, meaning FROM entry WHERE code = ?",
+                (ord(char),)).fetchone()
+  return _readmean(r)
+
+def _readmean(r):
+  return (tuple(r["on_"].splitlines() + r["kun"].splitlines()),
+          tuple(r["meaning"].splitlines()))
 
 def random(file = SQLITE_FILE):
   with sqlite_do(file) as c:

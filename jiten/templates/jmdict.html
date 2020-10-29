@@ -4,10 +4,10 @@
 
     File        : templates/jmdict.html
     Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-    Date        : 2020-10-20
+    Date        : 2020-10-29
 
     Copyright   : Copyright (C) 2020  Felix C. Stegerman
-    Version     : v0.3.4
+    Version     : v0.3.5
     License     : AGPLv3+
 
   -->
@@ -35,8 +35,9 @@
                     <span class="entry jap selbtn fakebtn btn btn-lg btn-warning py-1 mb-1">
                       {% for c in k.elem -%}
                         {% if M.isideo(c) -%}
+                          {%- set read, mean = krm(c) -%}
                           <a class="text-reset"
-                            title="{{ "; ".join(kmeaning(c)) }}"
+                            title="{{ "; ".join(mean) }} 【{{ "、".join(read) }}】"
                             data-toggle="tooltip" data-placement="top"
                             href="/kanji?query={{ c }}">{{ c }}</a>
                         {%- else -%}
