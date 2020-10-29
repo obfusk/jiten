@@ -44,6 +44,7 @@ release-arm64-v8a:
 .PHONY: _setup_root _setup_user
 
 _setup_root:
+	apt-get update || apt-get update
 	apt-get install -y build-essential git
 	apt-get install -y openjdk-11-jdk-headless
 	apt-get install -y zlib1g-dev zip unzip pkg-config libffi-dev
