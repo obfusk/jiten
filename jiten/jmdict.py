@@ -5,10 +5,10 @@
 #
 # File        : jiten/jmdict.py
 # Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-# Date        : 2020-08-31
+# Date        : 2020-10-29
 #
 # Copyright   : Copyright (C) 2020  Felix C. Stegerman
-# Version     : v0.3.2
+# Version     : v0.3.5
 # License     : AGPLv3+
 #
 # --                                                            ; }}}1
@@ -466,7 +466,8 @@ def search(q, langs = [LANGS[0]], max_results = None,           # {{{1
            file = SQLITE_FILE):
   fix_rank = lambda r: (r if r != F.NOFREQ else None)
   with sqlite_do(file) as c:
-    if q.lower() == "+random": q = "+#{}".format(random_seq(file))
+    if q.lower() == "+random":
+      q = "+#{}".format(random_seq(noun, verb, prio, file))
     if re.fullmatch(r"\+#\s*\d+", q):
       seq = int(q[2:].strip())
       for r in c.execute("SELECT rank FROM entry WHERE seq = ?", (seq,)):
@@ -547,9 +548,11 @@ def by_freq(offset = 0, limit = 1000, file = SQLITE_FILE):
     for seq, rank in ents:
       yield load_entry(c, seq), rank
 
-def random_seq(file = SQLITE_FILE):
+def random_seq(noun = False, verb = False, prio = False,
+               file = SQLITE_FILE):
+  f = nvp(noun, verb, prio)
   with sqlite_do(file) as c:
-    q = "SELECT seq FROM entry ORDER BY RANDOM() LIMIT 1"
+    q = "SELECT seq FROM entry {} ORDER BY RANDOM() LIMIT 1".format(f)
     return c.execute(q).fetchone()[0]
 
 if __name__ == "__main__":

@@ -85,6 +85,10 @@ def arg(k, *a, **kw):
 def arg_bool(k, *a, **kw):
   return arg(k, *a, **kw) == "yes"
 
+def unargs(d):
+  b2s = { True: "yes", False: "no" }
+  return { k: b2s[v] if isinstance(v, bool) else v for k, v in d.items() }
+
 def dark_toggle_link(dark):
   targs = request.args.copy()
   targs.setlist("dark", ["no" if dark else "yes"])
@@ -118,6 +122,10 @@ def get_query_max():
   w, e, f = arg_bool("word"), arg_bool("exact"), arg_bool("1stword")
   return M.process_query(arg("query"), w, e, f), arg("max", MAX, type = int)
 
+def get_nvp():
+  return dict(noun = arg_bool("noun"), verb = arg_bool("verb"),
+              prio = arg_bool("prio"))
+
 @app.route("/")
 def r_index():
   return respond("index.html", page = "index")
@@ -127,11 +135,9 @@ def r_index():
 @app.route("/jmdict")
 def r_jmdict():
   if arg("query", "").strip().lower() == "+random":
-    return redirect(url_for("r_jmdict_random"))
+    return redirect(url_for("r_jmdict_random", **unargs(get_nvp())))
   query, max_r = get_query_max()
-  opts = dict(langs = get_langs(), max_results = max_r,
-              noun = arg_bool("noun"), verb = arg_bool("verb"),
-              prio = arg_bool("prio"))
+  opts = dict(langs = get_langs(), max_results = max_r, **get_nvp())
   data = dict(page = "jmdict", query = query)
   try:
     if query: data["results"] = J.search(query, **opts)
@@ -149,7 +155,7 @@ def r_jmdict_by_freq():
 
 @app.route("/jmdict/random")
 def r_jmdict_random():
-  q = "+#{}".format(J.random_seq())
+  q = "+#{}".format(J.random_seq(**get_nvp()))
   return redirect(url_for("r_jmdict", query = q))
 
 # TODO
