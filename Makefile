@@ -20,6 +20,7 @@ test: all
 	python3 -m jiten.cli       --verbose  _doctest
 	python3 -m jiten.freq      --verbose --doctest
 	python3 -m jiten.jmdict    --verbose --doctest
+	python3 -m jiten.kana      --verbose --doctest
 	python3 -m jiten.kanji     --verbose --doctest
 	python3 -m jiten.misc      --verbose --doctest
 	python3 -m jiten.pitch     --verbose --doctest

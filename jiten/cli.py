@@ -5,10 +5,10 @@
 #
 # File        : jiten/cli.py
 # Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-# Date        : 2020-10-20
+# Date        : 2020-10-29
 #
 # Copyright   : Copyright (C) 2020  Felix C. Stegerman
-# Version     : v0.3.4
+# Version     : v0.3.5
 # License     : AGPLv3+
 #
 # --                                                            ; }}}1
@@ -255,6 +255,8 @@ from . import misc      as M
 from . import pitch     as P
 from . import sentences as S
 
+from .kana import with_romaji
+
 def setup_db(verbose):
   msg = "up to date"
   if not J.up2date():
@@ -295,6 +297,7 @@ def cli(ctx, colour, **kw):
 @click.option("--noun", is_flag = True, help = "Select nouns.")
 @click.option("--verb", is_flag = True, help = "Select verbs.")
 @click.option("--prio", is_flag = True, help = "Select priority entries.")
+@click.option("--romaji", is_flag = True, help = "Show romaji.")
 @click.argument("query", required = False, metavar = "REGEX")
 @click.pass_context
 def jmdict(ctx, query, **kw):
@@ -308,10 +311,12 @@ def jmdict(ctx, query, **kw):
       if not q: break
       click.echo_via_pager(jmdict_search(q, **ctx.obj))
 
-def jmdict_search(q, verbose, word, exact, fstwd, langs, **kw): # {{{1
+def jmdict_search(q, verbose, word, exact, fstwd, langs, romaji,
+                  **kw):                                        # {{{1
   langs = [ l for ls in langs for l in ls.split(",") ]
   q     = M.process_query(q, word, exact, fstwd)
   w     = click.get_terminal_size()[0]
+  f     = with_romaji if romaji else lambda x: x
   if verbose:
     yield "query: " + click.style(q, fg = "bright_red") + "\n\n"
   for i, (e, rank) in enumerate(J.search(q, langs = langs, **kw)):
@@ -319,10 +324,10 @@ def jmdict_search(q, verbose, word, exact, fstwd, langs, **kw): # {{{1
       click.style(k.elem, fg = "bright_yellow") for k in e.kanji
     ) or "[no kanji]") + "\n"
     yield (" | ".join(
-      click.style(r.elem, fg = "bright_green") for r in e.reading
+      click.style(f(r.elem), fg = "bright_green") for r in e.reading
     ) or "[no readings]") + "\n"
     yield (" | ".join(
-      click.style(p, fg = "cyan") for p in e.pitch()
+      click.style(f(p), fg = "cyan") for p in e.pitch()
     ) or "[no pitch data]") + "\n"
     gloss, info = e.gloss_pos_info(langs)
     for l in langs:
@@ -370,6 +375,7 @@ def indent_and_wrap_jap(w, xs, pre, fg):
               help = "Match exactly (same as ^...$).")
 @click.option("-m", "--max", "max_results", default = None,
               type = click.INT, help = "Maximum number of results.")
+@click.option("--romaji", is_flag = True, help = "Show romaji.")
 @click.argument("query", required = False, metavar = "REGEX")
 @click.pass_context
 def kanji(ctx, query, **kw):
@@ -383,21 +389,23 @@ def kanji(ctx, query, **kw):
       if not q: break
       click.echo_via_pager(kanji_search(q, **ctx.obj))
 
-def kanji_search(q, verbose, word, exact, fstwd, max_results):  # {{{1
+def kanji_search(q, verbose, word, exact, fstwd, max_results,
+                 romaji):                                       # {{{1
   q = M.process_query(q, word, exact, fstwd)
   w = click.get_terminal_size()[0]
+  f = with_romaji if romaji else lambda x: x
   if verbose:
     yield "query: " + click.style(q, fg = "bright_red") + "\n\n"
   for i, e in enumerate(K.search(q, max_results)):
     yield e.char + "\n"
     yield (" | ".join(
-      click.style(r, fg = "bright_yellow") for r in e.on
+      click.style(f(r), fg = "bright_yellow") for r in e.on
     ) or "[no on readings]") + "\n"
     yield (" | ".join(
-      click.style(r, fg = "bright_green") for r in e.kun
+      click.style(f(r), fg = "bright_green") for r in e.kun
     ) or "[no kun readings]") + "\n"
     yield (" | ".join(
-      click.style(r, fg = "cyan") for r in e.nanori
+      click.style(f(r), fg = "cyan") for r in e.nanori
     ) or "[no name readings]") + "\n"
     if e.meaning:
       yield click.style("= ", fg = "magenta") + \
