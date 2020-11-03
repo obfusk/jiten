@@ -5,10 +5,10 @@
 #
 # File        : jiten/pitch.py
 # Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-# Date        : 2020-09-17
+# Date        : 2020-10-03
 #
 # Copyright   : Copyright (C) 2020  Felix C. Stegerman
-# Version     : v0.3.4
+# Version     : v0.3.5
 # License     : AGPLv3+
 #
 # --                                                            ; }}}1
@@ -64,6 +64,7 @@ from .sql import sqlite_do
 
 SQLITE_FILE = M.resource_path("res/pitch.sqlite3")
 PITCH_FILE  = M.resource_path("res/pitch/PITCH")
+DATA_FILES  = (SQLITE_FILE, PITCH_FILE)
 
 # NB: skip ･ for e.g. せꜛい･いꜜっぱい
 MORASPLIT   = re.compile(r"(･?.[ぁぃぅぇぉゃょゅァィゥェォャュョ]?)")

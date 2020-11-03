@@ -5,7 +5,7 @@
 #
 # File        : jiten/jmdict.py
 # Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-# Date        : 2020-10-29
+# Date        : 2020-11-03
 #
 # Copyright   : Copyright (C) 2020  Felix C. Stegerman
 # Version     : v0.3.5
@@ -172,6 +172,7 @@ from .sql import sqlite_do, load_pcre_extension
 DBVERSION     = 8 # NB: update this when data/schema changes
 SQLITE_FILE   = M.resource_path("res/jmdict.sqlite3")
 JMDICT_FILE   = M.resource_path("res/jmdict/jmdict.xml.gz")
+DATA_FILES    = (SQLITE_FILE, JMDICT_FILE)
 
 MAXSEQ        = 10000000
 PRIO          = "news1 ichi1 spec1 spec2 gai1".split()

@@ -5,10 +5,10 @@
 #
 # File        : jiten/sentences.py
 # Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-# Date        : 2020-08-19
+# Date        : 2020-10-03
 #
 # Copyright   : Copyright (C) 2020  Felix C. Stegerman
-# Version     : v0.3.0
+# Version     : v0.3.5
 # License     : AGPLv3+
 #
 # --                                                            ; }}}1
@@ -59,6 +59,7 @@ from .sql import sqlite_do
 
 SQLITE_FILE     = M.resource_path("res/sentences.sqlite3")
 SENTENCES_FILE  = M.resource_path("res/sentences/SENTENCES")
+DATA_FILES      = (SQLITE_FILE, SENTENCES_FILE)
 
 LANGS = "eng dut ger".split()
 Entry = namedtuple("Entry", "id jap".split() + LANGS + ["audio"])

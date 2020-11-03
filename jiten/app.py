@@ -212,6 +212,10 @@ def r_stroke():
   return respond("stroke.html", page = "stroke",
                  query = arg("query", "").strip())
 
+@app.route("/_db/v<int:db_version>/<base>")
+def r_db(db_version, base):
+  return redirect(M.DBURLS[db_version][base])
+
 DEPENDENCIES = dict(                                            # {{{1
   p4a = dict(
     name  = "python-for-android",

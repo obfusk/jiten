@@ -257,16 +257,39 @@ from . import sentences as S
 
 from .kana import with_romaji
 
+SERVER = "https://jiten.obfusk.dev"
+
 def setup_db(verbose):
-  msg = "up to date"
-  if not J.up2date():
+  msg, mods = "up to date", [K, P, S, J] # J last!
+  if  all( not os.path.exists(m.DATA_FILES[0]) for m in mods ) and \
+      any( not os.path.exists(f) for m in mods
+                                 for f in m.DATA_FILES[1:] ):
+    msg = "downloaded"
+    download_db(mods)
+  elif not J.up2date():
     msg = "set up"
-    K.setup()
-    P.setup()
-    S.setup()
-    J.setup() # last
+    for m in mods: m.setup()
   if verbose:
     click.secho("DB v{} {}.".format(J.DBVERSION, msg), fg = "green")
+
+def download_db(mods):
+  import hashlib, urllib.request
+  url = lambda x: "{}/_db/v{}/{}".format(SERVER, J.DBVERSION, x)
+  for m in mods:
+    file = m.DATA_FILES[0]
+    base = os.path.basename(os.path.splitext(file)[0])
+    hash = hashlib.sha512()
+    with open(file + ".tmp", "wb") as fo:
+      with urllib.request.urlopen(url(base)) as fi:
+        chunks = iter((lambda: fi.read(1024)), b'')
+        with click.progressbar(chunks, width = 0,
+                               label = "downloading " + base) as bar:
+          for chunk in bar:
+            fo.write(chunk)
+            hash.update(chunk)
+    if hash.hexdigest() != M.SHA512SUMS[J.DBVERSION][base]:
+      raise RuntimeError("sha512 checksum did not match")       # TODO
+    os.replace(file + ".tmp", file)
 
 @click.group(help = """
   jiten - japanese cli&web dictionary based on jmdict/kanjidic

@@ -59,6 +59,20 @@ import itertools, re, os, sys
 
 class RegexError(RuntimeError): pass
 
+DBURL       = "https://github.com/obfusk/jiten/releases/download/{}/{}.sqlite3"
+DBURLS      = {
+  8: { k: DBURL.format("v0.3.5", k)
+       for k in "jmdict kanji pitch sentences".split() }
+}
+SHA512SUMS  = {
+  8: dict(
+    jmdict    = "c94830335a9176001fbc4400a4176a135b475e87a5f91d7fe3eccdcdc777219d7132a2ef56f99563bde7d6ed614dfd1ae8a9fed3a9ae4331159b9e675e60e9e7",
+    kanji     = "f16fcca818bf9dc8a63dbcae37a1d9220db1bb5b76a006ced6ac26b6d7fc549522f9cf6620277a2b692e902224e185a7263463643715f0ff502950971f2ba9d6",
+    pitch     = "8bac0a6a1cd74c901ffa5d222a336cf3b2c033ceb00a10c7f442056aae764d5110519085892777bfa4b0b8b7adfcaf3266da3ac5388bb094343e383dbc87777b",
+    sentences = "5f9d1968832457f096f55b30af90311ac681dc1456fdc12f293879adba93ed5a267984b87872ef514f84b5ecaba7fe7d2f17601018ea0fccb6198059d6a8b79a",
+  )
+}
+
 OKPUNC      = "々"
 
 ispunc1     = lambda c:  0x3000 <= ord(c) <=  0x303f
