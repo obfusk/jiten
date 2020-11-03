@@ -11,7 +11,7 @@ mod_sqlite3_pcre    = setuptools.Extension(
   libraries = "pcre sqlite3".split()
 )
 data    = [ "res/jlpt/N" + l for l in "12345" ] \
-        + [ "static/*." + x for x in "svg css js".split() ] \
+        + [ "static/*." + x for x in "svg png css js".split() ] \
         + [ "static/audio/*.mp3" ] \
         + [ "static/font/*." + x for x in "ttf txt".split() ] \
         + [ "static/licenses/*.txt" ] \
