@@ -5,10 +5,10 @@
 #
 # File        : jiten/misc.py
 # Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-# Date        : 2020-08-30
+# Date        : 2020-10-03
 #
 # Copyright   : Copyright (C) 2020  Felix C. Stegerman
-# Version     : v0.3.2
+# Version     : v0.3.5
 # License     : AGPLv3+
 #
 # --                                                            ; }}}1
@@ -99,10 +99,10 @@ def uniq(xs):
 def resource_path(path):
   return os.path.join(os.path.dirname(__file__), *path.split("/"))
 
-def process_query(q, word, exact, fstwd):
+def process_query(q, word, exact, fstwd, cli = False):
   if not q: return ""
   q = q.strip()
-  if word or exact or fstwd: q = without_e1w(q)
+  if not cli and (word or exact or fstwd): q = without_e1w(q)
   if q.startswith("+~"): return q[2:].lstrip()
   if not q.startswith("+"):
     if exact: return "+= " + q

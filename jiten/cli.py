@@ -5,7 +5,7 @@
 #
 # File        : jiten/cli.py
 # Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-# Date        : 2020-10-29
+# Date        : 2020-11-03
 #
 # Copyright   : Copyright (C) 2020  Felix C. Stegerman
 # Version     : v0.3.5
@@ -314,7 +314,7 @@ def jmdict(ctx, query, **kw):
 def jmdict_search(q, verbose, word, exact, fstwd, langs, romaji,
                   **kw):                                        # {{{1
   langs = [ l for ls in langs for l in ls.split(",") ]
-  q     = M.process_query(q, word, exact, fstwd)
+  q     = M.process_query(q, word, exact, fstwd, True)
   w     = click.get_terminal_size()[0]
   f     = with_romaji if romaji else lambda x: x
   if verbose:
@@ -391,7 +391,7 @@ def kanji(ctx, query, **kw):
 
 def kanji_search(q, verbose, word, exact, fstwd, max_results,
                  romaji):                                       # {{{1
-  q = M.process_query(q, word, exact, fstwd)
+  q = M.process_query(q, word, exact, fstwd, True)
   w = click.get_terminal_size()[0]
   f = with_romaji if romaji else lambda x: x
   if verbose:
