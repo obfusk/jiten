@@ -5,7 +5,7 @@
 #
 # File        : jiten/app.py
 # Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-# Date        : 2020-10-29
+# Date        : 2020-11-03
 #
 # Copyright   : Copyright (C) 2020  Felix C. Stegerman
 # Version     : v0.3.5
@@ -85,10 +85,6 @@ def arg(k, *a, **kw):
 def arg_bool(k, *a, **kw):
   return arg(k, *a, **kw) == "yes"
 
-def unargs(d):
-  b2s = { True: "yes", False: "no" }
-  return { k: b2s[v] if isinstance(v, bool) else v for k, v in d.items() }
-
 def dark_toggle_link(dark):
   targs = request.args.copy()
   targs.setlist("dark", ["no" if dark else "yes"])
@@ -135,7 +131,8 @@ def r_index():
 @app.route("/jmdict")
 def r_jmdict():
   if arg("query", "").strip().lower() == "+random":
-    return redirect(url_for("r_jmdict_random", **unargs(get_nvp())))
+    q = "+#{}".format(J.random_seq(**get_nvp()))
+    return redirect(url_for("r_jmdict", query = q))
   query, max_r = get_query_max()
   opts = dict(langs = get_langs(), max_results = max_r, **get_nvp())
   data = dict(page = "jmdict", query = query)
@@ -153,17 +150,17 @@ def r_jmdict_by_freq():
   return respond("jmdict-by-freq.html", page = "jmdict/by-freq",
                  offset = offset, results = results)
 
+# FIXME: legacy route
 @app.route("/jmdict/random")
 def r_jmdict_random():
-  q = "+#{}".format(J.random_seq(**get_nvp()))
-  return redirect(url_for("r_jmdict", query = q))
+  return redirect(url_for("r_jmdict", query = "+random"))
 
 # TODO
 # * --max
 @app.route("/kanji")
 def r_kanji():
   if arg("query", "").strip().lower() == "+random":
-    return redirect(url_for("r_kanji_random"))
+    return redirect(url_for("r_kanji", query = K.random().char))
   query, max_r = get_query_max()
   data = dict(page = "kanji", query = query)
   try:
@@ -187,9 +184,10 @@ def r_kanji_by_level():
 def r_kanji_by_jlpt():
   return respond("kanji-by-jlpt.html", page = "kanji/by-jlpt")
 
+# FIXME: legacy route
 @app.route("/kanji/random")
 def r_kanji_random():
-  return redirect(url_for("r_kanji", query = K.random().char))
+  return redirect(url_for("r_kanji", query = "+random"))
 
 # TODO: langs
 @app.route("/sentences")
