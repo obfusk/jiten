@@ -2,7 +2,7 @@
 
     File        : README.md
     Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-    Date        : 2020-10-29
+    Date        : 2020-11-03
 
     Copyright   : Copyright (C) 2020  Felix C. Stegerman
     Version     : v0.3.5
@@ -141,6 +141,7 @@ release.
 ```bash
 $ git clone https://github.com/obfusk/jiten.git
 $ cd jiten
+$ make
 $ pip install -e .
 ```
 
@@ -152,6 +153,7 @@ To update to the latest development version:
 ```bash
 $ cd jiten
 $ git pull --rebase
+$ make
 ```
 
 ## Miscellaneous
