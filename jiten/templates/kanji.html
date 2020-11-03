@@ -4,10 +4,10 @@
 
     File        : templates/kanji.html
     Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-    Date        : 2020-09-30
+    Date        : 2020-11-03
 
     Copyright   : Copyright (C) 2020  Felix C. Stegerman
-    Version     : v0.3.4
+    Version     : v0.3.5
     License     : AGPLv3+
 
   -->
@@ -46,7 +46,13 @@
                     {% for r in e.on %}
                       {% set rc = r.replace("-", "").replace(".", "") %}
                       <a class="jap selbtn btn btn-warning py-1 mb-1 mr-1"
-                        href="/jmdict?query={{ rc }}&exact=yes">{{ r }}</a>
+                          href="/jmdict?query={{ rc }}&exact=yes">
+                        {{ r }}
+                        {% if roma %}
+                          <span class="badge badge-primary"
+                            >{{ kana2romaji(r) }}</span>
+                        {% endif %}
+                      </a>
                       {% if loop.last %}
                         <span class="ml-auto align-self-end">
                           <small class="text-muted">音</small>
@@ -62,7 +68,13 @@
                     {% for r in e.kun %}
                       {% set rc = r.replace("-", "").replace(".", "") %}
                       <a class="jap selbtn btn btn-success py-1 mb-1 mr-1"
-                        href="/jmdict?query={{ rc }}&exact=yes">{{ r }}</a>
+                          href="/jmdict?query={{ rc }}&exact=yes">
+                        {{ r }}
+                        {% if roma %}
+                          <span class="badge badge-primary"
+                            >{{ kana2romaji(r) }}</span>
+                        {% endif %}
+                      </a>
                       {% if loop.last %}
                         <span class="ml-auto align-self-end">
                           <small class="text-muted">訓</small>
@@ -78,7 +90,13 @@
                     {% for r in e.nanori %}
                       {% set rc = r.replace("-", "").replace(".", "") %}
                       <a class="jap selbtn btn btn-info py-1 mb-1 mr-1"
-                        href="/jmdict?query={{ rc }}&exact=yes">{{ r }}</a>
+                          href="/jmdict?query={{ rc }}&exact=yes">
+                        {{ r }}
+                        {% if roma %}
+                          <span class="badge badge-primary"
+                            >{{ kana2romaji(r) }}</span>
+                        {% endif %}
+                      </a>
                       {% if loop.last %}
                         <span class="ml-auto align-self-end">
                           <small class="text-muted">名</small>

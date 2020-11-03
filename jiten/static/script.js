@@ -2,16 +2,16 @@
 //
 //  File        : static/script.js
 //  Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-//  Date        : 2020-10-17
+//  Date        : 2020-11-03
 //
 //  Copyright   : Copyright (C) 2020  Felix C. Stegerman
-//  Version     : v0.3.4
+//  Version     : v0.3.5
 //  License     : AGPLv3+
 //
 //  --                                                          ; }}}1
 
 "use strict";
-$(document).ready(() => {
+(() => {
 
 // === kana conversion ===
 
@@ -45,15 +45,16 @@ const romajiToHiragana = t => {                               //  {{{1
       let s = "", x = m[2] ? ROMP[m[2]] : m[0]
       if (x.length == 1) {
         s = HIRAGANA[ROWS.indexOf(x)]
-      } else if (x.length == 3 && x.slice(-2, -1) == "y") {
+      } else if (x.length == 3 && x.slice(-2, -1) == "y" && x[0] != "x") {
         s = HIRAGANA[5*COLS.indexOf(x[0])+1] +
             HIRAGANA[5*(COLS.indexOf("y")+1)+ROWS.indexOf(x[2])]
       } else {
         if (x.length == 3 && x[0] == x[1]) {
           s = "っ"; x = x.slice(1)
         }
-        if (x.length == 2) {
-          s += HIRAGANA[5*COLS.indexOf(x[0])+ROWS.indexOf(x[1])]
+        if (x.length == 2 || (x.length == 3 && x[0] == "x")) {
+          s += HIRAGANA[5*COLS.indexOf(x.slice(0, -1))
+                         +ROWS.indexOf(x.slice(-1))]
         } else {
           s = "〇"
         }
@@ -122,9 +123,11 @@ const KATAKANA = `
 
 const esc   = s => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
 
-const ROWS  = "aiueo", COLS = "-xvkgsztd-nhbpfmy-rw"
+const ROWS  = "aiueo", COLS_ = "-xvkgsztdTnhbpfmyYrwW"
+const COLS  = [...COLS_].map(c => "TYW".includes(c) ?
+                                  "x" + c.toLowerCase() : c)
 const ROMP  = {
-  shi:  "si",  ji:  "zi", chi:  "ti", tsu: "tu",
+  shi:  "si",  ji:  "zi", chi:  "ti", tsu: "tu", xtsu: "xtu",
   sha: "sya", sho: "syo", shu: "syu",
   cha: "tya", cho: "tyo", chu: "tyu",
    ja: "zya",  jo: "zyo",  ju: "zyu",
@@ -133,7 +136,7 @@ const ROSP  = { nn:"ん", "-":"ー", "~":"〜", ",":"、", ".":"。",
                 "?":"？", "!":"！", "(":"（", ")":"）" }      //  TODO
 const RORX  = "(" + Object.keys(ROSP).map(esc).join("|") + "|n\\b)|" +
               "(" + Object.keys(ROMP).join("|") + ")|" +
-              "(([" + COLS.replace(/-/g, "") + "])\\4?)?y?" +
+              "((" + COLS.slice(1).join("|") + ")\\4?)?y?" +
               "[" + ROWS + "]|(.)"
 
 // === miscellaneous ===
@@ -204,6 +207,34 @@ const confirm = msg => {
     }).modal()
   })
 }
+
+if (typeof document === "undefined") {
+
+console.log("Running tests...")
+
+const assertEq = (a, b) => {
+  if (a !== b) { throw new Error(`assertion failed: ${a} !== ${b}`) }
+}
+
+assertEq(romajiToHiragana("ikanakya")     , "いかなきゃ")
+assertEq(romajiToKatakana("ferikkusu")    , "フェリックス")
+assertEq(romajiToKatakana("vaiorinn")     , "ヴァイオリン")
+assertEq(romajiToKatakana("uwisukii")     , "ウヰスキー")
+assertEq(romajiToKatakana("kousu")        , "コース")
+
+assertEq(romajiToHiragana("konnnichiha")  , "こんにちは")
+assertEq(romajiToKatakana("uxirusu")      , "ウィルス")
+assertEq(romajiToHiragana("koucha")       , "こうちゃ")
+
+assertEq(romajiToHiragana("xya xwa xtsu") , "ゃ ゎ っ")
+
+/* TODO */
+
+console.log("OK")
+
+} else {
+
+$(document).ready(() => {
 
 // === window.JITEN ===
 
@@ -288,5 +319,9 @@ $("[data-toggle='tooltip']").tooltip().click(evt =>
 saveHistory()
 
 })
+
+}
+
+})()
 
 // vim: set tw=70 sw=2 sts=2 et fdm=marker :

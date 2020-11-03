@@ -5,7 +5,7 @@
 #
 # File        : jiten/kana.py
 # Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-# Date        : 2020-10-29
+# Date        : 2020-11-03
 #
 # Copyright   : Copyright (C) 2020  Felix C. Stegerman
 # Version     : v0.3.5
@@ -36,6 +36,9 @@ Kana conversion functions.
 >>> kana2romaji("こうちゃ")
 'koucha'
 
+>>> kana2romaji("ゃ ゎ っ")
+'xya xwa xtsu'
+
 """                                                             # }}}1
 
 import sys
@@ -57,8 +60,8 @@ def _kana2romaji(s):
 def _k2r_f(t, x):
   if not t: return [x]
   *ti, tl = t
-  if x[0] == "Y":     return ti + [tl[:-1] + "y" + x[1]]
-  elif tl == "Tu":    return ti + [x[0] + x]
+  if x[:2] == "xy":   return ti + [tl[:-1] + x[1:]]
+  elif tl == "xtu":   return ti + [x[0] + x]
   elif x[0] == "x":
     if tl == "hu":    return ti + ["f" + x[1]]
     elif tl == "vu":  return ti + ["v" + x[1]]
@@ -67,6 +70,8 @@ def _k2r_f(t, x):
 
 # TODO
 def _k2r_lookup(c):
+  if "a" <= c.lower() <= "z":
+    raise RuntimeError("kana2romaji: ascii letter in input")
   if not M.iskana1(c) or c == "ー": return c
   i = (HIRAGANA if M.ishiragana1(c) else KATAKANA).index(c)
   return (COLS[i // 5] + ROWS[i % 5]).replace("-", "")
@@ -125,9 +130,10 @@ KATAKANA = """
 """.split()
                                                                 # }}}1
 
-ROWS, COLS = "aiueo", "-xvkgsztdTnhbpfmyYrwWN-"
+ROWS, COLS_ = "aiueo", "-xvkgsztdTnhbpfmyYrwWN-"
+COLS = [ "x" + c.lower() if c in "TYW" else c for c in COLS_ ]
 ROMP = dict(
-  shi =  "si",  ji =  "zi", chi =  "ti", tsu = "tu",
+  shi =  "si",  ji =  "zi", chi =  "ti", tsu = "tu", xtsu = "xtu",
   sha = "sya", sho = "syo", shu = "syu",
   cha = "tya", cho = "tyo", chu = "tyu",
    ja = "zya",  jo = "zyo",  ju = "zyu",

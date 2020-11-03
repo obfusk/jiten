@@ -28,6 +28,7 @@ from flask import Flask, make_response, redirect, request, \
                   render_template, url_for
 
 from .version import __version__, py_version
+from .kana import kana2romaji
 
 from . import jmdict    as J
 from . import kanji     as K
@@ -85,25 +86,31 @@ def arg(k, *a, **kw):
 def arg_bool(k, *a, **kw):
   return arg(k, *a, **kw) == "yes"
 
+def yesno(b):
+  return "yes" if b else "no"
+
 def dark_toggle_link(dark):
   targs = request.args.copy()
-  targs.setlist("dark", ["no" if dark else "yes"])
+  targs.setlist("dark", [yesno(not dark)])
   targs.setlist("save", ["yes"])
   return url_for(request.endpoint, **dict(targs.lists()))
 
 def respond(template, **data):
   langs, dark = get_langs(), arg_bool("dark", get_pref("dark"))
+  roma        = arg_bool("roma", get_pref("roma"))
   if arg_bool("save"):
-    k, v = ("dark", "yes" if dark else "no") \
-           if "dark" in request.args else ("lang", " ".join(langs))
+    if "dark" in request.args   : k, v = "dark", yesno(dark)
+    elif "roma" in request.args : k, v = "roma", yesno(roma)
+    else                        : k, v = "lang", " ".join(langs)
     resp = redirect(request.url.replace("&save=yes", ""))       # TODO
     set_pref(k, v, resp)
     return resp
   return make_response(render_template(
     template, mode = "dark" if dark else "light", langs = langs,
-    toggle = dark_toggle_link(dark), ord = ord, hex = hex,
+    roma = roma, toggle = dark_toggle_link(dark), ord = ord, hex = hex,
     J = J, K = K, M = M, S = S, START = START, VERSION = __version__,
-    PY_VERSION = py_version, DEPS = DEPENDENCIES, **data
+    PY_VERSION = py_version, kana2romaji = kana2romaji,
+    DEPS = DEPENDENCIES, **data
   ))
 
 def get_langs():

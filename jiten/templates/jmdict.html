@@ -4,7 +4,7 @@
 
     File        : templates/jmdict.html
     Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-    Date        : 2020-10-29
+    Date        : 2020-11-03
 
     Copyright   : Copyright (C) 2020  Felix C. Stegerman
     Version     : v0.3.5
@@ -54,7 +54,13 @@
                     }}" title="reading">
                   {% for r in e.reading %}
                     <a class="entry jap selbtn btn btn-success py-1 mb-1 mr-1"
-                      href="/jmdict?query={{ r.elem }}&exact=yes">{{ r.elem }}</a>
+                        href="/jmdict?query={{ r.elem }}&exact=yes">
+                      {{ r.elem }}
+                      {% if roma %}
+                        <span class="badge badge-primary"
+                          >{{ kana2romaji(r.elem) }}</span>
+                      {% endif %}
+                    </a>
                     {% if loop.last %}
                       <span class="ml-auto align-self-end">
                         <small class="text-muted">読み</small>
@@ -71,6 +77,10 @@
                   {% for p in pitch %}
                     <span class="jap selbtn btn btn-info py-1 mb-1 mr-1">
                       {{ p }}
+                      {% if roma %}
+                        <span class="badge badge-primary"
+                          >{{ kana2romaji(p) }}</span>
+                      {% endif %}
                     </span>
                     {% if loop.last %}
                       <span class="ml-auto align-self-end">

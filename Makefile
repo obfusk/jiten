@@ -1,4 +1,5 @@
 SHELL   := /bin/bash
+PYTHON  ?= python3
 
 CSSV    := https://jigsaw.w3.org/css-validator/validator
 CSSOK   := Congratulations! No Error Found.
@@ -13,18 +14,19 @@ H5VCMD  := html5validator --show-warnings --log INFO --no-langdetect
 .PHONY: check-html validate-html validate-html-curl validate-html-py
 
 all: ext
-	python3 -m jiten.cli setup
+	$(PYTHON) -m jiten.cli setup
 
 test: all
-	python3 -m jiten.app       --verbose --doctest
-	python3 -m jiten.cli       --verbose  _doctest
-	python3 -m jiten.freq      --verbose --doctest
-	python3 -m jiten.jmdict    --verbose --doctest
-	python3 -m jiten.kana      --verbose --doctest
-	python3 -m jiten.kanji     --verbose --doctest
-	python3 -m jiten.misc      --verbose --doctest
-	python3 -m jiten.pitch     --verbose --doctest
-	python3 -m jiten.sentences --verbose --doctest
+	$(PYTHON) -m jiten.app       --verbose --doctest
+	$(PYTHON) -m jiten.cli       --verbose  _doctest
+	$(PYTHON) -m jiten.freq      --verbose --doctest
+	$(PYTHON) -m jiten.jmdict    --verbose --doctest
+	$(PYTHON) -m jiten.kana      --verbose --doctest
+	$(PYTHON) -m jiten.kanji     --verbose --doctest
+	$(PYTHON) -m jiten.misc      --verbose --doctest
+	$(PYTHON) -m jiten.pitch     --verbose --doctest
+	$(PYTHON) -m jiten.sentences --verbose --doctest
+	node jiten/static/script.js
 
 ci-test: test validate-css validate-html check-html
 
@@ -46,7 +48,7 @@ validate-css:
 	  -- "$(CSSV)" | grep -qF '$(CSSOK)'
 
 tmp-html:
-	python3 -m jiten.cli serve & pid=$$!; \
+	$(PYTHON) -m jiten.cli serve & pid=$$!; \
 	trap "kill $$pid" EXIT; mkdir -p tmp-html; sleep 5; \
 	curl -sG $(URL) > tmp-html/index.html; \
 	curl -sG $(URL)/jmdict -d max=10 -d word=yes \
@@ -82,7 +84,7 @@ validate-html-py:
 .PHONY: ext patch _version _package _publish
 
 ext:
-	python3 setup.py build_ext -i
+	$(PYTHON) setup.py build_ext -i
 
 patch:
 	$(MAKE) -C jiten/res/jmdict all
@@ -92,7 +94,7 @@ _version:
 	git describe --always > jiten/.version
 
 _package:
-	python3 setup.py sdist bdist_wheel
+	$(PYTHON) setup.py sdist bdist_wheel
 	twine check dist/*
 
 _publish: cleanup _package
