@@ -34,7 +34,7 @@ if "ANDROID_PRIVATE" in os.environ:
 
 # ssl certificates
 try:
-  import certify
+  import certifi
 except ImportError:
   pass
 else:
