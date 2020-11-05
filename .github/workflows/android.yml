@@ -10,6 +10,9 @@ jobs:
         - debug-arm64-v8a
         - release-armeabi-v7a
         - release-arm64-v8a
+        package:
+        - jiten
+        - jiten-nodb
     steps:
     - uses: actions/checkout@v2
       with:
@@ -29,6 +32,8 @@ jobs:
         key: ${{ runner.os }}
     - name: Build
       run: make -C android ${{ matrix.target }}
+      env:
+        APP_PACKAGE_NAME: ${{ matrix.package }}
     - name: Version
       run: touch VERSION_"$(git describe --always)"
     - uses: actions/upload-artifact@v2

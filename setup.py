@@ -21,13 +21,14 @@ data    = [ "res/jlpt/N" + l for l in "12345" ] \
 subprocess.run("make patch", shell = True, check = True)
 
 if android_build:
-  # "build" *.sqlite3
-  import jiten.cli
-  jiten.cli.cli("-v setup".split(), standalone_mode = False)
-
   subprocess.run("make _version", shell = True, check = True)
+  data += [ ".version" ]
 
-  data += [ "res/*.sqlite3" ] + [ ".version" ]
+  if "nodb" not in os.environ.get("APP_PACKAGE_NAME", "jiten"):
+    # "build" *.sqlite3
+    import jiten.cli
+    jiten.cli.cli("-v setup".split(), standalone_mode = False)
+    data += [ "res/*.sqlite3" ]
 else:
   data += [ "res/freq/" + x for x in """SOURCES base_aggregates.txt.nobom
                                         wordfreq_ck.utf8""".split() ] \
