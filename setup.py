@@ -3,7 +3,6 @@ import os, setuptools, subprocess, sys
 
 import jiten.version
 
-android_build       = os.environ.get("JITEN_ANDROID") == "yes"
 long_description    = Path(__file__).with_name("README.md") \
                       .read_text(encoding = "utf8")
 mod_sqlite3_pcre    = setuptools.Extension(
@@ -20,11 +19,11 @@ data    = [ "res/jlpt/N" + l for l in "12345" ] \
 # "build" *.xml.gz
 subprocess.run("make patch", shell = True, check = True)
 
-if android_build:
+if os.environ.get("JITEN_ANDROID") == "yes"
   subprocess.run("make _version", shell = True, check = True)
   data += [ ".version" ]
 
-  if "nodb" not in os.environ.get("APP_PACKAGE_NAME", "jiten"):
+  if os.environ.get("JITEN_NODB") != "yes":
     # "build" *.sqlite3
     import jiten.cli
     jiten.cli.cli("-v setup".split(), standalone_mode = False)

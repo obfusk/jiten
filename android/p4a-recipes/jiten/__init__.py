@@ -1,3 +1,4 @@
+import os
 from pythonforandroid.recipe import CompiledComponentsPythonRecipe, Recipe
 from pythonforandroid.logger import info
 
@@ -14,6 +15,9 @@ class JitenRecipe(CompiledComponentsPythonRecipe):
     def get_recipe_env(self, arch):
         env = super().get_recipe_env(arch)
         env['JITEN_ANDROID'] = 'yes'
+
+        if 'nodb' in os.environ.get('APP_PACKAGE_NAME', ''):
+          env['JITEN_NODB'] = 'yes'
 
         def add_flags(include_flags, link_dirs, link_libs):
             env['CPPFLAGS'] = env.get('CPPFLAGS', '') + include_flags
