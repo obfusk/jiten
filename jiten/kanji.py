@@ -5,7 +5,7 @@
 #
 # File        : jiten/kanji.py
 # Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-# Date        : 2020-11-03
+# Date        : 2020-11-05
 #
 # Copyright   : Copyright (C) 2020  Felix C. Stegerman
 # Version     : v0.3.5
@@ -117,7 +117,7 @@ KRADFILE        = M.resource_path("res/radicals/kradfile.utf8")
 KRADFILE2       = M.resource_path("res/radicals/kradfile2.utf8")
 JLPT_FILE_BASE  = M.resource_path("res/jlpt/N")
 DATA_FILES      = (SQLITE_FILE, KANJIDIC_FILE, KANJIVG_FILE, KRADFILE,
-                   KRADFILE2, *[ JLPT_FILE_BASE + n for n in "12345" ])
+                   KRADFILE2)
 
 MAXE   = 25                                                     # TODO
 NOFREQ = 9999
