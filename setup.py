@@ -3,9 +3,9 @@ import os, setuptools, subprocess, sys
 
 import jiten.version
 
-long_description    = Path(__file__).with_name("README.md") \
-                      .read_text(encoding = "utf8")
-mod_sqlite3_pcre    = setuptools.Extension(
+long_description  = Path(__file__).with_name("README.md") \
+                    .read_text(encoding = "utf8")
+mod_sqlite3_pcre  = setuptools.Extension(
   "jiten._sqlite3_pcre", ["sqlite3-pcre.c"],
   libraries = "pcre sqlite3".split()
 )
@@ -19,7 +19,7 @@ data    = [ "res/jlpt/N" + l for l in "12345" ] \
 # "build" *.xml.gz
 subprocess.run("make patch", shell = True, check = True)
 
-if os.environ.get("JITEN_ANDROID") == "yes"
+if os.environ.get("JITEN_ANDROID") == "yes":
   subprocess.run("make _version", shell = True, check = True)
   data += [ ".version" ]
 
