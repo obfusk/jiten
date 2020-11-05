@@ -260,10 +260,10 @@ from .kana import with_romaji
 MODS    = [K, P, S, J] # J last!
 SERVER  = "https://jiten.obfusk.dev"
 
-def setup_db(verbose):
+def setup_db(verbose, dl = False):
   msg = "up to date"
   if not J.up2date():
-    if missing_data():
+    if dl or missing_data():
       msg = "downloaded"
       download_dbs()
     else:
@@ -519,9 +519,11 @@ def serve_app(host = _serve_params["host"].default,
   app.run(host = host, port = port, load_dotenv = False, **opts)
 
 @cli.command(help = "Create sqlite databases from XML files.")
-def setup():
+@click.option("--download", is_flag = True,
+              help = "Always download DBs, never build them.")
+def setup(download):
   click.echo("Creating databases...")
-  setup_db(True)
+  setup_db(True, download)
 
 @cli.command("_doctest", hidden = True)
 @click.pass_context
