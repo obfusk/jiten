@@ -289,7 +289,7 @@ def download_dbs():
     if android and not os.path.islink(file): os.symlink(f, file)
 
 @click.group(help = """
-  jiten - japanese cli&web dictionary based on jmdict/kanjidic
+  jiten - japanese android/cli/web dictionary based on jmdict/kanjidic
 """)
 @click.option("-v", "--verbose", is_flag = True, help = "Be verbose.")
 @click.option("-c", "--colour/--no-colour", is_flag = True,
@@ -518,7 +518,7 @@ def serve_app(host = _serve_params["host"].default,
     setup_db(verbose)
   app.run(host = host, port = port, load_dotenv = False, **opts)
 
-@cli.command(help = "Create sqlite databases from XML files.")
+@cli.command(help = "Build (or download) sqlite databases.")
 @click.option("--download", is_flag = True,
               help = "Always download DBs, never build them.")
 def setup(download):
