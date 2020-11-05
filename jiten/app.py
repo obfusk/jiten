@@ -128,7 +128,7 @@ def get_nvp():
 
 @app.route("/")
 def r_index():
-  if app.config.get("MISSING_DBS"):
+  if not app.config.get("DBS_UP2DATE", True):
     return respond("download_dbs.html")
   return respond("index.html", page = "index")
 
@@ -217,14 +217,14 @@ def r_db(db_version, base):
 
 @app.route("/_download_dbs", methods = ["POST"])
 def r_download_dbs():
-  if not app.config.get("MISSING_DBS"):
-    return "no dbs missing", 400
+  if app.config.get("DBS_UP2DATE", True):
+    return "dbs up2date", 400
   try:
-    app.config["DOWNLOAD_DBS"](app.config["MISSING_DBS"])
+    app.config["DOWNLOAD_DBS"]()
   except M.DownloadError as e:
     return "download error: {} (file: {}, url: {})" \
            .format(escape(str(e)), e.file, e.url), 500
-  del app.config["MISSING_DBS"], app.config["DOWNLOAD_DBS"]
+  del app.config["DBS_UP2DATE"], app.config["DOWNLOAD_DBS"]
   return redirect(url_for("r_index"))
 
 @app.route("/_save_prefs", methods = ["POST"])

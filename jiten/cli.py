@@ -261,31 +261,32 @@ MODS    = [K, P, S, J] # J last!
 SERVER  = "https://jiten.obfusk.dev"
 
 def setup_db(verbose):
-  msg, dbs = "up to date", list(missing_dbs())
-  if dbs and list(missing_data()):
-    msg = "downloaded"
-    download_dbs(dbs)
-  elif not J.up2date():
-    msg = "set up"
-    for m in MODS: m.setup()
+  msg = "up to date"
+  if not J.up2date():
+    if missing_data():
+      msg = "downloaded"
+      download_dbs()
+    else:
+      msg = "set up"
+      for m in MODS: m.setup()
   if verbose:
     click.secho("DB v{} {}.".format(J.DBVERSION, msg), fg = "green")
-
-def missing_dbs():
-  for m in MODS:
-    f = m.DATA_FILES[0]
-    if not os.path.exists(f) or not os.path.getsize(f): yield f
 
 def missing_data():
   for m in MODS:
     for f in m.DATA_FILES[1:]:
-      if not os.path.exists(f): yield f
+      if not os.path.exists(f): return True
+  return False
 
-def download_dbs(dbs):
-  url = lambda x: "{}/_db/v{}/{}".format(SERVER, J.DBVERSION, x)
-  for file in dbs:
-    base = os.path.basename(os.path.splitext(file)[0])
-    M.download_file(url(base), file, M.DB_SHA512SUMS[J.DBVERSION][base])
+def download_dbs():
+  url     = lambda x: "{}/_db/v{}/{}".format(SERVER, J.DBVERSION, x)
+  android = os.environ.get("ANDROID_PRIVATE")
+  for file in [ m.DATA_FILES[0] for m in MODS ]:
+    fname = os.path.basename(file)
+    base  = os.path.splitext(fname)[0]
+    f     = os.path.join(android, fname) if android else file
+    M.download_file(url(base), f, M.DB_SHA512SUMS[J.DBVERSION][base])
+    if android and not os.path.islink(file): os.symlink(f, file)
 
 @click.group(help = """
   jiten - japanese cli&web dictionary based on jmdict/kanjidic
@@ -511,7 +512,7 @@ def serve_app(host = _serve_params["host"].default,
               verbose = True, download_missing = False, **opts):
   from .app import app
   if download_missing:
-    app.config["MISSING_DBS"]   = list(missing_dbs())
+    app.config["DBS_UP2DATE"]   = J.up2date()
     app.config["DOWNLOAD_DBS"]  = download_dbs
   else:
     setup_db(verbose)
