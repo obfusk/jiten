@@ -32,6 +32,15 @@ if "ANDROID_PRIVATE" in os.environ:
     def r_debug(): raise RuntimeError
 
 
+# ssl certificates
+try:
+  import certify
+except ImportError:
+  pass
+else:
+  os.environ["SSL_CERT_FILE"] = certifi.where()
+
+
 # serve app
 from jiten.cli import serve_app
 serve_app(port = 29483, download_missing = True, use_reloader = False)
