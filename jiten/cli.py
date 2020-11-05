@@ -5,7 +5,7 @@
 #
 # File        : jiten/cli.py
 # Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-# Date        : 2020-11-03
+# Date        : 2020-11-05
 #
 # Copyright   : Copyright (C) 2020  Felix C. Stegerman
 # Version     : v0.3.5
@@ -257,39 +257,35 @@ from . import sentences as S
 
 from .kana import with_romaji
 
-SERVER = "https://jiten.obfusk.dev"
+MODS    = [K, P, S, J] # J last!
+SERVER  = "https://jiten.obfusk.dev"
 
 def setup_db(verbose):
-  msg, mods = "up to date", [K, P, S, J] # J last!
-  if  all( not os.path.exists(m.DATA_FILES[0]) for m in mods ) and \
-      any( not os.path.exists(f) for m in mods
-                                 for f in m.DATA_FILES[1:] ):
+  msg, dbs = "up to date", list(missing_dbs())
+  if dbs and list(missing_data()):
     msg = "downloaded"
-    download_db(mods)
+    download_dbs(dbs)
   elif not J.up2date():
     msg = "set up"
-    for m in mods: m.setup()
+    for m in MODS: m.setup()
   if verbose:
     click.secho("DB v{} {}.".format(J.DBVERSION, msg), fg = "green")
 
-def download_db(mods):
-  import hashlib, urllib.request
+def missing_dbs():
+  for m in MODS:
+    f = m.DATA_FILES[0]
+    if not os.path.exists(f) or not os.path.getsize(f): yield f
+
+def missing_data():
+  for m in MODS:
+    for f in m.DATA_FILES[1:]:
+      if not os.path.exists(f): yield f
+
+def download_dbs(dbs):
   url = lambda x: "{}/_db/v{}/{}".format(SERVER, J.DBVERSION, x)
-  for m in mods:
-    file = m.DATA_FILES[0]
+  for file in dbs:
     base = os.path.basename(os.path.splitext(file)[0])
-    hash = hashlib.sha512()
-    with open(file + ".tmp", "wb") as fo:
-      with urllib.request.urlopen(url(base)) as fi:
-        chunks = iter((lambda: fi.read(1024)), b'')
-        with click.progressbar(chunks, width = 0,
-                               label = "downloading " + base) as bar:
-          for chunk in bar:
-            fo.write(chunk)
-            hash.update(chunk)
-    if hash.hexdigest() != M.SHA512SUMS[J.DBVERSION][base]:
-      raise RuntimeError("sha512 checksum did not match")       # TODO
-    os.replace(file + ".tmp", file)
+    M.download_file(url(base), file, M.DB_SHA512SUMS[J.DBVERSION][base])
 
 @click.group(help = """
   jiten - japanese cli&web dictionary based on jmdict/kanjidic
@@ -512,9 +508,13 @@ _serve_params = { p.name: p for p in serve.params }
 
 def serve_app(host = _serve_params["host"].default,
               port = _serve_params["port"].default,
-              verbose = True, **opts):
-  setup_db(verbose)
+              verbose = True, download_missing = False, **opts):
   from .app import app
+  if download_missing:
+    app.config["MISSING_DBS"]   = list(missing_dbs())
+    app.config["DOWNLOAD_DBS"]  = download_dbs
+  else:
+    setup_db(verbose)
   app.run(host = host, port = port, load_dotenv = False, **opts)
 
 @cli.command(help = "Create sqlite databases from XML files.")

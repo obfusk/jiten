@@ -71,6 +71,10 @@ legend {
   width: auto;
 }
 
+input[type=number] {
+  width: 5em;
+}
+
 .selbtn {
   -webkit-user-select: unset !important;
   -moz-user-select: unset !important;

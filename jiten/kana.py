@@ -5,7 +5,7 @@
 #
 # File        : jiten/kana.py
 # Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-# Date        : 2020-11-03
+# Date        : 2020-11-05
 #
 # Copyright   : Copyright (C) 2020  Felix C. Stegerman
 # Version     : v0.3.5
@@ -71,7 +71,7 @@ def _k2r_f(t, x):
 # TODO
 def _k2r_lookup(c):
   if "a" <= c.lower() <= "z":
-    raise RuntimeError("kana2romaji: ascii letter in input")
+    raise ValueError("kana2romaji: ascii letter in input")
   if not M.iskana1(c) or c == "ー": return c
   i = (HIRAGANA if M.ishiragana1(c) else KATAKANA).index(c)
   return (COLS[i // 5] + ROWS[i % 5]).replace("-", "")

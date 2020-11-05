@@ -5,7 +5,7 @@
 #
 # File        : jiten/misc.py
 # Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-# Date        : 2020-10-03
+# Date        : 2020-10-05
 #
 # Copyright   : Copyright (C) 2020  Felix C. Stegerman
 # Version     : v0.3.5
@@ -55,23 +55,16 @@ True
 
 """                                                             # }}}1
 
-import itertools, re, os, sys
+import hashlib, itertools, re, os, sys, urllib.request
+
+import click
 
 class RegexError(RuntimeError): pass
 
-DBURL       = "https://github.com/obfusk/jiten/releases/download/{}/{}.sqlite3"
-DBURLS      = {
-  8: { k: DBURL.format("v0.3.5", k)
-       for k in "jmdict kanji pitch sentences".split() }
-}
-SHA512SUMS  = {
-  8: dict(
-    jmdict    = "c94830335a9176001fbc4400a4176a135b475e87a5f91d7fe3eccdcdc777219d7132a2ef56f99563bde7d6ed614dfd1ae8a9fed3a9ae4331159b9e675e60e9e7",
-    kanji     = "f16fcca818bf9dc8a63dbcae37a1d9220db1bb5b76a006ced6ac26b6d7fc549522f9cf6620277a2b692e902224e185a7263463643715f0ff502950971f2ba9d6",
-    pitch     = "8bac0a6a1cd74c901ffa5d222a336cf3b2c033ceb00a10c7f442056aae764d5110519085892777bfa4b0b8b7adfcaf3266da3ac5388bb094343e383dbc87777b",
-    sentences = "5f9d1968832457f096f55b30af90311ac681dc1456fdc12f293879adba93ed5a267984b87872ef514f84b5ecaba7fe7d2f17601018ea0fccb6198059d6a8b79a",
-  )
-}
+class DownloadError(RuntimeError):
+  def __init__(self, msg, file, url):
+    super().__init__(msg)
+    self.file, self.url = file, url
 
 OKPUNC      = "々"
 
@@ -158,6 +151,41 @@ def q2rx(q):
   return "(?im)" + q.replace(r"\pk", r"\p{Katakana}") \
                     .replace(r"\ph", r"\p{Hiragana}") \
                     .replace(r"\pK", r"\p{Han}")                # TODO
+
+def download_file(url, file, sha512 = None, tmp = ".tmp"):
+  label = "downloading " + os.path.basename(file)
+  sha   = hashlib.sha512()
+  with open(file + tmp, "wb") as fo:
+    try:
+      with urllib.request.urlopen(url) as fi:
+        chunks = iter((lambda: fi.read(1024)), b'')
+        with click.progressbar(chunks, width = 0, label = label) as bar:
+          for chunk in bar:
+            fo.write(chunk)
+            sha.update(chunk)
+    except urllib.error.URLError as e:
+      os.remove(file + tmp)
+      raise DownloadError(str(e), file, url)
+  if sha512 is not None and sha.hexdigest() != sha512:
+    os.remove(file + tmp)
+    raise DownloadError("sha512 did not match: expected {}, got {}"
+                        .format(sha512, sha.hexdigest()), file, url)
+  os.replace(file + tmp, file)
+  return sha.hexdigest()
+
+DB_URLFMT     = "https://github.com/obfusk/jiten/releases/download/{}/{}.sqlite3"
+DB_URLS       = {
+  8: { k: DB_URLFMT.format("v0.3.5", k)
+       for k in "jmdict kanji pitch sentences".split() }
+}
+DB_SHA512SUMS = {
+  8: dict(
+    jmdict    = "c94830335a9176001fbc4400a4176a135b475e87a5f91d7fe3eccdcdc777219d7132a2ef56f99563bde7d6ed614dfd1ae8a9fed3a9ae4331159b9e675e60e9e7",
+    kanji     = "f16fcca818bf9dc8a63dbcae37a1d9220db1bb5b76a006ced6ac26b6d7fc549522f9cf6620277a2b692e902224e185a7263463643715f0ff502950971f2ba9d6",
+    pitch     = "8bac0a6a1cd74c901ffa5d222a336cf3b2c033ceb00a10c7f442056aae764d5110519085892777bfa4b0b8b7adfcaf3266da3ac5388bb094343e383dbc87777b",
+    sentences = "5f9d1968832457f096f55b30af90311ac681dc1456fdc12f293879adba93ed5a267984b87872ef514f84b5ecaba7fe7d2f17601018ea0fccb6198059d6a8b79a",
+  )
+}
 
 if __name__ == "__main__":
   if "--doctest" in sys.argv:

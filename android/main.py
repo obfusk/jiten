@@ -34,4 +34,4 @@ if "ANDROID_PRIVATE" in os.environ:
 
 # serve app
 from jiten.cli import serve_app
-serve_app(port = 29483, use_reloader = False)
+serve_app(port = 29483, download_missing = True, use_reloader = False)

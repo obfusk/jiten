@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="en">
+  <!--
+
+    File        : templates/download_dbs.html
+    Maintainer  : Felix C. Stegerman <flx@obfusk.net>
+    Date        : 2020-11-05
+
+    Copyright   : Copyright (C) 2020  Felix C. Stegerman
+    Version     : v0.3.5
+    License     : AGPLv3+
+
+  -->
+  <head>
+    {% include "_meta.html" %}
+    <title>jiten</title>
+  </head>
+  <body>
+    {% include "_nav.html" %}
+    <div class="container text-center">
+      <form method="post" action="/_download_dbs">
+        <div class="alert alert-danger">
+          Some database files are missing.
+        </div>
+        <button class="btn btn-primary">Download</button>
+        <br/>
+        <br/>
+        NB: the download may take a few minutes; please be patient and
+        wait for the page to reload.
+      </form>
+    </div>
+    {% include "_footer.html" %}
+  </body>
+</html>

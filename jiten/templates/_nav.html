@@ -2,10 +2,10 @@
 
   File        : templates/_nav.html
   Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-  Date        : 2020-08-31
+  Date        : 2020-10-05
 
   Copyright   : Copyright (C) 2020  Felix C. Stegerman
-  Version     : v0.3.2
+  Version     : v0.3.5
   License     : AGPLv3+
 
 --> #}
@@ -75,9 +75,10 @@
       title="radicals">部</button>
     <button type="button" data-toggle="modal" data-target="#history-modal"
       class="jap btn btn-light btn-sm my-2 my-lg-0 ml-2"
-      title="search history">履歴</button>
-    <a class="btn btn-light btn-sm my-2 my-lg-0 ml-2" href="{{ toggle }}"
-      >{{ "Light" if mode == "dark" else "Dark" }} Mode</a>
+      title="search history">History</button>
+    <button type="button" data-toggle="modal" data-target="#settings-modal"
+      class="btn btn-light btn-sm my-2 my-lg-0 ml-2"
+      title="settings">Settings</button>
   </div>
 </nav>
 <div class="modal" tabindex="-1" role="dialog" id="romaji-modal">
@@ -142,7 +143,8 @@
       </div>
       <div class="modal-body">
         <ul class="list-group" id="history"></ul>
-        <br/>
+      </div>
+      <div class="modal-footer">
         <div class="d-flex justify-content-end">
           <button id="history-clear" class="btn btn-danger">
             Clear History
@@ -338,6 +340,63 @@
           {% if not loop.last %}<br/><br/>{% endif %}
         {% endfor %}
       </div>
+    </div>
+  </div>
+</div>
+<div class="modal" tabindex="-1" role="dialog" id="settings-modal">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">設定 Settings</h5>
+        <button type="button" class="close" data-dismiss="modal"
+            aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <form method="post" action="/_save_prefs">
+        <div class="modal-body">
+          <input type="hidden" name="url" value="{{ request.url }}" />
+          <fieldset class="d-inline border p-2 pl-3">
+            <legend>languages</legend>
+            {% for l in J.LANGS %}
+              <div class="form-check form-check-inline">
+                <input type="checkbox" class="form-check-input"
+                  id="prefs-{{ l }}" name="lang" value="{{ l }}"
+                  {% if l in pref_langs %}checked{% endif %} />
+                <label class="form-check-label"
+                  for="prefs-{{ l }}">{{ l }}</label>
+              </div>
+            {% endfor %}
+          </fieldset>
+          <fieldset class="d-inline border p-2 pl-3">
+            <legend>other</legend>
+            <div class="form-check form-check-inline">
+              <input type="checkbox" class="form-check-input"
+                id="prefs-dark" name="dark" value="yes"
+                {% if mode == "dark" %}checked{% endif %} />
+              <label class="form-check-label"
+                for="prefs-dark">dark mode</label>
+            </div>
+            <div class="form-check form-check-inline">
+              <input type="checkbox" class="form-check-input"
+                id="prefs-roma" name="roma" value="yes"
+                {% if roma %}checked{% endif %} />
+              <label class="form-check-label"
+                for="prefs-roma">show romaji</label>
+            </div>
+          </fieldset>
+          <fieldset class="d-inline border p-2 pl-3">
+            <legend>max results</legend>
+            <input type="number" min="20" max="1000"
+              id="prefs-max" name="max" value="{{ pref_max }}" />
+          </fieldset>
+        </div>
+        <div class="modal-footer">
+          <div class="d-flex justify-content-end">
+            <button class="btn btn-primary">Save</button>
+          </div>
+        </div>
+      </form>
     </div>
   </div>
 </div>

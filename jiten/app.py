@@ -5,7 +5,7 @@
 #
 # File        : jiten/app.py
 # Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-# Date        : 2020-11-03
+# Date        : 2020-11-05
 #
 # Copyright   : Copyright (C) 2020  Felix C. Stegerman
 # Version     : v0.3.5
@@ -40,28 +40,30 @@ MAX     = 50
 name    = "jiten"
 HTTPS   = name.upper() + "_HTTPS"
 DOMAIN  = name.upper() + "_DOMAIN"
+PREFS   = "lang dark roma max".split()
 app     = Flask(__name__)
 
 if "ANDROID_PRIVATE" in os.environ:
   CONF = os.path.join(os.environ["ANDROID_PRIVATE"], "jiten-prefs.json")
-  def load_prefs():
+  def get_prefs():
     try:
       with open(CONF) as f: return json.load(f)
     except (OSError, ValueError):
       return {}
-  def save_prefs(p):
+  def set_prefs(d, resp):
+    p = { **get_prefs(), **d }
     with open(CONF, "w") as f:
       json.dump(p, f, indent = 2, sort_keys = True)
       f.write("\n")
-  def get_pref(k, d = None):
-    return load_prefs().get(k, d)
-  def set_pref(k, v, _resp):
-    save_prefs({ **load_prefs(), k: v })
+    return resp
 else:
-  def get_pref(k, d = None):
-    return request.cookies.get(k, d)
-  def set_pref(k, v, resp):
-    resp.set_cookie(k, v, max_age = 3600*24*365*10)
+  def get_prefs():
+    return { k: request.cookies[k] for k in PREFS
+             if k in request.cookies }
+  def set_prefs(d, resp):
+    for k, v in d.items():
+      resp.set_cookie(k, v, max_age = 3600*24*365*10)
+    return resp
 
 if os.environ.get(HTTPS) == "force":
   @app.before_request
@@ -89,32 +91,23 @@ def arg_bool(k, *a, **kw):
 def yesno(b):
   return "yes" if b else "no"
 
-def dark_toggle_link(dark):
-  targs = request.args.copy()
-  targs.setlist("dark", [yesno(not dark)])
-  targs.setlist("save", ["yes"])
-  return url_for(request.endpoint, **dict(targs.lists()))
-
 def respond(template, **data):
-  langs, dark = get_langs(), arg_bool("dark", get_pref("dark"))
-  roma        = arg_bool("roma", get_pref("roma"))
-  if arg_bool("save"):
-    if "dark" in request.args   : k, v = "dark", yesno(dark)
-    elif "roma" in request.args : k, v = "roma", yesno(roma)
-    else                        : k, v = "lang", " ".join(langs)
-    resp = redirect(request.url.replace("&save=yes", ""))       # TODO
-    set_pref(k, v, resp)
-    return resp
+  prefs       = get_prefs()
+  langs       = get_langs(prefs)
+  dark, roma  = prefs.get("dark") == "yes", prefs.get("roma") == "yes"
+  pref_langs  = prefs.get("lang", "").split() or [J.LANGS[0]]
+  pref_max    = int(prefs.get("max", MAX))
   return make_response(render_template(
     template, mode = "dark" if dark else "light", langs = langs,
-    roma = roma, toggle = dark_toggle_link(dark), ord = ord, hex = hex,
-    J = J, K = K, M = M, S = S, START = START, VERSION = __version__,
-    PY_VERSION = py_version, kana2romaji = kana2romaji,
-    DEPS = DEPENDENCIES, **data
+    roma = roma, pref_langs = pref_langs, pref_max = pref_max,
+    ord = ord, hex = hex, J = J, K = K, M = M, S = S, START = START,
+    VERSION = __version__, PY_VERSION = py_version,
+    kana2romaji = kana2romaji, DEPS = DEPENDENCIES, **data
   ))
 
-def get_langs():
-  ls = request.args.getlist("lang") or get_pref("lang", "").split()
+def get_langs(prefs = None):
+  if prefs is None: prefs = get_prefs()
+  ls = request.args.getlist("lang") or prefs.get("lang", "").split()
   return [ l for l in ls if l in J.LANGS ] or [J.LANGS[0]]
 
 def get_sentence_langs():
@@ -123,7 +116,11 @@ def get_sentence_langs():
 
 def get_query_max():
   w, e, f = arg_bool("word"), arg_bool("exact"), arg_bool("1stword")
-  return M.process_query(arg("query"), w, e, f), arg("max", MAX, type = int)
+  return M.process_query(arg("query"), w, e, f), get_max()
+
+# TODO
+def get_max():
+  return int(arg("max", get_prefs().get("max", MAX), type = int))
 
 def get_nvp():
   return dict(noun = arg_bool("noun"), verb = arg_bool("verb"),
@@ -131,6 +128,8 @@ def get_nvp():
 
 @app.route("/")
 def r_index():
+  if app.config.get("MISSING_DBS"):
+    return respond("download_dbs.html")
   return respond("index.html", page = "index")
 
 # TODO
@@ -199,7 +198,7 @@ def r_kanji_random():
 # TODO: langs
 @app.route("/sentences")
 def r_sentences():
-  query, max_r = arg("query", "").strip(), arg("max", MAX, type = int)
+  query, max_r = arg("query", "").strip(), get_max()
   opts = dict(langs = get_sentence_langs(), max_results = max_r,
               audio = arg_bool("audio"))
   data = dict(page = "sentences", query = query)
@@ -214,7 +213,29 @@ def r_stroke():
 
 @app.route("/_db/v<int:db_version>/<base>")
 def r_db(db_version, base):
-  return redirect(M.DBURLS[db_version][base])
+  return redirect(M.DB_URLS[db_version][base])
+
+@app.route("/_download_dbs", methods = ["POST"])
+def r_download_dbs():
+  if not app.config.get("MISSING_DBS"):
+    return "no dbs missing", 400
+  try:
+    app.config["DOWNLOAD_DBS"](app.config["MISSING_DBS"])
+  except M.DownloadError as e:
+    return "download error: {} (file: {}, url: {})" \
+           .format(str(e), e.file, e.url), 500
+  del app.config["MISSING_DBS"], app.config["DOWNLOAD_DBS"]
+  return redirect(url_for("r_index"))
+
+@app.route("/_save_prefs", methods = ["POST"])
+def r_save_prefs():
+  return set_prefs(dict(
+    lang  = " ".join( l for l in request.form.getlist("lang")
+                        if l in J.LANGS ),
+    dark  = yesno(request.form.get("dark") == "yes"),
+    roma  = yesno(request.form.get("roma") == "yes"),
+    max   = str(request.form.get("max", MAX, type = int)),
+  ), redirect(request.form.get("url", url_for("r_index"))))
 
 DEPENDENCIES = dict(                                            # {{{1
   p4a = dict(
