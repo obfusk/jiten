@@ -2,7 +2,7 @@
 //
 //  File        : static/script.js
 //  Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-//  Date        : 2020-11-03
+//  Date        : 2020-11-05
 //
 //  Copyright   : Copyright (C) 2020  Felix C. Stegerman
 //  Version     : v0.3.5
@@ -129,8 +129,8 @@ const COLS  = [...COLS_].map(c => "TYW".includes(c) ?
 const ROMP  = {
   shi:  "si",  ji:  "zi", chi:  "ti", tsu: "tu", xtsu: "xtu",
   sha: "sya", sho: "syo", shu: "syu",
-  cha: "tya", cho: "tyo", chu: "tyu",
    ja: "zya",  jo: "zyo",  ju: "zyu",
+  cha: "tya", cho: "tyo", chu: "tyu",
 }
 const ROSP  = { nn:"ん", "-":"ー", "~":"〜", ",":"、", ".":"。",
                 "?":"？", "!":"！", "(":"（", ")":"）" }      //  TODO

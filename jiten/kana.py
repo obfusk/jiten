@@ -36,6 +36,8 @@ Kana conversion functions.
 >>> kana2romaji("こうちゃ")
 'koucha'
 
+>>> kana2romaji("し じ ち つ ふ")
+'shi ji chi tsu fu'
 >>> kana2romaji("ゃ ゎ っ")
 'xya xwa xtsu'
 
@@ -135,8 +137,9 @@ COLS = [ "x" + c.lower() if c in "TYW" else c for c in COLS_ ]
 ROMP = dict(
   shi =  "si",  ji =  "zi", chi =  "ti", tsu = "tu", xtsu = "xtu",
   sha = "sya", sho = "syo", shu = "syu",
-  cha = "tya", cho = "tyo", chu = "tyu",
    ja = "zya",  jo = "zyo",  ju = "zyu",
+  cha = "tya", cho = "tyo", chu = "tyu",
+   fu =  "hu",
 )
 PMOR = { v: k for k, v in ROMP.items() }; PMOR.update(Na = "nn")
 
