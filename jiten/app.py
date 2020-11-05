@@ -24,7 +24,7 @@ import json, os, time
 
 import jinja2
 
-from flask import Flask, make_response, redirect, request, \
+from flask import Flask, escape, make_response, redirect, request, \
                   render_template, url_for
 
 from .version import __version__, py_version
@@ -147,7 +147,7 @@ def r_jmdict():
     with K.readmeans() as f:
       return respond("jmdict.html", krm = f, **data)
   except M.RegexError as e:
-    return "regex error: " + str(e), 400
+    return "regex error: " + escape(str(e)), 400
 
 @app.route("/jmdict/by-freq")
 def r_jmdict_by_freq():
@@ -173,7 +173,7 @@ def r_kanji():
     if query: data["results"] = K.search(query, max_results = max_r)
     return respond("kanji.html", **data)
   except M.RegexError as e:
-    return "regex error: " + str(e), 400
+    return "regex error: " + escape(str(e)), 400
 
 @app.route("/kanji/by-freq")
 def r_kanji_by_freq():
@@ -223,7 +223,7 @@ def r_download_dbs():
     app.config["DOWNLOAD_DBS"](app.config["MISSING_DBS"])
   except M.DownloadError as e:
     return "download error: {} (file: {}, url: {})" \
-           .format(str(e), e.file, e.url), 500
+           .format(escape(str(e)), e.file, e.url), 500
   del app.config["MISSING_DBS"], app.config["DOWNLOAD_DBS"]
   return redirect(url_for("r_index"))
 
