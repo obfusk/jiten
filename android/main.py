@@ -20,16 +20,20 @@ if isinstance(getattr(sys.stdout, "buffer", None), str):
 # "debug mode"
 import os
 if "ANDROID_PRIVATE" in os.environ:
-  import android.config, jnius
-  activ = jnius.autoclass(android.config.ACTIVITY_CLASS_NAME).mActivity
-  info  = activ.getApplicationInfo()
-  debug = os.path.join(os.environ["ANDROID_PRIVATE"], "__debug__")
-  if info.flags & type(info).FLAG_DEBUGGABLE and os.path.exists(debug):
-    print("*** DEBUG MODE ***")
-    os.environ["FLASK_ENV"] = "development"
-    from jiten.app import app
-    @app.route("/__debug__")
-    def r_debug(): raise RuntimeError
+  try:
+    import android.config, jnius
+  except ImportError:
+    pass
+  else:
+    activ = jnius.autoclass(android.config.ACTIVITY_CLASS_NAME).mActivity
+    info  = activ.getApplicationInfo()
+    debug = os.path.join(os.environ["ANDROID_PRIVATE"], "__debug__")
+    if info.flags & type(info).FLAG_DEBUGGABLE and os.path.exists(debug):
+      print("*** DEBUG MODE ***")
+      os.environ["FLASK_ENV"] = "development"
+      from jiten.app import app
+      @app.route("/__debug__")
+      def r_debug(): raise RuntimeError
 
 
 # ssl certificates
