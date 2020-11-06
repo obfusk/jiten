@@ -4,7 +4,7 @@
 
     File        : templates/download_dbs.html
     Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-    Date        : 2020-11-05
+    Date        : 2020-11-06
 
     Copyright   : Copyright (C) 2020  Felix C. Stegerman
     Version     : v0.3.5
@@ -20,14 +20,21 @@
     <div class="container text-center">
       <form method="post" action="/_download_dbs">
         <div class="alert alert-danger">
-          Some database files are missing.
+          Some database files are missing or out of date.
         </div>
-        <button class="btn btn-primary">Download</button>
+        <button id="download" class="btn btn-primary">Download</button>
         <br/>
         <br/>
         NB: the download may take a few minutes; please be patient and
         wait for the page to reload.
       </form>
+      <script>
+        $("#download").click(() => {
+          console.log("downloading...")
+          $("#download").addClass("disabled").text("Downloading...")
+          return true
+        })
+      </script>
     </div>
     {% include "_footer.html" %}
   </body>
