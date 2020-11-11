@@ -2,7 +2,7 @@
 
     File        : README.md
     Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-    Date        : 2020-11-03
+    Date        : 2020-11-10
 
     Copyright   : Copyright (C) 2020  Felix C. Stegerman
     Version     : v0.3.5
@@ -29,9 +29,14 @@ jiten - japanese android/cli/web dictionary based on jmdict/kanjidic
 → https://jiten.obfusk.dev
 
 [<img src="badges/google-play.png" alt="Get it on Google Play" height="60">](https://play.google.com/store/apps/details?id=dev.obfusk.jiten)
-<!--
-[<img src="badges/fdroid.png" alt="Get it on F-Droid" height="60">](https://f-droid.org/app/dev.obfusk.jiten)
--->
+
+NB: unfortunately, jiten is not (yet) available in the official
+F-Droid repository, but you can get it via [**obfusk's f-droid
+repo**](https://obfusk.dev/fdroid/repo?fingerprint=2A21B7FFC93B878724B1991C05DAE113C72B93A556C193F49B5D3342884798B7).
+
+[<img src="badges/fdroid.png" alt="Get it on F-Droid" height="60">]()
+
+<!-- [](https://f-droid.org/app/dev.obfusk.jiten) -->
 
 ![CLI screenshot](screenshot-cli.png)
 
