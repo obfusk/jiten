@@ -12,19 +12,25 @@ if  ! python3 -msysconfig | grep enable-loadable-sqlite-extensions \
   "$WORKSPACE_DIR/runtimes/$PYTHON_VERSION" /app/.heroku/python/
 fi
 
-# cache DB
-for x in .heroku/vendor/{jmdict,kanji,pitch,sentences}.sqlite3; do
-  if [ ! -s "$x" ]; then rm -fr .heroku/vendor/; break; fi
+# load DB from cache
+cp -R "$CACHE_DIR/.heroku/_cache" .heroku/ &> /dev/null || true
+for x in .heroku/_cache/{jmdict,kanji,pitch,sentences}.sqlite3; do
+  if [ ! -s "$x" ]; then rm -fr .heroku/_cache/; break; fi
 done
-mkdir -p .heroku/vendor
-touch    .heroku/vendor/{jmdict,kanji,pitch,sentences}.sqlite3
-ln -srf  .heroku/vendor/{jmdict,kanji,pitch,sentences}.sqlite3 jiten/res/
+mkdir -p .heroku/_cache
+touch    .heroku/_cache/{jmdict,kanji,pitch,sentences}.sqlite3
+ln -srf  .heroku/_cache/{jmdict,kanji,pitch,sentences}.sqlite3 jiten/res/
 
 # build .so & setup DB
 make
+rm -fr build
 
 # get .version (FIXME: is there no better way?)
 git clone https://github.com/obfusk/jiten.git _jiten
 ( cd _jiten && git checkout "$SOURCE_VERSION" && make _version )
 mv -v _jiten/jiten/.version jiten/
 rm -fr _jiten
+
+# save DB to cache
+rm -rf "$CACHE_DIR/.heroku/_cache"
+cp -R .heroku/_cache "$CACHE_DIR/.heroku/"
