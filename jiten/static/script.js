@@ -2,7 +2,7 @@
 //
 //  File        : static/script.js
 //  Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-//  Date        : 2020-11-05
+//  Date        : 2020-11-14
 //
 //  Copyright   : Copyright (C) 2020  Felix C. Stegerman
 //  Version     : v0.3.5
@@ -192,7 +192,18 @@ const populateHistoryList = () => {
   }
 }
 
-// === confirm ===
+// === alert & confirm ===
+
+const alert = msg => {
+  const c = $("#alert-modal"), o = $(".modal:visible")
+  return new Promise((resolve, reject) => {
+    $(".modal-title", c).text(msg)
+    o.modal("hide")
+    c.on("hidden.bs.modal", () => {
+      c.off(); o.modal("show"); resolve()
+    }).modal()
+  })
+}
 
 const confirm = msg => {
   const c = $("#confirm-modal"), o = $(".modal:visible")
@@ -207,6 +218,8 @@ const confirm = msg => {
     }).modal()
   })
 }
+
+// === node.js ===
 
 if (typeof document === "undefined") {
 
@@ -234,6 +247,8 @@ console.log("OK")
 
 } else {
 
+// === browser ===
+
 $(document).ready(() => {
 
 // === window.JITEN ===
@@ -241,7 +256,7 @@ $(document).ready(() => {
 window.JITEN = {
   convertKana, hiraganaToKatakana, katakanaToHiragana,
   romajiToHiragana, romajiToKatakana, playAudio,
-  clearHistory, getHistory, confirm
+  clearHistory, getHistory, alert, confirm
 }
 
 // === event handlers ===
@@ -294,18 +309,18 @@ $("#history-clear").click(async () => {
   }
 })
 
-$(".query-example").on("click", evt => {
+$(".query-example").click(evt => {
   const e = $(evt.delegateTarget)
   const i = $("input[type=text]", e.parents("form"))
   i.val(e.text().trim()).focus()
   return false
 })
 
-$("#expand-all").on("click", () => {
+$("#expand-all").click(() => {
   $(".container .collapse").collapse("show")
   return false
 }).removeClass("disabled")
-$("#collapse-all").on("click", () => {
+$("#collapse-all").click(() => {
   $(".container .collapse").collapse("hide")
   return false
 }).removeClass("disabled")
@@ -314,13 +329,20 @@ $("[data-toggle='tooltip']").tooltip().click(evt =>
   $(evt.delegateTarget).tooltip("hide")
 )
 
+if (navigator.userAgent.includes("Android")) {
+  $("#feedback").click(() => {
+    alert($("#feedback").attr("data-original-title"))
+    return false
+  })
+}
+
 // === save history ===
 
 saveHistory()
 
-})
+})  // $(document).ready
 
-}
+}   // browser
 
 })()
 

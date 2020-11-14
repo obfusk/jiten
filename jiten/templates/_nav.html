@@ -2,7 +2,7 @@
 
   File        : templates/_nav.html
   Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-  Date        : 2020-10-05
+  Date        : 2020-11-14
 
   Copyright   : Copyright (C) 2020  Felix C. Stegerman
   Version     : v0.3.5
@@ -81,97 +81,6 @@
       title="settings">Settings</button>
   </div>
 </nav>
-<div class="modal" tabindex="-1" role="dialog" id="romaji-modal">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="jap modal-title">konnnichiha → こんにちは</h5>
-        <button type="button" class="close" data-dismiss="modal"
-            aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <form action="javascript:void(0);"
-          class="modal-body form-inline justify-content-end">
-        <label class="sr-only" for="romaji">Romaji</label>
-        {{ input("romaji", "_", "", "", False, True, "2 mb-lg-0") }}
-        <button id="romaji-convert" class="btn btn-primary">Convert</button>
-      </form>
-    </div>
-  </div>
-</div>
-<div class="modal" tabindex="-1" role="dialog" id="radical-modal">
-  <div class="modal-dialog modal-lg" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="jap modal-title">部 Radicals</h5>
-        <button type="button" class="close" data-dismiss="modal"
-            aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body">
-        <p>
-          Click on a radical to add it to the kanji query input field.
-        </p>
-        <div>
-          {% set c = dict(rad = "primary", alt = "info", var = "secondary") %}
-          {% for g in K.RADTABLE %}
-            <span class="active notbtn btn btn-warning px-0 py-1 mb-1">
-              <span class="tworem">{{ loop.index }}</span>
-            </span>
-            {% for r, x in g %}
-              <button class="radical jap selbtn btn btn-{{ c[x] }} px-0 py-1 mb-1">
-                <span class="tworem">{{ r }}</span>
-              </button>
-            {% endfor %}
-          {% endfor %}
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-<div class="modal" tabindex="-1" role="dialog" id="history-modal">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="jap modal-title">検索履歴 Search History</h5>
-        <button type="button" class="close" data-dismiss="modal"
-            aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body">
-        <ul class="list-group" id="history"></ul>
-      </div>
-      <div class="modal-footer">
-        <div class="d-flex justify-content-end">
-          <button id="history-clear" class="btn btn-danger">
-            Clear History
-          </button>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-<div class="modal" tabindex="-1" role="dialog" id="confirm-modal">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title">[...]</h5>
-        <button type="button" class="close" data-dismiss="modal"
-            aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body d-flex justify-content-end">
-        <button class="btn btn-secondary mr-1"
-          data-dismiss="modal">Cancel</button>
-        <button id="confirm" class="btn btn-primary">OK</button>
-      </div>
-    </div>
-  </div>
-</div>
 <div class="modal" tabindex="-1" role="dialog" id="regex-modal">
   <div class="modal-dialog modal-lg" role="document">
     <div class="modal-content">
@@ -317,28 +226,75 @@
     </div>
   </div>
 </div>
-<div class="modal" tabindex="-1" role="dialog" id="licenses-modal">
+<div class="modal" tabindex="-1" role="dialog" id="romaji-modal">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="jap modal-title">konnnichiha → こんにちは</h5>
+        <button type="button" class="close" data-dismiss="modal"
+            aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <form action="javascript:void(0);"
+          class="modal-body form-inline justify-content-end">
+        <label class="sr-only" for="romaji">Romaji</label>
+        {{ input("romaji", "_", "", "", False, True, "2 mb-lg-0") }}
+        <button id="romaji-convert" class="btn btn-primary">Convert</button>
+      </form>
+    </div>
+  </div>
+</div>
+<div class="modal" tabindex="-1" role="dialog" id="radical-modal">
   <div class="modal-dialog modal-lg" role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title">Open Source Licenses</h5>
+        <h5 class="jap modal-title">部 Radicals</h5>
         <button type="button" class="close" data-dismiss="modal"
             aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
       <div class="modal-body">
-        {% for k, v in DEPS|dictsort %}
-          {% set name = v.get("name", k) %}
-          <h6>
-            <a href="{{ v.url }}" target="_blank" rel="noopener">
-              {{ name }}
-            </a>
-          </h6>
-          <iframe class="w-100" src="/static/licenses/{{ name }}.txt">
-          </iframe>
-          {% if not loop.last %}<br/><br/>{% endif %}
-        {% endfor %}
+        <p>
+          Click on a radical to add it to the kanji query input field.
+        </p>
+        <div>
+          {% set c = dict(rad = "primary", alt = "info", var = "secondary") %}
+          {% for g in K.RADTABLE %}
+            <span class="active notbtn btn btn-warning px-0 py-1 mb-1">
+              <span class="tworem">{{ loop.index }}</span>
+            </span>
+            {% for r, x in g %}
+              <button class="radical jap selbtn btn btn-{{ c[x] }} px-0 py-1 mb-1">
+                <span class="tworem">{{ r }}</span>
+              </button>
+            {% endfor %}
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="modal" tabindex="-1" role="dialog" id="history-modal">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="jap modal-title">検索履歴 Search History</h5>
+        <button type="button" class="close" data-dismiss="modal"
+            aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <ul class="list-group" id="history"></ul>
+      </div>
+      <div class="modal-footer">
+        <div class="d-flex justify-content-end">
+          <button id="history-clear" class="btn btn-danger">
+            Clear History
+          </button>
+        </div>
       </div>
     </div>
   </div>
@@ -397,6 +353,67 @@
           </div>
         </div>
       </form>
+    </div>
+  </div>
+</div>
+<div class="modal" tabindex="-1" role="dialog" id="licenses-modal">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Open Source Licenses</h5>
+        <button type="button" class="close" data-dismiss="modal"
+            aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        {% for k, v in DEPS|dictsort %}
+          {% set name = v.get("name", k) %}
+          <h6>
+            <a href="{{ v.url }}" target="_blank" rel="noopener">
+              {{ name }}
+            </a>
+          </h6>
+          <iframe class="w-100" src="/static/licenses/{{ name }}.txt">
+          </iframe>
+          {% if not loop.last %}<br/><br/>{% endif %}
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+</div>
+<div class="modal" tabindex="-1" role="dialog" id="alert-modal">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">[...]</h5>
+        <button type="button" class="close" data-dismiss="modal"
+            aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body d-flex justify-content-end">
+        <button class="btn btn-primary"
+          data-dismiss="modal">OK</button>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="modal" tabindex="-1" role="dialog" id="confirm-modal">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">[...]</h5>
+        <button type="button" class="close" data-dismiss="modal"
+            aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body d-flex justify-content-end">
+        <button class="btn btn-secondary mr-1"
+          data-dismiss="modal">Cancel</button>
+        <button id="confirm" class="btn btn-primary">OK</button>
+      </div>
     </div>
   </div>
 </div>
