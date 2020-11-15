@@ -38,7 +38,14 @@ jobs:
       run: touch VERSION_"$(git describe --always)"
     - uses: actions/upload-artifact@v2
       with:
-        name: APK
+        name: jiten-APK
         path: |
-          android/bin/*.apk
           VERSION_*
+          android/bin/*.apk
+          !android/bin/*nodb*.apk
+    - uses: actions/upload-artifact@v2
+      with:
+        name: jiten-nodb-APK
+        path: |
+          VERSION_*
+          android/bin/*nodb*.apk
