@@ -5,7 +5,7 @@
 #
 # File        : jiten/cli.py
 # Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-# Date        : 2020-11-05
+# Date        : 2020-11-15
 #
 # Copyright   : Copyright (C) 2020  Felix C. Stegerman
 # Version     : v0.3.5
@@ -244,7 +244,7 @@ query: +w 日
 
 import os, sys
 
-from .version import __version__
+from .version import __version__, py_version
 name = "jiten"
 
 import click
@@ -294,7 +294,8 @@ def download_dbs():
 @click.option("-v", "--verbose", is_flag = True, help = "Be verbose.")
 @click.option("-c", "--colour/--no-colour", is_flag = True,
               default = None, help = "Use terminal colours.")
-@click.version_option(__version__)
+@click.version_option("{} [{}]".format(__version__, py_version),
+                      message = "%(prog)s 「辞典」 %(version)s")
 @click.pass_context
 def cli(ctx, colour, **kw):
   if colour is not None: ctx.color = colour
