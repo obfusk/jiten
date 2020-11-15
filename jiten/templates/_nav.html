@@ -2,7 +2,7 @@
 
   File        : templates/_nav.html
   Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-  Date        : 2020-11-14
+  Date        : 2020-11-15
 
   Copyright   : Copyright (C) 2020  Felix C. Stegerman
   Version     : v0.3.5
@@ -35,17 +35,23 @@
       <li class="nav-item {{ "active" if page == "stroke" else "" }}">
         <a class="nav-link" href="/stroke"><strong>Stroke Order</strong></a>
       </li>
-      <li class="nav-item {{ "active" if page == "kanji/by-freq" else "" }}">
-        <a class="nav-link" href="/kanji/by-freq">Kanji by Freq.</a>
-      </li>
-      <li class="nav-item {{ "active" if page == "kanji/by-level" else "" }}">
-        <a class="nav-link" href="/kanji/by-level">Kanji by Level</a>
-      </li>
-      <li class="nav-item {{ "active" if page == "kanji/by-jlpt" else "" }}">
-        <a class="nav-link" href="/kanji/by-jlpt">Kanji by JLPT</a>
-      </li>
-      <li class="nav-item {{ "active" if page == "jmdict/by-freq" else "" }}">
-        <a class="nav-link" href="/jmdict/by-freq">JMDict by Freq.</a>
+      <li class="nav-item dropdown {{ "active" if "/by-" in page else "" }}">
+        <a class="nav-link dropdown-toggle" href="#"
+            id="by-dropdown" role="button" data-toggle="dropdown"
+            aria-haspopup="true" aria-expanded="false">
+          Browse Kanji & JMDict
+        </a>
+        <div class="dropdown-menu" aria-labelledby="by-dropdown">
+          <a class="dropdown-item {{ "active" if page == "kanji/by-freq" else "" }}"
+            href="/kanji/by-freq">Kanji by Frequency</a>
+          <a class="dropdown-item {{ "active" if page == "kanji/by-level" else "" }}"
+            href="/kanji/by-level">Kanji by Level</a>
+          <a class="dropdown-item {{ "active" if page == "kanji/by-jlpt" else "" }}"
+            href="/kanji/by-jlpt">Kanji by JLPT</a>
+          <div class="dropdown-divider"></div>
+          <a class="dropdown-item {{ "active" if page == "jmdict/by-freq" else "" }}"
+            href="/jmdict/by-freq">JMDict by Frequency</a>
+        </div>
       </li>
     </ul>
     <ul class="navbar-nav">
