@@ -5,7 +5,7 @@
 #
 # File        : jiten/cli.py
 # Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-# Date        : 2020-11-15
+# Date        : 2020-11-17
 #
 # Copyright   : Copyright (C) 2020  Felix C. Stegerman
 # Version     : v0.3.5
@@ -257,8 +257,9 @@ from . import sentences as S
 
 from .kana import with_romaji
 
-MODS    = [K, P, S, J] # J last!
-SERVER  = "https://jiten.obfusk.dev"
+MODS          = [K, P, S, J] # J last!
+SERVER        = "https://jiten.obfusk.dev"
+ANDROID_PRIV  = os.environ.get("ANDROID_PRIVATE") or None
 
 def setup_db(verbose, dl = False):
   msg = "up to date"
@@ -279,14 +280,19 @@ def missing_data():
   return False
 
 def download_dbs():
-  url     = lambda x: "{}/_db/v{}/{}".format(SERVER, J.DBVERSION, x)
-  android = os.environ.get("ANDROID_PRIVATE")
+  url = lambda x: "{}/_db/v{}/{}".format(SERVER, J.DBVERSION, x)
   for file in [ m.DATA_FILES[0] for m in MODS ]:
     fname = os.path.basename(file)
     base  = os.path.splitext(fname)[0]
-    f     = os.path.join(android, fname) if android else file
+    f     = os.path.join(ANDROID_PRIV, fname) if ANDROID_PRIV else file
     M.download_file(url(base), f, M.DB_SHA512SUMS[J.DBVERSION][base])
-    if android and not os.path.islink(file): os.symlink(f, file)
+  if ANDROID_PRIV: android_link_dbs()
+
+def android_link_dbs():
+  for file in [ m.DATA_FILES[0] for m in MODS ]:
+    f = os.path.join(ANDROID_PRIV, os.path.basename(file))
+    if os.path.exists(f) and not os.path.islink(file):
+      os.symlink(f, file)
 
 @click.group(help = """
   jiten - japanese android/cli/web dictionary based on jmdict/kanjidic
@@ -510,9 +516,10 @@ _serve_params = { p.name: p for p in serve.params }
 
 def serve_app(host = _serve_params["host"].default,
               port = _serve_params["port"].default,
-              verbose = True, download_missing = False, **opts):
+              verbose = True, **opts):
   from .app import app
-  if download_missing:
+  if ANDROID_PRIV:
+    android_link_dbs()
     app.config["DBS_UP2DATE"]   = J.up2date()
     app.config["DOWNLOAD_DBS"]  = download_dbs
   else:

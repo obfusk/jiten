@@ -1,7 +1,11 @@
+import os, sys
+
+ANDROID_PRIV = os.environ.get("ANDROID_PRIVATE") or None
+
+
 # FIXME: workaround for bug in older versions of p4a
-import sys
 if isinstance(getattr(sys.stdout, "buffer", None), str):
-  print("Fixing stdout/stderr...")
+  print("*** Fixing stdout/stderr ***")
   import androidembed
   class LogFile:
     def __init__(self):
@@ -18,8 +22,7 @@ if isinstance(getattr(sys.stdout, "buffer", None), str):
 
 
 # "debug mode"
-import os
-if "ANDROID_PRIVATE" in os.environ:
+if ANDROID_PRIV:
   try:
     import android.config, jnius
   except ImportError:
@@ -27,7 +30,7 @@ if "ANDROID_PRIVATE" in os.environ:
   else:
     activ = jnius.autoclass(android.config.ACTIVITY_CLASS_NAME).mActivity
     info  = activ.getApplicationInfo()
-    debug = os.path.join(os.environ["ANDROID_PRIVATE"], "__debug__")
+    debug = os.path.join(ANDROID_PRIV, "__debug__")
     if info.flags & type(info).FLAG_DEBUGGABLE and os.path.exists(debug):
       print("*** DEBUG MODE ***")
       os.environ["FLASK_ENV"] = "development"
@@ -38,7 +41,7 @@ if "ANDROID_PRIVATE" in os.environ:
 
 # ssl certificates
 try:
-  import certifi, os
+  import certifi
 except ImportError:
   pass
 else:
@@ -47,4 +50,4 @@ else:
 
 # serve app
 from jiten.cli import serve_app
-serve_app(port = 29483, download_missing = True, use_reloader = False)
+serve_app(port = 29483, use_reloader = False)
