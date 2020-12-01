@@ -13,7 +13,7 @@
 #
 # --                                                            ; }}}1
 
-import os, secrets, sys, time
+import os, secrets, sys
 
 from jiten.misc import SERVER
 
