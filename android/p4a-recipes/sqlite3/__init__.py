@@ -8,6 +8,6 @@ def _patch():
   spec.loader.exec_module(mod)
   Sqlite3Recipe, recipe = mod.Sqlite3Recipe, mod.recipe
   Sqlite3Recipe.name    = "sqlite3"
-  Sqlite3Recipe.version = "3.33.0"
-  Sqlite3Recipe.url     = "https://www.sqlite.org/2020/sqlite-amalgamation-3330000.zip"
+  Sqlite3Recipe.version = "3.34.0"
+  Sqlite3Recipe.url     = "https://www.sqlite.org/2020/sqlite-amalgamation-3340000.zip"
 _patch()
