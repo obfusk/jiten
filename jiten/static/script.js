@@ -2,7 +2,7 @@
 //
 //  File        : static/script.js
 //  Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-//  Date        : 2020-11-14
+//  Date        : 2020-12-02
 //
 //  Copyright   : Copyright (C) 2020  Felix C. Stegerman
 //  Version     : v0.3.5
@@ -259,7 +259,30 @@ window.JITEN = {
   clearHistory, getHistory, alert, confirm
 }
 
+// === clipboard ===
+
+let copyToClipboard = null
+
+if (JITEN_CONFIG.clipboard_token) {
+  copyToClipboard = t => fetch(
+    `/__copy_to_clipboard__/${JITEN_CONFIG.clipboard_token}`,
+    { method: "POST", body: t }
+  ).then(r => {
+    if (!r.ok) {
+      throw new Error(`response (${r.status} ${r.statusText}) was not ok`)
+    }
+  }).catch(e => console.error("clipboard POST failed:", e))
+} else if (navigator.clipboard) {
+  copyToClipboard = t => navigator.clipboard.writeText(t)
+    .catch(e => console.error("clipboard.writeText() failed:", e))
+}
+
 // === event handlers ===
+
+$(".play-audio").click(e => {
+  playAudio(e.delegateTarget.href)
+  return false
+})
 
 $(".convert-kana").click(e => {
   const i = $("input", $(e.delegateTarget).parents(".input-group"))
@@ -273,11 +296,10 @@ $(".clear-input").click(evt => {
   $("input", e.parents(".input-group")).val("").focus()
 })
 
-if (navigator.clipboard) {
+if (copyToClipboard) {
   $(".copy-input").click(e => {
     const i = $("input", $(e.delegateTarget).parents(".input-group"))
-    navigator.clipboard.writeText(selection(i)[1])
-      .catch(r => console.error("clipboard.writeText() failed:", r))
+    copyToClipboard(selection(i)[1])
   }).show()
 }
 
@@ -296,17 +318,17 @@ $("#radical-modal").on("hidden.bs.modal", () =>
   setTimeout(() => $("#kanji-query").focus())
 )
 
-$(".play-audio").click(e => {
-  playAudio(e.delegateTarget.href)
-  return false
-})
-
 $("#history-modal").on("shown.bs.modal", () => populateHistoryList())
 
 $("#history-clear").click(async () => {
   if (await confirm("Clear search history?")) {
     $("#history").empty(); clearHistory()
   }
+})
+
+$("#licenses-modal").on("shown.bs.modal", evt => {
+  const e = $(evt.delegateTarget).off("shown.bs.modal")
+  $("iframe", e).each((i, x) => x.src = x.dataset.src)
 })
 
 $(".query-example").click(evt => {
@@ -320,6 +342,7 @@ $("#expand-all").click(() => {
   $(".container .collapse").collapse("show")
   return false
 }).removeClass("disabled")
+
 $("#collapse-all").click(() => {
   $(".container .collapse").collapse("hide")
   return false

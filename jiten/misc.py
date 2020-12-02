@@ -5,7 +5,7 @@
 #
 # File        : jiten/misc.py
 # Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-# Date        : 2020-12-01
+# Date        : 2020-12-02
 #
 # Copyright   : Copyright (C) 2020  Felix C. Stegerman
 # Version     : v0.3.5
@@ -86,6 +86,7 @@ isjap1      = lambda c: iskanji1(c) or iskana1(c)               # TODO
 isokjap1    = lambda c: isjap1(c) or c in OKPUNC                # TODO
 iscjk1      = lambda c: isideo1(c) or iskana1(c) or ispunc1(c)  # TODO
 
+# FIXME: return False for ""?!
 for _n, _f in list(locals().items()):
   if _n.startswith("is") and _n.endswith("1"):
     locals()[_n[:-1]] = (lambda f: lambda s: all(map(f, s)))(_f)
@@ -129,7 +130,7 @@ LIKERX = re.compile("(?P<one>" + "|".join([
 ]))
 
 # TODO
-def q2like(q):
+def q2like(q):                                                  # {{{1
   f = lambda c: "_" if c in "%_" or (not isascii(c)
                        and c.upper() != c.lower()) else c
   q, p = without_e1w(q), ""
@@ -143,6 +144,7 @@ def q2like(q):
       else: p += "_" if m.group("one") else f(m.group(0))
     q = q[m.end():]
   return re.sub(r"%%+", "%", "%" + p + "%")
+                                                                # }}}1
 
 def q2rx(q):
   if   q.startswith("+="): q = "^"   + q[2:].lstrip() +   "$"
@@ -152,7 +154,7 @@ def q2rx(q):
                     .replace(r"\ph", r"\p{Hiragana}") \
                     .replace(r"\pK", r"\p{Han}")                # TODO
 
-def download_file(url, file, sha512 = None, tmp = ".tmp"):
+def download_file(url, file, sha512 = None, tmp = ".tmp"):      # {{{1
   label = "downloading " + os.path.basename(file)
   sha   = hashlib.sha512()
   with open(file + tmp, "wb") as fo:
@@ -172,13 +174,18 @@ def download_file(url, file, sha512 = None, tmp = ".tmp"):
                         .format(sha512, sha.hexdigest()), file, url)
   os.replace(file + tmp, file)
   return sha.hexdigest()
+                                                                # }}}1
 
-SERVER        = "https://jiten.obfusk.dev"
-DB_URLFMT     = "https://github.com/obfusk/jiten/releases/download/{}/{}.sqlite3"
-DB_URLS       = {
+J_O_D     = "https://jiten.obfusk.dev"
+SERVERS   = os.environ.get("JITEN_SERVERS", "").split() or [J_O_D]
+SERVER    = SERVERS[0]
+
+DB_URLFMT = "https://github.com/obfusk/jiten/releases/download/{}/{}.sqlite3"
+DB_URLS   = {
   8: { k: DB_URLFMT.format("v0.3.5", k)
        for k in "jmdict kanji pitch sentences".split() }
 }
+
 DB_SHA512SUMS = {
   8: dict(
     jmdict    = "c94830335a9176001fbc4400a4176a135b475e87a5f91d7fe3eccdcdc777219d7132a2ef56f99563bde7d6ed614dfd1ae8a9fed3a9ae4331159b9e675e60e9e7",
@@ -187,6 +194,30 @@ DB_SHA512SUMS = {
     sentences = "5f9d1968832457f096f55b30af90311ac681dc1456fdc12f293879adba93ed5a267984b87872ef514f84b5ecaba7fe7d2f17601018ea0fccb6198059d6a8b79a",
   )
 }
+
+DEPENDENCIES = dict(                                            # {{{1
+  p4a = dict(
+    name  = "python-for-android",
+    url   = "https://github.com/kivy/python-for-android"
+  ),
+
+  libffi        = dict(url = "https://github.com/libffi/libffi"),
+  libpcre       = dict(url = "https://www.pcre.org"),
+  openssl       = dict(url = "https://www.openssl.org"),
+  pyjnius       = dict(url = "https://github.com/kivy/pyjnius"),
+  python3       = dict(url = "https://www.python.org"),
+  sqlite3       = dict(url = "https://www.sqlite.org"),
+
+  certifi       = dict(url = "https://github.com/certifi/python-certifi"),
+  click         = dict(url = "https://github.com/pallets/click"),
+  flask         = dict(url = "https://github.com/pallets/flask"),
+  itsdangerous  = dict(url = "https://github.com/pallets/itsdangerous"),
+  jinja2        = dict(url = "https://github.com/pallets/jinja"),
+  markupsafe    = dict(url = "https://github.com/pallets/markupsafe"),
+  setuptools    = dict(url = "https://github.com/pypa/setuptools"),
+  six           = dict(url = "https://github.com/benjaminp/six"),
+  werkzeug      = dict(url = "https://github.com/pallets/werkzeug"),
+)                                                               # }}}1
 
 if __name__ == "__main__":
   if "--doctest" in sys.argv:

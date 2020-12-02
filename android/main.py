@@ -15,12 +15,12 @@
 
 import os, secrets, sys
 
-from jiten.misc import SERVER
+from jiten.misc import SERVERS
 
 HOST, PORT    = "127.0.0.1", 29483
 LOCAL         = "http://{}:{}".format(HOST, PORT)
 ANDROID       = "ANDROID_APP_PATH" in os.environ
-RUNNING, URL  = False, None
+RUNNING, URL  = False, None   # mutable state
 
 # FIXME: workaround for bug in older versions of p4a
 def fix_stdio():                                                # {{{1
@@ -48,9 +48,9 @@ def debug_mode(act):
     os.path.exists(os.path.join(priv, "__debug__"))
 
 def setup_flask(dbg):
-  global app
+  global app, request
   if dbg: os.environ["FLASK_ENV"] = "development"
-  from jiten.app import app
+  from jiten.app import app, request
 
 def setup_debug_mode():
   token = secrets.token_hex()
@@ -58,7 +58,7 @@ def setup_debug_mode():
   @app.route("/__debug__/" + token)
   def r_debug(): raise RuntimeError
 
-def setup_activities(act):
+def setup_activities(act, dbg):
   @app.before_first_request
   def before_first_request():
     global RUNNING
@@ -66,15 +66,28 @@ def setup_activities(act):
     if URL: act.loadUrl(URL)
   def on_new_intent(intent):
     global URL
-    if data := intent.getData():
-      if (url := data.toString()).startswith(SERVER):
-        url = url.replace(SERVER, LOCAL, 1)
-        if RUNNING:
-          act.loadUrl(url)
-        else:
-          URL = url
+    if (data := intent.getData()) and (url := data.toString()):
+      if dbg: print("*** on_new_intent ***\n * url:", url)
+      for server in SERVERS:
+        if url.startswith(server):
+          url = url.replace(server, LOCAL, 1)
+          if RUNNING:
+            act.loadUrl(url)
+          else:
+            URL = url
   android.activity.bind(on_new_intent = on_new_intent)
   if intent := act.getIntent(): on_new_intent(intent)
+
+def setup_clipboard(act):
+  app.config.setdefault("JS_CONFIG", {})["clipboard_token"] = \
+    token = secrets.token_hex()
+  CD  = jnius.autoclass("android.content.ClipData")
+  ctx = act.getApplicationContext()
+  clp = ctx.getSystemService(type(ctx).CLIPBOARD_SERVICE)
+  @app.route("/__copy_to_clipboard__/" + token, methods = ["POST"])
+  def r_copy_to_clipboard():
+    clp.setPrimaryClip(CD.newPlainText("text", request.data))
+    return "" # FIXME
 
 if __name__ == "__main__":
   if ANDROID:
@@ -85,7 +98,8 @@ if __name__ == "__main__":
     dbg = debug_mode(act)
     setup_flask(dbg)
     if dbg: setup_debug_mode()
-    setup_activities(act)
+    setup_activities(act, dbg)
+    setup_clipboard(act)
   from jiten.cli import serve_app
   serve_app(host = HOST, port = PORT, use_reloader = False)
 
