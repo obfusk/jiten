@@ -5,7 +5,7 @@
 #
 # File        : android/main.py
 # Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-# Date        : 2020-12-01
+# Date        : 2020-12-02
 #
 # Copyright   : Copyright (C) 2020  Felix C. Stegerman
 # Version     : v0.3.5
@@ -19,7 +19,7 @@ from jiten.misc import SERVER
 
 HOST, PORT    = "127.0.0.1", 29483
 LOCAL         = "http://{}:{}".format(HOST, PORT)
-ANDROID_PRIV  = os.environ.get("ANDROID_PRIVATE") or None
+ANDROID       = "ANDROID_APP_PATH" in os.environ
 RUNNING, URL  = False, None
 
 # FIXME: workaround for bug in older versions of p4a
@@ -41,14 +41,15 @@ def fix_stdio():                                                # {{{1
     sys.stdout = sys.stderr = LogFile()
                                                                 # }}}1
 
-def debug_mode(activ):
-  info = activ.getApplicationInfo()
+def debug_mode(act):
+  priv = os.environ["ANDROID_PRIVATE"]
+  info = act.getApplicationInfo()
   return info.flags & type(info).FLAG_DEBUGGABLE and \
-    os.path.exists(os.path.join(ANDROID_PRIV, "__debug__"))
+    os.path.exists(os.path.join(priv, "__debug__"))
 
-def setup_flask(debug):
+def setup_flask(dbg):
   global app
-  if debug: os.environ["FLASK_ENV"] = "development"
+  if dbg: os.environ["FLASK_ENV"] = "development"
   from jiten.app import app
 
 def setup_debug_mode():
@@ -57,42 +58,34 @@ def setup_debug_mode():
   @app.route("/__debug__/" + token)
   def r_debug(): raise RuntimeError
 
-def setup_activities(activ):
+def setup_activities(act):
   @app.before_first_request
   def before_first_request():
     global RUNNING
     RUNNING = True
-    if URL: activ.loadUrl(URL)
+    if URL: act.loadUrl(URL)
   def on_new_intent(intent):
     global URL
     if data := intent.getData():
       if (url := data.toString()).startswith(SERVER):
         url = url.replace(SERVER, LOCAL, 1)
         if RUNNING:
-          activ.loadUrl(url)
+          act.loadUrl(url)
         else:
           URL = url
   android.activity.bind(on_new_intent = on_new_intent)
-  if intent := activ.getIntent(): on_new_intent(intent)
+  if intent := act.getIntent(): on_new_intent(intent)
 
 if __name__ == "__main__":
-  fix_stdio()
-  if ANDROID_PRIV:
-    try:
-      import android.activity, android.config, jnius
-    except ImportError:
-      pass
-    else:
-      activ = jnius.autoclass(android.config.ACTIVITY_CLASS_NAME).mActivity
-      setup_flask(debug := debug_mode(activ))
-      if debug: setup_debug_mode()
-      setup_activities(activ)
-  try:
-    import certifi
-  except ImportError:
-    pass
-  else:
+  if ANDROID:
+    fix_stdio()
+    import android.activity, android.config, certifi, jnius
     os.environ["SSL_CERT_FILE"] = certifi.where()
+    act = jnius.autoclass(android.config.ACTIVITY_CLASS_NAME).mActivity
+    dbg = debug_mode(act)
+    setup_flask(dbg)
+    if dbg: setup_debug_mode()
+    setup_activities(act)
   from jiten.cli import serve_app
   serve_app(host = HOST, port = PORT, use_reloader = False)
 
