@@ -5,7 +5,7 @@
 #
 # File        : jiten/app.py
 # Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-# Date        : 2020-11-05
+# Date        : 2020-12-02
 #
 # Copyright   : Copyright (C) 2020  Felix C. Stegerman
 # Version     : v0.3.5
@@ -138,7 +138,7 @@ def r_index():
 def r_jmdict():
   if arg("query", "").strip().lower() == "+random":
     q = "+#{}".format(J.random_seq(**get_nvp()))
-    return redirect(url_for("r_jmdict", query = q))
+    return redirect(url_for("r_jmdict", query = q, lang = get_langs()))
   query, max_r = get_query_max()
   opts = dict(langs = get_langs(), max_results = max_r, **get_nvp())
   data = dict(page = "jmdict", query = query)
