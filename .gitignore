@@ -1,6 +1,7 @@
 *.sqlite3
 *.sqlite3-journal
 *.sqlite3.tmp
+
 __pycache__
 
 /build
@@ -9,4 +10,5 @@ __pycache__
 
 /jiten/.version
 /jiten/_sqlite3_pcre.*.so
+/tmp
 /tmp-html
