@@ -2,7 +2,7 @@
 //
 //  File        : static/script.js
 //  Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-//  Date        : 2020-12-02
+//  Date        : 2020-12-03
 //
 //  Copyright   : Copyright (C) 2020  Felix C. Stegerman
 //  Version     : v0.3.5
@@ -175,7 +175,6 @@ const saveHistory = (max = 500) => {
     }
     params.delete("save"); params.delete("dark")
     const link = location.pathname + "?" + params.toString()
-    console.log("updating history...")
     updateHistory(hist =>
       uniq([[query, link], ...hist], x => x[1]).slice(0, max)
     )
@@ -261,11 +260,18 @@ window.JITEN = {
 
 // === clipboard ===
 
+let webview_token = localStorage.getItem("webview_token")
+
+if (document.location.hash.includes("webview_token")) {
+  webview_token = document.location.hash.split("=")[1]
+  localStorage.setItem("webview_token", webview_token)
+}
+
 let copyToClipboard = null
 
-if (JITEN_CONFIG.clipboard_token) {
+if (webview_token) {
   copyToClipboard = t => fetch(
-    `/__copy_to_clipboard__/${JITEN_CONFIG.clipboard_token}`,
+    `/__copy_to_clipboard__/${webview_token}`,
     { method: "POST", body: t }
   ).then(r => {
     if (!r.ok) {

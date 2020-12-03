@@ -5,7 +5,7 @@
 #
 # File        : android/main.py
 # Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-# Date        : 2020-12-02
+# Date        : 2020-12-03
 #
 # Copyright   : Copyright (C) 2020  Felix C. Stegerman
 # Version     : v0.3.5
@@ -55,39 +55,44 @@ def setup_flask(dbg):
 def setup_debug_mode():
   token = secrets.token_hex()
   print("*** DEBUG MODE ***\n * token:", token)
+
   @app.route("/__debug__/" + token)
   def r_debug(): raise RuntimeError
 
-def setup_activities(act, dbg):
+def setup_activities(act, dbg, token):
   @app.before_first_request
   def before_first_request():
     global RUNNING
     RUNNING = True
-    if URL: act.loadUrl(URL)
+    act.loadUrl("{}#webview_token={}".format(URL or LOCAL, token))
+
   def on_new_intent(intent):
     global URL
     if (data := intent.getData()) and (url := data.toString()):
       if dbg: print("*** on_new_intent ***\n * url:", url)
       for server in SERVERS:
         if url.startswith(server):
-          url = url.replace(server, LOCAL, 1)
+          url = url.replace(server, LOCAL, 1).split("#")[0]
           if RUNNING:
             act.loadUrl(url)
           else:
             URL = url
+
   android.activity.bind(on_new_intent = on_new_intent)
   if intent := act.getIntent(): on_new_intent(intent)
 
 def setup_clipboard(act):
-  app.config.setdefault("JS_CONFIG", {})["clipboard_token"] = \
-    token = secrets.token_hex()
-  CD  = jnius.autoclass("android.content.ClipData")
-  ctx = act.getApplicationContext()
-  clp = ctx.getSystemService(type(ctx).CLIPBOARD_SERVICE)
+  token = secrets.token_hex()
+  CD    = jnius.autoclass("android.content.ClipData")
+  ctx   = act.getApplicationContext()
+  clp   = ctx.getSystemService(type(ctx).CLIPBOARD_SERVICE)
+
   @app.route("/__copy_to_clipboard__/" + token, methods = ["POST"])
   def r_copy_to_clipboard():
     clp.setPrimaryClip(CD.newPlainText("text", request.data))
     return "" # FIXME
+
+  return token
 
 if __name__ == "__main__":
   if ANDROID:
@@ -98,8 +103,9 @@ if __name__ == "__main__":
     dbg = debug_mode(act)
     setup_flask(dbg)
     if dbg: setup_debug_mode()
-    setup_activities(act, dbg)
-    setup_clipboard(act)
+    token = setup_clipboard(act)
+    setup_activities(act, dbg, token)
+
   from jiten.cli import serve_app
   serve_app(host = HOST, port = PORT, use_reloader = False)
 
