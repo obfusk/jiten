@@ -4,7 +4,7 @@
 
     File        : templates/kanji.html
     Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-    Date        : 2020-11-04
+    Date        : 2020-12-04
 
     Copyright   : Copyright (C) 2020  Felix C. Stegerman
     Version     : v0.3.5
@@ -124,7 +124,7 @@
                   </li>
                 </ul>
               </div>
-              <ul class="collapse show list-group mt-2 mb-1"
+              <ul class="collapse collapseall show list-group mt-2 mb-1"
                   id="collapse-{{ loop.index }}" title="miscellaneous">
                 {% set js = e.jmdict()|list %}
                 {% if js %}

@@ -345,12 +345,12 @@ $(".query-example").click(evt => {
 })
 
 $("#expand-all").click(() => {
-  $(".container .collapse").collapse("show")
+  $(".container .collapseall").collapse("show")
   return false
 }).removeClass("disabled")
 
 $("#collapse-all").click(() => {
-  $(".container .collapse").collapse("hide")
+  $(".container .collapseall").collapse("hide")
   return false
 }).removeClass("disabled")
 

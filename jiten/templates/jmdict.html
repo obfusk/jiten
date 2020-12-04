@@ -96,7 +96,8 @@
                 {{ collapsebtn("collapse-" + loop.index|string) }}
                 {{ topbtn() }}
               </div>
-              <div class="collapse show" id="collapse-{{ loop.index }}">
+              <div class="collapse collapseall show"
+                  id="collapse-{{ loop.index }}">
                 {% set ns = namespace(has_meanings = false) %}
                 {% set gloss, info = e.gloss_pos_info(langs) %}
                 {% for l in langs if gloss[l] %}
