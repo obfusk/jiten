@@ -326,6 +326,8 @@ def cli(ctx, colour, **kw):
 @click.option("--noun", is_flag = True, help = "Select nouns.")
 @click.option("--verb", is_flag = True, help = "Select verbs.")
 @click.option("--prio", is_flag = True, help = "Select priority entries.")
+@click.option("-n", "--jlpt", type = M.JLPT_LEVEL,
+              help = "Select entries by JLPT level(s); e.g. 1 or 3-5.")
 @click.option("--romaji", is_flag = True, help = "Show romaji.")
 @click.argument("query", required = False, metavar = "REGEX")
 @click.pass_context

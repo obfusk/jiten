@@ -2,7 +2,7 @@
 
   File        : templates/_nav.html
   Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-  Date        : 2020-12-03
+  Date        : 2020-12-04
 
   Copyright   : Copyright (C) 2020  Felix C. Stegerman
   Version     : v0.3.5
@@ -10,7 +10,7 @@
 
 --> #}
 {% from "_macros.html" import input, copybtn with context %}
-<nav class="navbar navbar-expand-md navbar-dark fixed-top bg-primary">
+<nav class="navbar navbar-expand-lg navbar-dark fixed-top bg-primary">
   <a class="jap navbar-brand" href="/">辞典</a>
   {%- if config.get("DEBUG") %}
     <span class="navbar-brand">
@@ -44,7 +44,7 @@
         <a class="nav-link dropdown-toggle" href="#"
             id="by-dropdown" role="button" data-toggle="dropdown"
             aria-haspopup="true" aria-expanded="false">
-          Browse Kanji & JMDict
+          Browse
         </a>
         <div class="dropdown-menu" aria-labelledby="by-dropdown">
           <a class="dropdown-item {{ "active" if page == "kanji/by-freq" else "" }}"
@@ -77,7 +77,7 @@
       </li>
     </ul>
     <button type="button" data-toggle="modal" data-target="#regex-modal"
-      class="btn btn-light btn-sm my-2 my-lg-0 ml-md-2">Help</button>
+      class="btn btn-light btn-sm my-2 my-lg-0 ml-lg-2">Help</button>
     <button type="button" data-toggle="modal" data-target="#romaji-modal"
       class="jap btn btn-light btn-sm my-2 my-lg-0 ml-2"
       title="romaji" style="white-space: nowrap;">a→あ</button>

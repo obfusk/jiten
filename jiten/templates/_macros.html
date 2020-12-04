@@ -2,7 +2,7 @@
 
   File        : templates/_macros.html
   Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-  Date        : 2020-12-02
+  Date        : 2020-12-04
 
   Copyright   : Copyright (C) 2020  Felix C. Stegerman
   Version     : v0.3.5
@@ -91,7 +91,7 @@
     <polygon points="153,58.65 0,211.65 35.7,247.35 153,130.05 270.3,247.35 306,211.65" fill="currentColor"/>
   </svg>
 {% endmacro %}
-{% macro collapsebtn(target) %}
+{% macro collapsebtn(target, info = None) %}
   <div class="d-inline-block" title="collapse/expand"
       data-toggle="tooltip" data-placement="top">
     <a class="btn btn-sm btn-outline-primary" href="#{{target }}"
@@ -99,6 +99,9 @@
         aria-expanded="true" aria-controls="{{ target }}">
       {{ collapseopen() }}
       {{ collapseclose() }}
+      {% if info %}
+        <span class="collapse-open">{{ info }}</span>
+      {% endif %}
     </a>
   </div>
 {% endmacro %}

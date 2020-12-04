@@ -30,8 +30,8 @@ a[aria-expanded=false] .collapse-close {
 }
 
 .collapsing {
- -webkit-transition: height 0.1s ease;
- transition:         height 0.1s ease;
+  -webkit-transition: height 0.1s ease;
+  transition:         height 0.1s ease;
 }
 
 .ellipsis {
@@ -61,6 +61,11 @@ a[aria-expanded=false] .collapse-close {
     "Noto Sans CJK JP", "Noto Sans CJK SC", "Noto Sans CJK TC",
     ipaexgothic, ipagothic, sans-serif,
     "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+}
+
+fieldset {
+  vertical-align: top;
+  min-height: 5em;
 }
 
 legend {

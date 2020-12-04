@@ -5,7 +5,7 @@
 #
 # File        : jiten/misc.py
 # Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-# Date        : 2020-12-02
+# Date        : 2020-12-04
 #
 # Copyright   : Copyright (C) 2020  Felix C. Stegerman
 # Version     : v0.3.5
@@ -153,6 +153,28 @@ def q2rx(q):
   return "(?im)" + q.replace(r"\pk", r"\p{Katakana}") \
                     .replace(r"\ph", r"\p{Hiragana}") \
                     .replace(r"\pK", r"\p{Han}")                # TODO
+
+class IntOrRange(click.ParamType):                              # {{{1
+  """e.g. 1 or 1-10"""
+  name = "(nonnegative) int or range (in range)"
+  def __init__(self, min, max, name = None):
+    if min < 0 or max < 0:
+      raise ValueError("min & max must not be negative")
+    self.range = click.IntRange(min, max)
+    if name: self.name = name
+  def convert(self, val, param = None, ctx = None):
+    f = lambda x: self.range.convert(x, param, ctx)
+    try:
+      if val.isdigit():
+        a = b = f(val)
+      else:
+        a, b = sorted(map(f, val.split("-")))
+      return (a, b)
+    except ValueError:
+      self.fail("{!r} is not a valid integer range".format(val), param, ctx)
+                                                                # }}}1
+
+JLPT_LEVEL = IntOrRange(1, 5, "LEVEL")
 
 def download_file(url, file, sha512 = None, tmp = ".tmp"):      # {{{1
   label = "downloading " + os.path.basename(file)

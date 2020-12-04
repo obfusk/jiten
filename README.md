@@ -2,7 +2,7 @@
 
     File        : README.md
     Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-    Date        : 2020-12-03
+    Date        : 2020-12-04
 
     Copyright   : Copyright (C) 2020  Felix C. Stegerman
     Version     : v0.3.5
@@ -82,8 +82,10 @@ repo**](https://obfusk.dev/fdroid/repo?fingerprint=2A21B7FFC93B878724B1991C05DAE
 $ jiten -v jmdict --max 1 --word cat
 $ jiten -v jmdict --max 1 --word kat --lang dut
 $ jiten -v jmdict --max 1 --exact 誤魔化す
+
 $ jiten -v jmdict +random         # random entry
 $ jiten -v jmdict --prio +random  # random "priority" entry"
+$ jiten -v jmdict -n 4-5 +random  # random JLPT N4 or N5 entry
 ```
 
 ### Kanji

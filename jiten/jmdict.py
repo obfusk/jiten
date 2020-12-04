@@ -449,13 +449,15 @@ def setup(file = SQLITE_FILE):                                  # {{{1
   jmdict2sqldb(jmdict, file)
                                                                 # }}}1
 
-def nvp(noun, verb, prio):
-  if not any([noun, verb, prio]): return ""
+def search_filter(noun, verb, prio, jlpt):
+  if not any([noun, verb, prio, jlpt]): return ""
   s = []
   if noun and verb: s.append("(noun = 1 OR verb = 1)")
   elif noun       : s.append("noun = 1")
   elif verb       : s.append("verb = 1")
   if prio         : s.append("prio = 1")
+  if jlpt         : s.append("({} <= jlpt AND jlpt <= {})"
+                             .format(*map(int, jlpt)))
   return "WHERE " + " AND ".join(s)
 
 def load_entry(c, seq, jlpt):                                   # {{{1
@@ -485,11 +487,11 @@ def load_entry(c, seq, jlpt):                                   # {{{1
 # TODO
 def search(q, langs = [LANGS[0]], max_results = None,           # {{{1
            noun = False, verb = False, prio = False,
-           file = SQLITE_FILE):
+           jlpt = None, file = SQLITE_FILE):
   fix_rank = lambda r: (r if r != F.NOFREQ else None)
   with sqlite_do(file) as c:
     if q.lower() == "+random":
-      q = "+#{}".format(random_seq(noun, verb, prio, file))
+      q = "+#{}".format(random_seq(noun, verb, prio, jlpt, file))
     if re.fullmatch(r"\+#\s*\d+", q):
       seq = int(q[2:].strip())
       for r in c.execute("SELECT rank, jlpt FROM entry WHERE seq = ?", (seq,)):
@@ -497,7 +499,7 @@ def search(q, langs = [LANGS[0]], max_results = None,           # {{{1
     else:
       lang  = ",".join( "'" + l + "'" for l in langs if l in LANGS )
       limit = "LIMIT " + str(int(max_results)) if max_results else ""
-      fltr  = nvp(noun, verb, prio)
+      fltr  = search_filter(noun, verb, prio, jlpt)
       if len(q) == 1 and M.iskanji(q):
         query = ("""
           SELECT rank, seq, jlpt FROM (
@@ -566,16 +568,16 @@ def by_freq(offset = 0, limit = 1000, file = SQLITE_FILE):
     ents = [ tuple(r) for r in c.execute("""
         SELECT seq, rank, jlpt FROM entry WHERE prio AND rank != {}
           ORDER BY rank ASC LIMIT ? OFFSET ?
-        """.format(F.NOFREQ), (limit, offset)) ]              # safe!
+        """.format(F.NOFREQ), (int(limit), int(offset))) ]    # safe!
     for seq, rank, jlpt in ents:
       yield load_entry(c, seq, jlpt), rank
 
-def random_seq(noun = False, verb = False, prio = False,
+def random_seq(noun = False, verb = False, prio = False, jlpt = None,
                file = SQLITE_FILE):
-  f = nvp(noun, verb, prio)
+  f = search_filter(noun, verb, prio, jlpt)
   with sqlite_do(file) as c:
     q = "SELECT seq FROM entry {} ORDER BY RANDOM() LIMIT 1".format(f)
-    return c.execute(q).fetchone()[0]
+    return c.execute(q).fetchone()[0]                       # ^ safe!
 
 if __name__ == "__main__":
   if "--doctest" in sys.argv:

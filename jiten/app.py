@@ -5,7 +5,7 @@
 #
 # File        : jiten/app.py
 # Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-# Date        : 2020-12-02
+# Date        : 2020-12-04
 #
 # Copyright   : Copyright (C) 2020  Felix C. Stegerman
 # Version     : v0.3.5
@@ -22,7 +22,7 @@ Web interface.
 
 import json, os, time
 
-import jinja2
+import click, jinja2
 
 from flask import Flask, escape, make_response, redirect, request, \
                   render_template, url_for
@@ -100,8 +100,8 @@ def respond(template, **data):
   return make_response(render_template(
     template, mode = "dark" if dark else "light", langs = langs,
     roma = roma, pref_langs = pref_langs, pref_max = pref_max,
-    ord = ord, hex = hex, J = J, K = K, M = M, S = S, START = START,
-    VERSION = __version__, PY_VERSION = py_version,
+    int = int, ord = ord, hex = hex, J = J, K = K, M = M, S = S,
+    START = START, VERSION = __version__, PY_VERSION = py_version,
     kana2romaji = kana2romaji, **data
   ))
 
@@ -122,9 +122,11 @@ def get_query_max():
 def get_max():
   return int(arg("max", get_prefs().get("max", MAX), type = int))
 
-def get_nvp():
+def get_filters():
+  jlpt = "-".join(filter(None, request.args.getlist("jlpt"))) or None
+  if jlpt: jlpt = M.JLPT_LEVEL.convert(jlpt)
   return dict(noun = arg_bool("noun"), verb = arg_bool("verb"),
-              prio = arg_bool("prio"))
+              prio = arg_bool("prio"), jlpt = jlpt)
 
 @app.route("/")
 def r_index():
@@ -132,15 +134,17 @@ def r_index():
     return respond("download_dbs.html")
   return respond("index.html", page = "index")
 
-# TODO
-# * --max
 @app.route("/jmdict")
 def r_jmdict():
+  try:
+    filters = get_filters()
+  except click.exceptions.BadParameter as e:
+    return "param error: " + escape(str(e)), 400
   if arg("query", "").strip().lower() == "+random":
-    q = "+#{}".format(J.random_seq(**get_nvp()))
+    q = "+#{}".format(J.random_seq(**filters))
     return redirect(url_for("r_jmdict", query = q, lang = get_langs()))
   query, max_r = get_query_max()
-  opts = dict(langs = get_langs(), max_results = max_r, **get_nvp())
+  opts = dict(langs = get_langs(), max_results = max_r, **filters)
   data = dict(page = "jmdict", query = query)
   try:
     if query: data["results"] = J.search(query, **opts)
@@ -161,8 +165,6 @@ def r_jmdict_by_freq():
 def r_jmdict_random():
   return redirect(url_for("r_jmdict", query = "+random"))
 
-# TODO
-# * --max
 @app.route("/kanji")
 def r_kanji():
   if arg("query", "").strip().lower() == "+random":
@@ -195,7 +197,6 @@ def r_kanji_by_jlpt():
 def r_kanji_random():
   return redirect(url_for("r_kanji", query = "+random"))
 
-# TODO: langs
 @app.route("/sentences")
 def r_sentences():
   query, max_r = arg("query", "").strip(), get_max()

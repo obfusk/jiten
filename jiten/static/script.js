@@ -2,7 +2,7 @@
 //
 //  File        : static/script.js
 //  Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-//  Date        : 2020-12-03
+//  Date        : 2020-12-04
 //
 //  Copyright   : Copyright (C) 2020  Felix C. Stegerman
 //  Version     : v0.3.5
@@ -364,6 +364,11 @@ if (navigator.userAgent.includes("Android")) {
     return false
   })
 }
+
+$("#jmdict-query").parents("form").submit(() =>
+  $("select[name=jlpt]").filter((i, x) => !x.value)
+    .prop("disabled", true)
+)
 
 // === save history ===
 

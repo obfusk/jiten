@@ -2,20 +2,23 @@
 
   File        : templates/_search.html
   Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-  Date        : 2020-10-05
+  Date        : 2020-12-04
 
   Copyright   : Copyright (C) 2020  Felix C. Stegerman
   Version     : v0.3.5
   License     : AGPLv3+
 
 --> #}
-{% from "_macros.html" import search with context %}
+{% from "_macros.html" import search, collapsebtn with context %}
 {% macro jmdict(langs, query = "", af = True) %}
   {% call search("/jmdict", "Query (Regex)", "Search JMDict",
                  "jmdict-query", "query", query,
                  "regex to match japanese/english/dutch/german", af,
                  btn = "info") %}
-    <div class="form-group mb-0">
+    <div class="float-right mt-1 ml-1">
+      {{ collapsebtn("jmdict-collapse", "Search Options") }}
+    </div>
+    <div class="collapse show form-group mb-0" id="jmdict-collapse">
       <fieldset class="d-inline border p-2 pl-3">
         <legend>options</legend>
         <div class="nowrap">
@@ -40,7 +43,9 @@
               title="^...$">exact</label>
           </div>
         </div>
-        &nbsp; &nbsp;
+      </fieldset>
+      <fieldset class="d-inline border p-2 pl-3">
+        <legend>filters</legend>
         <div class="nowrap">
           <div class="form-check form-check-inline">
             <input type="checkbox" class="form-check-input"
@@ -65,6 +70,22 @@
           </div>
         </div>
       </fieldset>
+      <fieldset class="d-inline border p-2 px-3">
+        <legend>jlpt</legend>
+        <div class="form-inline d-flex flex-nowrap">
+          {% set jlpt = request.args.getlist("jlpt", int)|select|sort %}
+          {% for x in (jlpt|min, jlpt|max) %}
+            <select class="form-control form-control-sm" name="jlpt">
+              <option value=""></option>
+              {% for n in range(1, 5+1) %}
+                <option value="{{ n }}"
+                  {% if n == x %}selected{% endif %}>N{{ n }}</option>
+              {% endfor %}
+            </select>
+            {% if loop.first %}-{% endif %}
+          {% endfor %}
+        </div>
+      </fieldset>
       <fieldset class="d-inline border p-2 pl-3">
         <legend>languages</legend>
         {% for l in J.LANGS %}
@@ -77,13 +98,20 @@
           </div>
         {% endfor %}
       </fieldset>
-    </div>
-    <br/>
-    <div>
+      <br/><br/>
       For a random entry use
       <a class="query-example"
         href="/jmdict?query=%2Brandom"><kbd>+random</kbd></a>.
     </div>
+    {% if query %}
+      <script>
+        if (window.innerWidth <= 576) {
+          $("a[data-target='#jmdict-collapse']")
+            .attr("aria-expanded", "false")
+          $("#jmdict-collapse").removeClass("show")
+        }
+      </script>
+    {% endif %}
   {% endcall %}
 {% endmacro %}
 {% macro kanji(query = "", af = True) %}
@@ -106,9 +134,7 @@
             title="^...$">exact</label>
         </div>
       </fieldset>
-    </div>
-    <br/>
-    <div>
+      <br/><br/>
       <span class="nowrap">
         To search by SKIP code use e.g.
         <a class="query-example"
@@ -165,9 +191,7 @@
           </div>
         {% endfor %}
       </fieldset>
-    </div>
-    <br/>
-    <div>
+      <br/><br/>
       For random sentences use
       <a class="query-example"
         href="/sentences?query=%2Brandom"><kbd>+random</kbd></a>.
