@@ -5,7 +5,7 @@
 #
 # File        : jiten/cli.py
 # Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-# Date        : 2020-12-03
+# Date        : 2020-12-04
 #
 # Copyright   : Copyright (C) 2020  Felix C. Stegerman
 # Version     : v0.3.5
@@ -112,7 +112,7 @@ query: += 誤魔化す
   tamper | to juggle | to manipulate
 = to dodge | to beg the question (issue, difficulties)
 = to varnish over | to gloss over
---> Godan verb with `su' ending | transitive verb | word usually written using
+--> Godan verb with 'su' ending | transitive verb | word usually written using
     kana alone
 ~~> ateji (phonetic) reading
 seq# 1271480, freq# 10495, jlpt 1, prio; 1

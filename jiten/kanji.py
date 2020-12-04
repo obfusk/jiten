@@ -5,7 +5,7 @@
 #
 # File        : jiten/kanji.py
 # Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-# Date        : 2020-12-03
+# Date        : 2020-12-04
 #
 # Copyright   : Copyright (C) 2020  Felix C. Stegerman
 # Version     : v0.3.5
@@ -34,18 +34,20 @@ Entry(char='猫', cat='KANJI', level='常用', strokes=11, freq=1702, jlpt=2, sk
 >>> [ x for x in kanjidic if x.char == "日" ][0]
 Entry(char='日', cat='KANJI', level='常用1', strokes=4, freq=1, jlpt=4, skip='3-3-1', rad=72, comp='⽇日', var='', on=('ニチ', 'ジツ'), kun=('ひ', '-び', '-か'), nanori=('あ', 'あき', 'いる', 'く', 'くさ', 'こう', 'す', 'たち', 'に', 'にっ', 'につ', 'へ'), meaning=('day', 'sun', 'Japan', 'counter for days'))
 
+>>> len([ x for x in kanjidic if x.level and x.level.startswith("常用") and x.level[-1].isdigit() ])
+1026
 >>> len([ x for x in kanjidic if x.level == "常用1" ])
 80
 >>> len([ x for x in kanjidic if x.level == "常用2" ])
 160
 >>> len([ x for x in kanjidic if x.level == "常用3" ])
 200
->>> len([ x for x in kanjidic if x.level == "常用4" ])
-197
+>>> len([ x for x in kanjidic if x.level == "常用4" ])  # 200 + 20 都道府県名
+220
 >>> len([ x for x in kanjidic if x.level == "常用5" ])
-197
+185
 >>> len([ x for x in kanjidic if x.level == "常用6" ])
-192
+181
 >>> len([ x for x in kanjidic if x.level == "常用" ])
 1110
 >>> len([ x for x in kanjidic if x.level == "人名" ])
@@ -170,7 +172,7 @@ def variants(char, vs):
 
 def decode_variant(t, x):
   decode  = lambda b, x = "": b.decode("iso-2022-jp" + x)
-  dekuten = lambda: bytes( int(i) + 32 for i in x.split("-") )
+  dekuten = lambda: bytes( int(i) + 32 for i in x.split("-")[-2:] )
   if t == "jis208": return decode(b"\x1b$B"  + dekuten())
   if t == "jis212": return decode(b"\x1b$(D" + dekuten(), "-2")
   if t == "jis213": return decode(b"\x1b$(P" + dekuten(), "-2004")
@@ -209,10 +211,10 @@ def parse_kanjidic(kanjivg = None, file = KANJIDIC_FILE):       # {{{1
         meaning = tuple( m.text.strip() for m in e.findall(".//meaning")
                                         if m.get("m_lang") is None )
         if comp and not set(RADICALS[rad-1]).issubset(comp):
-          for x, y in "肉⽉ 白⽇ 曰⽇ 臼𦥑 匸⼕ 夊⼡ 夂久 人⼊ 入⼈".split():
+          for x, y in "肉⽉ 白⽇ 曰⽇ 臼𦥑 匸⼕ 夊⼡ 夂久 人⼊ 入⼈ 釆采".split():
             if x == RADICALS[rad-1][1] and y in comp: break
           else:
-            assert char in "為亀巨尭壮争単壷丗舅关"
+            assert char in "巨尭之冒丗关"
         comp = "".join(sorted(comp | set(RADICALS[rad-1] + char)))
         assert len(char) == 1
         assert 1 <= rad <= 214
