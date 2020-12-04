@@ -40,7 +40,7 @@ CLI
 <BLANKLINE>
 
 >>> run("-v jmdict -m1 -w cat")
-DB v8 up to date.
+DB v9 up to date.
 query: +w cat
 <BLANKLINE>
 猫
@@ -61,7 +61,7 @@ seq# 1467640, freq# 2201, jlpt 5, prio; 1
 <BLANKLINE>
 
 >>> run("-v jmdict -m1 -w kat -l dut")
-DB v8 up to date.
+DB v9 up to date.
 query: +w kat
 <BLANKLINE>
 猫
@@ -79,7 +79,7 @@ seq# 1467640, freq# 2201, jlpt 5, prio; 1
 <BLANKLINE>
 
 >>> run("-v jmdict -m1 -w idiot")
-DB v8 up to date.
+DB v9 up to date.
 query: +w idiot
 <BLANKLINE>
 馬鹿 | 莫迦 | 破家 | 馬稼
@@ -101,7 +101,7 @@ seq# 1601260, freq# 2472, jlpt 3, prio; 1
 <BLANKLINE>
 
 >>> run("-v jmdict -m1 -e 誤魔化す")
-DB v8 up to date.
+DB v9 up to date.
 query: += 誤魔化す
 <BLANKLINE>
 誤魔化す | 誤摩化す | 胡麻化す | 誤魔かす | 胡魔化す
@@ -120,7 +120,7 @@ seq# 1271480, freq# 10495, jlpt 1, prio; 1
 <BLANKLINE>
 
 >>> run("-v jmdict -m1 -w まる")
-DB v8 up to date.
+DB v9 up to date.
 query: +w まる
 <BLANKLINE>
 丸 | 円
@@ -143,7 +143,7 @@ seq# 1216250, freq# 63, jlpt 3, prio; 1
 <BLANKLINE>
 
 >>> run("-v jmdict -m1 -w cat --verb")
-DB v8 up to date.
+DB v9 up to date.
 query: +w cat
 <BLANKLINE>
 逆撫で | 逆なで
@@ -159,7 +159,7 @@ seq# 1227180, freq# 30500; 1
 <BLANKLINE>
 
 >>> run("-v jmdict -m1 -w みる --noun")
-DB v8 up to date.
+DB v9 up to date.
 query: +w みる
 <BLANKLINE>
 海松 | 水松
@@ -175,7 +175,7 @@ seq# 1772790, freq# 75; 1
 <BLANKLINE>
 
 >>> run("-v jmdict -m1 -w みる --noun --prio")
-DB v8 up to date.
+DB v9 up to date.
 query: +w みる
 <BLANKLINE>
 <BLANKLINE>
@@ -193,7 +193,7 @@ query: +w みる
 <BLANKLINE>
 
 >>> run("-v kanji -m1 -e cat")
-DB v8 up to date.
+DB v9 up to date.
 query: += cat
 <BLANKLINE>
 猫
@@ -218,7 +218,7 @@ variants: 貓
 <BLANKLINE>
 
 >>> run("-v kanji -m1 -w 日")
-DB v8 up to date.
+DB v9 up to date.
 query: +w 日
 <BLANKLINE>
 日
@@ -364,7 +364,6 @@ def jmdict_search(q, verbose, word, exact, fstwd, langs, romaji,
     t = indent_and_wrap(w, info, "--> ", "green")
     if t: yield t
     if verbose:
-      jlpt = e.jlpt()
       ti = indent_and_wrap(w, e.xinfo(), "~~> ", "blue")
       if ti: yield ti
       tx = indent_and_wrap(w, e.xrefs(), "see ", "yellow")
@@ -372,8 +371,8 @@ def jmdict_search(q, verbose, word, exact, fstwd, langs, romaji,
       yield  ("seq# " + click.style(str(e.seq), fg = "blue")
         + (", freq# " + click.style(str(rank ), fg = "cyan")
                     if rank else "")
-        + (", jlpt " + click.style(str(jlpt), fg = "yellow")
-                    if jlpt else "")
+        + (", jlpt " + click.style(str(e.jlpt), fg = "yellow")
+                    if e.jlpt else "")
         + (", prio" if e.isprio() else "") + "; " + str(i+1) + "\n")
     yield "\n"
                                                                 # }}}1
@@ -465,8 +464,8 @@ def kanji_search(q, verbose, word, exact, fstwd, max_results,
            if e.freq else "")
         + (", old jlpt " + click.style(str(e.jlpt), fg = "blue")
            if e.jlpt else "")
-        + (", jlpt " + click.style(str(e.new_jlpt()), fg = "cyan")
-           if e.new_jlpt() else "")
+        + (", jlpt " + click.style(str(e.new_jlpt), fg = "cyan")
+           if e.new_jlpt else "")
         + (", skip " + click.style(e.skip, fg = "yellow")
            if e.skip else "") + "\n")
     yield "\n"

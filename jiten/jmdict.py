@@ -19,7 +19,7 @@ r"""
 JMDict.
 
 >>> DBVERSION
-8
+9
 
 >>> jmdict = parse_jmdict()
 >>> len(jmdict)
@@ -169,7 +169,7 @@ from . import misc  as M
 from . import pitch as P
 from .sql import sqlite_do, load_pcre_extension
 
-DBVERSION       = 8 # NB: update this when data/schema changes
+DBVERSION       = 9 # NB: update this when data/schema changes
 SQLITE_FILE     = M.resource_path("res/jmdict.sqlite3")
 JMDICT_FILE     = M.resource_path("res/jmdict/jmdict.xml.gz")
 JLPT_FILE_BASE  = M.resource_path("res/jlpt/N")
@@ -180,7 +180,7 @@ PRIO            = "news1 ichi1 spec1 spec2 gai1".split()
 USUKANA         = "word usually written using kana alone"
 LANGS           = "eng dut ger".split()
 
-Entry   = namedtuple("Entry"  , """seq kanji reading sense""".split())
+Entry   = namedtuple("Entry"  , """seq jlpt kanji reading sense""".split())
 Kanji   = namedtuple("Kanji"  , """elem chars info prio""".split())
 Reading = namedtuple("Reading", """elem restr info prio""".split())
 Sense   = namedtuple("Sense"  , """pos lang gloss info xref""".split())
@@ -244,11 +244,10 @@ def pitch(e):
     p = P.get_pitch(r.elem, ks)
     if p: yield p
 
-def jlpt(e):
-  for x in e.kanji or e.reading:
-    l = JLPT.get(x.elem)
-    if l is not None: return l
-  return None
+def jlpt_level(kanji, reading):
+  ws = set( x.elem for x in kanji + reading )
+  ls = set(map(JLPT.get, ws)) - {None}
+  return max(ls) if ls else None
 
 Entry.definition      = definition
 Entry.words           = words
@@ -266,7 +265,6 @@ Entry.isverb          = isverb
 Entry.xinfo           = xinfo
 Entry.xrefs           = xrefs
 Entry.pitch           = pitch
-Entry.jlpt            = jlpt
 Entry.__hash__        = lambda e: hash(e.seq)
 
 Sense.isichidan = lambda s: any( "Ichidan verb" in x for x in s.pos )
@@ -332,7 +330,8 @@ def parse_jmdict(file = JMDICT_FILE):                           # {{{1
           assert all( "\n" not in x and "" not in x for xs in
                       [pos, gloss, s_inf, misc, xref] for x in xs )
           sense.append(Sense(pos, lang, tuple(gloss), s_inf + misc, xref))
-        data.append(Entry(seq, *( tuple(x) for x in [kanji, reading, sense] )))
+        krs = ( tuple(x) for x in [kanji, reading, sense] )
+        data.append(Entry(seq, jlpt_level(kanji, reading), *krs))
       return data
                                                                 # }}}1
 
@@ -355,8 +354,8 @@ def jmdict2sqldb(data, file = SQLITE_FILE):                     # {{{1
     c.executescript(JMDICT_CREATE_SQL)
     with click.progressbar(data, width = 0, label = "writing jmdict") as bar:
       for e in bar:
-        c.execute("INSERT INTO entry VALUES (?,?,?,?,?,?)",
-                  (e.seq, e._rank(), str(e._freq()),
+        c.execute("INSERT INTO entry VALUES (?,?,?,?,?,?,?)",
+                  (e.seq, e.jlpt, e._rank(), str(e._freq()),
                    e.isprio(), e.isnoun(), e.isverb()))
         for k in e.kanji:
           c.execute("INSERT INTO kanji VALUES (?,?,?,?,?)",
@@ -388,6 +387,7 @@ JMDICT_CREATE_SQL = """
 
   CREATE TABLE entry(
     seq INTEGER PRIMARY KEY ASC,
+    jlpt INTEGER,
     rank INTEGER,
     freq INTEGER,
     prio BOOLEAN,
@@ -458,7 +458,7 @@ def nvp(noun, verb, prio):
   if prio         : s.append("prio = 1")
   return "WHERE " + " AND ".join(s)
 
-def load_entry(c, seq):                                         # {{{1
+def load_entry(c, seq, jlpt):                                   # {{{1
   k = tuple(
       Kanji(r["elem"], frozenset(r["chars"]),
             tuple(r["info"].splitlines()), bool(r["prio"]))
@@ -479,7 +479,7 @@ def load_entry(c, seq):                                         # {{{1
     for r in c.execute("SELECT * FROM sense WHERE entry = ?" +
                        " ORDER BY rowid ASC", (seq,))
   )
-  return Entry(seq, *( tuple(x) for x in [k, r, s] ))
+  return Entry(seq, jlpt, *(k, r, s))
                                                                 # }}}1
 
 # TODO
@@ -492,15 +492,15 @@ def search(q, langs = [LANGS[0]], max_results = None,           # {{{1
       q = "+#{}".format(random_seq(noun, verb, prio, file))
     if re.fullmatch(r"\+#\s*\d+", q):
       seq = int(q[2:].strip())
-      for r in c.execute("SELECT rank FROM entry WHERE seq = ?", (seq,)):
-        yield load_entry(c, seq), fix_rank(r[0]) # #=1
+      for r in c.execute("SELECT rank, jlpt FROM entry WHERE seq = ?", (seq,)):
+        yield load_entry(c, seq, r[1]), fix_rank(r[0]) # #=1
     else:
       lang  = ",".join( "'" + l + "'" for l in langs if l in LANGS )
       limit = "LIMIT " + str(int(max_results)) if max_results else ""
       fltr  = nvp(noun, verb, prio)
       if len(q) == 1 and M.iskanji(q):
         query = ("""
-          SELECT rank, seq FROM (
+          SELECT rank, seq, jlpt FROM (
             SELECT entry FROM kanji_code WHERE code = ?
           )
           INNER JOIN entry ON seq = entry
@@ -510,7 +510,7 @@ def search(q, langs = [LANGS[0]], max_results = None,           # {{{1
         """.format(fltr, limit), (ord(q),))                   # safe!
       elif M.iscjk(q):
         query = ("""
-          SELECT rank, seq FROM (
+          SELECT rank, seq, jlpt FROM (
               SELECT entry FROM kanji WHERE elem LIKE :q
             UNION
               SELECT entry FROM reading WHERE elem LIKE :q
@@ -524,7 +524,7 @@ def search(q, langs = [LANGS[0]], max_results = None,           # {{{1
         load_pcre_extension(c.connection)
         prms  = dict(q = M.q2like(q), re = M.q2rx(q))
         query = ("""
-          SELECT rank, seq FROM (
+          SELECT rank, seq, jlpt FROM (
               SELECT entry FROM kanji WHERE
                 elem LIKE :q AND elem REGEXP :re
             UNION
@@ -544,7 +544,7 @@ def search(q, langs = [LANGS[0]], max_results = None,           # {{{1
       else:
         load_pcre_extension(c.connection)
         query = ("""
-          SELECT rank, seq FROM (
+          SELECT rank, seq, jlpt FROM (
               SELECT entry FROM kanji WHERE elem REGEXP :re
             UNION
               SELECT entry FROM reading WHERE elem REGEXP :re
@@ -557,18 +557,18 @@ def search(q, langs = [LANGS[0]], max_results = None,           # {{{1
           ORDER BY prio DESC, rank ASC, seq ASC
           {}
         """.format(lang, fltr, limit), dict(re = M.q2rx(q)))  # safe!
-      for r, seq in [ tuple(r) for r in c.execute(*query) ]:  # eager!
-        yield load_entry(c, seq), fix_rank(r)
+      for r, s, j in [ tuple(r) for r in c.execute(*query) ]: # eager!
+        yield load_entry(c, s, j), fix_rank(r)
                                                                 # }}}1
 
 def by_freq(offset = 0, limit = 1000, file = SQLITE_FILE):
   with sqlite_do(file) as c:
     ents = [ tuple(r) for r in c.execute("""
-        SELECT seq, rank FROM entry WHERE prio AND rank != {}
+        SELECT seq, rank, jlpt FROM entry WHERE prio AND rank != {}
           ORDER BY rank ASC LIMIT ? OFFSET ?
         """.format(F.NOFREQ), (limit, offset)) ]              # safe!
-    for seq, rank in ents:
-      yield load_entry(c, seq), rank
+    for seq, rank, jlpt in ents:
+      yield load_entry(c, seq, jlpt), rank
 
 def random_seq(noun = False, verb = False, prio = False,
                file = SQLITE_FILE):

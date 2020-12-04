@@ -29,10 +29,10 @@ KanjiDic.
 13108
 
 >>> [ x for x in kanjidic if x.char == "猫" ][0]
-Entry(char='猫', cat='KANJI', level='常用', strokes=11, freq=1702, jlpt=2, skip='1-3-8', rad=94, comp='⺨⽝⽥⾋犬犯猫田艸艹艾苗', var='貓', on=('ビョウ',), kun=('ねこ',), nanori=(), meaning=('cat',))
+Entry(char='猫', cat='KANJI', level='常用', strokes=11, freq=1702, jlpt=2, new_jlpt=3, skip='1-3-8', rad=94, comp='⺨⽝⽥⾋犬犯猫田艸艹艾苗', var='貓', on=('ビョウ',), kun=('ねこ',), nanori=(), meaning=('cat',))
 
 >>> [ x for x in kanjidic if x.char == "日" ][0]
-Entry(char='日', cat='KANJI', level='常用1', strokes=4, freq=1, jlpt=4, skip='3-3-1', rad=72, comp='⽇日', var='', on=('ニチ', 'ジツ'), kun=('ひ', '-び', '-か'), nanori=('あ', 'あき', 'いる', 'く', 'くさ', 'こう', 'す', 'たち', 'に', 'にっ', 'につ', 'へ'), meaning=('day', 'sun', 'Japan', 'counter for days'))
+Entry(char='日', cat='KANJI', level='常用1', strokes=4, freq=1, jlpt=4, new_jlpt=5, skip='3-3-1', rad=72, comp='⽇日', var='', on=('ニチ', 'ジツ'), kun=('ひ', '-び', '-か'), nanori=('あ', 'あき', 'いる', 'く', 'くさ', 'こう', 'す', 'たち', 'に', 'にっ', 'につ', 'へ'), meaning=('day', 'sun', 'Japan', 'counter for days'))
 
 >>> len([ x for x in kanjidic if x.level and x.level.startswith("常用") and x.level[-1].isdigit() ])
 1026
@@ -61,7 +61,7 @@ Entry(char='日', cat='KANJI', level='常用1', strokes=4, freq=1, jlpt=4, skip=
 2501
 >>> len([ x for x in kanjidic if x.jlpt is not None ])
 2230
->>> len([ x for x in kanjidic if x.new_jlpt() is not None ])
+>>> len([ x for x in kanjidic if x.new_jlpt is not None ])
 2211
 >>> len([ x for x in kanjidic if x.skip is None ])
 952
@@ -126,7 +126,7 @@ NOFREQ = 9999
 LEVELS = "常用1 常用2 常用3 常用4 常用5 常用6 常用 人名 人名(常用)".split()
 
 Entry = namedtuple("Entry", """
-  char cat level strokes freq jlpt skip rad comp var
+  char cat level strokes freq jlpt new_jlpt skip rad comp var
   on kun nanori meaning
 """.split())
 
@@ -140,7 +140,6 @@ Entry.canonical   = lambda e: canonical(e.char)
 Entry.radical     = lambda e: RADICALS[e.rad-1][1]
 Entry.name        = lambda e: UD.name(e.char)
 Entry.jmdict      = lambda e: J.search(e.char, max_results = MAXE)
-Entry.new_jlpt    = lambda e: JLPT.get(e.char)
 
 def canonical(c): return UD.normalize("NFC", c)
 
@@ -225,8 +224,9 @@ def parse_kanjidic(kanjivg = None, file = KANJIDIC_FILE):       # {{{1
         assert all( "\n" not in x for x in kun )
         assert all( "\n" not in x for x in nanori )
         assert all( "\n" not in x for x in meaning )
-        data.append(Entry(char, category(char), lvl, strokes, freq, jlpt,
-                          skip, rad, comp, var, on, kun, nanori, meaning))
+        data.append(Entry(char, category(char), lvl, strokes, freq,
+                          jlpt, JLPT.get(char), skip, rad, comp, var,
+                          on, kun, nanori, meaning))
       return data
                                                                 # }}}1
 
@@ -286,8 +286,8 @@ def kanjidic2sqldb(data, file = SQLITE_FILE):                   # {{{1
         c.execute("INSERT INTO entry VALUES ({})"
                   .format(",".join("?"*(len(Entry._fields)+1))),
                   (ord(e.char), e.char, e.cat, e.level, e.strokes,
-                   e.freq, e.jlpt, e.skip, e.rad, e.comp, e.var,
-                   "\n".join(e.on), "\n".join(e.kun),
+                   e.freq, e.jlpt, e.new_jlpt, e.skip, e.rad, e.comp,
+                   e.var, "\n".join(e.on), "\n".join(e.kun),
                    "\n".join(e.nanori), "\n".join(e.meaning)))
         for k in e.comp:
           c.execute("INSERT INTO comp VALUES(?,?)", (ord(e.char), ord(k)))
@@ -306,6 +306,7 @@ KANJIDIC_CREATE_SQL = """
     strokes INTEGER,
     freq INTEGER,
     jlpt INTEGER,
+    new_jlpt INTEGER,
     skip TEXT,
     rad INTEGER,
     comp TEXT,
