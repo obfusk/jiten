@@ -2,7 +2,7 @@
 
     File        : README.md
     Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-    Date        : 2020-11-10
+    Date        : 2020-12-03
 
     Copyright   : Copyright (C) 2020  Felix C. Stegerman
     Version     : v0.3.5
@@ -108,7 +108,7 @@ $ jiten --help
 
 ## Bugs & Feature Requests
 
-→ [Issue Tracker](https://github.com/obfusk/jiten/issues).
+→ [Issue Tracker](https://github.com/obfusk/jiten/issues)
 
 ## Questions & Feedback
 
@@ -241,6 +241,12 @@ Audio by huizi99, Mizu & yomi (CC BY-NC 4.0).
 © Ulrich Apel, the AAAA project and the Wadoku project
 
 [BSD-3-Clause](https://www.nihilist.org.uk)
+
+### JLPT Data
+
+© Jonathan Waller
+
+[CC-BY](https://www.tanos.co.uk/jlpt/sharing/)
 
 ### Kana Tables
 

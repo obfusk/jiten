@@ -4,7 +4,7 @@
 
     File        : templates/jmdict.html
     Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-    Date        : 2020-11-03
+    Date        : 2020-12-03
 
     Copyright   : Copyright (C) 2020  Felix C. Stegerman
     Version     : v0.3.5
@@ -163,6 +163,15 @@
                         &nbsp;» freq#
                         <span class="badge badge-info">
                           {{ rank }}
+                        </span>
+                      </span>
+                    {% endif %}
+                    {% set jlpt = e.jlpt() %}
+                    {% if jlpt %}
+                      <span class="nowrap">
+                        &nbsp;» jlpt
+                        <span class="badge badge-warning">
+                          {{ jlpt }}
                         </span>
                       </span>
                     {% endif %}

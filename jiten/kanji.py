@@ -5,7 +5,7 @@
 #
 # File        : jiten/kanji.py
 # Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-# Date        : 2020-11-05
+# Date        : 2020-12-03
 #
 # Copyright   : Copyright (C) 2020  Felix C. Stegerman
 # Version     : v0.3.5
@@ -267,7 +267,7 @@ def parse_kanjivg(file = KANJIVG_FILE, kradfile = KRADFILE,     # {{{1
 def load_jlpt(base = JLPT_FILE_BASE):
   data = {}
   for level in "12345":
-    with open(base + level) as f:
+    with open(base + level + "-kanji") as f:
       for c in f.readline().strip():
         assert M.iskanji(c)
         assert c not in data

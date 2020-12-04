@@ -5,7 +5,7 @@
 #
 # File        : jiten/jmdict.py
 # Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-# Date        : 2020-11-03
+# Date        : 2020-12-03
 #
 # Copyright   : Copyright (C) 2020  Felix C. Stegerman
 # Version     : v0.3.5
@@ -169,20 +169,21 @@ from . import misc  as M
 from . import pitch as P
 from .sql import sqlite_do, load_pcre_extension
 
-DBVERSION     = 8 # NB: update this when data/schema changes
-SQLITE_FILE   = M.resource_path("res/jmdict.sqlite3")
-JMDICT_FILE   = M.resource_path("res/jmdict/jmdict.xml.gz")
-DATA_FILES    = (SQLITE_FILE, JMDICT_FILE)
+DBVERSION       = 8 # NB: update this when data/schema changes
+SQLITE_FILE     = M.resource_path("res/jmdict.sqlite3")
+JMDICT_FILE     = M.resource_path("res/jmdict/jmdict.xml.gz")
+JLPT_FILE_BASE  = M.resource_path("res/jlpt/N")
+DATA_FILES      = (SQLITE_FILE, JMDICT_FILE)
 
-MAXSEQ        = 10000000
-PRIO          = "news1 ichi1 spec1 spec2 gai1".split()
-USUKANA       = "word usually written using kana alone"
-LANGS         = "eng dut ger".split()
+MAXSEQ          = 10000000
+PRIO            = "news1 ichi1 spec1 spec2 gai1".split()
+USUKANA         = "word usually written using kana alone"
+LANGS           = "eng dut ger".split()
 
-Entry         = namedtuple("Entry"  , """seq kanji reading sense""".split())
-Kanji         = namedtuple("Kanji"  , """elem chars info prio""".split())
-Reading       = namedtuple("Reading", """elem restr info prio""".split())
-Sense         = namedtuple("Sense"  , """pos lang gloss info xref""".split())
+Entry   = namedtuple("Entry"  , """seq kanji reading sense""".split())
+Kanji   = namedtuple("Kanji"  , """elem chars info prio""".split())
+Reading = namedtuple("Reading", """elem restr info prio""".split())
+Sense   = namedtuple("Sense"  , """pos lang gloss info xref""".split())
 
 # TODO
 # * include all readings if usually_kana? or only frequent ones?
@@ -243,6 +244,12 @@ def pitch(e):
     p = P.get_pitch(r.elem, ks)
     if p: yield p
 
+def jlpt(e):
+  for x in e.kanji or e.reading:
+    l = JLPT.get(x.elem)
+    if l is not None: return l
+  return None
+
 Entry.definition      = definition
 Entry.words           = words
 Entry.meanings        = meanings
@@ -259,6 +266,7 @@ Entry.isverb          = isverb
 Entry.xinfo           = xinfo
 Entry.xrefs           = xrefs
 Entry.pitch           = pitch
+Entry.jlpt            = jlpt
 Entry.__hash__        = lambda e: hash(e.seq)
 
 Sense.isichidan = lambda s: any( "Ichidan verb" in x for x in s.pos )
@@ -327,6 +335,19 @@ def parse_jmdict(file = JMDICT_FILE):                           # {{{1
         data.append(Entry(seq, *( tuple(x) for x in [kanji, reading, sense] )))
       return data
                                                                 # }}}1
+
+def load_jlpt(base = JLPT_FILE_BASE):
+  data = {}
+  for level in "12345":
+    with open(base + level + "-vocab") as f:
+      for line in f:
+        for word in line.split()[0].split("/"):
+          if word in "× Ͼ立 より、ほう".split(): continue
+          assert M.isokjap(word)
+          data[word] = int(level) # seen is sorta ok, higher is better
+  return data
+
+JLPT = load_jlpt()
 
 # NB: kanji/reading/sense are retrieved in insertion (i.e. rowid) order!
 def jmdict2sqldb(data, file = SQLITE_FILE):                     # {{{1

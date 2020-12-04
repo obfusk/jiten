@@ -5,7 +5,7 @@
 #
 # File        : jiten/cli.py
 # Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-# Date        : 2020-12-01
+# Date        : 2020-12-03
 #
 # Copyright   : Copyright (C) 2020  Felix C. Stegerman
 # Version     : v0.3.5
@@ -56,7 +56,7 @@ query: +w cat
 --> noun (common) (futsuumeishi) | abbreviation | word usually written using
     kana alone | colloquialism
 see 猫車 | 猫火鉢
-seq# 1467640, freq# 2201, prio; 1
+seq# 1467640, freq# 2201, jlpt 5, prio; 1
 <BLANKLINE>
 <BLANKLINE>
 
@@ -74,7 +74,7 @@ query: +w kat
 = kruiwagen
 --> noun (common) (futsuumeishi)
 see 猫車 | 猫火鉢
-seq# 1467640, freq# 2201, prio; 1
+seq# 1467640, freq# 2201, jlpt 5, prio; 1
 <BLANKLINE>
 <BLANKLINE>
 
@@ -96,7 +96,7 @@ query: +w idiot
     abbreviation
 ~~> ateji (phonetic) reading
 see 馬鹿貝
-seq# 1601260, freq# 2472, prio; 1
+seq# 1601260, freq# 2472, jlpt 3, prio; 1
 <BLANKLINE>
 <BLANKLINE>
 
@@ -115,7 +115,7 @@ query: += 誤魔化す
 --> Godan verb with `su' ending | transitive verb | word usually written using
     kana alone
 ~~> ateji (phonetic) reading
-seq# 1271480, freq# 10495, prio; 1
+seq# 1271480, freq# 10495, jlpt 1, prio; 1
 <BLANKLINE>
 <BLANKLINE>
 
@@ -138,7 +138,7 @@ query: +w まる
 --> noun (common) (futsuumeishi) | noun, used as a prefix | suffix | slang |
     esp. 丸
 see ○ | まる | スッポン | 麻呂
-seq# 1216250, freq# 63, prio; 1
+seq# 1216250, freq# 63, jlpt 3, prio; 1
 <BLANKLINE>
 <BLANKLINE>
 
@@ -364,6 +364,7 @@ def jmdict_search(q, verbose, word, exact, fstwd, langs, romaji,
     t = indent_and_wrap(w, info, "--> ", "green")
     if t: yield t
     if verbose:
+      jlpt = e.jlpt()
       ti = indent_and_wrap(w, e.xinfo(), "~~> ", "blue")
       if ti: yield ti
       tx = indent_and_wrap(w, e.xrefs(), "see ", "yellow")
@@ -371,6 +372,8 @@ def jmdict_search(q, verbose, word, exact, fstwd, langs, romaji,
       yield  ("seq# " + click.style(str(e.seq), fg = "blue")
         + (", freq# " + click.style(str(rank ), fg = "cyan")
                     if rank else "")
+        + (", jlpt " + click.style(str(jlpt), fg = "yellow")
+                    if jlpt else "")
         + (", prio" if e.isprio() else "") + "; " + str(i+1) + "\n")
     yield "\n"
                                                                 # }}}1
