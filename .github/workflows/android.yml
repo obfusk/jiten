@@ -25,11 +25,6 @@ jobs:
       run: |
         sudo make -C android _setup_root
         make -C android _setup_user
-    - name: Cache ~/.buildozer
-      uses: actions/cache@v2
-      with:
-        path: ~/.buildozer
-        key: ${{ runner.os }}
     - name: Build
       run: make -C android ${{ matrix.target }}
       env:
