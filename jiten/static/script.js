@@ -2,7 +2,7 @@
 //
 //  File        : static/script.js
 //  Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-//  Date        : 2020-12-04
+//  Date        : 2020-12-05
 //
 //  Copyright   : Copyright (C) 2020  Felix C. Stegerman
 //  Version     : v0.3.5
@@ -368,6 +368,11 @@ if (navigator.userAgent.includes("Android")) {
 $("#jmdict-query").parents("form").submit(() =>
   $("select[name=jlpt]").filter((i, x) => !x.value)
     .prop("disabled", true)
+)
+
+$("form.search-form").submit(e =>
+  $(".search-button", e.delegateTarget)
+    .addClass("disabled").text("Loading...")
 )
 
 // === save history ===

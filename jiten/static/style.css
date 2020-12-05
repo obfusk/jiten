@@ -25,6 +25,10 @@ a[aria-expanded=false] .collapse-close {
   display: none;
 }
 
+#jmdict-collapse.show {
+  display: inline;
+}
+
 .collapse.show + .collapse-alt {
   display: none;
 }

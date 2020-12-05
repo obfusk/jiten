@@ -2,7 +2,7 @@
 
   File        : templates/_search.html
   Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-  Date        : 2020-12-04
+  Date        : 2020-12-05
 
   Copyright   : Copyright (C) 2020  Felix C. Stegerman
   Version     : v0.3.5
@@ -16,11 +16,11 @@
                  "regex to match japanese/english/dutch/german", af,
                  btn = "info") %}
     <div class="float-right mt-1 ml-1">
-      {{ collapsebtn("jmdict-collapse", "Search Options") }}
+      {{ collapsebtn("jmdict-collapse") }}
     </div>
-    <div class="collapse show form-group mb-0" id="jmdict-collapse">
+    <div class="form-group mb-0 d-inline">
       <fieldset class="d-inline border p-2 pl-3">
-        <legend>options</legend>
+        <legend>match</legend>
         <div class="nowrap">
           <div class="form-check form-check-inline">
             <input type="checkbox"
@@ -44,8 +44,10 @@
           </div>
         </div>
       </fieldset>
+    </div>
+    <div class="collapse show form-group mb-0" id="jmdict-collapse">
       <fieldset class="d-inline border p-2 pl-3">
-        <legend>filters</legend>
+        <legend>select</legend>
         <div class="nowrap">
           <div class="form-check form-check-inline">
             <input type="checkbox" class="form-check-input"
@@ -71,7 +73,7 @@
         </div>
       </fieldset>
       <fieldset class="d-inline border p-2 px-3">
-        <legend>jlpt</legend>
+        <legend>jlpt level(s)</legend>
         <div class="form-inline d-flex flex-nowrap">
           {% set jlpt = request.args.getlist("jlpt", int)|select|sort %}
           {% for x in (jlpt|min, jlpt|max) %}
@@ -118,9 +120,12 @@
   {% call search("/kanji", "Query (Regex)", "Search Kanji",
                  "kanji-query", "query", query,
                  "kanji or regex to match kana/english", af) %}
-    <div class="form-group mb-0">
+    <div class="float-right mt-1 ml-1">
+      {{ collapsebtn("kanji-collapse") }}
+    </div>
+    <div class="form-group mb-0 d-inline">
       <fieldset class="d-inline border p-2 pl-3">
-        <legend>options</legend>
+        <legend>match</legend>
         <div class="form-check form-check-inline">
           <input type="checkbox" class="form-check-input"
             id="kanji-word" name="word" value="yes" />
@@ -134,7 +139,9 @@
             title="^...$">exact</label>
         </div>
       </fieldset>
-      <br/><br/>
+    </div>
+    <div class="collapse show form-group mb-0" id="kanji-collapse">
+      <br/>
       <span class="nowrap">
         To search by SKIP code use e.g.
         <a class="query-example"
@@ -156,6 +163,15 @@
           href="/kanji?query=%2Brandom"><kbd>+random</kbd></a>.
       </span>
     </div>
+    {% if query %}
+      <script>
+        if (window.innerWidth <= 576) {
+          $("a[data-target='#kanji-collapse']")
+            .attr("aria-expanded", "false")
+          $("#kanji-collapse").removeClass("show")
+        }
+      </script>
+    {% endif %}
   {% endcall %}
 {% endmacro %}
 {% macro stroke(query = "", af = True) %}
@@ -170,7 +186,7 @@
                  "substring to match japanese/english/dutch/german", af) %}
     <div class="form-group mb-0">
       <fieldset class="d-inline border p-2 pl-3">
-        <legend>options</legend>
+        <legend>select</legend>
         <div class="form-check form-check-inline">
           <input type="checkbox" class="form-check-input"
             id="sentences-audio" name="audio" value="yes"
