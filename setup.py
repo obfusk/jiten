@@ -9,8 +9,8 @@ mod_sqlite3_pcre  = setuptools.Extension(
   "jiten._sqlite3_pcre", ["sqlite3-pcre.c"],
   libraries = "pcre sqlite3".split()
 )
-data    = [ "res/jlpt/N" + l + "-kanji" for l in "12345" ] \
-        + [ "res/jlpt/N" + l + "-vocab" for l in "12345" ] \
+data    = [ "res/jlpt/N" + l + "-" + x for l in "12345"
+            for x in "kanji vocab-eng vocab-hiragana".split() ] \
         + [ "static/*." + x for x in "svg png css js".split() ] \
         + [ "static/audio/*.mp3" ] \
         + [ "static/font/*." + x for x in "ttf txt".split() ] \
