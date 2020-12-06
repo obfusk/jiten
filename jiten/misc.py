@@ -5,7 +5,7 @@
 #
 # File        : jiten/misc.py
 # Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-# Date        : 2020-12-04
+# Date        : 2020-12-06
 #
 # Copyright   : Copyright (C) 2020  Felix C. Stegerman
 # Version     : v0.3.5
@@ -86,10 +86,9 @@ isjap1      = lambda c: iskanji1(c) or iskana1(c)               # TODO
 isokjap1    = lambda c: isjap1(c) or c in OKPUNC                # TODO
 iscjk1      = lambda c: isideo1(c) or iskana1(c) or ispunc1(c)  # TODO
 
-# FIXME: return False for ""?!
 for _n, _f in list(locals().items()):
   if _n.startswith("is") and _n.endswith("1"):
-    locals()[_n[:-1]] = (lambda f: lambda s: all(map(f, s)))(_f)
+    locals()[_n[:-1]] = (lambda f: lambda s: bool(s) and all(map(f, s)))(_f)
 del _n, _f
 
 isascii     = getattr(str, "isascii",
