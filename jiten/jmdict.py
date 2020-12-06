@@ -572,6 +572,7 @@ def search(q, langs = [LANGS[0]], max_results = None,           # {{{1
       lang  = ",".join( "'" + l + "'" for l in langs if l in LANGS )
       limit = "LIMIT " + str(int(max_results)) if max_results else ""
       fltr  = search_filter(noun, verb, prio, jlpt)
+                        # vvvvvvvvvvvvvvv NB: 1 > 0 > NULL
       ordr  = """ORDER BY prio >= {} DESC, rank ASC, jlpt DESC,
                           prio DESC, seq ASC""".format(MINPRIO) # TODO
       if len(q) == 1 and M.iskanji(q):
