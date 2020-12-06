@@ -5,7 +5,7 @@
 #
 # File        : jiten/jmdict.py
 # Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-# Date        : 2020-12-04
+# Date        : 2020-12-06
 #
 # Copyright   : Copyright (C) 2020  Felix C. Stegerman
 # Version     : v0.3.5
@@ -19,7 +19,7 @@ r"""
 JMDict.
 
 >>> DBVERSION
-9
+10
 
 >>> jmdict = parse_jmdict()
 >>> len(jmdict)
@@ -169,16 +169,19 @@ from . import misc  as M
 from . import pitch as P
 from .sql import sqlite_do, load_pcre_extension
 
-DBVERSION       = 9 # NB: update this when data/schema changes
+DBVERSION       = 10 # NB: update this when data/schema changes
 SQLITE_FILE     = M.resource_path("res/jmdict.sqlite3")
 JMDICT_FILE     = M.resource_path("res/jmdict/jmdict.xml.gz")
 JLPT_FILE_BASE  = M.resource_path("res/jlpt/N")
 DATA_FILES      = (SQLITE_FILE, JMDICT_FILE)
 
 MAXSEQ          = 10000000
-PRIO            = "news1 ichi1 spec1 spec2 gai1".split()
+PRIO            = dict(news1 = 10, news2 = 1, ichi1 = 10, ichi2 = 1,
+                       spec1 = 10, spec2 = 5, gai1  = 10, gai2  = 1)
+MINPRIO         = 5
 USUKANA         = "word usually written using kana alone"
 LANGS           = "eng dut ger".split()
+JLPTKK, JLPTUK  = JLPTKANA = "[katakana]", "[usukana]"
 
 Entry   = namedtuple("Entry"  , """seq jlpt kanji reading sense""".split())
 Kanji   = namedtuple("Kanji"  , """elem chars info prio""".split())
@@ -192,8 +195,7 @@ def definition(e):
   xs    = r + k if e.usually_kana() else k or r
   return tuple(M.uniq( x.elem for x in xs ))
 
-def words(e):
-  return frozenset( x.elem for x in M.flatten([e.kanji, e.reading]) )
+def words(e): return frozenset( x.elem for x in e.kanji + e.reading )
 
 def meanings(e, *a):
   l = a or [LANGS[0]]
@@ -211,10 +213,15 @@ def _freq(e): return sum( F.freq.get(w, 0) for w in e.definition() )
 # TODO: load from DB
 def _rank(e): return min( F.rank(w) for w in e.definition() )
 
-def isprio(e):
-  return any( x.prio for x in M.flatten([e.kanji, e.reading]) )
+def isprio(e):      return _isprio(e.kanji + e.reading)
+def _isprio(xs):    return (_prio_level(xs) or 0) >= MINPRIO
+def prio_level(e):  return _prio_level(e.kanji + e.reading)
+def _prio_level(xs):
+  ps = [ x.prio for x in xs if x.prio ]
+  return max(ps) if ps else None
 
-def usually_kana(e): return any( USUKANA in s.info for s in e.sense )
+def usually_kana(e): return _usukana(e.sense)
+def _usukana(sense): return any( USUKANA in s.info for s in sense )
 
 def gloss_pos_info(e, langs):
   gloss, pos, info = {}, [], []
@@ -244,10 +251,42 @@ def pitch(e):
     p = P.get_pitch(r.elem, ks)
     if p: yield p
 
-def jlpt_level(kanji, reading):
-  ws = set( x.elem for x in kanji + reading )
-  ls = set(map(JLPT.get, ws)) - {None}
+def jlpt_level(kanji, reading, usukana):                        # {{{1
+  kana, prio  = not kanji or usukana, _isprio(kanji + reading)
+  ls, ka      = set(), set( k.elem for k in kanji )
+  for k in ka:
+    jlpt = JLPT.get(k)
+    if not jlpt: continue
+    for r in reading:
+      ls.update( n for x, n in jlpt if r.elem == x )
+  for r in reading:
+    if r.elem in JLPT_COMMON:
+      if (ka and not ka & JLPT_CO_KA) or \
+         (not ka and r.elem not in JLPT_CO_NK): continue
+    jlpt = JLPT.get(r.elem)
+    if not jlpt: continue
+    for x, n in jlpt:
+      assert x in JLPTKANA
+      if x == JLPTUK and not kana:
+        if any( k in JLPT_BLACK for k in ka ): continue
+        if not any( k in JLPT_WHITE for k in ka ):
+          if not prio: continue
+      ls.add(n)
   return max(ls) if ls else None
+                                                                # }}}1
+
+JLPT_BLACK  = set(""" 滑降 保母 """.split())
+JLPT_WHITE  = set(""" お先に お待たせしました お邪魔します 一昨昨日
+                      明々後日 """.split())
+JLPT_CO_KA  = set(""" 彼れ 一杯 斯う 此処 事 此の 先 為る 然う 其処
+                      其の 同 何の 成る 白 又 良く """.split())
+JLPT_CO_NK  = set(""" さん じゃ そう ちゃん と どうか なんか ね はい
+                  """.split())
+JLPT_COMMON = set(""" あ あした あと あれ いく いち いっぱい えい こう
+                      ここ こと この さっき さん し じゃ すり する
+                      せっけん そう そこ その たて ちゃん つき と どう
+                      どうか どの なる なんか ね はい はく ほんとう
+                      また よい よく """.split())               # TODO
 
 Entry.definition      = definition
 Entry.words           = words
@@ -258,6 +297,7 @@ Entry.chars           = chars
 Entry._freq           = _freq
 Entry._rank           = _rank
 Entry.isprio          = isprio
+Entry.prio_level      = prio_level
 Entry.usually_kana    = usually_kana
 Entry.gloss_pos_info  = gloss_pos_info
 Entry.isnoun          = isnoun
@@ -275,11 +315,14 @@ Sense.isintrans = lambda s: "intransitive verb" in s.pos
 Sense.istransitive    = Sense.istrans
 Sense.isintransitive  = Sense.isintrans
 
-def _isprio_k(e):
-  return any( x.text.strip() in PRIO for x in e.findall("ke_pri") )
+def _prio_l(tags):
+  return sum( PRIO.get(t, 0) for t in set(tags) )
 
-def _isprio_r(e):
-  return any( x.text.strip() in PRIO for x in e.findall("re_pri") )
+def _prio_k(e):
+  return _prio_l( x.text.strip() for x in e.findall("ke_pri") )
+
+def _prio_r(e):
+  return _prio_l( x.text.strip() for x in e.findall("re_pri") )
 
 def _kanji_chars(s): return frozenset( c for c in s if M.iskanji(c) )
 
@@ -301,7 +344,7 @@ def parse_jmdict(file = JMDICT_FILE):                           # {{{1
           keb   = ke.find("keb").text.strip()   # word/phrase w/ kanji
           info  = tuple( x.text.strip() for x in ke.findall("ke_inf") )
           assert all( "\n" not in x and "" not in x for x in info )
-          kanji.append(Kanji(keb, _kanji_chars(keb), info, _isprio_k(ke)))
+          kanji.append(Kanji(keb, _kanji_chars(keb), info, _prio_k(ke)))
         for re in e.findall("r_ele"):           # 1+ reading elem
           reb   = re.find("reb").text.strip()   # reading elem
           restr = tuple( x.text.strip() for x in re.findall("re_restr") )
@@ -309,7 +352,7 @@ def parse_jmdict(file = JMDICT_FILE):                           # {{{1
           info  = tuple( x.text.strip() for x in re.findall("re_inf") )
           assert all( "\n" not in x and "" not in x for xs in
                       [restr, info] for x in xs )
-          reading.append(Reading(reb, restr, info, _isprio_r(re)))
+          reading.append(Reading(reb, restr, info, _prio_r(re)))
         for se in e.findall("sense"):           # 1+ sense elem
           pos   = tuple( x.text.strip() for x in se.findall("pos") ) or pos
                   # part of speech, applies to following senses too
@@ -330,23 +373,52 @@ def parse_jmdict(file = JMDICT_FILE):                           # {{{1
           assert all( "\n" not in x and "" not in x for xs in
                       [pos, gloss, s_inf, misc, xref] for x in xs )
           sense.append(Sense(pos, lang, tuple(gloss), s_inf + misc, xref))
-        krs = ( tuple(x) for x in [kanji, reading, sense] )
-        data.append(Entry(seq, jlpt_level(kanji, reading), *krs))
+        krs   = ( tuple(x) for x in [kanji, reading, sense] )
+        jlpt  = jlpt_level(kanji, reading, _usukana(sense))
+        data.append(Entry(seq, jlpt, *krs))
       return data
                                                                 # }}}1
 
-def load_jlpt(base = JLPT_FILE_BASE):
-  data = {}
+def load_jlpt(base = JLPT_FILE_BASE):                           # {{{1
+  skip        = "×|Ͼ立|あげる (=やる)|より、ほう".split("|")
+  kata        = "ローマじ ジェットき けしゴム".split()
+  repl        = { "あたたか(い)": "あたたかい" }
+  data, seen  = {}, set()
   for level in "12345":
-    with open(base + level + "-vocab") as f:
+    with open(base + level + "-vocab-hiragana") as f:
       for line in f:
-        for word in line.split()[0].split("/"):
-          if word in "× Ͼ立 より、ほう".split(): continue
-          assert M.isokjap(word)
-          data[word] = int(level) # seen is sorta ok, higher is better
+        word, read = line.rstrip("\n").split("\t")
+        if word in skip: continue
+        if read.endswith("・する"): read = read[:-3]
+        words = word.replace("  ", "/").split("/")
+        reads = read.replace("  ", "/").replace(" / ", "/").split("/")
+        reads = [ repl.get(r, r) for r in reads ]
+        reads = [ r for r in reads if r in kata or M.ishiragana(r) ]
+        if not reads: continue
+        assert words and all( M.isokjap(w) for w in words )
+        assert not (len(words) > 1 and len(reads) > 1)
+        for w in words:
+          for r in reads:
+            assert w != r or M.iskana(w)
+            if w == r: r = JLPTUK
+            else: seen.add(w)
+            data.setdefault(w, []).append((r, int(level)))
+  for level in "12345":
+    with open(base + level + "-vocab-eng") as f:
+      for line in f:
+        words = line.rstrip("\n").replace("  ", "/").split("/")
+        words = [ w.strip() for w in words if w ]
+        if any( w in skip for w in words ): continue
+        assert words and all( M.isokjap(w) for w in words )
+        for w in words:
+          if w not in seen:
+            assert M.iskana(w)
+            what = JLPTKK if M.iskatakana(w) else JLPTUK
+            data.setdefault(w, []).append((what, int(level)))
   return data
+                                                                # }}}1
 
-JLPT = load_jlpt()
+JLPT = load_jlpt()                                              # TODO
 
 # NB: kanji/reading/sense are retrieved in insertion (i.e. rowid) order!
 def jmdict2sqldb(data, file = SQLITE_FILE):                     # {{{1
@@ -356,7 +428,7 @@ def jmdict2sqldb(data, file = SQLITE_FILE):                     # {{{1
       for e in bar:
         c.execute("INSERT INTO entry VALUES (?,?,?,?,?,?,?)",
                   (e.seq, e.jlpt, e._rank(), str(e._freq()),
-                   e.isprio(), e.isnoun(), e.isverb()))
+                   e.prio_level(), e.isnoun(), e.isverb()))
         for k in e.kanji:
           c.execute("INSERT INTO kanji VALUES (?,?,?,?,?)",
                     (e.seq, k.elem, "".join(sorted(k.chars)),
@@ -390,7 +462,7 @@ JMDICT_CREATE_SQL = """
     jlpt INTEGER,
     rank INTEGER,
     freq INTEGER,
-    prio BOOLEAN,
+    prio INTEGER,
     noun BOOLEAN,
     verb BOOLEAN
   );
@@ -399,7 +471,7 @@ JMDICT_CREATE_SQL = """
     elem TEXT,
     chars TEXT,
     info TEXT,
-    prio BOOLEAN,
+    prio INTEGER,
     FOREIGN KEY(entry) REFERENCES entry(seq)
   );
   CREATE TABLE kanji_code(
@@ -412,7 +484,7 @@ JMDICT_CREATE_SQL = """
     elem TEXT,
     restr TEXT,
     info TEXT,
-    prio BOOLEAN,
+    prio INTEGER,
     FOREIGN KEY(entry) REFERENCES entry(seq)
   );
   CREATE TABLE sense(
@@ -455,7 +527,7 @@ def search_filter(noun, verb, prio, jlpt):
   if noun and verb: s.append("(noun = 1 OR verb = 1)")
   elif noun       : s.append("noun = 1")
   elif verb       : s.append("verb = 1")
-  if prio         : s.append("prio = 1")
+  if prio         : s.append("prio >= {}".format(MINPRIO))
   if jlpt         : s.append("({} <= jlpt AND jlpt <= {})"
                              .format(*map(int, jlpt)))
   return "WHERE " + " AND ".join(s)
@@ -463,13 +535,13 @@ def search_filter(noun, verb, prio, jlpt):
 def load_entry(c, seq, jlpt):                                   # {{{1
   k = tuple(
       Kanji(r["elem"], frozenset(r["chars"]),
-            tuple(r["info"].splitlines()), bool(r["prio"]))
+            tuple(r["info"].splitlines()), r["prio"])
     for r in c.execute("SELECT * FROM kanji WHERE entry = ?" +
                        " ORDER BY rowid ASC", (seq,))
   )
   r = tuple(
       Reading(r["elem"], tuple(r["restr"].splitlines()),
-              tuple(r["info"].splitlines()), bool(r["prio"]))
+              tuple(r["info"].splitlines()), r["prio"])
     for r in c.execute("SELECT * FROM reading WHERE entry = ?" +
                        " ORDER BY rowid ASC", (seq,))
   )
@@ -500,16 +572,16 @@ def search(q, langs = [LANGS[0]], max_results = None,           # {{{1
       lang  = ",".join( "'" + l + "'" for l in langs if l in LANGS )
       limit = "LIMIT " + str(int(max_results)) if max_results else ""
       fltr  = search_filter(noun, verb, prio, jlpt)
+      ordr  = """ORDER BY prio >= {} DESC, rank ASC, jlpt DESC,
+                          prio DESC, seq ASC""".format(MINPRIO) # TODO
       if len(q) == 1 and M.iskanji(q):
         query = ("""
           SELECT rank, seq, jlpt FROM (
             SELECT entry FROM kanji_code WHERE code = ?
           )
           INNER JOIN entry ON seq = entry
-          {}
-          ORDER BY prio DESC, rank ASC, seq ASC
-          {}
-        """.format(fltr, limit), (ord(q),))                   # safe!
+          {} {} {}
+        """.format(fltr, ordr, limit), (ord(q),))             # safe!
       elif M.iscjk(q):
         query = ("""
           SELECT rank, seq, jlpt FROM (
@@ -518,10 +590,8 @@ def search(q, langs = [LANGS[0]], max_results = None,           # {{{1
               SELECT entry FROM reading WHERE elem LIKE :q
           )
           INNER JOIN entry ON seq = entry
-          {}
-          ORDER BY prio DESC, rank ASC, seq ASC
-          {}
-        """.format(fltr, limit), dict(q = "%"+q+"%"))         # safe!
+          {} {} {}
+        """.format(fltr, ordr, limit), dict(q = "%"+q+"%"))   # safe!
       elif M.q2like(q):
         load_pcre_extension(c.connection)
         prms  = dict(q = M.q2like(q), re = M.q2rx(q))
@@ -539,10 +609,8 @@ def search(q, langs = [LANGS[0]], max_results = None,           # {{{1
         """.format(lang)) + """
           )
           INNER JOIN entry ON seq = entry
-          {}
-          ORDER BY prio DESC, rank ASC, seq ASC
-          {}
-        """.format(fltr, limit), prms)                        # safe!
+          {} {} {}
+        """.format(fltr, ordr, limit), prms)                  # safe!
       else:
         load_pcre_extension(c.connection)
         query = ("""
@@ -555,20 +623,20 @@ def search(q, langs = [LANGS[0]], max_results = None,           # {{{1
                 lang IN ({}) AND gloss REGEXP :re
           )
           INNER JOIN entry ON seq = entry
-          {}
-          ORDER BY prio DESC, rank ASC, seq ASC
-          {}
-        """.format(lang, fltr, limit), dict(re = M.q2rx(q)))  # safe!
+          {} {} {}
+        """.format(lang, fltr, ordr, limit),                  # safe!
+          dict(re = M.q2rx(q)))
       for r, s, j in [ tuple(r) for r in c.execute(*query) ]: # eager!
         yield load_entry(c, s, j), fix_rank(r)
                                                                 # }}}1
 
 def by_freq(offset = 0, limit = 1000, file = SQLITE_FILE):
   with sqlite_do(file) as c:
-    ents = [ tuple(r) for r in c.execute("""
-        SELECT seq, rank, jlpt FROM entry WHERE prio AND rank != {}
-          ORDER BY rank ASC LIMIT ? OFFSET ?
-        """.format(F.NOFREQ), (int(limit), int(offset))) ]    # safe!
+    q = """ SELECT seq, rank, jlpt FROM entry
+              WHERE prio >= {} AND rank != {}
+              ORDER BY rank ASC LIMIT ? OFFSET ?
+        """.format(MINPRIO, F.NOFREQ)                         # safe!
+    ents = [ tuple(r) for r in c.execute(q, (int(limit), int(offset))) ]
     for seq, rank, jlpt in ents:
       yield load_entry(c, seq, jlpt), rank
 
