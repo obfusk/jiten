@@ -4,7 +4,7 @@
 
     File        : templates/sentences.html
     Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-    Date        : 2020-10-29
+    Date        : 2020-12-07
 
     Copyright   : Copyright (C) 2020  Felix C. Stegerman
     Version     : v0.3.5
@@ -38,15 +38,19 @@
               <span class="float-right">{{ topbtn() }}</span>
               <h6 class="card-title entry jap mb-1" title="japanese">
                 {% for c in e.jap -%}
-                  {% if M.iskanji(c) -%}
-                    {%- set read, mean = krm(c) -%}
-                    <a class="text-reset"
-                      title="{{ "; ".join(mean) }} 【{{ "、".join(read) }}】"
-                      data-toggle="tooltip" data-placement="top"
-                      href="/kanji?query={{ c }}">{{ c }}</a>
+                  {%- if M.isideo(c) -%}
+                    {%- set rm = krm(c) -%}
+                    {%- if rm -%}
+                      <a class="text-reset"
+                        title="{{ "; ".join(rm[1]) }} 【{{ "、".join(rm[0]) }}】"
+                        data-toggle="tooltip" data-placement="top"
+                        href="/kanji?query={{ c }}">{{ c }}</a>
+                    {%- else -%}
+                      {{ c }}
+                    {%- endif -%}
                   {%- else -%}
                     {{ c }}
-                  {%- endif %}
+                  {%- endif -%}
                 {%- endfor %}
               </h6>
             </div>

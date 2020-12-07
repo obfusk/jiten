@@ -5,7 +5,7 @@
 #
 # File        : jiten/kanji.py
 # Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-# Date        : 2020-12-04
+# Date        : 2020-12-07
 #
 # Copyright   : Copyright (C) 2020  Felix C. Stegerman
 # Version     : v0.3.5
@@ -415,7 +415,7 @@ def readmeans(file = SQLITE_FILE):
 def readmean(char, c):
   r = c.execute("SELECT on_, kun, meaning FROM entry WHERE code = ?",
                 (ord(char),)).fetchone()
-  return _readmean(r)
+  return _readmean(r) if r else None
 
 def _readmean(r):
   return (tuple(r["on_"].splitlines() + r["kun"].splitlines()),
