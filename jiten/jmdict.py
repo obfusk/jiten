@@ -407,7 +407,7 @@ def load_jlpt(base = JLPT_FILE_BASE):                           # {{{1
       for line in f:
         words = line.rstrip("\n").replace("  ", "/").split("/")
         words = [ w.strip() for w in words if w ]
-        if skip & words: continue
+        if skip & set(words): continue
         assert words and all( M.isokjap(w) for w in words )
         for w in words:
           if w not in seen:
