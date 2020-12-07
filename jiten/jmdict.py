@@ -5,7 +5,7 @@
 #
 # File        : jiten/jmdict.py
 # Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-# Date        : 2020-12-06
+# Date        : 2020-12-07
 #
 # Copyright   : Copyright (C) 2020  Felix C. Stegerman
 # Version     : v0.3.5
@@ -268,9 +268,8 @@ def jlpt_level(kanji, reading, usukana):                        # {{{1
     for x, n in jlpt:
       assert x in JLPTKANA
       if x == JLPTUK and not kana:
-        if any( k in JLPT_BLACK for k in ka ): continue
-        if not any( k in JLPT_WHITE for k in ka ):
-          if not prio: continue
+        if ka & JLPT_BLACK: continue
+        if not ka & JLPT_WHITE and not prio: continue
       ls.add(n)
   return max(ls) if ls else None
                                                                 # }}}1
@@ -380,7 +379,7 @@ def parse_jmdict(file = JMDICT_FILE):                           # {{{1
                                                                 # }}}1
 
 def load_jlpt(base = JLPT_FILE_BASE):                           # {{{1
-  skip        = "×|Ͼ立|あげる (=やる)|より、ほう".split("|")
+  skip        = set("×|Ͼ立|あげる (=やる)|より、ほう".split("|"))
   kata        = "ローマじ ジェットき けしゴム".split()
   repl        = { "あたたか(い)": "あたたかい" }
   data, seen  = {}, set()
@@ -408,7 +407,7 @@ def load_jlpt(base = JLPT_FILE_BASE):                           # {{{1
       for line in f:
         words = line.rstrip("\n").replace("  ", "/").split("/")
         words = [ w.strip() for w in words if w ]
-        if any( w in skip for w in words ): continue
+        if skip & words: continue
         assert words and all( M.isokjap(w) for w in words )
         for w in words:
           if w not in seen:
