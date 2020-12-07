@@ -315,7 +315,7 @@ Sense.istransitive    = Sense.istrans
 Sense.isintransitive  = Sense.isintrans
 
 def _prio_l(tags):
-  return sum( PRIO.get(t, 0) for t in set(tags) )
+  return sum( PRIO.get(t, 0) for t in set(tags) ) # or None   # FIXME
 
 def _prio_k(e):
   return _prio_l( x.text.strip() for x in e.findall("ke_pri") )
