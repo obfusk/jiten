@@ -5,7 +5,7 @@
 #
 # File        : jiten/cli.py
 # Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-# Date        : 2020-12-06
+# Date        : 2020-12-07
 #
 # Copyright   : Copyright (C) 2020  Felix C. Stegerman
 # Version     : v0.3.5
@@ -56,7 +56,7 @@ query: +w cat
 --> noun (common) (futsuumeishi) | abbreviation | word usually written using
     kana alone | colloquialism
 see 猫車 | 猫火鉢
-seq# 1467640, freq# 2201, jlpt 5, prio; 1
+seq# 1467640, freq# 2201, jlpt N5, prio; 1
 <BLANKLINE>
 <BLANKLINE>
 
@@ -74,7 +74,7 @@ query: +w kat
 = kruiwagen
 --> noun (common) (futsuumeishi)
 see 猫車 | 猫火鉢
-seq# 1467640, freq# 2201, jlpt 5, prio; 1
+seq# 1467640, freq# 2201, jlpt N5, prio; 1
 <BLANKLINE>
 <BLANKLINE>
 
@@ -96,7 +96,7 @@ query: +w idiot
     abbreviation
 ~~> ateji (phonetic) reading
 see 馬鹿貝
-seq# 1601260, freq# 2472, jlpt 3, prio; 1
+seq# 1601260, freq# 2472, jlpt N3, prio; 1
 <BLANKLINE>
 <BLANKLINE>
 
@@ -115,7 +115,7 @@ query: += 誤魔化す
 --> Godan verb with 'su' ending | transitive verb | word usually written using
     kana alone
 ~~> ateji (phonetic) reading
-seq# 1271480, freq# 10495, jlpt 1, prio; 1
+seq# 1271480, freq# 10495, jlpt N1, prio; 1
 <BLANKLINE>
 <BLANKLINE>
 
@@ -138,7 +138,7 @@ query: +w まる
 --> noun (common) (futsuumeishi) | noun, used as a prefix | suffix | slang |
     esp. 丸
 see ○ | まる | スッポン | 麻呂
-seq# 1216250, freq# 63, jlpt 3, prio; 1
+seq# 1216250, freq# 63, jlpt N3, prio; 1
 <BLANKLINE>
 <BLANKLINE>
 
@@ -213,7 +213,7 @@ query: += cat
 部: 犬 (94) ⺨ 犯 田 艸 艹 艾 苗
 variants: 貓
 0x732b CJK UNIFIED IDEOGRAPH-732B; 1
-11 strokes, level 常用, freq# 1702, old jlpt 2, jlpt 3, skip 1-3-8
+11 strokes, level 常用, freq# 1702, old jlpt N2, jlpt N3, skip 1-3-8
 <BLANKLINE>
 <BLANKLINE>
 
@@ -236,7 +236,7 @@ query: +w 日
     訪日 【ほうにち】 | 三十日 【さんじゅうにち】 | 三十日 【みそか】
 部: 日 (72)
 0x65e5 CJK UNIFIED IDEOGRAPH-65E5; 1
-4 strokes, level 常用1, freq# 1, old jlpt 4, jlpt 5, skip 3-3-1
+4 strokes, level 常用1, freq# 1, old jlpt N4, jlpt N5, skip 3-3-1
 <BLANKLINE>
 <BLANKLINE>
 
@@ -375,7 +375,7 @@ def jmdict_search(q, verbose, word, exact, fstwd, langs, romaji,
       yield  ("seq# " + click.style(str(e.seq), fg = "blue")
         + (", freq# " + click.style(str(rank ), fg = "cyan")
                     if rank else "")
-        + (", jlpt " + click.style(str(e.jlpt), fg = "yellow")
+        + (", jlpt " + click.style("N"+str(e.jlpt), fg = "yellow")
                     if e.jlpt else "")
         + (", prio" if e.isprio() else "") + "; " + str(i+1) + "\n")
     yield "\n"
@@ -466,9 +466,9 @@ def kanji_search(q, verbose, word, exact, fstwd, max_results,
            if e.level else "")
         + (", freq# " + click.style(str(e.freq), fg = "magenta")
            if e.freq else "")
-        + (", old jlpt " + click.style(str(e.jlpt), fg = "blue")
+        + (", old jlpt " + click.style("N"+str(e.jlpt), fg = "blue")
            if e.jlpt else "")
-        + (", jlpt " + click.style(str(e.new_jlpt), fg = "cyan")
+        + (", jlpt " + click.style("N"+str(e.new_jlpt), fg = "cyan")
            if e.new_jlpt else "")
         + (", skip " + click.style(e.skip, fg = "yellow")
            if e.skip else "") + "\n")
