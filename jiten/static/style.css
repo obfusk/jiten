@@ -47,22 +47,31 @@ a[aria-expanded=false] .collapse-close {
 
 @font-face {
   font-family: KanjiStrokeOrders;
-  src: url(/static/font/KanjiStrokeOrders_v4.003.ttf);
+  src: url("/static/font/KanjiStrokeOrders_v4.003.ttf");
 }
-.stroke {
-  font-family: KanjiStrokeOrders;
+/*
+@font-face {
+  font-family: "__Noto Serif CJK JP";
+  src: url("/static/font/NotoSerifJP-Regular.otf") format("opentype");
 }
-.kanji {
+@font-face {
+  font-family: "__Noto Sans CJK JP";
+  src: url("/static/font/NotoSansJP-Regular.otf") format("opentype");
+}
+*/
+.stroke, .kanji {
   font-family:
     KanjiStrokeOrders,
-    "Noto Serif CJK JP", "Noto Serif CJK SC", "Noto Serif CJK TC",
+    "Noto Serif CJK JP", /* "__Noto Serif CJK JP", */
+    "Noto Serif CJK SC", "Noto Serif CJK TC",
     ipaexmincho, ipamincho, serif;
 }
 .jap, .kanji:hover, .tooltip {
   font-family:
     -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
     "Helvetica Neue", Arial,
-    "Noto Sans CJK JP", "Noto Sans CJK SC", "Noto Sans CJK TC",
+    "Noto Sans CJK JP", /* "__Noto Sans CJK JP", */
+    "Noto Sans CJK SC", "Noto Sans CJK TC",
     ipaexgothic, ipagothic, sans-serif,
     "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
 }
