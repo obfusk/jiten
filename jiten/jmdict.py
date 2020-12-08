@@ -33,15 +33,32 @@ Japanese-Multilingual Dictionary Project - Creation Date: 2020-12-03
 >>> len([ x for x in jmdict if x.isprio() and list(x.pitch()) ])
 14719
 
+>>> len([ x for x in jmdict if x.jlpt == 1 ])
+3034
+>>> len([ x for x in jmdict if x.jlpt == 2 ])
+1725
+>>> len([ x for x in jmdict if x.jlpt == 3 ])
+1657
+>>> len([ x for x in jmdict if x.jlpt == 4 ])
+633
+>>> len([ x for x in jmdict if x.jlpt == 5 ])
+679
+
 >>> baka = [ x for x in jmdict if any( r.elem == "ばか" for r in x.reading ) ][0]
 >>> baka.seq
 1601260
 >>> baka.definition()
 ('ばか', 'バカ', '馬鹿', '莫迦', '破家', '馬稼')
+>>> tuple(baka.pitch())
+('ばꜜか',)
 >>> baka.usually_kana()
 True
+>>> baka.jlpt
+3
 >>> baka.isprio()
 True
+>>> baka.prio_level()
+11
 >>> baka.isnoun()
 True
 >>> baka.isverb()
@@ -90,10 +107,16 @@ ateji (phonetic) reading
 1578850
 >>> iku.definition()
 ('いく', 'ゆく', '行く', '逝く', '往く')
+>>> tuple(iku.pitch())
+('いꜛく', 'ゆꜛく')
 >>> iku.usually_kana()
 True
+>>> iku.jlpt
+5
 >>> iku.isprio()
 True
+>>> iku.prio_level()
+10
 >>> iku.isnoun()
 False
 >>> iku.isverb()
