@@ -27,7 +27,7 @@
 → available online at https://jiten.obfusk.dev
 
 [<img src="badges/google-play.png" alt="Get it on Google Play" height="60">](https://play.google.com/store/apps/details?id=dev.obfusk.jiten)
-[<img src="badges/fdroid.png" alt="Get it on F-Droid" height="60">](#)
+[<img src="badges/fdroid.png" alt="Get it on F-Droid" height="60">](#not-yet-available)
 
 <!-- [](https://f-droid.org/app/dev.obfusk.jiten) -->
 
