@@ -1,14 +1,14 @@
-<!-- {{{1 -->
+<!-- {{{1
 
     File        : README.md
     Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-    Date        : 2020-12-04
+    Date        : 2020-12-08
 
     Copyright   : Copyright (C) 2020  Felix C. Stegerman
     Version     : v0.3.5
     License     : AGPLv3+
 
-<!-- }}}1 -->
+}}}1 -->
 
 [![GitHub Release](https://img.shields.io/github/release/obfusk/jiten.svg?logo=github)](https://github.com/obfusk/jiten/releases)
 [![PyPI Version](https://img.shields.io/pypi/v/jiten.svg)](https://pypi.python.org/pypi/jiten)
@@ -22,25 +22,26 @@
 [![F-Droid Version](https://img.shields.io/f-droid/v/dev.obfusk.jiten.svg)](https://f-droid.org/app/dev.obfusk.jiten)
 -->
 
-## Description
+## jiten - japanese android/cli/web dictionary based on jmdict/kanjidic
 
-jiten - japanese android/cli/web dictionary based on jmdict/kanjidic
-
-→ https://jiten.obfusk.dev
+→ available online at https://jiten.obfusk.dev
 
 [<img src="badges/google-play.png" alt="Get it on Google Play" height="60">](https://play.google.com/store/apps/details?id=dev.obfusk.jiten)
-
-NB: unfortunately, jiten is not (yet) available in the official
-F-Droid repository, but you can get it via [**obfusk's f-droid
-repo**](https://obfusk.dev/fdroid/repo?fingerprint=2A21B7FFC93B878724B1991C05DAE113C72B93A556C193F49B5D3342884798B7).
-
-[<img src="badges/fdroid.png" alt="Get it on F-Droid" height="60">]()
+[<img src="badges/fdroid.png" alt="Get it on F-Droid" height="60">](#)
 
 <!-- [](https://f-droid.org/app/dev.obfusk.jiten) -->
 
-![CLI screenshot](screenshot-cli.png)
+NB: unfortunately, **jiten is not (yet) available in the official
+F-Droid repository**.  You can use
+[**obfusk's f-droid repo**](https://obfusk.dev/fdroid/repo?fingerprint=2A21B7FFC93B878724B1991C05DAE113C72B93A556C193F49B5D3342884798B7)
+instead: this contains the exact same APKs available via Google Play,
+as well as occational beta versions (which are only installed when
+selected manually).
 
-![app screenshot](screenshot-app.png)
+## Screenshots
+
+[<img src="screenshot-app.png" alt="app screenshot" width="256">](screenshot-app.png)
+[<img src="screenshot-cli.png" alt="cli screenshot" width="543">](screenshot-cli.png)
 
 ## Features
 
@@ -52,17 +53,18 @@ repo**](https://obfusk.dev/fdroid/repo?fingerprint=2A21B7FFC93B878724B1991C05DAE
 * JMDict multilingual japanese dictionary
   - kanji, readings, meanings (english, dutch and/or german) & more
   - pitch accent (from Wadoku)
-  - browse by frequency
+  - browse by frequency/jlpt
 * Kanji dictionary
   - readings, meanings (english), jmdict entries, radicals & more
   - search using
     [SKIP codes](https://en.wikipedia.org/wiki/Kodansha_Kanji_Learner%27s_Dictionary#SKIP)
   - search by radical
-  - browse by frequency/level
+  - browse by frequency/level/jlpt
 * Example sentences (from Tatoeba)
   - with english, dutch and/or german translation
   - some with audio
 * Stroke order
+  - input a word or sentence and see how it's written
 * Android app
   - wraps the web interface (running locally on your device) in a webview
   - completely offline, no internet access required
@@ -70,6 +72,7 @@ repo**](https://obfusk.dev/fdroid/repo?fingerprint=2A21B7FFC93B878724B1991C05DAE
   - available online at https://jiten.obfusk.dev
   - light/dark mode
   - search history (stored locally)
+  - tooltips to quickly see meanings and readings for kanji in words and sentences
   - use long press for tooltips on mobile
   - can be run on your own computer (or e.g. android phone)
 * Command-line interface

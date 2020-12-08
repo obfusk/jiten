@@ -9,19 +9,20 @@ Features:
 JMDict multilingual japanese dictionary
 • kanji, readings, meanings (english, dutch and/or german) & more
 • pitch accent (from Wadoku)
-• browse by frequency
+• browse by frequency/jlpt
 
 Kanji dictionary
 • readings, meanings (english), jmdict entries, radicals & more
 • search using SKIP codes
 • search by radical
-• browse by frequency/level
+• browse by frequency/level/jlpt
 
 Example sentences (from Tatoeba)
 • with english, dutch and/or german translation
 • some with audio
 
 Stroke order
+• input a word or sentence and see how it's written
 
 Fine-grained search using regexes (regular expressions)
 • simple searches don't require knowledge of regexes
@@ -32,6 +33,7 @@ Dark mode
 Search history (stored locally)
 
 Use long press for tooltips
+• quickly see meanings and readings for kanji in words and sentences
 
 
 To report bugs and request features, please use the issue tracker at
