@@ -358,13 +358,6 @@ $("[data-toggle='tooltip']").tooltip().click(evt =>
   $(evt.delegateTarget).tooltip("hide")
 )
 
-if (navigator.userAgent.includes("Android")) {
-  $("#feedback").click(() => {
-    alert($("#feedback").attr("data-original-title"))
-    return false
-  })
-}
-
 $("#jmdict-query").parents("form").submit(() =>
   $("select[name=jlpt]").filter((i, x) => !x.value)
     .prop("disabled", true)

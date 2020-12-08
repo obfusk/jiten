@@ -117,6 +117,8 @@ $ jiten --help
 
 ## Questions & Feedback
 
+→ [Discussions](https://github.com/obfusk/jiten/discussions)
+
 → jiten@obfusk.dev
 
 ## Requirements
