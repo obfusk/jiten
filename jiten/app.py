@@ -5,7 +5,7 @@
 #
 # File        : jiten/app.py
 # Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-# Date        : 2020-12-04
+# Date        : 2020-12-07
 #
 # Copyright   : Copyright (C) 2020  Felix C. Stegerman
 # Version     : v0.3.5
@@ -159,6 +159,18 @@ def r_jmdict_by_freq():
   results = list(J.by_freq(offset, 1000))
   return respond("jmdict-by-freq.html", page = "jmdict/by-freq",
                  offset = offset, results = results)
+
+@app.route("/jmdict/by-jlpt/1")
+@app.route("/jmdict/by-jlpt/2")
+@app.route("/jmdict/by-jlpt/3")
+@app.route("/jmdict/by-jlpt/4")
+@app.route("/jmdict/by-jlpt/5")
+def r_jmdict_by_jlpt():
+  n       = int(request.path.split("/")[-1])
+  offset  = arg("offset", 0, type = int)
+  results = list(J.by_jlpt(n, offset, 1000))
+  return respond("jmdict-by-jlpt.html", page = request.path[1:],
+                 level = n, offset = offset, results = results)
 
 # FIXME: legacy route
 @app.route("/jmdict/random")

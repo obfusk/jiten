@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="en">
+  <!--
+
+    File        : templates/jmdict-by-jlpt.html
+    Maintainer  : Felix C. Stegerman <flx@obfusk.net>
+    Date        : 2020-12-07
+
+    Copyright   : Copyright (C) 2020  Felix C. Stegerman
+    Version     : v0.3.5
+    License     : AGPLv3+
+
+  -->
+  <head>
+    {% include "_meta.html" %}
+    <title>jiten - jmdict by jlpt - n{{ level }}</title>
+  </head>
+  <body>
+    {% from "_macros.html" import topbtn with context %}
+    {% include "_nav.html" %}
+    <div class="container">
+      {% for row in results|batch(100) %}
+        <div class="card">
+          <div class="card-header d-flex flex-wrap">
+            <div>
+            {% if loop.first %}
+              <h4 class="card-title">JLPT N{{ level }}</h4>
+              <h6 class="card-subtitle text-muted">
+            {% else %}
+              <h6 class="card-title text-muted">
+            {% endif %}
+                {{ offset + loop.index0 * 100 + 1 }} -
+                {{ offset + loop.index0 * 100 + row|length }}
+              </h6>
+            </div>
+            <span class="ml-auto">{{ topbtn() }}</span>
+          </div>
+          <div class="card-body">
+            {% for e in row %}
+              <!-- TODO: langs for meanings()?! -->
+              <a class="jap selbtn btn btn-primary px-2 py-1 mb-1"
+                title="{{ "; ".join(e.meanings()|sum(start=())) }}"
+                data-toggle="tooltip" data-placement="top"
+                href="/jmdict?query={{ ("+#" + e.seq|string)|urlencode }}"
+                >{{ "、".join(e.definition()) }}</a>
+            {% endfor %}
+          </div>
+          {% if loop.last %}
+            <div class="card-footer text-right">
+              {{ topbtn() }}
+            </div>
+          {% endif %}
+        </div>
+        <br/>
+      {% endfor %}
+      <div class="text-right">
+        {% if offset >= 1000 %}
+          <a class="btn btn-primary"
+            href="?offset={{ offset - 1000 }}">« Previous</a>
+        {% endif %}
+        {% if results|length == 1000 %}
+          <a class="btn btn-primary"
+            href="?offset={{ offset + 1000 }}">Next »</a>
+        {% endif %}
+      </div>
+    </div>
+    {% include "_footer.html" %}
+  </body>
+</html>

@@ -44,6 +44,17 @@ Japanese-Multilingual Dictionary Project - Creation Date: 2020-12-03
 >>> len([ x for x in jmdict if x.jlpt == 5 ])
 679
 
+>>> len([ x for x in jmdict if x.jlpt == 1 and x.isprio() ])
+2628
+>>> len([ x for x in jmdict if x.jlpt == 2 and x.isprio() ])
+1647
+>>> len([ x for x in jmdict if x.jlpt == 3 and x.isprio() ])
+1615
+>>> len([ x for x in jmdict if x.jlpt == 4 and x.isprio() ])
+615
+>>> len([ x for x in jmdict if x.jlpt == 5 and x.isprio() ])
+657
+
 >>> baka = [ x for x in jmdict if any( r.elem == "ばか" for r in x.reading ) ][0]
 >>> baka.seq
 1601260
@@ -274,6 +285,7 @@ def pitch(e):
     p = P.get_pitch(r.elem, ks)
     if p: yield p
 
+# TODO
 def jlpt_level(kanji, reading, usukana):                        # {{{1
   kana, prio  = not kanji or usukana, _isprio(kanji + reading)
   ls, ka      = set(), set( k.elem for k in kanji )
@@ -662,6 +674,15 @@ def by_freq(offset = 0, limit = 1000, file = SQLITE_FILE):
     ents = [ tuple(r) for r in c.execute(q, (int(limit), int(offset))) ]
     for seq, rank, jlpt in ents:
       yield load_entry(c, seq, jlpt), rank
+
+def by_jlpt(n, offset = 0, limit = 1000, file = SQLITE_FILE):
+  with sqlite_do(file) as c:
+    query =  (""" SELECT seq, jlpt FROM entry
+                    WHERE prio >= {} AND jlpt = ?
+                    ORDER BY rank ASC LIMIT ? OFFSET ?
+              """.format(MINPRIO), (int(n), int(limit), int(offset)))
+    for seq, jlpt in [ tuple(r) for r in c.execute(*query) ]:
+      yield load_entry(c, seq, jlpt)
 
 def random_seq(noun = False, verb = False, prio = False, jlpt = None,
                file = SQLITE_FILE):
