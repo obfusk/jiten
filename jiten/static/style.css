@@ -58,13 +58,16 @@ a[aria-expanded=false] .collapse-close {
     "Noto Serif CJK JP", "Noto Serif CJK SC", "Noto Serif CJK TC",
     ipaexmincho, ipamincho, serif;
 }
-.jap, .kanji:hover {
+.jap, .kanji:hover, .tooltip {
   font-family:
     -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
     "Helvetica Neue", Arial,
     "Noto Sans CJK JP", "Noto Sans CJK SC", "Noto Sans CJK TC",
     ipaexgothic, ipagothic, sans-serif,
     "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+}
+.jap:not(.sentence), .tooltip {
+  word-break: keep-all;
 }
 
 fieldset {

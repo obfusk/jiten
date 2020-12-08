@@ -36,7 +36,8 @@
           <div class="card">
             <div class="card-header">
               <span class="float-right">{{ topbtn() }}</span>
-              <h6 class="card-title entry jap mb-1" title="japanese">
+              <h6 class="card-title entry jap sentence mb-1"
+                  title="japanese">
                 {% for c in e.jap -%}
                   {%- if M.isideo(c) -%}
                     {%- set rm = krm(c) -%}

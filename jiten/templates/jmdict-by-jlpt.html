@@ -38,8 +38,10 @@
           <div class="card-body">
             {% for e in row %}
               <!-- TODO: langs for meanings()?! -->
+              {% set mean = e.meanings()|sum(start=()) %}
+              {% set read = e.reading|map(attribute="elem") %}
               <a class="jap selbtn btn btn-primary px-2 py-1 mb-1"
-                title="{{ "; ".join(e.meanings()|sum(start=())) }}"
+                title="{{ "; ".join(mean) }} 【{{ "、".join(read) }}】"
                 data-toggle="tooltip" data-placement="top"
                 href="/jmdict?query={{ ("+#" + e.seq|string)|urlencode }}"
                 >{{ "、".join(e.definition()) }}</a>
