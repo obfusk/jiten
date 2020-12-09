@@ -1,15 +1,19 @@
 #!/bin/bash
 set -e
+buildpack_url=https://github.com/heroku/heroku-buildpack-python
+buildpack_vsn=v187
 
 # rebuild python if it's missing loadable sqlite extensions
 if  ! python3 -msysconfig | grep enable-loadable-sqlite-extensions \
     > /dev/null; then
   PYTHON_VERSION="$(< runtime.txt)"
-  export WORKSPACE_DIR="$(cd "$BIN_DIR"/.. || exit; pwd)/builds"
+  git clone -b "$buildpack_vsn" "$buildpack_url" _buildpack
+  export WORKSPACE_DIR="$PWD/_buildpack/builds"
   rm -f .heroku/python/bin/python   # prevent failing ln after build
   sed -i 's!figure --pre!figure --enable-loadable-sqlite-extensions --pre!' \
     "$WORKSPACE_DIR"/runtimes/python3
   "$WORKSPACE_DIR/runtimes/$PYTHON_VERSION" /app/.heroku/python/
+  rm -fr _buildpack
 fi
 
 # load DB from cache
