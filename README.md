@@ -35,7 +35,7 @@ NB: unfortunately, **jiten is not (yet) available in the official
 F-Droid repository**.  You can use
 [**obfusk's f-droid repo**](https://obfusk.dev/fdroid/repo?fingerprint=2A21B7FFC93B878724B1991C05DAE113C72B93A556C193F49B5D3342884798B7)
 instead: this contains the exact same APKs available via Google Play,
-as well as occational beta versions (which are only installed when
+as well as occasional beta versions (which are only installed when
 selected manually).
 
 ## Screenshots
