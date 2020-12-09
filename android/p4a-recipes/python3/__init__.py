@@ -12,7 +12,7 @@ def _patch():
     "patches/py3.8.1_fix_cortex_a8.patch"
   ]
   Python3Recipe, recipe = mod.Python3Recipe, mod.recipe
-  Python3Recipe.version = "3.9.0"
+  Python3Recipe.version = "3.9.1"
   if sqlite_ext not in Python3Recipe.configure_args:
     Python3Recipe.configure_args += (sqlite_ext,)
   for patch in patches:
