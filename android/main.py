@@ -94,17 +94,23 @@ def setup_clipboard(act):
 
   return token
 
+def setup_webview(cls):
+  cls.enableZoom()
+  cls.mOpenExternalLinksInBrowser = True
+
 if __name__ == "__main__":
   if ANDROID:
     fix_stdio()
     import android.activity, android.config, certifi, jnius
     os.environ["SSL_CERT_FILE"] = certifi.where()
-    act = jnius.autoclass(android.config.ACTIVITY_CLASS_NAME).mActivity
+    cls = jnius.autoclass(android.config.ACTIVITY_CLASS_NAME)
+    act = cls.mActivity
     dbg = debug_mode(act)
     setup_flask(dbg)
     if dbg: setup_debug_mode()
     token = setup_clipboard(act)
     setup_activities(act, dbg, token)
+    setup_webview(cls)
 
   from jiten.cli import serve_app
   serve_app(host = HOST, port = PORT, use_reloader = False)

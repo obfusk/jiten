@@ -1,6 +1,6 @@
 --- a/pythonforandroid/bootstraps/webview/build/src/main/java/org/kivy/android/PythonActivity.java
 +++ b/pythonforandroid/bootstraps/webview/build/src/main/java/org/kivy/android/PythonActivity.java
-@@ -33,6 +33,7 @@ import android.view.ViewGroup.LayoutParams;
+@@ -34,6 +34,7 @@ import android.view.ViewGroup.LayoutParams;
  
  import android.webkit.WebViewClient;
  import android.webkit.WebView;
@@ -8,23 +8,37 @@
  
  import org.renpy.android.ResourceManager;
  
-@@ -156,12 +157,19 @@ public class PythonActivity extends Activity {
-             mWebView = new WebView(PythonActivity.mActivity);
-             mWebView.getSettings().setJavaScriptEnabled(true);
-             mWebView.getSettings().setDomStorageEnabled(true);
-+            mWebView.getSettings().setBuiltInZoomControls(true);
-+            mWebView.getSettings().setDisplayZoomControls(false);
-             mWebView.loadUrl("file:///" + app_root_dir + "/_load.html");
+@@ -45,6 +46,7 @@ public class PythonActivity extends Activity {
+     private static final String TAG = "PythonActivity";
  
-             mWebView.setLayoutParams(new LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.FILL_PARENT));
+     public static PythonActivity mActivity = null;
++    public static boolean mOpenExternalLinksInBrowser = false;
+ 
+     /** If shared libraries (e.g. SDL or the native application) could not be loaded. */
+     public static boolean mBrokenLibraries;
+@@ -163,6 +165,13 @@ public class PythonActivity extends Activity {
              mWebView.setWebViewClient(new WebViewClient() {
                      @Override
                      public boolean shouldOverrideUrlLoading(WebView view, String url) {
-+                        if(!(url.startsWith("file:") || url.startsWith("http://127.0.0.1:"))) {
-+                            Intent i = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
-+                            startActivity(i);
-+                            return true;
++                        if (mOpenExternalLinksInBrowser) {
++                            if (!(url.startsWith("file:") || url.startsWith("http://127.0.0.1:"))) {
++                                Intent i = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
++                                startActivity(i);
++                                return true;
++                            }
 +                        }
                          view.loadUrl(url);
                          return false;
                      }
+@@ -240,6 +249,11 @@ public class PythonActivity extends Activity {
+         mActivity.runOnUiThread(new LoadUrl(url));
+     }
+ 
++    public static void enableZoom() {
++        mWebView.getSettings().setBuiltInZoomControls(true);
++        mWebView.getSettings().setDisplayZoomControls(false);
++    }
++
+     public static ViewGroup getLayout() {
+         return   mLayout;
+     }
