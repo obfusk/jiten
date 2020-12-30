@@ -373,7 +373,7 @@ $("form.search-form").submit(e => {
 $(".search-alt").click(evt => {
   const e = evt.delegateTarget, r = e.dataset.route
   const f = $(`<form action="/${r}">`)
-  const i = $('<input type="text" name="query" />')
+  const i = $('<input type="hidden" name="query" />')
   let   v = $("input", $(e).parents("form")).val()
   if (/sentences|stroke/.test(r)) { v = v.replace(/^\+[=1w]\s*/, "") }
   i.val(v); f.append(i); $("body").append(f); f.submit()
