@@ -3,8 +3,8 @@
 @@ -44,6 +44,7 @@ public class PythonUtil {
          libsList.add("python3.6m");
          libsList.add("python3.7m");
-         libsList.add("python3.8m");
-+        libsList.add("python3.9m");
+         libsList.add("python3.8");
++        libsList.add("python3.9");
          libsList.add("main");
          return libsList;
      }
