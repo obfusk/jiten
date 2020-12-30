@@ -6,7 +6,9 @@ dir="$PWD" p=( patch -N -r- -p1 )
 (
   cd .p4a
   for f in "$dir"/patches/*.patch; do
-    ! "${p[@]}" --dry-run < "$f" | grep -iF failed
+    echo "applying patch $(basename "$f") ..."
+    err="$( "${p[@]}" --dry-run < "$f" 2>&1 | grep -iF failed )"
+    [ "$err" = "" ] || { echo FAILED; false; }
     "${p[@]}" < "$f" || true
   done
 )
