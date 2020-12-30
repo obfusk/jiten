@@ -2,7 +2,7 @@
 //
 //  File        : static/script.js
 //  Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-//  Date        : 2020-12-05
+//  Date        : 2020-12-30
 //
 //  Copyright   : Copyright (C) 2020  Felix C. Stegerman
 //  Version     : v0.3.5
@@ -363,10 +363,22 @@ $("#jmdict-query").parents("form").submit(() =>
     .prop("disabled", true)
 )
 
-$("form.search-form").submit(e =>
+$("form.search-form").submit(e => {
+  $(".dropdown-toggle", e.delegateTarget).addClass("disabled")
   $(".search-button", e.delegateTarget)
     .addClass("disabled").text("Loading...")
-)
+})
+
+// TODO
+$(".search-alt").click(evt => {
+  const e = evt.delegateTarget, r = e.dataset.route
+  const f = $(`<form action="/${r}">`)
+  const i = $('<input type="text" name="query" />')
+  let   v = $("input", $(e).parents("form")).val()
+  if (/sentences|stroke/.test(r)) { v = v.replace(/^\+[=1w]\s*/, "") }
+  i.val(v); f.append(i); $("body").append(f); f.submit()
+  return false
+})
 
 // === save history ===
 

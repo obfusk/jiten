@@ -4,10 +4,10 @@
 
     File        : templates/index.html
     Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-    Date        : 2020-08-05
+    Date        : 2020-12-30
 
     Copyright   : Copyright (C) 2020  Felix C. Stegerman
-    Version     : v0.2.0
+    Version     : v0.3.5
     License     : AGPLv3+
 
   -->
@@ -16,7 +16,7 @@
     <title>jiten</title>
   </head>
   <body>
-    {% from "_search.html" import jmdict, kanji, stroke, sentences with context %}
+    {% from "_search.html" import jmdict, kanji, sentences, stroke with context %}
     {% include "_nav.html" %}
     <div class="container">
       {{ jmdict(langs) }}

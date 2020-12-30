@@ -174,12 +174,6 @@
     {% endif %}
   {% endcall %}
 {% endmacro %}
-{% macro stroke(query = "", af = True) %}
-  {% call search("/stroke", "Text", "筆順を示す",
-                 "stroke-query", "query", query,
-                 "漢字か仮名を入力", af) %}
-  {% endcall %}
-{% endmacro %}
 {% macro sentences(query = "", af = True) %}
   {% call search("/sentences", "Query", "Search Sentences",
                  "sentences-query", "query", query,
@@ -212,5 +206,11 @@
       <a class="query-example"
         href="/sentences?query=%2Brandom"><kbd>+random</kbd></a>.
     </div>
+  {% endcall %}
+{% endmacro %}
+{% macro stroke(query = "", af = True) %}
+  {% call search("/stroke", "Text", "筆順を示す",
+                 "stroke-query", "query", query,
+                 "漢字か仮名を入力", af, mb = 0) %}
   {% endcall %}
 {% endmacro %}

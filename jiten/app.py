@@ -5,7 +5,7 @@
 #
 # File        : jiten/app.py
 # Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-# Date        : 2020-12-07
+# Date        : 2020-12-30
 #
 # Copyright   : Copyright (C) 2020  Felix C. Stegerman
 # Version     : v0.3.5
@@ -102,7 +102,7 @@ def respond(template, **data):
     roma = roma, pref_langs = pref_langs, pref_max = pref_max,
     int = int, ord = ord, hex = hex, J = J, K = K, M = M, S = S,
     START = START, VERSION = __version__, PY_VERSION = py_version,
-    kana2romaji = kana2romaji, **data
+    kana2romaji = kana2romaji, SEARCH = SEARCH, **data
   ))
 
 def get_langs(prefs = None):
@@ -249,5 +249,12 @@ def r_save_prefs():
     roma  = yesno(request.form.get("roma") == "yes"),
     max   = str(request.form.get("max", MAX, type = int)),
   ), redirect(request.form.get("url", url_for("r_index"))))
+
+SEARCH = (
+  ("jmdict"   , "Search JMDict"   ),
+  ("kanji"    , "Search Kanji"    ),
+  ("sentences", "Search Sentences"),
+  ("stroke"   , "筆順を示す"      ),
+)
 
 # vim: set tw=70 sw=2 sts=2 et fdm=marker :

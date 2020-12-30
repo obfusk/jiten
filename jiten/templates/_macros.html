@@ -2,7 +2,7 @@
 
   File        : templates/_macros.html
   Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-  Date        : 2020-12-05
+  Date        : 2020-12-30
 
   Copyright   : Copyright (C) 2020  Felix C. Stegerman
   Version     : v0.3.5
@@ -51,13 +51,32 @@
     </div>
   </div>
 {% endmacro %}
-{% macro search(action, label, go, id, name, value, ph, af = True, btn = "primary") %}
+{% macro search(action, label, go, id, name, value, ph, af = True,
+                btn = "primary", mb = 2) %}
   <div class="card">
     <form class="search-form card-body" action="{{ action }}">
       <div class="form-group form-inline justify-content-end mb-0">
         <label class="sr-only" for="{{ id }}">{{ label }}</label>
-        {{ input(id, name, value, ph, af) }}
-        <button class="search-button btn btn-{{ btn }} mb-2">{{ go }}</button>
+        {% set imb = mb or "sm-0 mb-2" %}{# TODO #}
+        {{ input(id, name, value, ph, af, mb = imb) }}
+        <div class="btn-group mb-{{ mb }}">
+          <button class="search-button btn btn-{{ btn }}">{{ go }}</button>
+          <button data-toggle="dropdown"
+              class="btn btn-{{ btn }} dropdown-toggle dropdown-toggle-split"
+              aria-haspopup="true" aria-expanded="false">
+            <span class="sr-only">Toggle Dropdown</span>
+          </button>
+          <div class="dropdown-menu">
+            <h5 class="dropdown-header">Switch to</h5>
+            {% for x in SEARCH %}
+              {% if go != x[1] %}
+                <a class="search-alt dropdown-item"
+                  data-route="{{ x[0] }}"
+                  href="/{{ x[0] }}">{{ x[1] }}</a>
+              {% endif %}
+            {% endfor %}
+          </div>
+        </div>
       </div>
       {{ caller() }}
     </form>
