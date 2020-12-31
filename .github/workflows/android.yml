@@ -2,7 +2,7 @@ name: Android
 on: [push, pull_request, workflow_dispatch]
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     strategy:
       matrix:
         target:
@@ -13,6 +13,10 @@ jobs:
         package:
         - jiten
         - jiten_nodb
+    env:
+      JAVA_HOME: /usr/lib/jvm/java-11-openjdk-amd64
+      JAVA_HOME_11_X64: /usr/lib/jvm/java-11-openjdk-amd64
+      JAVA_HOME_8_X64: ''
     steps:
     - uses: actions/checkout@v2
       with:
@@ -24,7 +28,14 @@ jobs:
     - name: Install dependencies
       run: |
         sudo make -C android _setup_root
+        sudo apt-get purge -y adoptopenjdk-11-hotspot adoptopenjdk-8-hotspot
         make -C android _setup_user
+    - name: System info
+      run: |
+        lsb_release -a
+        git --version && python --version
+        java -version && javac -version
+        # env | grep -Eiv 'token|secret|github'
     - name: Build
       run: make -C android ${{ matrix.target }}
       env:

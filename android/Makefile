@@ -2,6 +2,14 @@ SHELL       := /bin/bash
 BUILDOZER   ?= buildozer
 PIP_INSTALL ?= pip install
 
+# for reproducible builds
+export LC_ALL             := C
+export TZ                 := UTC
+export SOURCE_DATE_EPOCH  := $(shell git log -1 --pretty=%ct)
+export PYTHONHASHSEED     := $(SOURCE_DATE_EPOCH)
+export BUILD_DATE         := $(shell date +'%b %e %Y' -d @$(SOURCE_DATE_EPOCH))
+export BUILD_TIME         := $(shell date +'%H:%M:%S' -d @$(SOURCE_DATE_EPOCH))
+
 export APP_VERSION := $(shell git describe | sed 's/^v//')
 ifndef APP_VERSION
   $(error git describe failed)
@@ -12,9 +20,10 @@ ifndef NUMERIC
   $(error numeric version command failed)
 endif
 
-.PHONY: debug clean
+.PHONY: debug release clean
 
 debug: debug-armeabi-v7a debug-arm64-v8a
+release: release-armeabi-v7a release-arm64-v8a
 
 clean:
 	buildozer android clean
@@ -48,7 +57,7 @@ _setup_root:
 	apt-get install -y build-essential git
 	apt-get install -y openjdk-11-jdk-headless
 	apt-get install -y zlib1g-dev zip unzip pkg-config libffi-dev
-	apt-get install -y libltdl-dev
+	apt-get install -y libltdl-dev libssl-dev
 	apt-get install -y lld
 
 _setup_user:
