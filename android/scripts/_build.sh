@@ -10,7 +10,7 @@
 #
 # NB:
 #   assumes a (ubuntu LTS) host w/ _setup_root packages + python3-pip
-#   installed
+#   installed (& umask 022)
 #
 # TODO:
 #   * specify branch != master?
@@ -20,7 +20,6 @@
 ######################################################################
 
 set -xe
-umask 022
 
 test "$#" -ge 2
 remote="$1"; shift
