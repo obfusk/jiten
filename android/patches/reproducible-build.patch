@@ -119,7 +119,7 @@
 +                    utime(filen, (timestamp, timestamp))
              info("Zip {} files into the bundle".format(len(stdlib_filens)))
 -            shprint(sh.zip, stdlib_zip, *stdlib_filens)
-+            shprint(sh.zip, '--no-extra', stdlib_zip, *stdlib_filens)
++            shprint(sh.zip, '-X', stdlib_zip, *stdlib_filens)
  
          # copy the site-packages into place
          ensure_dir(join(dirn, 'site-packages'))
