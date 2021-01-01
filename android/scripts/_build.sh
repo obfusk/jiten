@@ -36,7 +36,7 @@ ssh "$remote" 'mkdir -p work/jiten && \
 ssh "$remote" 'cd work/jiten/jiten && \
   export PATH="$HOME/.local/bin:$PATH" && \
   make -C android _setup_user PIP_INSTALL="pip3 install --user" && \
-  for target in '"$*"'; do make -C android "$target"; done'
+  for target in '"$*"'; do make -C android "$target" || exit $?; done'
 
 # copy APKs
 mkdir -p tmp/_build

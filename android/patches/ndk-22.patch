@@ -1,0 +1,415 @@
+--- a/pythonforandroid/archs.py
++++ b/pythonforandroid/archs.py
+@@ -30,7 +30,7 @@ class Arch:
+     common_cppflags = [
+         '-DANDROID',
+         '-D__ANDROID_API__={ctx.ndk_api}',
+-        '-I{ctx.ndk_dir}/sysroot/usr/include/{command_prefix}',
++        '-I{ctx.ndk_sysroot}/usr/include/{command_prefix}',
+         '-I{python_includes}',
+     ]
+ 
+--- a/pythonforandroid/build.py
++++ b/pythonforandroid/build.py
+@@ -12,9 +12,10 @@ import sh
+ import shutil
+ import subprocess
+ from contextlib import suppress
++from distutils.version import LooseVersion
+ 
+ from pythonforandroid.util import (
+-    current_directory, ensure_dir,
++    build_platform, current_directory, ensure_dir,
+     BuildInterruptingException,
+ )
+ from pythonforandroid.logger import (info, warning, info_notify, info_main, shprint)
+@@ -23,7 +24,7 @@ from pythonforandroid.pythonpackage import get_package_name
+ from pythonforandroid.recipe import CythonRecipe, Recipe
+ from pythonforandroid.recommendations import (
+     check_ndk_version, check_target_api, check_ndk_api,
+-    RECOMMENDED_NDK_API, RECOMMENDED_TARGET_API)
++    read_ndk_version, RECOMMENDED_NDK_API, RECOMMENDED_TARGET_API)
+ 
+ 
+ def get_ndk_platform_dir(ndk_dir, ndk_api, arch):
+@@ -40,6 +41,21 @@ def get_ndk_platform_dir(ndk_dir, ndk_api, arch):
+     return ndk_platform, ndk_platform_dir_exists
+ 
+ 
++def get_ndk_standalone(ndk_dir):
++    return join(ndk_dir, 'toolchains', 'llvm', 'prebuilt', build_platform)
++
++
++def get_ndk_sysroot(ndk_dir):
++    sysroot = join(get_ndk_standalone(ndk_dir), 'sysroot')
++    if not exists(sysroot):
++        warning("sysroot doesn't exist: {}".format(sysroot))
++    return sysroot
++
++
++def get_ndk_lib_dir(sysroot, ndk_api, arch):
++    return join(sysroot, 'usr', 'lib', arch.command_prefix, str(ndk_api))
++
++
+ def get_toolchain_versions(ndk_dir, arch):
+     toolchain_versions = []
+     toolchain_path_exists = True
+@@ -115,6 +131,10 @@ class Context:
+     ccache = None  # whether to use ccache
+ 
+     ndk_platform = None  # the ndk platform directory
++    ndk_standalone = None  # ndk >= r22 doesn't have platform/ & sysroot/
++    ndk_sysroot = None
++    ndk_lib_dir = None  # usr/lib
++    ndk_include_dir = None  # usr/include
+ 
+     bootstrap = None
+     bootstrap_build_dir = None
+@@ -378,9 +398,19 @@ class Context:
+         # This would need to be changed if supporting multiarch APKs
+         arch = self.archs[0]
+         toolchain_prefix = arch.toolchain_prefix
+-        self.ndk_platform, ndk_platform_dir_exists = get_ndk_platform_dir(
+-            self.ndk_dir, self.ndk_api, arch)
+-        ok = ok and ndk_platform_dir_exists
++        ndk_version = read_ndk_version(ndk_dir)
++        if ndk_version is None or ndk_version < LooseVersion('22'):
++            self.ndk_platform, ndk_platform_dir_exists = get_ndk_platform_dir(
++                self.ndk_dir, self.ndk_api, arch)
++            ok = ok and ndk_platform_dir_exists
++            self.ndk_sysroot = join(self.ndk_dir, 'sysroot')
++            self.ndk_lib_dir = join(self.ndk_dir, 'usr', 'lib')
++        else:
++            self.ndk_standalone = get_ndk_standalone(self.ndk_dir)
++            self.ndk_sysroot = get_ndk_sysroot(self.ndk_dir)
++            self.ndk_lib_dir = get_ndk_lib_dir(self.ndk_sysroot, self.ndk_api, arch)
++            ok = ok and exists(self.ndk_sysroot)
++        self.ndk_include_dir = join(self.ndk_sysroot, 'usr', 'include')
+ 
+         py_platform = sys.platform
+         if py_platform in ['linux2', 'linux3']:
+@@ -878,7 +908,7 @@ def biglink(ctx, arch):
+ 
+     # Move to the directory containing crtstart_so.o and crtend_so.o
+     # This is necessary with newer NDKs? A gcc bug?
+-    with current_directory(join(ctx.ndk_platform, 'usr', 'lib')):
++    with current_directory(ctx.ndk_lib_dir):
+         do_biglink(
+             join(ctx.get_libs_dir(arch.arch), 'libpymodules.so'),
+             obj_dir.split(' '),
+--- a/pythonforandroid/recipe.py
++++ b/pythonforandroid/recipe.py
+@@ -1129,7 +1129,10 @@ class CythonRecipe(PythonRecipe):
+         env['LDSHARED'] = env['CC'] + ' -shared'
+         # shprint(sh.whereis, env['LDSHARED'], _env=env)
+         env['LIBLINK'] = 'NOTNONE'
+-        env['NDKPLATFORM'] = self.ctx.ndk_platform
++        if self.ctx.ndk_standalone:
++            env['NDKPLATFORM'] = self.ctx.ndk_sysroot  # FIXME
++        else:
++            env['NDKPLATFORM'] = self.ctx.ndk_platform
+         if self.ctx.copy_libs:
+             env['COPYLIBS'] = '1'
+ 
+--- a/pythonforandroid/recipes/Pillow/__init__.py
++++ b/pythonforandroid/recipes/Pillow/__init__.py
+@@ -35,9 +35,13 @@ class PillowRecipe(CompiledComponentsPythonRecipe):
+     def get_recipe_env(self, arch=None, with_flags_in_cc=True):
+         env = super().get_recipe_env(arch, with_flags_in_cc)
+ 
+-        env['ANDROID_ROOT'] = join(self.ctx.ndk_platform, 'usr')
+-        ndk_lib_dir = join(self.ctx.ndk_platform, 'usr', 'lib')
+-        ndk_include_dir = join(self.ctx.ndk_dir, 'sysroot', 'usr', 'include')
++        if self.ctx.ndk_standalone:
++            pass  # FIXME
++        else:
++            env['ANDROID_ROOT'] = join(self.ctx.ndk_platform, 'usr')
++
++        ndk_lib_dir = self.ctx.ndk_lib_dir
++        ndk_include_dir = self.ctx.ndk_include_dir
+ 
+         png = self.get_recipe('png', self.ctx)
+         png_lib_dir = join(png.get_build_dir(arch.arch), '.libs')
+--- a/pythonforandroid/recipes/audiostream/__init__.py
++++ b/pythonforandroid/recipes/audiostream/__init__.py
+@@ -25,7 +25,10 @@ class AudiostreamRecipe(CythonRecipe):
+                               jni_path=join(self.ctx.bootstrap.build_dir, 'jni'),
+                               sdl_include=sdl_include,
+                               sdl_mixer_include=sdl_mixer_include)
+-        env['NDKPLATFORM'] = self.ctx.ndk_platform
++        if self.ctx.ndk_standalone:
++            env['NDKPLATFORM'] = self.ctx.ndk_sysroot  # FIXME
++        else:
++            env['NDKPLATFORM'] = self.ctx.ndk_platform
+         env['LIBLINK'] = 'NOTNONE'  # Hacky fix. Needed by audiostream setup.py
+         return env
+ 
+--- a/pythonforandroid/recipes/cffi/__init__.py
++++ b/pythonforandroid/recipes/cffi/__init__.py
+@@ -35,9 +35,7 @@ class CffiRecipe(CompiledComponentsPythonRecipe):
+                           self.ctx.get_libs_dir(arch.arch))
+         env['LDFLAGS'] += ' -L{}'.format(os.path.join(self.ctx.bootstrap.build_dir, 'libs', arch.arch))
+         # required for libc and libdl
+-        ndk_dir = self.ctx.ndk_platform
+-        ndk_lib_dir = os.path.join(ndk_dir, 'usr', 'lib')
+-        env['LDFLAGS'] += ' -L{}'.format(ndk_lib_dir)
++        env['LDFLAGS'] += ' -L{}'.format(self.ndk_lib_dir)
+         env['PYTHONPATH'] = ':'.join([
+             self.ctx.get_site_packages_dir(),
+             env['BUILDLIB_PATH'],
+--- a/pythonforandroid/recipes/evdev/__init__.py
++++ b/pythonforandroid/recipes/evdev/__init__.py
+@@ -18,7 +18,10 @@ class EvdevRecipe(CompiledComponentsPythonRecipe):
+ 
+     def get_recipe_env(self, arch=None):
+         env = super().get_recipe_env(arch)
+-        env['NDKPLATFORM'] = self.ctx.ndk_platform
++        if self.ctx.ndk_standalone:
++            env['NDKPLATFORM'] = self.ctx.ndk_sysroot  # FIXME
++        else:
++            env['NDKPLATFORM'] = self.ctx.ndk_platform
+         return env
+ 
+ 
+--- a/pythonforandroid/recipes/ffmpeg/__init__.py
++++ b/pythonforandroid/recipes/ffmpeg/__init__.py
+@@ -120,9 +120,7 @@ class FFMpegRecipe(Recipe):
+                 '--cross-prefix={}-'.format(arch.target),
+                 '--arch={}'.format(arch_flag),
+                 '--strip={}strip'.format(cross_prefix),
+-                '--sysroot={}'.format(join(self.ctx.ndk_dir, 'toolchains',
+-                                           'llvm', 'prebuilt', 'linux-x86_64',
+-                                           'sysroot')),
++                '--sysroot={}'.format(self.ctx.ndk_sysroot),  # FIXME
+                 '--enable-neon',
+                 '--prefix={}'.format(realpath('.')),
+             ]
+--- a/pythonforandroid/recipes/freetype/__init__.py
++++ b/pythonforandroid/recipes/freetype/__init__.py
+@@ -46,14 +46,14 @@ class FreetypeRecipe(Recipe):
+                 )
+             )
+ 
+-        # android's zlib support
+-        zlib_lib_path = join(self.ctx.ndk_platform, 'usr', 'lib')
+-        zlib_includes = join(self.ctx.ndk_dir, 'sysroot', 'usr', 'include')
+-
+         def add_flag_if_not_added(flag, env_key):
+             if flag not in env[env_key]:
+                 env[env_key] += flag
+ 
++        # android's zlib support
++        zlib_lib_path = self.ctx.ndk_lib_dir
++        zlib_includes = self.ctx.ndk_include_dir
++
+         add_flag_if_not_added(' -I' + zlib_includes, 'CFLAGS')
+         add_flag_if_not_added(' -L' + zlib_lib_path, 'LDFLAGS')
+         add_flag_if_not_added(' -lz', 'LDLIBS')
+--- a/pythonforandroid/recipes/jpeg/__init__.py
++++ b/pythonforandroid/recipes/jpeg/__init__.py
+@@ -33,7 +33,7 @@ class JpegRecipe(Recipe):
+                     '-DCMAKE_SYSTEM_PROCESSOR={cpu}'.format(cpu='arm'),
+                     '-DCMAKE_POSITION_INDEPENDENT_CODE=1',
+                     '-DCMAKE_ANDROID_ARCH_ABI={arch}'.format(arch=arch.arch),
+-                    '-DCMAKE_ANDROID_NDK=' + self.ctx.ndk_dir,
++                    '-DCMAKE_ANDROID_NDK=' + self.ctx.ndk_dir,  # FIXME
+                     '-DCMAKE_C_COMPILER={cc}'.format(cc=arch.get_clang_exe()),
+                     '-DCMAKE_CXX_COMPILER={cc_plus}'.format(
+                         cc_plus=arch.get_clang_exe(plus_plus=True)),
+--- a/pythonforandroid/recipes/libogg/__init__.py
++++ b/pythonforandroid/recipes/libogg/__init__.py
+@@ -11,10 +11,11 @@ class OggRecipe(Recipe):
+     def build_arch(self, arch):
+         with current_directory(self.get_build_dir(arch.arch)):
+             env = self.get_recipe_env(arch)
+-            flags = [
+-                '--with-sysroot=' + self.ctx.ndk_platform,
+-                '--host=' + arch.toolchain_prefix,
+-            ]
++            flags = ['--host=' + arch.toolchain_prefix]
++            if self.ctx.ndk_standalone:
++                flags.append('--with-sysroot=' + self.ctx.ndk_sysroot)  # FIXME
++            else:
++                flags.append('--with-sysroot=' + self.ctx.ndk_platform)
+             configure = sh.Command('./configure')
+             shprint(configure, *flags, _env=env)
+             shprint(sh.make, _env=env)
+--- a/pythonforandroid/recipes/librt/__init__.py
++++ b/pythonforandroid/recipes/librt/__init__.py
+@@ -20,7 +20,7 @@ class LibRt(Recipe):
+ 
+     @property
+     def libc_path(self):
+-        return join(self.ctx.ndk_platform, 'usr', 'lib', 'libc')
++        return join(self.ctx.ndk_lib_dir, 'libc')  # FIXME
+ 
+     def build_arch(self, arch):
+         # Create a temporary folder to add to link path with a fake librt.so:
+--- a/pythonforandroid/recipes/libvorbis/__init__.py
++++ b/pythonforandroid/recipes/libvorbis/__init__.py
+@@ -20,10 +20,11 @@ class VorbisRecipe(NDKRecipe):
+     def build_arch(self, arch):
+         with current_directory(self.get_build_dir(arch.arch)):
+             env = self.get_recipe_env(arch)
+-            flags = [
+-                '--with-sysroot=' + self.ctx.ndk_platform,
+-                '--host=' + arch.toolchain_prefix,
+-            ]
++            flags = ['--host=' + arch.toolchain_prefix]
++            if self.ctx.ndk_standalone:
++                flags.append('--with-sysroot=' + self.ctx.ndk_sysroot)  # FIXME
++            else:
++                flags.append('--with-sysroot=' + self.ctx.ndk_platform)
+             configure = sh.Command('./configure')
+             shprint(configure, *flags, _env=env)
+             shprint(sh.make, _env=env)
+--- a/pythonforandroid/recipes/lxml/__init__.py
++++ b/pythonforandroid/recipes/lxml/__init__.py
+@@ -51,10 +51,8 @@ class LXMLRecipe(CompiledComponentsPythonRecipe):
+         env['LIBS'] += ' -lxml2'
+ 
+         # android's ndk flags
+-        ndk_lib_dir = join(self.ctx.ndk_platform, 'usr', 'lib')
+-        ndk_include_dir = join(self.ctx.ndk_dir, 'sysroot', 'usr', 'include')
+-        cflags += ' -I' + ndk_include_dir
+-        env['LDFLAGS'] += ' -L' + ndk_lib_dir
++        cflags += ' -I' + self.ctx.ndk_include_dir
++        env['LDFLAGS'] += ' -L' + self.ctx.ndk_lib_dir
+         env['LIBS'] += ' -lz -lm -lc'
+ 
+         if cflags not in env['CFLAGS']:
+--- a/pythonforandroid/recipes/matplotlib/__init__.py
++++ b/pythonforandroid/recipes/matplotlib/__init__.py
+@@ -98,7 +98,7 @@ class MatplotlibRecipe(CppCompiledComponentsPythonRecipe):
+ 
+         with open(join(self.get_build_dir(arch), 'setup.cfg'), 'w') as fileh:
+             fileh.write(setup_cfg.format(
+-                ndk_sysroot_usr=join(self.ctx.ndk_dir, 'sysroot', 'usr')))
++                ndk_sysroot_usr=join(self.ctx.ndk_sysroot, 'usr')))  # FIXME
+ 
+         self.generate_libraries_pc_files(arch)
+         self.download_web_backend_dependencies(arch)
+--- a/pythonforandroid/recipes/opencv/__init__.py
++++ b/pythonforandroid/recipes/opencv/__init__.py
+@@ -39,7 +39,7 @@ class OpenCVRecipe(NDKRecipe):
+ 
+     def get_recipe_env(self, arch):
+         env = super().get_recipe_env(arch)
+-        env['ANDROID_NDK'] = self.ctx.ndk_dir
++        env['ANDROID_NDK'] = self.ctx.ndk_dir  # FIXME
+         env['ANDROID_SDK'] = self.ctx.sdk_dir
+         return env
+ 
+--- a/pythonforandroid/recipes/openssl/__init__.py
++++ b/pythonforandroid/recipes/openssl/__init__.py
+@@ -96,7 +96,11 @@ class OpenSSLRecipe(Recipe):
+         env = super().get_recipe_env(arch)
+         env['OPENSSL_VERSION'] = self.version
+         env['MAKE'] = 'make'  # This removes the '-j5', which isn't safe
+-        env['ANDROID_NDK'] = self.ctx.ndk_dir
++        if self.ctx.ndk_standalone:
++            env['ANDROID_NDK_HOME'] = self.ctx.ndk_standalone
++            env['CC'] = 'clang'
++        else:
++            env['ANDROID_NDK_HOME'] = self.ctx.ndk_dir
+         return env
+ 
+     def select_build_arch(self, arch):
+@@ -127,6 +131,7 @@ class OpenSSLRecipe(Recipe):
+                 buildarch,
+                 '-D__ANDROID_API__={}'.format(self.ctx.ndk_api),
+             ]
++            self.apply_patch('standalone-ndk.patch', arch.arch)
+             shprint(perl, 'Configure', *config_args, _env=env)
+             self.apply_patch('disable-sover.patch', arch.arch)
+ 
+new file mode 100644
+--- /dev/null
++++ b/pythonforandroid/recipes/openssl/standalone-ndk.patch
+@@ -0,0 +1,26 @@
++--- a/Configurations/15-android.conf	2021-01-02 03:49:06.227255874 +0100
+++++ b/Configurations/15-android.conf	2021-01-02 04:06:22.239571311 +0100
++@@ -107,16 +107,20 @@
++                 }
++             } elsif (-f "$ndk/AndroidVersion.txt") {    #"standalone toolchain"
++                 my $cc = $user{CC} // "clang";
+++                my $ndk_api = $ENV{NDK_API};
+++                if ($ndk_api =~ m|^android-(\d+)$|) {
+++                  $api = $1;
+++                }
++                 # One can probably argue that both clang and gcc should be
++                 # probed, but support for "standalone toolchain" was added
++                 # *after* announcement that gcc is being phased out, so
++                 # favouring clang is considered adequate. Those who insist
++                 # have option to enforce test for gcc with CC=gcc.
++-                if (which("$triarch-$cc") !~ m|^$ndk|) {
+++                if (which("$triarch$api-$cc") !~ m|^$ndk|) {
++                     die "no NDK $triarch-$cc on \$PATH";
++                 }
++-                $user{CC} = $cc;
++-                $user{CROSS_COMPILE} = "$triarch-";
+++                $user{CC} = "$triarch$api-$cc";
+++                $user{CROSS_COMPILE} = "";
++             } elsif ($user{CC} eq "clang") {
++                 die "no NDK clang on \$PATH";
++             } else {
+--- a/pythonforandroid/recipes/pygame/__init__.py
++++ b/pythonforandroid/recipes/pygame/__init__.py
+@@ -28,9 +28,11 @@ class Pygame2Recipe(CompiledComponentsPythonRecipe):
+         with current_directory(self.get_build_dir(arch.arch)):
+             setup_template = open(join("buildconfig", "Setup.Android.SDL2.in")).read()
+             env = self.get_recipe_env(arch)
+-            env['ANDROID_ROOT'] = join(self.ctx.ndk_platform, 'usr')
+ 
+-            ndk_lib_dir = join(self.ctx.ndk_platform, 'usr', 'lib')
++            if self.ctx.ndk_standalone:
++                pass  # FIXME
++            else:
++                env['ANDROID_ROOT'] = join(self.ctx.ndk_platform, 'usr')
+ 
+             png = self.get_recipe('png', self.ctx)
+             png_lib_dir = join(png.get_build_dir(arch.arch), '.libs')
+@@ -43,7 +45,7 @@ class Pygame2Recipe(CompiledComponentsPythonRecipe):
+                 sdl_includes=(
+                     " -I" + join(self.ctx.bootstrap.build_dir, 'jni', 'SDL', 'include') +
+                     " -L" + join(self.ctx.bootstrap.build_dir, "libs", str(arch)) +
+-                    " -L" + png_lib_dir + " -L" + jpeg_lib_dir + " -L" + ndk_lib_dir),
++                    " -L" + png_lib_dir + " -L" + jpeg_lib_dir + " -L" + self.ctx.ndk_lib_dir),
+                 sdl_ttf_includes="-I"+join(self.ctx.bootstrap.build_dir, 'jni', 'SDL2_ttf'),
+                 sdl_image_includes="-I"+join(self.ctx.bootstrap.build_dir, 'jni', 'SDL2_image'),
+                 sdl_mixer_includes="-I"+join(self.ctx.bootstrap.build_dir, 'jni', 'SDL2_mixer'),
+--- a/pythonforandroid/recipes/python3/__init__.py
++++ b/pythonforandroid/recipes/python3/__init__.py
+@@ -262,8 +262,8 @@ class Python3Recipe(TargetPythonRecipe):
+         # the build of zlib module, here we search for android's zlib version
+         # and sets the right flags, so python can be build with android's zlib
+         info("Activating flags for android's zlib")
+-        zlib_lib_path = join(self.ctx.ndk_platform, 'usr', 'lib')
+-        zlib_includes = join(self.ctx.ndk_dir, 'sysroot', 'usr', 'include')
++        zlib_lib_path = self.ctx.ndk_lib_dir
++        zlib_includes = self.ctx.ndk_include_dir
+         zlib_h = join(zlib_includes, 'zlib.h')
+         try:
+             with open(zlib_h) as fileh:
+--- a/pythonforandroid/recipes/vlc/__init__.py
++++ b/pythonforandroid/recipes/vlc/__init__.py
+@@ -59,7 +59,7 @@ class VlcRecipe(Recipe):
+                 env = dict(environ)
+                 env.update({
+                     'ANDROID_ABI': arch.arch,
+-                    'ANDROID_NDK': self.ctx.ndk_dir,
++                    'ANDROID_NDK': self.ctx.ndk_dir,  # FIXME
+                     'ANDROID_SDK': self.ctx.sdk_dir,
+                 })
+                 info("compiling vlc from sources")
+--- a/pythonforandroid/toolchain.py
++++ b/pythonforandroid/toolchain.py
+@@ -1052,7 +1052,7 @@ class ToolchainCL:
+             if not exists("gradlew"):
+                 raise BuildInterruptingException("gradlew file is missing")
+ 
+-            env["ANDROID_NDK_HOME"] = self.ctx.ndk_dir
++            env['ANDROID_NDK_HOME'] = self.ctx.ndk_dir  # FIXME
+             env["ANDROID_HOME"] = self.ctx.sdk_dir
+ 
+             gradlew = sh.Command('./gradlew')
