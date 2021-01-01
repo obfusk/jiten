@@ -48,11 +48,11 @@
          compile_dir(sd, optimize_python=optimize_python)
          files += [(x, relpath(realpath(x), sd)) for x in listfiles(sd)
                    if select(x)]
-+    files.sort() # deterministic
++    files.sort()  # deterministic
  
      # create tar.gz of thoses files
 -    tf = tarfile.open(tfn, 'w:gz', format=tarfile.USTAR_FORMAT)
-+    gf = GzipFile(tfn, 'wb', mtime=0) # deterministic
++    gf = GzipFile(tfn, 'wb', mtime=0)  # deterministic
 +    tf = tarfile.open(None, 'w', gf, format=tarfile.USTAR_FORMAT)
      dirs = []
      for fn, afn in files:
@@ -99,7 +99,15 @@
  from os.path import dirname, exists, join
  from pathlib import Path
  from shutil import copy2
-@@ -385,6 +385,12 @@ class Python3Recipe(TargetPythonRecipe):
+@@ -62,6 +62,7 @@ class Python3Recipe(TargetPythonRecipe):
+ 
+     patches = [
+         'patches/pyconfig_detection.patch',
++        'patches/reproducible-buildinfo.diff',
+ 
+         # Python 3.7.1
+         ('patches/py3.7.1_fix-ctypes-util-find-library.patch', version_starts_with("3.7")),
+@@ -385,8 +386,14 @@ class Python3Recipe(TargetPythonRecipe):
          with current_directory(join(self.get_build_dir(arch.arch), 'Lib')):
              stdlib_filens = list(walk_valid_filens(
                  '.', self.stdlib_dir_blacklist, self.stdlib_filen_blacklist))
@@ -110,5 +118,25 @@
 +                for filen in stdlib_filens:
 +                    utime(filen, (timestamp, timestamp))
              info("Zip {} files into the bundle".format(len(stdlib_filens)))
-             shprint(sh.zip, stdlib_zip, *stdlib_filens)
+-            shprint(sh.zip, stdlib_zip, *stdlib_filens)
++            shprint(sh.zip, '--no-extra', stdlib_zip, *stdlib_filens)
  
+         # copy the site-packages into place
+         ensure_dir(join(dirn, 'site-packages'))
+new file mode 100644
+--- /dev/null
++++ b/pythonforandroid/recipes/python3/patches/reproducible-buildinfo.diff
+@@ -0,0 +1,13 @@
++# DP: Build getbuildinfo.o with DATE/TIME values when defined
++
++--- a/Makefile.pre.in
+++++ b/Makefile.pre.in
++@@ -785,6 +785,8 @@ Modules/getbuildinfo.o: $(PARSER_OBJS) \
++ 	      -DGITVERSION="\"`LC_ALL=C $(GITVERSION)`\"" \
++ 	      -DGITTAG="\"`LC_ALL=C $(GITTAG)`\"" \
++ 	      -DGITBRANCH="\"`LC_ALL=C $(GITBRANCH)`\"" \
+++	      $(if $(BUILD_DATE),-DDATE='"$(BUILD_DATE)"') \
+++	      $(if $(BUILD_TIME),-DTIME='"$(BUILD_TIME)"') \
++ 	      -o $@ $(srcdir)/Modules/getbuildinfo.c
++ 
++ Modules/getpath.o: $(srcdir)/Modules/getpath.c Makefile

@@ -9,8 +9,7 @@ def _patch():
   sqlite_ext  = "--enable-loadable-sqlite-extensions"
   patches     = [
     "patches/py3.8.1.patch",
-    "patches/py3.8.1_fix_cortex_a8.patch",
-    "extra-patches/reproducible-buildinfo.diff" # FIXME
+    "patches/py3.8.1_fix_cortex_a8.patch"
   ]
   Python3Recipe, recipe = mod.Python3Recipe, mod.recipe
   Python3Recipe.version = "3.9.1"
