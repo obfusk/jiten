@@ -64,3 +64,6 @@ _setup_root:
 _setup_user:
 	$(PIP_INSTALL) --upgrade $(BUILDOZER)
 	$(PIP_INSTALL) --upgrade Cython==0.29.19 virtualenv
+	# FIXME
+	buildozer="$$( python3 -c 'import buildozer.targets.android as x; print(x.__file__)' )"; \
+	  sed -r 's!^( *_version *=) *re.search.*!\1 self.android_ndk_version!' "$$buildozer" -i
