@@ -13,8 +13,6 @@
 #   installed (& umask 022)
 #
 # TODO:
-#   * specify branch != master?
-#   * force push?
 #   * override PIP_INSTALL?
 #
 ######################################################################
@@ -23,14 +21,15 @@ set -xe
 
 test "$#" -ge 2
 remote="$1"; shift
+branch="$( git branch --show-current )"
 
 # push
-ssh "$remote" 'test -e jiten.git || git init --bare jiten.git'
-git push "$remote":jiten.git master --tags
+ssh "$remote" 'test -e _jiten.git || git init --bare _jiten.git'
+git push -f "$remote":_jiten.git "$branch":master --tags
 
 # clone
 ssh "$remote" 'mkdir -p work/jiten && \
-  rm -fr work/jiten/jiten && git clone jiten.git work/jiten/jiten'
+  rm -fr work/jiten/jiten && git clone _jiten.git work/jiten/jiten'
 
 # setup & build
 ssh "$remote" 'cd work/jiten/jiten && \
