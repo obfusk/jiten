@@ -3,6 +3,8 @@ on: [push, pull_request, workflow_dispatch]
 jobs:
   build:
     runs-on: ubuntu-20.04
+    container:
+      image: debian:buster
     strategy:
       matrix:
         target:
@@ -13,33 +15,56 @@ jobs:
         package:
         - jiten
         - jiten_nodb
-    env:
-      JAVA_HOME: /usr/lib/jvm/java-11-openjdk-amd64
-      JAVA_HOME_11_X64: /usr/lib/jvm/java-11-openjdk-amd64
-      JAVA_HOME_8_X64: ''
     steps:
+    - name: Install git etc.
+      run: |
+        apt-get update || apt-get update
+        apt-get upgrade -y
+        apt-get install -y usrmerge
+        apt-get install -y git lsb-release
+      env:
+        DEBIAN_FRONTEND: noninteractive
+    - name: Setup user
+      run: |
+        adduser --disabled-password --gecos '' build
     - uses: actions/checkout@v2
       with:
         fetch-depth: 0
-    - name: Set up Python
-      uses: actions/setup-python@v2
-      with:
-        python-version: 3.8
+    - name: Move repo
+      run: |
+        mv /__w/jiten/jiten ~build/
+        ln -s ~build/jiten /__w/jiten/
+        chown -R build:build ~build
     - name: Install dependencies
       run: |
-        sudo make -C android _setup_root
-        sudo apt-get purge -y adoptopenjdk-11-hotspot adoptopenjdk-8-hotspot
-        make -C android _setup_user
+        ./android/scripts/setup-root.sh
+        su - build -c '
+          set -e && cd jiten
+          ./android/scripts/setup-user.sh
+        '
     - name: System info
       run: |
-        lsb_release -a
-        git --version && python --version
-        java -version && javac -version
-        # env | grep -Eiv 'token|secret|github'
+        su - build -c '
+          set -e && cd jiten
+          uname -a && lsb_release -a
+          git --version && python3 --version
+          java -version && javac -version
+          id && pwd && echo "umask=$(umask)"
+        '
     - name: Build
-      run: make -C android ${{ matrix.target }}
+      run: |
+        su -w APP_PACKAGE_NAME - build -c '
+          set -e && cd jiten
+          export PATH="$HOME/.local/bin:$PATH"
+          make -C android ${{ matrix.target }}
+        '
       env:
         APP_PACKAGE_NAME: ${{ matrix.package }}
+    - name: Move repo back
+      run: |
+        rm /__w/jiten/jiten
+        mv ~build/jiten /__w/jiten/
+        chown -R root:root /__w/jiten/jiten
     - name: SHASUMS
       run: |
         sha1sum   android/bin/*.apk

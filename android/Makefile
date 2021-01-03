@@ -1,14 +1,12 @@
-SHELL       := /bin/bash
-BUILDOZER   ?= buildozer
-PIP_INSTALL ?= pip install
+SHELL := /bin/bash
 
 # for reproducible builds
 export LC_ALL             := C
 export TZ                 := UTC
 export SOURCE_DATE_EPOCH  := $(shell git log -1 --pretty=%ct)
 export PYTHONHASHSEED     := $(SOURCE_DATE_EPOCH)
-export BUILD_DATE         := $(shell date +'%b %e %Y' -d @$(SOURCE_DATE_EPOCH))
-export BUILD_TIME         := $(shell date +'%H:%M:%S' -d @$(SOURCE_DATE_EPOCH))
+export BUILD_DATE         := $(shell LC_ALL=C TZ=UTC date +'%b %e %Y' -d @$(SOURCE_DATE_EPOCH))
+export BUILD_TIME         := $(shell LC_ALL=C TZ=UTC date +'%H:%M:%S' -d @$(SOURCE_DATE_EPOCH))
 
 export APP_VERSION := $(shell git describe | sed 's/^v//')
 ifndef APP_VERSION
@@ -54,16 +52,7 @@ release-arm64-v8a:
 .PHONY: _setup_root _setup_user
 
 _setup_root:
-	apt-get update || apt-get update
-	apt-get install -y build-essential git
-	apt-get install -y openjdk-11-jdk-headless
-	apt-get install -y zlib1g-dev zip unzip pkg-config libffi-dev
-	apt-get install -y libltdl-dev libssl-dev
-	apt-get install -y lld
+	./scripts/setup-root.sh
 
 _setup_user:
-	$(PIP_INSTALL) --upgrade $(BUILDOZER)
-	$(PIP_INSTALL) --upgrade Cython==0.29.19 virtualenv
-	# FIXME
-	buildozer="$$( python3 -c 'import buildozer.targets.android as x; print(x.__file__)' )"; \
-	  sed -r 's!^( *_version *=) *re.search.*!\1 self.android_ndk_version!' "$$buildozer" -i
+	./scripts/setup-user.sh
