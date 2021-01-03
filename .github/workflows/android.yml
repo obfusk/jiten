@@ -40,6 +40,11 @@ jobs:
       run: make -C android ${{ matrix.target }}
       env:
         APP_PACKAGE_NAME: ${{ matrix.package }}
+    - name: SHASUMS
+      run: |
+        sha1sum   android/bin/*.apk
+        sha256sum android/bin/*.apk
+        sha512sum android/bin/*.apk
     - name: Version
       run: touch VERSION_"$(git describe --always)"
     - uses: actions/upload-artifact@v2
