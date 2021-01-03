@@ -37,6 +37,10 @@ ssh "$remote" 'cd work/jiten/jiten && \
   make -C android _setup_user PIP_INSTALL="pip3 install --user" && \
   for target in '"$*"'; do make -C android "$target" || exit $?; done'
 
+# show shasums
+ssh "$remote" 'cd work/jiten/jiten/android/bin && \
+  sha1sum *.apk && sha256sum *.apk && sha512sum *.apk'
+
 # copy APKs
 mkdir -p tmp/_build
 scp "$remote:work/jiten/jiten/android/bin/*.apk" tmp/_build/
