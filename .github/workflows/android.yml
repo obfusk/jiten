@@ -4,23 +4,23 @@ jobs:
   build:
     runs-on: ubuntu-20.04
     container:
-      image: debian:buster
+      image: ubuntu:20.04
     strategy:
       matrix:
         target:
-        - debug-armeabi-v7a
-        - debug-arm64-v8a
-        - release-armeabi-v7a
+      # - debug-armeabi-v7a
+      # - debug-arm64-v8a
+      # - release-armeabi-v7a
         - release-arm64-v8a
         package:
         - jiten
-        - jiten_nodb
+      # - jiten_nodb
     steps:
     - name: Install git etc.
       run: |
         apt-get update || apt-get update
         apt-get upgrade -y
-        apt-get install -y usrmerge
+        # apt-get install -y usrmerge
         apt-get install -y git lsb-release
       env:
         DEBIAN_FRONTEND: noninteractive
@@ -39,13 +39,13 @@ jobs:
       run: |
         ./android/scripts/setup-root.sh
         su - build -c '
-          set -e && cd jiten
+          umask 022 && set -e && cd jiten
           ./android/scripts/setup-user.sh
         '
     - name: System info
       run: |
         su - build -c '
-          set -e && cd jiten
+          umask 022 && set -e && cd jiten
           uname -a && lsb_release -a
           git --version && python3 --version
           java -version && javac -version
@@ -54,7 +54,7 @@ jobs:
     - name: Build
       run: |
         su -w APP_PACKAGE_NAME - build -c '
-          set -e && cd jiten
+          umask 022 && set -e && cd jiten
           export PATH="$HOME/.local/bin:$PATH"
           make -C android ${{ matrix.target }}
         '
