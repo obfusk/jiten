@@ -7,12 +7,12 @@ source.include_exts = py
 source.exclude_dirs = bin,patches,p4a-recipes,scripts
 source.exclude_patterns = makefile,*.png,*.xml
 requirements =
-  click==7.1.2,flask==1.1.2,jiten,sqlite3,
+  click==7.1.2,flask==1.1.2,jiten,openssl,sqlite3,
   certifi==2020.12.5,libpcre==8.44,
   hostpython3==3.9.1,python3==3.9.1,
   android,genericndkbuild,
   itsdangerous==1.1.0,jinja2==2.11.2,markupsafe==1.1.1,werkzeug==1.0.1,
-  libffi==v3.3,openssl==1.1.1i,pyjnius==1.3.0,
+  libffi==v3.3,pyjnius==1.3.0,
   setuptools==51.0.0,six==1.15.0
 requirements.source.jiten = ..
 icon.filename = %(source.dir)s/icon.png
