@@ -17,7 +17,7 @@ class JitenRecipe(CompiledComponentsPythonRecipe):
         env['JITEN_ANDROID'] = 'yes'
 
         if 'nodb' in os.environ.get('APP_PACKAGE_NAME', ''):
-          env['JITEN_NODB'] = 'yes'
+            env['JITEN_NODB'] = 'yes'
 
         def add_flags(include_flags, link_dirs, link_libs):
             env['CPPFLAGS'] = env.get('CPPFLAGS', '') + include_flags

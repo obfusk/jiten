@@ -1,1 +1,0 @@
-../../.p4a/pythonforandroid/recipes/python3/__init__.py

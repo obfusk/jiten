@@ -1,1 +1,0 @@
-../../.p4a/pythonforandroid/recipes/hostpython3/__init__.py

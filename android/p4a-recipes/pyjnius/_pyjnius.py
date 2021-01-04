@@ -1,1 +1,0 @@
-../../.p4a/pythonforandroid/recipes/pyjnius/__init__.py
