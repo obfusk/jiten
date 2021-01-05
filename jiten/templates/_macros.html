@@ -2,9 +2,9 @@
 
   File        : templates/_macros.html
   Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-  Date        : 2020-12-30
+  Date        : 2021-01-05
 
-  Copyright   : Copyright (C) 2020  Felix C. Stegerman
+  Copyright   : Copyright (C) 2021  Felix C. Stegerman
   Version     : v0.3.5
   License     : AGPLv3+
 
@@ -60,7 +60,8 @@
         {% set imb = mb or "sm-0 mb-2" %}{# TODO #}
         {{ input(id, name, value, ph, af, mb = imb) }}
         <div class="btn-group mb-{{ mb }}">
-          <button class="search-button btn btn-{{ btn }}">{{ go }}</button>
+          <button class="search-button btn btn-{{ btn }}"
+            data-text="{{ go }}">{{ go }}</button>
           <button data-toggle="dropdown"
               class="btn btn-{{ btn }} dropdown-toggle dropdown-toggle-split"
               aria-haspopup="true" aria-expanded="false">

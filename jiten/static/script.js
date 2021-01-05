@@ -2,9 +2,9 @@
 //
 //  File        : static/script.js
 //  Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-//  Date        : 2020-12-30
+//  Date        : 2021-01-05
 //
-//  Copyright   : Copyright (C) 2020  Felix C. Stegerman
+//  Copyright   : Copyright (C) 2021  Felix C. Stegerman
 //  Version     : v0.3.5
 //  License     : AGPLv3+
 //
@@ -358,16 +358,18 @@ $("[data-toggle='tooltip']").tooltip().click(evt =>
   $(evt.delegateTarget).tooltip("hide")
 )
 
+// NB: must undo
 $("#jmdict-query").parents("form").submit(() =>
   $("select[name=jlpt]").filter((i, x) => !x.value)
     .prop("disabled", true)
 )
 
-$("form.search-form").submit(e => {
-  $(".dropdown-toggle", e.delegateTarget).addClass("disabled")
-  $(".search-button", e.delegateTarget)
-    .addClass("disabled").text("Loading...")
-})
+// NB: must undo
+const showLoading = () => {
+  $("form.search-form .dropdown-toggle").addClass("disabled")
+  $(".search-button").addClass("disabled").text("Loading...")
+}
+$("form.search-form").submit(showLoading)
 
 // TODO
 $(".search-alt").click(evt => {
@@ -376,8 +378,17 @@ $(".search-alt").click(evt => {
   const i = $('<input type="hidden" name="query" />')
   let   v = $("input", $(e).parents("form")).val()
   if (/sentences|stroke/.test(r)) { v = v.replace(/^\+[=1w]\s*/, "") }
-  i.val(v); f.append(i); $("body").append(f); f.submit()
+  $("body").append(f.append(i.val(v)))
+  f.submit(showLoading).submit().remove()
   return false
+})
+
+// NB: undo modifications for firefox page cache
+$(window).on("pageshow", () => {
+  $("select[name=jlpt]").prop("disabled", false)
+  $("form.search-form .dropdown-toggle").removeClass("disabled")
+  $(".search-button").removeClass("disabled")
+    .each((i, x) => $(x).text(x.dataset.text))
 })
 
 // === save history ===
