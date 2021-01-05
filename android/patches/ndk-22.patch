@@ -1,3 +1,16 @@
+--- a/ci/constants.py
++++ b/ci/constants.py
+@@ -28,6 +28,10 @@ BROKEN_RECIPES_PYTHON3 = set([
+     'vlc',
+     # need extra gfortran NDK system add-on
+     'lapack', 'scipy',
++    # 403 on https://jqueryui.com/resources/download/jquery-ui-1.12.1.zip
++    'matplotlib',
++    # requires kernel headers
++    'evdev',
+ ])
+ 
+ BROKEN_RECIPES = {
 --- a/pythonforandroid/archs.py
 +++ b/pythonforandroid/archs.py
 @@ -30,7 +30,7 @@ class Arch:
@@ -99,7 +112,7 @@
              obj_dir.split(' '),
 --- a/pythonforandroid/recipe.py
 +++ b/pythonforandroid/recipe.py
-@@ -1129,7 +1129,10 @@ class CythonRecipe(PythonRecipe):
+@@ -1131,7 +1131,10 @@ class CythonRecipe(PythonRecipe):
          env['LDSHARED'] = env['CC'] + ' -shared'
          # shprint(sh.whereis, env['LDSHARED'], _env=env)
          env['LIBLINK'] = 'NOTNONE'
@@ -153,7 +166,7 @@
 -        ndk_dir = self.ctx.ndk_platform
 -        ndk_lib_dir = os.path.join(ndk_dir, 'usr', 'lib')
 -        env['LDFLAGS'] += ' -L{}'.format(ndk_lib_dir)
-+        env['LDFLAGS'] += ' -L{}'.format(self.ndk_lib_dir)
++        env['LDFLAGS'] += ' -L{}'.format(self.ctx.ndk_lib_dir)
          env['PYTHONPATH'] = ':'.join([
              self.ctx.get_site_packages_dir(),
              env['BUILDLIB_PATH'],
@@ -173,14 +186,12 @@
  
 --- a/pythonforandroid/recipes/ffmpeg/__init__.py
 +++ b/pythonforandroid/recipes/ffmpeg/__init__.py
-@@ -120,9 +120,7 @@ class FFMpegRecipe(Recipe):
-                 '--cross-prefix={}-'.format(arch.target),
-                 '--arch={}'.format(arch_flag),
+@@ -122,7 +122,7 @@ class FFMpegRecipe(Recipe):
                  '--strip={}strip'.format(cross_prefix),
--                '--sysroot={}'.format(join(self.ctx.ndk_dir, 'toolchains',
--                                           'llvm', 'prebuilt', 'linux-x86_64',
+                 '--sysroot={}'.format(join(self.ctx.ndk_dir, 'toolchains',
+                                            'llvm', 'prebuilt', 'linux-x86_64',
 -                                           'sysroot')),
-+                '--sysroot={}'.format(self.ctx.ndk_sysroot),  # FIXME
++                                           'sysroot')),  # FIXME
                  '--enable-neon',
                  '--prefix={}'.format(realpath('.')),
              ]
@@ -389,7 +400,7 @@ new file mode 100644
                  sdl_mixer_includes="-I"+join(self.ctx.bootstrap.build_dir, 'jni', 'SDL2_mixer'),
 --- a/pythonforandroid/recipes/python3/__init__.py
 +++ b/pythonforandroid/recipes/python3/__init__.py
-@@ -262,8 +262,8 @@ class Python3Recipe(TargetPythonRecipe):
+@@ -264,8 +264,8 @@ class Python3Recipe(TargetPythonRecipe):
          # the build of zlib module, here we search for android's zlib version
          # and sets the right flags, so python can be build with android's zlib
          info("Activating flags for android's zlib")
@@ -422,3 +433,15 @@ new file mode 100644
              env["ANDROID_HOME"] = self.ctx.sdk_dir
  
              gradlew = sh.Command('./gradlew')
+--- a/tests/recipes/recipe_ctx.py
++++ b/tests/recipes/recipe_ctx.py
+@@ -48,6 +48,9 @@ class RecipeCtx:
+             f"{self.ctx._ndk_dir}/platforms/"
+             f"android-{self.ctx.ndk_api}/{self.arch.platform_dir}"
+         )
++        self.ctx.ndk_sysroot = f'{self.ctx._ndk_dir}/sysroot'
++        self.ctx.ndk_lib_dir = f'{self.ctx._ndk_dir}/usr/lib'
++        self.ctx.ndk_include_dir = f'{self.ctx.ndk_sysroot}/usr/include'
+         self.recipe = Recipe.get_recipe(self.recipe_name, self.ctx)
+ 
+     def tearDown(self):

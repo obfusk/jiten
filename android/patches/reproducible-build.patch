@@ -34,8 +34,8 @@
              return False
          return not is_blacklist(fn)
  
-+    # cleaning function (for reproducible builds)
 +    def clean(tinfo):
++        """cleaning function (for reproducible builds)"""
 +        tinfo.uid = tinfo.gid = 0
 +        tinfo.uname = tinfo.gname = ''
 +        tinfo.mtime = 0
@@ -107,7 +107,7 @@
  
          # Python 3.7.1
          ('patches/py3.7.1_fix-ctypes-util-find-library.patch', version_starts_with("3.7")),
-@@ -385,8 +386,14 @@ class Python3Recipe(TargetPythonRecipe):
+@@ -387,8 +388,14 @@ class Python3Recipe(TargetPythonRecipe):
          with current_directory(join(self.get_build_dir(arch.arch), 'Lib')):
              stdlib_filens = list(walk_valid_filens(
                  '.', self.stdlib_dir_blacklist, self.stdlib_filen_blacklist))
