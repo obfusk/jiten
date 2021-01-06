@@ -5,7 +5,7 @@ package.domain = dev.obfusk
 source.dir = .
 source.include_exts = py
 source.exclude_dirs = bin,patches,p4a-recipes,scripts
-source.exclude_patterns = makefile,*.png,*.xml
+source.exclude_patterns = makefile,p4a-commit,*.png,*.xml
 requirements =
   click==7.1.2,flask==1.1.2,jiten,openssl,sqlite3,
   certifi==2020.12.5,libpcre==8.44,

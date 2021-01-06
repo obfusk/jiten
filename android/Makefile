@@ -24,6 +24,7 @@ debug: debug-armeabi-v7a debug-arm64-v8a
 release: release-armeabi-v7a release-arm64-v8a
 
 clean:
+	mkdir -p ../../_jiten_buildozer_
 	APP_ANDROID_ARCH=armeabi-v7a buildozer android clean
 	buildozer android clean
 	rm -fr bin/
