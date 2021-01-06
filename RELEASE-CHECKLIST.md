@@ -6,7 +6,10 @@
 
 # Dependencies
 
+- [ ] run `checkupdates buildozer-spec`
+- [ ] pinned `requirements` in `buildozer.spec`
 - [ ] `version` (& `url`) in `p4a-recipes/*/__init__.py`
+- [ ] pinned p4a commit in `p4a-commit`
 - [ ] Python version in `runtime.txt`
 
 # DB
@@ -23,5 +26,6 @@
 - [ ] `vX.Y.Z` tag
 - [ ] GitHub release
 - [ ] upload to PyPi
+- [ ] update obfusk's f-droid repo
 - [ ] update F-Droid (automatic)
 - [ ] update Play Store
