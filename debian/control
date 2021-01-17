@@ -1,0 +1,62 @@
+Source: jiten
+Section: non-free/text
+Priority: optional
+Maintainer: Felix C. Stegerman <flx@obfusk.net>
+Build-Depends: debhelper-compat (= 12),
+               dh-python,
+               python3-all,
+               python3-click,
+               libsqlite3-dev,
+               libpcre3-dev,
+               nodejs,
+Standards-Version: 4.5.0
+Vcs-Git: https://salsa.debian.org/obfusk/jiten.git
+Vcs-Browser: https://salsa.debian.org/obfusk/jiten
+Homepage: https://github.com/obfusk/jiten
+
+Package: jiten
+Architecture: any
+Depends: ${misc:Depends},
+         ${python3:Depends},
+         ${shlibs:Depends},
+Description: japanese android/cli/web dictionary based on jmdict/kanjidic
+ Jiten is a Japanese dictionary based on JMDict/Kanjidic
+ .
+ Features:
+ .
+ Fine-grained search using regexes (regular expressions)
+  * simple searches don't require knowledge of regexes
+  * quick reference available in the web interface and android app
+ .
+ JMDict multilingual japanese dictionary
+  * kanji, readings, meanings (english, dutch and/or german) & more
+  * pitch accent (from Wadoku)
+  * browse by frequency/jlpt
+ .
+ Kanji dictionary
+  * readings, meanings (english), jmdict entries, radicals & more
+  * search using SKIP codes
+  * search by radical
+  * browse by frequency/level/jlpt
+ .
+ Example sentences (from Tatoeba)
+  * with english, dutch and/or german translation
+  * some with audio
+ .
+ Stroke order
+  * input a word or sentence and see how it's written
+ .
+ Android app
+  * wraps the web interface (running locally on your device) in a webview
+  * completely offline, no internet access required
+ .
+ Web interface
+  * available online at https://jiten.obfusk.dev
+  * light/dark mode
+  * search history (stored locally)
+  * tooltips to quickly see meanings and readings for kanji in words and
+    sentences
+  * use long press for tooltips on mobile
+  * can be run on your own computer (or e.g. android phone)
+ .
+ Command-line interface

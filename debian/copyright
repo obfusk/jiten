@@ -1,0 +1,120 @@
+Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
+Upstream-Name: jiten
+Upstream-Contact: flx@obfusk.net
+Source: <https://github.com/obfusk/jiten>
+#
+# Please double check copyright with the licensecheck(1) command.
+
+Files:     *
+Copyright: 2021 Felix C. Stegerman
+License:   AGPL-3.0-or-later
+  https://www.gnu.org/licenses/agpl-3.0.html
+
+Files:     jiten/res/freq/base_aggregates.txt
+           jiten/res/freq/base_aggregates.txt.nobom
+Copyright: 2008 Michiel Kamermans
+License:   CC-BY-SA-3.0
+  https://www.edrdg.org/edrdg/licence.html
+
+Files:     jiten/res/freq/wordfreq_ck
+           jiten/res/freq/wordfreq_ck.utf8
+Copyright: 2003 Charles Kelly
+License:   CC-BY-SA-3.0
+  https://www.edrdg.org/edrdg/licence.html
+
+Files:     jiten/res/jlpt/N1-kanji
+           jiten/res/jlpt/N1-vocab-eng
+           jiten/res/jlpt/N1-vocab-hiragana
+           jiten/res/jlpt/N2-kanji
+           jiten/res/jlpt/N2-vocab-eng
+           jiten/res/jlpt/N2-vocab-hiragana
+           jiten/res/jlpt/N3-kanji
+           jiten/res/jlpt/N3-vocab-eng
+           jiten/res/jlpt/N3-vocab-hiragana
+           jiten/res/jlpt/N4-kanji
+           jiten/res/jlpt/N4-vocab-eng
+           jiten/res/jlpt/N4-vocab-hiragana
+           jiten/res/jlpt/N5-kanji
+           jiten/res/jlpt/N5-vocab-eng
+           jiten/res/jlpt/N5-vocab-hiragana
+Copyright: Jonathan Waller
+License:   CC-BY
+  https://www.tanos.co.uk/jlpt/sharing/
+
+Files:     jiten/res/jmdict/jmdict-unpatched.xml.gz
+           jiten/res/jmdict/jmdict.patch
+           jiten/res/jmdict/kanjidic2-unpatched.xml.gz
+           jiten/res/jmdict/kanjidic2.patch
+Copyright: James William BREEN and The Electronic Dictionary Research and Development Group
+License:   CC-BY-SA-3.0
+  https://www.edrdg.org/edrdg/licence.html
+
+Files:     jiten/res/pitch/PITCH
+Copyright: Ulrich Apel & Wadoku.de contributors
+License:   Non-commercial
+  https://www.wadoku.de/wiki/display/WAD/Wadoku.de-Daten+Lizenz
+
+Files:     jiten/res/radicals/kanjivg.xml.gz
+Copyright: Ulrich Apel
+License:   CC-BY-SA-3.0
+  https://github.com/KanjiVG/kanjivg/blob/master/COPYING
+
+Files:     jiten/res/radicals/kradfile
+           jiten/res/radicals/kradfile.utf8
+Copyright: James William BREEN and The Electronic Dictionary Research and Development Group
+License:   CC-BY-SA-3.0
+  https://www.edrdg.org/edrdg/licence.html
+
+Files:     jiten/res/radicals/kradfile2
+           jiten/res/radicals/kradfile2.utf8
+Copyright: 2007 James Rose and the KanjiCafe.com
+License:   Other
+  Special GRANT OF LICENSE is hereby given to James Breen and the
+  Electronic Dictionary Research & Development Group such that said
+  licensees may maintain, modify, use, and redistribute this file.
+  Derivatives should maintain this notice.  All other rights reserved.
+
+Files:     jiten/res/sentences/SENTENCES
+Copyright: Tatoeba contributors
+License:   CC-BY-2.0
+  https://tatoeba.org/eng/downloads
+
+Files:     jiten/static/audio/*.mp3
+Copyright: huizi99, Mizu & yomi
+License:   CC-BY-NC-4.0
+
+Files:     jiten/static/bootstrap.min.css
+           jiten/static/bootstrap.min.js
+Copyright: 2011-2020 The Bootstrap Authors
+License:   MIT
+
+Files:     jiten/static/bootstrap-darkly.min.css
+           jiten/static/bootstrap-flatly.min.css
+Copyright: 2012-2020 Thomas Park
+License:   MIT
+
+Files:     jiten/static/font/KanjiStrokeOrders_v4.003.ttf
+Copyright: 2004-2020 Ulrich Apel, the AAAA project and the Wadoku project
+License:   BSD-3-Clause
+  https://www.nihilist.org.uk
+
+Files:     jiten/static/jquery-3.5.1.slim.min.js
+Copyright: OpenJS Foundation and other contributors
+License:   MIT
+
+Files:     jiten/static/popper-1.16.0.min.js
+Copyright: 2019 Federico Zivolo
+License:   MIT
+
+Files:     jiten/static/Table_hiragana.svg
+           jiten/static/Table_katakana.svg
+Copyright: Wikipedia contributors
+License:   CC-BY-SA-3.0
+  https://en.wikipedia.org/wiki/File:Table_hiragana.svg
+  https://en.wikipedia.org/wiki/File:Table_katakana.svg
+
+Files:     badges/fdroid.png
+Copyright: F-Droid
+
+Files:     badges/google-play.png
+Copyright: Google

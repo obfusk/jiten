@@ -1,0 +1,6 @@
+jiten (0.3.6-26-ga981f30-1) UNRELEASED; urgency=low
+
+  * Initial release. Closes: #nnnn
+    <nnnn is the bug number of your ITP>
+
+ -- Felix C. Stegerman <flx@obfusk.net>  Sun, 17 Jan 2021 04:49:49 +0100
