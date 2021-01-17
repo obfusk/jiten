@@ -2,9 +2,9 @@
 
     File        : README.md
     Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-    Date        : 2020-12-08
+    Date        : 2021-01-17
 
-    Copyright   : Copyright (C) 2020  Felix C. Stegerman
+    Copyright   : Copyright (C) 2021  Felix C. Stegerman
     Version     : v0.3.5
     License     : AGPLv3+
 
@@ -169,6 +169,18 @@ $ make
 ```
 
 ## Miscellaneous
+
+### WebView GUI on Linux/macOS/Windows
+
+NB: requires [`pywebview`](https://pywebview.flowrl.com) (Debian &
+Ubuntu users can `apt install python3-webview`).
+
+```bash
+$ jiten gui
+```
+
+You can use e.g. `export PYWEBVIEW_GUI=qt` to choose the [webview
+backend](https://pywebview.flowrl.com/guide/renderer.html).
 
 ### Web Interface on Android
 

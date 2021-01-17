@@ -258,6 +258,7 @@ from . import sentences as S
 from .kana import with_romaji
 from .misc import SERVER
 
+HOST, PORT    = "localhost", 5000
 MODS          = [K, P, S, J] # J last!
 ANDROID_PRIV  = os.environ.get("ANDROID_PRIVATE") or None
 
@@ -515,17 +516,13 @@ def sentence_search(q, verbose, langs, max_results):            # {{{1
                                                                 # }}}1
 
 @cli.command(help = "Serve the web interface.")
-@click.option("-h", "--host", default = "localhost", metavar = "HOST")
-@click.option("-p", "--port", default = 5000, metavar = "PORT", type = click.INT)
+@click.option("-h", "--host", default = HOST, metavar = "HOST")
+@click.option("-p", "--port", default = PORT, metavar = "PORT", type = click.INT)
 @click.pass_context
 def serve(ctx, host, port):
   serve_app(host, port, ctx.obj["verbose"])
 
-_serve_params = { p.name: p for p in serve.params }
-
-def serve_app(host = _serve_params["host"].default,
-              port = _serve_params["port"].default,
-              verbose = True, **opts):
+def serve_app(host = HOST, port = PORT, verbose = True, **opts):
   from .app import app
   if ANDROID_PRIV:
     android_link_dbs()
@@ -534,6 +531,17 @@ def serve_app(host = _serve_params["host"].default,
   else:
     setup_db(verbose)
   app.run(host = host, port = port, load_dotenv = False, **opts)
+
+@cli.command(help = "Serve the web interface in a GUI.")
+@click.pass_context
+def gui(ctx):
+  import webview
+  from .app import app
+  app.config["GUI"] = True
+  setup_db(ctx.obj["verbose"])
+  webview.create_window("Jiten Japanese Dictionary", app,
+                        width = 1280, height = 720, text_select = True)
+  webview.start(debug = os.environ.get("FLASK_ENV") == "development")
 
 @cli.command(help = "Build (or download) sqlite databases.")
 @click.option("--download", is_flag = True,
