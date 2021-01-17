@@ -467,7 +467,7 @@ def jmdict2sqldb(data, file = SQLITE_FILE):                     # {{{1
           c.execute("INSERT INTO kanji VALUES (?,?,?,?,?)",
                     (e.seq, k.elem, "".join(sorted(k.chars)),
                      "\n".join(k.info), k.prio))
-        for k in e.chars():
+        for k in sorted(e.chars()):
           c.execute("INSERT INTO kanji_code VALUES (?,?)",
                     (e.seq, ord(k)))
         for r in e.reading:
