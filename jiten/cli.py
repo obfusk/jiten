@@ -5,9 +5,9 @@
 #
 # File        : jiten/cli.py
 # Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-# Date        : 2020-12-07
+# Date        : 2021-01-17
 #
-# Copyright   : Copyright (C) 2020  Felix C. Stegerman
+# Copyright   : Copyright (C) 2021  Felix C. Stegerman
 # Version     : v0.3.5
 # License     : AGPLv3+
 #
@@ -357,9 +357,12 @@ def jmdict_search(q, verbose, word, exact, fstwd, langs, romaji,
     yield (" | ".join(
       click.style(f(r.elem), fg = "bright_green") for r in e.reading
     ) or "[no readings]") + "\n"
-    yield (" | ".join(
-      click.style(f(p), fg = "cyan") for p in e.pitch()
-    ) or "[no pitch data]") + "\n"
+    if P.have_pitch():
+      yield (" | ".join(
+        click.style(f(p), fg = "cyan") for p in e.pitch()
+      ) or "[no pitch data]") + "\n"
+    else:
+      yield "[pitch data unavailable]\n"
     gloss, info = e.gloss_pos_info(langs)
     for l in langs:
       yield click.style("[" + l + "]", fg = "blue") + "\n"

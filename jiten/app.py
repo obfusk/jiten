@@ -5,9 +5,9 @@
 #
 # File        : jiten/app.py
 # Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-# Date        : 2020-12-30
+# Date        : 2021-01-17
 #
-# Copyright   : Copyright (C) 2020  Felix C. Stegerman
+# Copyright   : Copyright (C) 2021  Felix C. Stegerman
 # Version     : v0.3.5
 # License     : AGPLv3+
 #
@@ -33,6 +33,7 @@ from .kana import kana2romaji
 from . import jmdict    as J
 from . import kanji     as K
 from . import misc      as M
+from . import pitch     as P
 from . import sentences as S
 
 START   = int(time.time())
@@ -100,7 +101,7 @@ def respond(template, **data):
   return make_response(render_template(
     template, mode = "dark" if dark else "light", langs = langs,
     roma = roma, pref_langs = pref_langs, pref_max = pref_max,
-    int = int, ord = ord, hex = hex, J = J, K = K, M = M, S = S,
+    int = int, ord = ord, hex = hex, J = J, K = K, M = M, P = P, S = S,
     START = START, VERSION = __version__, PY_VERSION = py_version,
     kana2romaji = kana2romaji, SEARCH = SEARCH, **data
   ))

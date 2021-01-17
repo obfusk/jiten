@@ -5,9 +5,9 @@
 #
 # File        : jiten/pitch.py
 # Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-# Date        : 2020-10-03
+# Date        : 2021-01-17
 #
-# Copyright   : Copyright (C) 2020  Felix C. Stegerman
+# Copyright   : Copyright (C) 2021  Felix C. Stegerman
 # Version     : v0.3.5
 # License     : AGPLv3+
 #
@@ -55,7 +55,7 @@ Pitch Accent from Wadoku.
 
 """                                                             # }}}1
 
-import re, sys
+import functools, os, re, sys
 
 import click
 
@@ -120,11 +120,12 @@ def setup(file = SQLITE_FILE):
 # TODO
 def get_pitch(reading, kanjis, file = SQLITE_FILE):
   rd = reading.replace("・", "")
-  with sqlite_do(file) as c:
-    for k in ( k.replace("・", "") for k in kanjis ):
-      for r in c.execute("SELECT * FROM entry WHERE kanji = ?", (k,)):
-        if r["reading"].replace("—", "") != rd: continue
-        return with_pitch(r)
+  if have_pitch(file):
+    with sqlite_do(file) as c:
+      for k in ( k.replace("・", "") for k in kanjis ):
+        for r in c.execute("SELECT * FROM entry WHERE kanji = ?", (k,)):
+          if r["reading"].replace("—", "") != rd: continue
+          return with_pitch(r)
   return None
 
 def with_pitch(r):
@@ -132,6 +133,10 @@ def with_pitch(r):
   rs      = sr[:len(sa)-1] + ["･".join(sr[len(sa)-1:])]
   return "･".join( with_accent(r, a if a is None else int(a))
                    for r, a in zip(rs, sa) )
+
+@functools.lru_cache
+def have_pitch(file = SQLITE_FILE):
+  return os.path.exists(file)
 
 if __name__ == "__main__":
   if "--doctest" in sys.argv:
