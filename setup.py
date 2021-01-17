@@ -53,6 +53,7 @@ setuptools.setup(
     "Environment :: Console",
     "Environment :: Web Environment",
     "Intended Audience :: End Users/Desktop",
+    "License :: Free for non-commercial use",
     "License :: OSI Approved :: GNU Affero General Public License v3 or later (AGPLv3+)",
     "Natural Language :: Dutch",
     "Natural Language :: English",
