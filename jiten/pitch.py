@@ -134,7 +134,7 @@ def with_pitch(r):
   return "･".join( with_accent(r, a if a is None else int(a))
                    for r, a in zip(rs, sa) )
 
-@functools.lru_cache
+@functools.lru_cache(maxsize = None)
 def have_pitch(file = SQLITE_FILE):
   return os.path.exists(file)
 
