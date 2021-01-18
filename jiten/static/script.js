@@ -2,7 +2,7 @@
 //
 //  File        : static/script.js
 //  Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-//  Date        : 2021-01-05
+//  Date        : 2021-01-18
 //
 //  Copyright   : Copyright (C) 2021  Felix C. Stegerman
 //  Version     : v0.3.5
@@ -258,6 +258,16 @@ window.JITEN = {
   clearHistory, getHistory, alert, confirm
 }
 
+// === fetch ===
+
+const fetch_post = (info, path, data = "") =>
+  fetch(path, { method: "POST", body: data }).then(r => {
+    if (!r.ok) {
+      throw new Error(`response (${r.status} ${r.statusText}) was not ok`)
+    }
+    return r
+  }).catch(e => console.error(`${info} POST failed:`, e))
+
 // === clipboard ===
 
 let webview_token = localStorage.getItem("webview_token")
@@ -270,14 +280,9 @@ if (document.location.hash.includes("webview_token")) {
 let copyToClipboard = null
 
 if (webview_token) {
-  copyToClipboard = t => fetch(
-    `/__copy_to_clipboard__/${webview_token}`,
-    { method: "POST", body: t }
-  ).then(r => {
-    if (!r.ok) {
-      throw new Error(`response (${r.status} ${r.statusText}) was not ok`)
-    }
-  }).catch(e => console.error("clipboard POST failed:", e))
+  copyToClipboard = t => fetch_post(
+    "clipboard", `/__copy_to_clipboard__/${webview_token}`, t
+  )
 } else if (navigator.clipboard) {
   copyToClipboard = t => navigator.clipboard.writeText(t)
     .catch(e => console.error("clipboard.writeText() failed:", e))
@@ -394,6 +399,22 @@ $(window).on("pageshow", () => {
 // === save history ===
 
 saveHistory()
+
+$(window).on("pywebviewready", () => {
+  if (localStorage.getItem("history_loaded") == "loaded") {
+    fetch_post(
+      "save history", `/__save_history__/${window.pywebview.token}`,
+      localStorage.getItem("history")
+    )
+  } else {
+    fetch_post(
+      "load history", `/__load_history__/${window.pywebview.token}`,
+    ).then(r => r.text()).then(data => {
+      localStorage.setItem("history_loaded", "loaded")
+      if (data) { localStorage.setItem("history", data) }
+    })
+  }
+})
 
 })  // $(document).ready
 
