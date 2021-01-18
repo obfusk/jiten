@@ -5,7 +5,7 @@
 #
 # File        : jiten/app.py
 # Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-# Date        : 2021-01-17
+# Date        : 2021-01-18
 #
 # Copyright   : Copyright (C) 2021  Felix C. Stegerman
 # Version     : v0.3.5
@@ -22,6 +22,8 @@ Web interface.
 
 import json, os, time
 
+from pathlib import Path
+
 import click, jinja2
 
 from flask import Flask, escape, make_response, redirect, request, \
@@ -36,24 +38,38 @@ from . import misc      as M
 from . import pitch     as P
 from . import sentences as S
 
-START   = int(time.time())
-MAX     = 50
-name    = "jiten"
-HTTPS   = name.upper() + "_HTTPS"
-DOMAIN  = name.upper() + "_DOMAIN"
-PREFS   = "lang dark roma max".split()
-app     = Flask(__name__)
+START         = int(time.time())
+MAX           = 50
+NAME          = "jiten"
+HTTPS         = NAME.upper() + "_HTTPS"
+DOMAIN        = NAME.upper() + "_DOMAIN"
+PREFS         = "lang dark roma max".split()
 
-if "ANDROID_PRIVATE" in os.environ:
-  CONF = os.path.join(os.environ["ANDROID_PRIVATE"], "jiten-prefs.json")
+GUI_TOKEN     = os.environ.get("JITEN_GUI_TOKEN") or None
+ANDROID_PRIV  = os.environ.get("ANDROID_PRIVATE") or None
+
+app           = Flask(__name__)
+
+if GUI_TOKEN:
+  CONF_PATH   = Path.home() / ".config" / "jiten"             #  FIXME
+  CONF_PREFS  = str(CONF_PATH / "prefs.json")
+  CONF_HIST   = str(CONF_PATH / "history.json")
+  CONF_PATH.mkdir(parents = True, exist_ok = True)
+elif ANDROID_PRIV:
+  CONF_PREFS  = os.path.join(ANDROID_PRIV, "jiten-prefs.json")
+else:
+  CONF_PREFS  = None
+
+if CONF_PREFS:
+  # FIXME: CSRF protection needed?
   def get_prefs():
     try:
-      with open(CONF) as f: return json.load(f)
+      with open(CONF_PREFS) as f: return json.load(f)
     except (OSError, ValueError):
       return {}
   def set_prefs(d, resp):
     p = { **get_prefs(), **d }
-    with open(CONF, "w") as f:
+    with open(CONF_PREFS, "w") as f:
       json.dump(p, f, indent = 2, sort_keys = True)
       f.write("\n")
     return resp
@@ -103,7 +119,8 @@ def respond(template, **data):
     roma = roma, pref_langs = pref_langs, pref_max = pref_max,
     int = int, ord = ord, hex = hex, J = J, K = K, M = M, P = P, S = S,
     START = START, VERSION = __version__, PY_VERSION = py_version,
-    kana2romaji = kana2romaji, SEARCH = SEARCH, **data
+    kana2romaji = kana2romaji, SEARCH = SEARCH, GUI_TOKEN = GUI_TOKEN,
+    **data
   ))
 
 def get_langs(prefs = None):
@@ -250,6 +267,18 @@ def r_save_prefs():
     roma  = yesno(request.form.get("roma") == "yes"),
     max   = str(request.form.get("max", MAX, type = int)),
   ), redirect(request.form.get("url", url_for("r_index"))))
+
+if GUI_TOKEN:
+  @app.route("/__load_history__/" + GUI_TOKEN, methods = ["POST"])
+  def r_load_history():
+    try:
+      with open(CONF_HIST) as f: return f.read()
+    except OSError:
+      return ""
+  @app.route("/__save_history__/" + GUI_TOKEN, methods = ["POST"])
+  def r_save_history():
+    with open(CONF_HIST, "wb") as f: f.write(request.data)
+    return "" # FIXME
 
 SEARCH = (
   ("jmdict"   , "Search JMDict"   ),

@@ -2,15 +2,37 @@
 
   File        : templates/_nav.html
   Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-  Date        : 2020-12-07
+  Date        : 2021-01-18
 
-  Copyright   : Copyright (C) 2020  Felix C. Stegerman
+  Copyright   : Copyright (C) 2021  Felix C. Stegerman
   Version     : v0.3.5
   License     : AGPLv3+
 
 --> #}
 {% from "_macros.html" import input, copybtn with context %}
 <nav class="navbar navbar-expand-lg navbar-dark fixed-top bg-primary">
+  {%- if GUI_TOKEN %}
+    <span class="navbar-brand">
+      <a class="btn btn-info" href="javascript:history.back()">
+        <!-- https://www.flaticon.com/free-icon/back-arrow_60577 -->
+        <svg xmlns="http://www.w3.org/2000/svg"
+            style="height: 1.25rem; width: 1.25rem;"
+            viewBox="0 0 459 459" focusable="false">
+          <title>Go backwards</title>
+          <path d="M178.5,140.25v-102L0,216.75l178.5,178.5V290.7c127.5,0,216.75,40.8,280.5,130.05C433.5,293.25,357,165.75,178.5,140.25z" fill="currentColor" />
+        </svg>
+      </a>
+      <a class="btn btn-info" href="javascript:history.forward()">
+        <!-- https://www.flaticon.com/free-icon/back-arrow_60577 -->
+        <svg xmlns="http://www.w3.org/2000/svg"
+            style="height: 1.25rem; width: 1.25rem; transform: scaleX(-1);"
+            viewBox="0 0 459 459" focusable="false">
+          <title>Go forwards</title>
+          <path d="M178.5,140.25v-102L0,216.75l178.5,178.5V290.7c127.5,0,216.75,40.8,280.5,130.05C433.5,293.25,357,165.75,178.5,140.25z" fill="currentColor" />
+        </svg>
+      </a>
+    </span>
+  {% endif %}
   <a class="jap navbar-brand" href="/">辞典</a>
   {%- if config.get("DEBUG") %}
     <span class="navbar-brand">
@@ -25,9 +47,6 @@
   </button>
   <div class="collapse navbar-collapse" id="nav">
     <ul class="navbar-nav mr-auto">
-      <li class="nav-item {{ "active" if page == "index" else "" }}">
-        <a class="nav-link" href="/">Home</a>
-      </li>
       <li class="nav-item {{ "active" if page == "jmdict" else "" }}">
         <a class="nav-link" href="/jmdict"><strong>JMDict</strong></a>
       </li>

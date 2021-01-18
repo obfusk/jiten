@@ -5,7 +5,7 @@
 #
 # File        : jiten/cli.py
 # Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-# Date        : 2021-01-17
+# Date        : 2021-01-18
 #
 # Copyright   : Copyright (C) 2021  Felix C. Stegerman
 # Version     : v0.3.5
@@ -258,6 +258,7 @@ from . import sentences as S
 from .kana import with_romaji
 from .misc import SERVER
 
+HOST, PORT    = "localhost", 5000
 MODS          = [K, P, S, J] # J last!
 ANDROID_PRIV  = os.environ.get("ANDROID_PRIVATE") or None
 
@@ -402,7 +403,7 @@ def indent_and_wrap_jap(w, xs, pre, fg):
   w = len(pre) + n + (n // k * 2)   # 2 extra chars per word per line
   return indent_and_wrap(w, xs, pre, fg).replace("_【", " 【")
 
-@cli.command(help = "Search Kanji.")
+@cli.command(help = "Search kanji.")
 @click.option("-w", "--word", is_flag = True,
               help = "Match whole word (same as \\b...\\b).")
 @click.option("-1", "--1stword", "--first-word", "fstwd", is_flag = True,
@@ -478,7 +479,7 @@ def kanji_search(q, verbose, word, exact, fstwd, max_results,
     yield "\n"
                                                                 # }}}1
 
-@cli.command(help = "Search Example Sentences.")
+@cli.command(help = "Search Tatoeba example sentences.")
 @click.option("-l", "--lang", "langs", multiple = True,
               default = [], metavar = "LANG",
               envvar = name.upper() + "_LANGS",
@@ -515,17 +516,16 @@ def sentence_search(q, verbose, langs, max_results):            # {{{1
                                                                 # }}}1
 
 @cli.command(help = "Serve the web interface.")
-@click.option("-h", "--host", default = "localhost", metavar = "HOST")
-@click.option("-p", "--port", default = 5000, metavar = "PORT", type = click.INT)
+@click.option("-h", "--host", default = HOST, metavar = "HOST",
+              help = "Host to listen on.", show_default = True)
+@click.option("-p", "--port", default = PORT, metavar = "PORT",
+              help = "Port to listen on.", show_default = True,
+              type = click.INT)
 @click.pass_context
 def serve(ctx, host, port):
   serve_app(host, port, ctx.obj["verbose"])
 
-_serve_params = { p.name: p for p in serve.params }
-
-def serve_app(host = _serve_params["host"].default,
-              port = _serve_params["port"].default,
-              verbose = True, **opts):
+def serve_app(host = HOST, port = PORT, verbose = True, **opts):
   from .app import app
   if ANDROID_PRIV:
     android_link_dbs()
@@ -534,6 +534,45 @@ def serve_app(host = _serve_params["host"].default,
   else:
     setup_db(verbose)
   app.run(host = host, port = port, load_dotenv = False, **opts)
+
+@cli.command(help = """
+  WebView GUI.  Wraps the web interface.  Requires pywebview.
+""")
+@click.pass_context
+def gui(ctx):
+  setup_db(ctx.obj["verbose"])
+  _fix_profile()
+  import platform, webview
+  os.environ["JITEN_GUI_TOKEN"] = webview.token
+  from .app import app
+  opts = dict(debug = os.environ.get("FLASK_ENV") == "development")
+  if platform.system() == "Linux" and "PYWEBVIEW_GUI" not in os.environ:
+    opts["gui"] = "qt"
+  webview.create_window("Jiten Japanese Dictionary", app,
+                        width = 1280, height = 720, text_select = True)
+  webview.start(**opts)
+
+# FIXME
+def _fix_profile():
+  """use OTR profile"""
+  import platform
+  gui, system = os.environ.get("PYWEBVIEW_GUI"), platform.system()
+  if system == "Windows": return
+  if system == "Linux" and gui and gui != "qt": return
+  if system != "Linux" and gui != "qt": return
+  try:
+    from PyQt5.QtWidgets import QApplication
+    from PyQt5.QtWebEngineWidgets import QWebEnginePage, QWebEngineProfile
+  except ImportError:
+    pass
+  else:
+    app       = _fix_profile.app      = QApplication([])
+    profile   = _fix_profile.profile  = QWebEngineProfile()
+    old_init  = QWebEnginePage.__init__
+    def new_init(self, *a):
+      if len(a) == 1: a = (profile, *a)
+      old_init(self, *a)
+    QWebEnginePage.__init__ = new_init
 
 @cli.command(help = "Build (or download) sqlite databases.")
 @click.option("--download", is_flag = True,

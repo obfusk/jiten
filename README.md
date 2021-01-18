@@ -2,9 +2,9 @@
 
     File        : README.md
     Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-    Date        : 2020-12-08
+    Date        : 2021-01-17
 
-    Copyright   : Copyright (C) 2020  Felix C. Stegerman
+    Copyright   : Copyright (C) 2021  Felix C. Stegerman
     Version     : v0.3.5
     License     : AGPLv3+
 
@@ -76,6 +76,8 @@ selected manually).
   - use long press for tooltips on mobile
   - can be run on your own computer (or e.g. android phone)
 * Command-line interface
+* WebView GUI
+  - wraps the web interface
 
 ## CLI
 
@@ -103,6 +105,15 @@ $ jiten -v kanji --max 1 --word 日
 
 ```bash
 $ jiten -v serve
+```
+
+## WebView GUI for Linux/macOS/Windows
+
+NB: requires [`pywebview`](https://pywebview.flowrl.com)
+(Debian/Ubuntu users can `apt install python3-webview`).
+
+```bash
+$ jiten gui
 ```
 
 ## Help
