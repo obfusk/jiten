@@ -1,6 +1,7 @@
-jiten (0.3.6-26-ga981f30-1) UNRELEASED; urgency=low
+jiten (0.3.6-36-gee59a99-1) UNRELEASED; urgency=medium
 
   * Initial release. Closes: #nnnn
     <nnnn is the bug number of your ITP>
+  * Recommend pywebview, use JITEN_VERSION, cleanup.
 
- -- Felix C. Stegerman <flx@obfusk.net>  Sun, 17 Jan 2021 04:49:49 +0100
+ -- Felix C. Stegerman <flx@obfusk.net>  Mon, 18 Jan 2021 16:10:56 +0100
