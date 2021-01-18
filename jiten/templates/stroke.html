@@ -4,10 +4,10 @@
 
     File        : templates/stroke.html
     Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-    Date        : 2020-07-14
+    Date        : 2021-01-17
 
-    Copyright   : Copyright (C) 2020  Felix C. Stegerman
-    Version     : v0.1.1
+    Copyright   : Copyright (C) 2021  Felix C. Stegerman
+    Version     : v0.3.5
     License     : AGPLv3+
 
   -->
@@ -26,8 +26,10 @@
         <div class="card-body">
           <h2 class="card-title">漢字と仮名の筆順</h2>
           <a class="jap btn btn-outline-primary"
+            data-toggle="modal" data-target="#hiragana-modal"
             href="/static/Table_hiragana.svg">平仮名表</a>
           <a class="jap btn btn-outline-primary"
+            data-toggle="modal" data-target="#katakana-modal"
             href="/static/Table_katakana.svg">片仮名表</a>
         </div>
       </div>
@@ -41,6 +43,25 @@
         </div>
       </div>
     </div>
+    {% for k, j in (("hiragana", "平仮名表"), ("katakana", "片仮名表")) %}
+      <div class="modal" tabindex="-1" role="dialog" id="{{ k }}-modal">
+        <div class="modal-dialog modal-lg" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title">{{ j }}</h5>
+              <button type="button" class="close" data-dismiss="modal"
+                  aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              <img style="max-width: 100%;"
+                src="/static/Table_{{ k }}.svg" alt="{{ j }}" />
+            </div>
+          </div>
+        </div>
+      </div>
+    {% endfor %}
     {% include "_footer.html" %}
   </body>
 </html>
