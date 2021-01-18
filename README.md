@@ -116,9 +116,6 @@ NB: requires [`pywebview`](https://pywebview.flowrl.com)
 $ jiten gui
 ```
 
-You can use e.g. `export PYWEBVIEW_GUI=qt` to choose the
-[renderer](https://pywebview.flowrl.com/guide/renderer.html).
-
 ## Help
 
 ```bash

@@ -540,13 +540,16 @@ def serve_app(host = HOST, port = PORT, verbose = True, **opts):
 """)
 @click.pass_context
 def gui(ctx):
-  import webview
+  import platform, webview
   from .app import app
   app.config["GUI"] = True
+  opts = dict(debug = os.environ.get("FLASK_ENV") == "development")
+  if platform.system() == "Linux" and "PYWEBVIEW_GUI" not in os.environ:
+    opts["gui"] = "qt"
   setup_db(ctx.obj["verbose"])
   webview.create_window("Jiten Japanese Dictionary", app,
                         width = 1280, height = 720, text_select = True)
-  webview.start(debug = os.environ.get("FLASK_ENV") == "development")
+  webview.start(**opts)
 
 @cli.command(help = "Build (or download) sqlite databases.")
 @click.option("--download", is_flag = True,
