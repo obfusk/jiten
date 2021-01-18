@@ -5,7 +5,7 @@
 #
 # File        : jiten/cli.py
 # Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-# Date        : 2021-01-17
+# Date        : 2021-01-18
 #
 # Copyright   : Copyright (C) 2021  Felix C. Stegerman
 # Version     : v0.3.5
@@ -540,6 +540,7 @@ def serve_app(host = HOST, port = PORT, verbose = True, **opts):
 """)
 @click.pass_context
 def gui(ctx):
+  _fix_profile()
   import platform, webview
   from .app import app
   app.config["GUI"] = True
@@ -550,6 +551,28 @@ def gui(ctx):
   webview.create_window("Jiten Japanese Dictionary", app,
                         width = 1280, height = 720, text_select = True)
   webview.start(**opts)
+
+# FIXME
+def _fix_profile():
+  """use OTR profile"""
+  import platform
+  gui, system = os.environ.get("PYWEBVIEW_GUI"), platform.system()
+  if system == "Windows": return
+  if system == "Linux" and gui and gui != "qt": return
+  if system != "Linux" and gui != "qt": return
+  try:
+    from PyQt5.QtWidgets import QApplication
+    from PyQt5.QtWebEngineWidgets import QWebEnginePage, QWebEngineProfile
+  except ImportError:
+    pass
+  else:
+    app       = _fix_profile.app      = QApplication([])
+    profile   = _fix_profile.profile  = QWebEngineProfile()
+    old_init  = QWebEnginePage.__init__
+    def new_init(self, *a):
+      if len(a) == 1: a = (profile, *a)
+      old_init(self, *a)
+    QWebEnginePage.__init__ = new_init
 
 @cli.command(help = "Build (or download) sqlite databases.")
 @click.option("--download", is_flag = True,
