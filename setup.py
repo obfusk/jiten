@@ -1,33 +1,39 @@
 from pathlib import Path
 import os, setuptools, subprocess, sys
 
-import jiten.version
+from jiten.version import __version__
 
-long_description  = Path(__file__).with_name("README.md") \
-                    .read_text(encoding = "utf8")
-mod_sqlite3_pcre  = setuptools.Extension(
-  "jiten._sqlite3_pcre", ["sqlite3-pcre.c"],
-  libraries = "pcre sqlite3".split()
-)
-data    = [ "res/jlpt/N" + l + "-" + x for l in "12345"
-            for x in "kanji vocab-eng vocab-hiragana".split() ] \
-        + [ "static/*." + x for x in "svg png css js".split() ] \
-        + [ "static/audio/*.mp3" ] \
-        + [ "static/font/*." + x for x in "ttf txt".split() ] \
-        + [ "static/licenses/*.txt" ] \
-        + [ "templates/*.html" ]
+clean = "clean" in sys.argv[1:]
 
-# "build" *.xml.gz
-subprocess.run("make patch", shell = True, check = True)
+info  = Path(__file__).with_name("README.md").read_text(encoding = "utf8")
+pcre  = setuptools.Extension("jiten._sqlite3_pcre", ["sqlite3-pcre.c"],
+                             libraries = "pcre sqlite3".split())
 
-if os.environ.get("JITEN_ANDROID") == "yes":
-  subprocess.run("make _version", shell = True, check = True)
+data  = [ "res/jlpt/N" + l + "-" + x for l in "12345"
+          for x in "kanji vocab-eng vocab-hiragana".split() ] \
+      + [ "static/*." + x for x in "svg png css js".split() ] \
+      + [ "static/audio/*.mp3" ] \
+      + [ "static/font/*." + x for x in "ttf txt".split() ] \
+      + [ "static/licenses/*.txt" ] \
+      + [ "templates/*.html" ]
+
+if clean:
+  subprocess.run("make clean", shell = True, check = True)
+else:
+  # "build" *.xml.gz
+  subprocess.run("make patch", shell = True, check = True)
+
+if os.environ.get("JITEN_ANDROID") == "yes" or \
+    os.environ.get("JITEN_FINAL") == "yes":
+  if not clean:
+    subprocess.run("make _version", shell = True, check = True)
   data += [ ".version" ]
 
   if os.environ.get("JITEN_NODB") != "yes":
-    # "build" *.sqlite3
-    import jiten.cli
-    jiten.cli.cli("-v setup".split(), standalone_mode = False)
+    if not clean:
+      # "build" *.sqlite3
+      import jiten.cli
+      jiten.cli.cli("-v setup".split(), standalone_mode = False)
     data += [ "res/*.sqlite3" ]
 else:
   data += [ "res/freq/" + x for x in """SOURCES base_aggregates.txt.nobom
@@ -42,9 +48,9 @@ setuptools.setup(
   name              = "jiten",
   url               = "https://github.com/obfusk/jiten",
   description       = "japanese cli&web dictionary based on jmdict/kanjidic",
-  long_description  = long_description,
+  long_description  = info,
   long_description_content_type = "text/markdown",
-  version           = jiten.version.__version__,
+  version           = __version__,
   author            = "Felix C. Stegerman",
   author_email      = "flx@obfusk.net",
   license           = "AGPLv3+",
@@ -79,5 +85,5 @@ setuptools.setup(
   scripts           = ["bin/jiten"],
   python_requires   = ">=3.5",
   install_requires  = ["Flask", "click>=6.0"],
-  ext_modules       = [mod_sqlite3_pcre],
+  ext_modules       = [pcre],
 )
