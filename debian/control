@@ -19,6 +19,7 @@ Architecture: any
 Depends: ${misc:Depends},
          ${python3:Depends},
          ${shlibs:Depends},
+Recommends: python3-webview
 Description: japanese android/cli/web dictionary based on jmdict/kanjidic
  Jiten is a Japanese dictionary based on JMDict/Kanjidic
  .
@@ -60,3 +61,7 @@ Description: japanese android/cli/web dictionary based on jmdict/kanjidic
   * can be run on your own computer (or e.g. android phone)
  .
  Command-line interface
+ .
+ WebView GUI
+  * wraps the web interface
+  * requires python3-webview
