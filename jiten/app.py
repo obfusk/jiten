@@ -24,7 +24,7 @@ import json, os, time
 
 from pathlib import Path
 
-import click, jinja2
+import click, jinja2, werkzeug
 
 from flask import Flask, escape, make_response, redirect, request, \
                   render_template, url_for
@@ -146,6 +146,18 @@ def get_filters():
   return dict(noun = arg_bool("noun"), verb = arg_bool("verb"),
               prio = arg_bool("prio"), jlpt = jlpt)
 
+@app.errorhandler(M.RegexError)
+def handle_regexerror(e):
+  return respond("error.html", name = "Regex Error", info = str(e)), 400
+
+@app.errorhandler(click.exceptions.BadParameter)
+def handle_paramerror(e):
+  return respond("error.html", name = "Param Error", info = str(e)), 400
+
+@app.errorhandler(werkzeug.exceptions.HTTPException)
+def handle_httperror(e):
+  return respond("error.html", name = e.name, info = e.description), e.code
+
 @app.route("/")
 def r_index():
   if not app.config.get("DBS_UP2DATE", True):
@@ -154,22 +166,16 @@ def r_index():
 
 @app.route("/jmdict")
 def r_jmdict():
-  try:
-    filters = get_filters()
-  except click.exceptions.BadParameter as e:
-    return "param error: " + escape(str(e)), 400
+  filters = get_filters()
   if arg("query", "").strip().lower() == "+random":
     q = "+#{}".format(J.random_seq(**filters))
     return redirect(url_for("r_jmdict", query = q, lang = get_langs()))
   query, max_r = get_query_max()
   opts = dict(langs = get_langs(), max_results = max_r, **filters)
   data = dict(page = "jmdict", query = query)
-  try:
-    if query: data["results"] = J.search(query, **opts)
-    with K.readmeans() as f:
-      return respond("jmdict.html", krm = f, **data)
-  except M.RegexError as e:
-    return "regex error: " + escape(str(e)), 400
+  if query: data["results"] = J.search(query, **opts)
+  with K.readmeans() as f:
+    return respond("jmdict.html", krm = f, **data)
 
 @app.route("/jmdict/by-freq")
 def r_jmdict_by_freq():
@@ -201,11 +207,8 @@ def r_kanji():
     return redirect(url_for("r_kanji", query = K.random().char))
   query, max_r = get_query_max()
   data = dict(page = "kanji", query = query)
-  try:
-    if query: data["results"] = K.search(query, max_results = max_r)
-    return respond("kanji.html", **data)
-  except M.RegexError as e:
-    return "regex error: " + escape(str(e)), 400
+  if query: data["results"] = K.search(query, max_results = max_r)
+  return respond("kanji.html", **data)
 
 @app.route("/kanji/by-freq")
 def r_kanji_by_freq():
@@ -253,8 +256,9 @@ def r_download_dbs():
   try:
     app.config["DOWNLOAD_DBS"]()
   except M.DownloadError as e:
-    return "download error: {} (file: {}, url: {})" \
-           .format(escape(str(e)), e.file, e.url), 500
+    name  = "Download Error"
+    info  = "{} (file: {}, url: {})".format(str(e), e.file, e.url)
+    return respond("error.html", name = name, info = info), 500
   del app.config["DBS_UP2DATE"], app.config["DOWNLOAD_DBS"]
   return redirect(url_for("r_index"))
 

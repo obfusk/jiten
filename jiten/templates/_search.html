@@ -2,9 +2,9 @@
 
   File        : templates/_search.html
   Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-  Date        : 2020-12-05
+  Date        : 2021-01-18
 
-  Copyright   : Copyright (C) 2020  Felix C. Stegerman
+  Copyright   : Copyright (C) 2021  Felix C. Stegerman
   Version     : v0.3.5
   License     : AGPLv3+
 
@@ -23,22 +23,26 @@
         <legend>match</legend>
         <div class="nowrap">
           <div class="form-check form-check-inline">
-            <input type="checkbox"
+            <input type="checkbox" data-command="+w"
               class="form-check-input clear-input-checked"
               id="jmdict-word" name="word" value="yes"
-              {% if not query %}checked{% endif %} />
+              {% if not query or query.startswith("+w") %}checked{% endif %} />
             <label class="form-check-label" for="jmdict-word"
               title="\b...\b">word</label>
           </div>
           <div class="form-check form-check-inline">
-            <input type="checkbox" class="form-check-input"
-              id="jmdict-1stword" name="1stword" value="yes" />
+            <input type="checkbox" data-command="+1"
+              class="form-check-input clear-input-unchecked"
+              id="jmdict-1stword" name="1stword" value="yes"
+              {% if query.startswith("+1") %}checked{% endif %} />
             <label class="form-check-label" for="jmdict-1stword"
               title="^...\b">1st word</label>
           </div>
           <div class="form-check form-check-inline">
-            <input type="checkbox" class="form-check-input"
-              id="jmdict-exact" name="exact" value="yes" />
+            <input type="checkbox" data-command="+="
+              class="form-check-input clear-input-unchecked"
+              id="jmdict-exact" name="exact" value="yes"
+              {% if query.startswith("+=") %}checked{% endif %} />
             <label class="form-check-label" for="jmdict-exact"
               title="^...$">exact</label>
           </div>
@@ -127,14 +131,18 @@
       <fieldset class="d-inline border p-2 pl-3">
         <legend>match</legend>
         <div class="form-check form-check-inline">
-          <input type="checkbox" class="form-check-input"
-            id="kanji-word" name="word" value="yes" />
+          <input type="checkbox" data-command="+w"
+            class="form-check-input"
+            id="kanji-word" name="word" value="yes"
+            {% if query.startswith("+w") %}checked{% endif %} />
           <label class="form-check-label" for="kanji-word"
             title="\b...\b">word</label>
         </div>
         <div class="form-check form-check-inline">
-          <input type="checkbox" class="form-check-input"
-            id="kanji-exact" name="exact" value="yes" />
+          <input type="checkbox" data-command="+="
+            class="form-check-input"
+            id="kanji-exact" name="exact" value="yes"
+            {% if query.startswith("+=") %}checked{% endif %} />
           <label class="form-check-label" for="kanji-exact"
             title="^...$">exact</label>
         </div>

@@ -296,20 +296,32 @@ $(".play-audio").click(e => {
 })
 
 $(".convert-kana").click(e => {
-  const i = $("input", $(e.delegateTarget).parents(".input-group"))
+  const i = $("input[type=text]", $(e.delegateTarget).parents(".input-group"))
   const [b, v, a] = selection(i)
   i.val(b + convertKana(v) + a).focus()
 })
 
 $(".clear-input").click(evt => {
-  const e = $(evt.delegateTarget)
-  $(".clear-input-checked", e.parents("form")).prop("checked", true)
-  $("input", e.parents(".input-group")).val("").focus()
+  const e = $(evt.delegateTarget), f = e.parents("form")
+  $(".clear-input-checked"  , f).prop("checked", true)
+  $(".clear-input-unchecked", f).prop("checked", false)
+  $("input[type=text]", e.parents(".input-group")).val("").focus()
+})
+
+$(":checkbox[data-command]").change(evt => {
+  const e = evt.delegateTarget, i = $("input[type=text]", $(e).parents("form"))
+  const x = e.checked ? e.dataset.command + " " : "", v = i.val().trim()
+  if (e.checked) {
+    $(":checkbox", $(e).parents("fieldset"))
+      .filter((i, x) => x != e).prop("checked", false)
+  }
+  if (!v || /^\+[^=1w]/.test(v)) return
+  i.val(x + v.replace(/^\+[=1w]\s*/, ""))
 })
 
 if (copyToClipboard) {
   $(".copy-input").click(e => {
-    const i = $("input", $(e.delegateTarget).parents(".input-group"))
+    const i = $("input[type=text]", $(e.delegateTarget).parents(".input-group"))
     copyToClipboard(selection(i)[1])
   }).show()
 }
@@ -381,8 +393,8 @@ $(".search-alt").click(evt => {
   const e = evt.delegateTarget, r = e.dataset.route
   const f = $(`<form action="/${r}">`)
   const i = $('<input type="hidden" name="query" />')
-  let   v = $("input", $(e).parents("form")).val()
-  if (/sentences|stroke/.test(r)) { v = v.replace(/^\+[=1w]\s*/, "") }
+  let   v = $("input[type=text]", $(e).parents("form")).val()
+  if (/sentences|stroke/.test(r)) { v = v.replace(/^\s*\+[=1w]\s*/, "") }
   $("body").append(f.append(i.val(v)))
   f.submit(showLoading).submit().remove()
   return false
