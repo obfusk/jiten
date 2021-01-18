@@ -91,7 +91,11 @@ patch:
 	$(MAKE) -C jiten/res/jmdict cleanup
 
 _version:
-	git describe --always > jiten/.version
+	if [ -n "$$JITEN_VERSION" ]; then \
+	  echo "v$$JITEN_VERSION"; \
+	else \
+	  git describe --always; \
+	fi > jiten/.version
 
 _package:
 	$(PYTHON) setup.py sdist bdist_wheel
