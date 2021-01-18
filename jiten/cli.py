@@ -403,7 +403,7 @@ def indent_and_wrap_jap(w, xs, pre, fg):
   w = len(pre) + n + (n // k * 2)   # 2 extra chars per word per line
   return indent_and_wrap(w, xs, pre, fg).replace("_【", " 【")
 
-@cli.command(help = "Search Kanji.")
+@cli.command(help = "Search kanji.")
 @click.option("-w", "--word", is_flag = True,
               help = "Match whole word (same as \\b...\\b).")
 @click.option("-1", "--1stword", "--first-word", "fstwd", is_flag = True,
@@ -479,7 +479,7 @@ def kanji_search(q, verbose, word, exact, fstwd, max_results,
     yield "\n"
                                                                 # }}}1
 
-@cli.command(help = "Search Example Sentences.")
+@cli.command(help = "Search Tatoeba example sentences.")
 @click.option("-l", "--lang", "langs", multiple = True,
               default = [], metavar = "LANG",
               envvar = name.upper() + "_LANGS",
@@ -516,8 +516,11 @@ def sentence_search(q, verbose, langs, max_results):            # {{{1
                                                                 # }}}1
 
 @cli.command(help = "Serve the web interface.")
-@click.option("-h", "--host", default = HOST, metavar = "HOST")
-@click.option("-p", "--port", default = PORT, metavar = "PORT", type = click.INT)
+@click.option("-h", "--host", default = HOST, metavar = "HOST",
+              help = "Host to listen on.", show_default = True)
+@click.option("-p", "--port", default = PORT, metavar = "PORT",
+              help = "Port to listen on.", show_default = True,
+              type = click.INT)
 @click.pass_context
 def serve(ctx, host, port):
   serve_app(host, port, ctx.obj["verbose"])
@@ -532,7 +535,9 @@ def serve_app(host = HOST, port = PORT, verbose = True, **opts):
     setup_db(verbose)
   app.run(host = host, port = port, load_dotenv = False, **opts)
 
-@cli.command(help = "Serve the web interface in a GUI.")
+@cli.command(help = """
+  WebView GUI.  Wraps the web interface.  Requires pywebview.
+""")
 @click.pass_context
 def gui(ctx):
   import webview

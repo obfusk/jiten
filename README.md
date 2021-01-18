@@ -76,6 +76,8 @@ selected manually).
   - use long press for tooltips on mobile
   - can be run on your own computer (or e.g. android phone)
 * Command-line interface
+* WebView GUI
+  - wraps the web interface
 
 ## CLI
 
@@ -104,6 +106,18 @@ $ jiten -v kanji --max 1 --word 日
 ```bash
 $ jiten -v serve
 ```
+
+## WebView GUI for Linux/macOS/Windows
+
+NB: requires [`pywebview`](https://pywebview.flowrl.com)
+(Debian/Ubuntu users can `apt install python3-webview`).
+
+```bash
+$ jiten gui
+```
+
+You can use e.g. `export PYWEBVIEW_GUI=qt` to choose the
+[renderer](https://pywebview.flowrl.com/guide/renderer.html).
 
 ## Help
 
@@ -169,18 +183,6 @@ $ make
 ```
 
 ## Miscellaneous
-
-### WebView GUI on Linux/macOS/Windows
-
-NB: requires [`pywebview`](https://pywebview.flowrl.com) (Debian &
-Ubuntu users can `apt install python3-webview`).
-
-```bash
-$ jiten gui
-```
-
-You can use e.g. `export PYWEBVIEW_GUI=qt` to choose the [webview
-backend](https://pywebview.flowrl.com/guide/renderer.html).
 
 ### Web Interface on Android
 
