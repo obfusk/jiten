@@ -59,6 +59,7 @@ setuptools.setup(
     "Natural Language :: English",
     "Natural Language :: German",
     "Natural Language :: Japanese",
+    "Operating System :: Android",
     "Operating System :: POSIX :: Linux",
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3.5",
