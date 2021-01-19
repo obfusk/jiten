@@ -19,22 +19,22 @@ r"""
 JMDict.
 
 >>> DBVERSION
-10
+11
 
 >>> jmdict = parse_jmdict()
 >>> len(jmdict)
-190343
+190722
 
 >>> print(jmdict[-1].sense[0].gloss[0])
-Japanese-Multilingual Dictionary Project - Creation Date: 2020-12-03
+Japanese-Multilingual Dictionary Project - Creation Date: 2021-01-19
 
 >>> len([ x for x in jmdict if x.isprio() ])
-22437
+22443
 >>> len([ x for x in jmdict if x.isprio() and list(x.pitch()) ])
-14719
+17415
 
 >>> len([ x for x in jmdict if x.jlpt == 1 ])
-3034
+3035
 >>> len([ x for x in jmdict if x.jlpt == 2 ])
 1725
 >>> len([ x for x in jmdict if x.jlpt == 3 ])

@@ -5,7 +5,7 @@
 #
 # File        : jiten/pitch.py
 # Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-# Date        : 2021-01-17
+# Date        : 2021-01-19
 #
 # Copyright   : Copyright (C) 2021  Felix C. Stegerman
 # Version     : v0.3.5
@@ -20,7 +20,7 @@ Pitch Accent from Wadoku.
 
 >>> pitch = parse_pitch()
 >>> len(pitch) + len(BLACKLIST)
-141798
+205092
 
 >>> [ x for x in pitch if x[0] == "小猫" ][0]
 ['小猫', 'こねこ', '2']

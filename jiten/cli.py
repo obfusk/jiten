@@ -5,7 +5,7 @@
 #
 # File        : jiten/cli.py
 # Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-# Date        : 2021-01-18
+# Date        : 2021-01-19
 #
 # Copyright   : Copyright (C) 2021  Felix C. Stegerman
 # Version     : v0.3.5
@@ -40,7 +40,7 @@ CLI
 <BLANKLINE>
 
 >>> run("-v jmdict -m1 -w cat")
-DB v10 up to date.
+DB v11 up to date.
 query: +w cat
 <BLANKLINE>
 猫
@@ -61,7 +61,7 @@ seq# 1467640, freq# 2201, jlpt N5, prio; 1
 <BLANKLINE>
 
 >>> run("-v jmdict -m1 -w kat -l dut")
-DB v10 up to date.
+DB v11 up to date.
 query: +w kat
 <BLANKLINE>
 猫
@@ -79,7 +79,7 @@ seq# 1467640, freq# 2201, jlpt N5, prio; 1
 <BLANKLINE>
 
 >>> run("-v jmdict -m1 -w idiot")
-DB v10 up to date.
+DB v11 up to date.
 query: +w idiot
 <BLANKLINE>
 馬鹿 | 莫迦 | 破家 | 馬稼
@@ -101,7 +101,7 @@ seq# 1601260, freq# 2472, jlpt N3, prio; 1
 <BLANKLINE>
 
 >>> run("-v jmdict -m1 -e 誤魔化す")
-DB v10 up to date.
+DB v11 up to date.
 query: += 誤魔化す
 <BLANKLINE>
 誤魔化す | 誤摩化す | 胡麻化す | 誤魔かす | 胡魔化す
@@ -120,7 +120,7 @@ seq# 1271480, freq# 10495, jlpt N1, prio; 1
 <BLANKLINE>
 
 >>> run("-v jmdict -m1 -w まる")
-DB v10 up to date.
+DB v11 up to date.
 query: +w まる
 <BLANKLINE>
 丸 | 円
@@ -143,12 +143,12 @@ seq# 1216250, freq# 63, jlpt N3, prio; 1
 <BLANKLINE>
 
 >>> run("-v jmdict -m1 -w cat --verb")
-DB v10 up to date.
+DB v11 up to date.
 query: +w cat
 <BLANKLINE>
 逆撫で | 逆なで
 さかなで | ぎゃくなで
-[no pitch data]
+さꜛかなで
 [eng]
 = rubbing the wrong way (e.g. a cat) | irritating
 --> noun (common) (futsuumeishi) | noun or participle which takes the aux. verb
@@ -159,7 +159,7 @@ seq# 1227180, freq# 30500; 1
 <BLANKLINE>
 
 >>> run("-v jmdict -m1 -w みる --noun")
-DB v10 up to date.
+DB v11 up to date.
 query: +w みる
 <BLANKLINE>
 海松 | 水松
@@ -175,7 +175,7 @@ seq# 1772790, freq# 75; 1
 <BLANKLINE>
 
 >>> run("-v jmdict -m1 -w みる --noun --prio")
-DB v10 up to date.
+DB v11 up to date.
 query: +w みる
 <BLANKLINE>
 <BLANKLINE>
@@ -193,7 +193,7 @@ query: +w みる
 <BLANKLINE>
 
 >>> run("-v kanji -m1 -e cat")
-DB v10 up to date.
+DB v11 up to date.
 query: += cat
 <BLANKLINE>
 猫
@@ -218,7 +218,7 @@ variants: 貓
 <BLANKLINE>
 
 >>> run("-v kanji -m1 -w 日")
-DB v10 up to date.
+DB v11 up to date.
 query: +w 日
 <BLANKLINE>
 日

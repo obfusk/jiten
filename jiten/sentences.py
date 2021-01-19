@@ -5,9 +5,9 @@
 #
 # File        : jiten/sentences.py
 # Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-# Date        : 2020-10-03
+# Date        : 2021-01-19
 #
-# Copyright   : Copyright (C) 2020  Felix C. Stegerman
+# Copyright   : Copyright (C) 2021  Felix C. Stegerman
 # Version     : v0.3.5
 # License     : AGPLv3+
 #
@@ -20,22 +20,22 @@ Sentences from Tatoeba.
 
 >>> sentences = parse_sentences()
 >>> len(sentences)
-193617
+200389
 
 >>> len([ x for x in sentences if x.jap ])
-193617
+200389
 >>> len([ x for x in sentences if x.eng ])
-188544
+195187
 >>> len([ x for x in sentences if x.dut ])
-4494
+4739
 >>> len([ x for x in sentences if x.ger ])
-38269
+41254
 >>> len([ x for x in sentences if x.audio ])
-1280
+1281
 >>> len([ x for x in sentences if x.eng and x.dut and x.ger ])
-2348
+2543
 >>> len([ x for x in sentences if x.eng and x.dut and x.ger and x.audio ])
-534
+538
 
 >>> [ x for x in sentences if "子猫" in x.jap ][0]
 Entry(id=74794, jap='「お前、どこの子だ？」足に纏わりついてきたのは、小さな子猫だった。灰色の縞模様のふわふわした猫だ。', eng='"Who do you belong to?" Wrapped around his feet was a small cat. It was a fluffy grey striped cat.', dut=None, ger=None, audio=None)
