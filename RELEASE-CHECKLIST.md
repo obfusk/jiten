@@ -14,18 +14,20 @@
 
 # DB
 
-- [ ] run `make update` in `jiten/res/jmdict`
+- [ ] run `make update` in `jiten/res/jmdict` etc.
 - [ ] tests in `jiten/jmdict.py`
 - [ ] tests in `jiten/kanji.py`
 - [ ] `Creation Date:` in `jiten/jmdict.py`
 - [ ] `DBVERSION++` in `jiten/jmdict.py` 2x
 - [ ] `DBVERSION++` in `jiten/cli.py`
+- [ ] nodb links
 
 # Release
 
 - [ ] `vX.Y.Z` tag
-- [ ] GitHub release
+- [ ] GitHub release (`*.apk`, `*.sqlite3`, `*.deb` & `*.sig`)
 - [ ] upload to PyPi
 - [ ] update obfusk's f-droid repo
-- [ ] update F-Droid (automatic)
 - [ ] update Play Store
+- [ ] update Debian package
+- [ ] update F-Droid (automatic?!)
