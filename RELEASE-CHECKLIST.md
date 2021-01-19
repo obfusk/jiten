@@ -22,6 +22,13 @@
 - [ ] `DBVERSION++` in `jiten/cli.py`
 - [ ] nodb links
 
+# Metadata
+
+- [ ] description & screenshots in `README.md`
+- [ ] description & screenshots for f-droid (2x) & Play Store
+- [ ] description for Debian package
+- [ ] changelog
+
 # Release
 
 - [ ] `vX.Y.Z` tag
