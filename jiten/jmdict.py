@@ -5,9 +5,9 @@
 #
 # File        : jiten/jmdict.py
 # Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-# Date        : 2020-12-07
+# Date        : 2021-01-19
 #
-# Copyright   : Copyright (C) 2020  Felix C. Stegerman
+# Copyright   : Copyright (C) 2021  Felix C. Stegerman
 # Version     : v0.3.5
 # License     : AGPLv3+
 #
@@ -203,7 +203,7 @@ from . import misc  as M
 from . import pitch as P
 from .sql import sqlite_do, load_pcre_extension
 
-DBVERSION       = 10 # NB: update this when data/schema changes
+DBVERSION       = 11 # NB: update this when data/schema changes
 SQLITE_FILE     = M.resource_path("res/jmdict.sqlite3")
 JMDICT_FILE     = M.resource_path("res/jmdict/jmdict.xml.gz")
 JLPT_FILE_BASE  = M.resource_path("res/jlpt/N")
