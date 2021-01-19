@@ -2,7 +2,7 @@
 
   File        : templates/_nav.html
   Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-  Date        : 2021-01-18
+  Date        : 2021-01-19
 
   Copyright   : Copyright (C) 2021  Felix C. Stegerman
   Version     : v0.3.5
@@ -11,7 +11,7 @@
 --> #}
 {% from "_macros.html" import input, copybtn with context %}
 <nav class="navbar navbar-expand-lg navbar-dark fixed-top bg-primary">
-  {%- if GUI_TOKEN %}
+  {%- if GUI %}
     <span class="navbar-brand">
       <a class="btn btn-info" href="javascript:history.back()">
         <!-- https://www.flaticon.com/free-icon/back-arrow_60577 -->
@@ -354,6 +354,7 @@
       <form method="post" action="/_save_prefs">
         <div class="modal-body">
           <input type="hidden" name="url" value="{{ request.url }}" />
+          <input type="hidden" name="token" id="prefs-token" value="" />
           <fieldset class="d-inline border p-2 pl-3">
             <legend>languages</legend>
             {% for l in J.LANGS %}

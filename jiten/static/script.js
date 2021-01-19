@@ -2,7 +2,7 @@
 //
 //  File        : static/script.js
 //  Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-//  Date        : 2021-01-18
+//  Date        : 2021-01-19
 //
 //  Copyright   : Copyright (C) 2021  Felix C. Stegerman
 //  Version     : v0.3.5
@@ -268,18 +268,18 @@ const fetch_post = (info, path, data = "") =>
     return r
   }).catch(e => console.error(`${info} POST failed:`, e))
 
-// === clipboard ===
+// === clipboard & webview & token ===
 
-let webview_token = localStorage.getItem("webview_token")
+let webview_token   = localStorage.getItem("webview_token")
+let copyToClipboard = null
 
 if (document.location.hash.includes("webview_token")) {
   webview_token = document.location.hash.split("=")[1]
   localStorage.setItem("webview_token", webview_token)
 }
 
-let copyToClipboard = null
-
 if (webview_token) {
+  $("#prefs-token").val(webview_token)
   copyToClipboard = t => fetch_post(
     "clipboard", `/__copy_to_clipboard__/${webview_token}`, t
   )
@@ -408,11 +408,12 @@ $(window).on("pageshow", () => {
     .each((i, x) => $(x).text(x.dataset.text))
 })
 
-// === save history ===
+// === save history & pywebview & token ===
 
 saveHistory()
 
 $(window).on("pywebviewready", () => {
+  $("#prefs-token").val(window.pywebview.token)
   if (localStorage.getItem("history_loaded") == "loaded") {
     fetch_post(
       "save history", `/__save_history__/${window.pywebview.token}`,

@@ -5,7 +5,7 @@
 #
 # File        : jiten/app.py
 # Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-# Date        : 2021-01-18
+# Date        : 2021-01-19
 #
 # Copyright   : Copyright (C) 2021  Felix C. Stegerman
 # Version     : v0.3.5
@@ -26,8 +26,8 @@ from pathlib import Path
 
 import click, jinja2, werkzeug
 
-from flask import Flask, escape, make_response, redirect, request, \
-                  render_template, url_for
+from flask import Flask, abort, escape, make_response, redirect, \
+                  request, render_template, url_for
 
 from .version import __version__, py_version
 from .kana import kana2romaji
@@ -61,7 +61,6 @@ else:
   CONF_PREFS  = None
 
 if CONF_PREFS:
-  # FIXME: CSRF protection needed?
   def get_prefs():
     try:
       with open(CONF_PREFS) as f: return json.load(f)
@@ -119,7 +118,7 @@ def respond(template, **data):
     roma = roma, pref_langs = pref_langs, pref_max = pref_max,
     int = int, ord = ord, hex = hex, J = J, K = K, M = M, P = P, S = S,
     START = START, VERSION = __version__, PY_VERSION = py_version,
-    kana2romaji = kana2romaji, SEARCH = SEARCH, GUI_TOKEN = GUI_TOKEN,
+    kana2romaji = kana2romaji, SEARCH = SEARCH, GUI = bool(GUI_TOKEN),
     **data
   ))
 
@@ -157,6 +156,13 @@ def handle_paramerror(e):
 @app.errorhandler(werkzeug.exceptions.HTTPException)
 def handle_httperror(e):
   return respond("error.html", name = e.name, info = e.description), e.code
+
+def check_token(f):
+  def g(*a, **k):
+    token = GUI_TOKEN or app.config.get("WEBVIEW_TOKEN")
+    if token and token != request.form.get("token"): abort(403)
+    return f(*a, **k)
+  return g
 
 @app.route("/")
 def r_index():
@@ -263,6 +269,7 @@ def r_download_dbs():
   return redirect(url_for("r_index"))
 
 @app.route("/_save_prefs", methods = ["POST"])
+@check_token
 def r_save_prefs():
   return set_prefs(dict(
     lang  = " ".join( l for l in request.form.getlist("lang")

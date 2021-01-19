@@ -5,9 +5,9 @@
 #
 # File        : android/main.py
 # Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-# Date        : 2020-12-03
+# Date        : 2021-01-19
 #
-# Copyright   : Copyright (C) 2020  Felix C. Stegerman
+# Copyright   : Copyright (C) 2021  Felix C. Stegerman
 # Version     : v0.3.5
 # License     : AGPLv3+
 #
@@ -51,6 +51,8 @@ def setup_flask(dbg):
   global app, request
   if dbg: os.environ["FLASK_ENV"] = "development"
   from jiten.app import app, request
+  token = app.config["WEBVIEW_TOKEN"] = secrets.token_hex()
+  return token
 
 def setup_debug_mode():
   token = secrets.token_hex()
@@ -81,8 +83,7 @@ def setup_activities(act, dbg, token):
   android.activity.bind(on_new_intent = on_new_intent)
   if intent := act.getIntent(): on_new_intent(intent)
 
-def setup_clipboard(act):
-  token = secrets.token_hex()
+def setup_clipboard(act, token):
   CD    = jnius.autoclass("android.content.ClipData")
   ctx   = act.getApplicationContext()
   clp   = ctx.getSystemService(type(ctx).CLIPBOARD_SERVICE)
@@ -91,8 +92,6 @@ def setup_clipboard(act):
   def r_copy_to_clipboard():
     clp.setPrimaryClip(CD.newPlainText("text", request.data))
     return "" # FIXME
-
-  return token
 
 def setup_webview(cls):
   cls.enableZoom()
@@ -103,12 +102,12 @@ if __name__ == "__main__":
     fix_stdio()
     import android.activity, android.config, certifi, jnius
     os.environ["SSL_CERT_FILE"] = certifi.where()
-    cls = jnius.autoclass(android.config.ACTIVITY_CLASS_NAME)
-    act = cls.mActivity
-    dbg = debug_mode(act)
-    setup_flask(dbg)
+    cls   = jnius.autoclass(android.config.ACTIVITY_CLASS_NAME)
+    act   = cls.mActivity
+    dbg   = debug_mode(act)
+    token = setup_flask(dbg)
     if dbg: setup_debug_mode()
-    token = setup_clipboard(act)
+    setup_clipboard(act, token)
     setup_activities(act, dbg, token)
     setup_webview(cls)
 
