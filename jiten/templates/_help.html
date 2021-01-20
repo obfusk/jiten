@@ -1,0 +1,289 @@
+{# <!--
+
+  File        : templates/_help.html
+  Maintainer  : Felix C. Stegerman <flx@obfusk.net>
+  Date        : 2021-01-19
+
+  Copyright   : Copyright (C) 2021  Felix C. Stegerman
+  Version     : v0.3.5
+  License     : AGPLv3+
+
+--> #}
+<div class="modal" tabindex="-1" role="dialog" id="help-modal">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Help</h5>
+        <button type="button" class="close" data-dismiss="modal"
+            aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="accordion" id="help-accordion">
+          <div class="card">
+            <div class="card-header" id="help-tips-h">
+              <h5 class="mb-0">
+                <button class="btn btn-link" type="button"
+                    data-toggle="collapse" data-target="#help-tips"
+                    aria-expanded="true" aria-controls="help-tips">
+                  Tips
+                </button>
+              </h5>
+            </div>
+            <div id="help-tips" class="collapse show" aria-labelledby="help-tips-h">
+              <div class="card-body">
+  <h6>Navigation & Tooltips</h6>
+  <ul class="pl-4 mb-2">
+    <li>
+      <strong>Click on most Japanese words</strong> (buttons)
+      <strong>to search for them or go to their definition</strong>.
+    </li><li>
+      <strong>Click on most kanji</strong> (including in sentences)
+      <strong>to go to their definition</strong>.
+    </li><li>
+      <strong>Hover over</strong> [<em>use long press on mobile</em>]
+      <strong>most kanji</strong> (including in sentences) <strong>and
+      many Japanese words for</strong> a tooltip with <strong>their
+      meanings and/or readings</strong>.
+    </li>
+  </ul>
+  <h6 class="mt-4">Search Kanji by Radical</h6>
+  <ul class="pl-4 mb-2">
+    <li>
+      Click on the <kbd class="jap">部</kbd> or <kbd>radical</kbd>
+      button in the
+      <span class="nowrap"><kbd>Search Kanji</kbd></span>
+      form to open the radicals dialog.
+    </li><li>
+      Click on a radical to add it to the query input field; close the
+      dialog when you've selected the desired radicals.
+    </li><li>
+      This way you can search for e.g.
+      <span class="nowrap"><kbd>+r <span class="jap">犭艹田</span></kbd></span>.
+    </li>
+  </ul>
+  <h6 class="mt-4">Other Tips</h6>
+  <ul class="pl-4 mb-2">
+    <li>
+      Quickly switch between
+      <span class="nowrap"><kbd>Search JMDict</kbd></span>,
+      <span class="nowrap"><kbd>Search Kanji</kbd></span>,
+      <span class="nowrap"><kbd>Search Sentences</kbd></span> and
+      <span class="nowrap"><kbd><span class="jap">筆順を示す</span></kbd></span>
+      (Stroke Order) via the dropdown menu of their respective search
+      buttons.
+    </li><li>
+      Hover over [use long press on mobile] the large kanji with
+      stroke order font to switch to a gothic font.  Click on it to
+      search for words containing it.
+    </li><li>
+      Collapse JMDict and kanji entries to show less detail.
+    </li><li>
+      Collapse the additional search filter options (like JLPT level)
+      for more screen space (this may happen automatically on small
+      screens).  <em>NB: these additional filter options may still be
+      in effect, even if you don't see them because they are
+      collapsed.</em>
+    </li>
+  </ul>
+              </div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-header" id="help-features-h">
+              <h5 class="mb-0">
+                <button class="btn btn-link collapsed" type="button"
+                    data-toggle="collapse" data-target="#help-features"
+                    aria-expanded="false" aria-controls="help-features">
+                  Features
+                </button>
+              </h5>
+            </div>
+            <div id="help-features" class="collapse" aria-labelledby="help-features-h">
+              <div class="card-body">
+  <ul class="pl-4 mb-2">
+    <li>
+      JMDict multilingual japanese dictionary
+      <ul class="pl-4 mb-2">
+        <li>kanji, readings, meanings (english, dutch and/or german) &
+        more</li>
+        <li>pitch accent (from Wadoku)</li>
+        <li>browse by frequency/jlpt</li>
+      </ul>
+    </li><li>
+      Kanji dictionary
+      <ul class="pl-4 mb-2">
+        <li>readings, meanings (english), jmdict entries, radicals &
+        more</li>
+        <li>search using
+          <a href="https://en.wikipedia.org/wiki/Kodansha_Kanji_Learner%27s_Dictionary#SKIP"
+            target="_blank" rel="noopener">SKIP codes</a>
+        </li>
+        <li>search by radical</li>
+        <li>browse by frequency/level/jlpt</li>
+      </ul>
+    </li><li>
+      Example sentences (from Tatoeba)
+      <ul class="pl-4 mb-2">
+        <li>with english, dutch and/or german translation</li>
+        <li>some with audio</li>
+      </ul>
+    </li><li>
+      Stroke order
+      <ul class="pl-4 mb-2">
+        <li>input a word or sentence and see how it's written</li>
+      </ul>
+    </li><li>
+      Web interface / Android app / WebView GUI
+      <ul class="pl-4 mb-2">
+        <li>light/dark mode</li>
+        <li>search history (stored locally)</li>
+        <li>optionally show readings with romaji</li>
+      </ul>
+    </li>
+  </ul>
+              </div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-header" id="help-search-h">
+              <h5 class="mb-0">
+                <button class="btn btn-link collapsed" type="button"
+                    data-toggle="collapse" data-target="#help-search"
+                    aria-expanded="false" aria-controls="help-search">
+                  Searching: Regexes & Prefix "Commands"
+                </button>
+              </h5>
+            </div>
+            <div id="help-search" class="collapse" aria-labelledby="help-search-h">
+              <div class="card-body">
+  For beginners:
+  <a href="https://docs.python.org/3/howto/regex.html#regex-howto"
+    target="_blank" rel="noopener">Python Regex HOWTO</a>
+  &amp;
+  <a href="https://docs.python.org/3/library/re.html#regular-expression-syntax"
+    target="_blank" rel="noopener">Python Regex Syntax</a>.
+  <br/>
+  For when the details matter:
+  <a href="https://www.pcre.org/original/doc/html/pcresyntax.html"
+    target="_blank" rel="noopener">PCRE Syntax</a>
+  (what jiten actually uses).
+  <h6 class="mt-4">Prefix "Commands"</h6>
+  Queries support prefix "commands" (unrelated to regex syntax): e.g.
+  <code>+w foo</code> (word) should give the same results as
+  <code>\bfoo\b</code>, <code>+1 foo</code> (1st word) as
+  <code>^foo\b</code>, and <code>+= foo</code> (exact) as
+  <code>^foo$</code>.  (The <code>+</code> prefix was chosen because
+  no valid regex can start with it.)
+  <h6 class="mt-4">Quick Reference</h6>
+  <ul class="pl-4 mb-2"><li>
+    Most letters and characters will simply match themselves; e.g.
+    <code>foo</code> matches "foo".
+  </li><li>
+    The metacharacters <code>. ^ $ * + ? { } [ ] \ | ( )</code> allow
+    matching using sophisticated patterns and rules; they are escaped
+    by preceding them with a backslash; e.g.  <code>\\</code> matches
+    an actual backslash.
+  </li></ul>
+  <ul class="pl-4 mb-2"><li>
+    <code>.</code> matches any character (except newline); e.g.
+    <code>ba.</code> matches "bar", "baz", etc.
+  </li></ul>
+  <ul class="pl-4 mb-2"><li>
+    <code>^</code> matches at the start of a line; e.g.
+    <code>^foo</code> matches "foo" at the start of a line.
+  </li><li>
+    <code>$</code> matches at the end of a line; e.g.
+    <code>foo$</code> matches "foo" at the end of a line.
+  </li><li>
+    <code>\b</code> matches at a "word boundary" (the start or end of
+    a "word"); e.g. <code>\bbar\b</code> matches "bar" in "foo bar
+    baz", but not in "foobarbaz"; <code>\B</code> is its complement.
+  </li></ul>
+  <ul class="pl-4 mb-2"><li>
+    <code>*</code> matches the preceding thing zero or more times;
+    e.g. <code>fo*</code> matches "f", "fo", "foo", etc.
+  </li><li>
+    <code>+</code> matches the preceding thing one or more times; e.g.
+    <code>fo+</code> matches "fo", "foo", etc.
+  </li><li>
+    <code>?</code> matches the preceding thing optionally; e.g.
+    <code>fo?</code> matches "f" or "fo".
+  </li><li>
+    <code>{m,n}</code> (or just <code>{m}</code> instead of
+    <code>{m,m}</code>) matches the preceding thing <code>m</code> to
+    <code>n</code> times; e.g.  <code>fo{2,4}</code> matches "foo",
+    "fooo", or "foooo".
+  </li></ul>
+  <ul class="pl-4 mb-2"><li class="jap">
+    <code>[...]</code> is a character class; e.g.  <code>[a-z]</code>
+    matches "a" through "z"; <code>[あいうえお]</code> matches "あ",
+    "い", "う", "え", or "お".
+  </li><li>
+    <code>[^...]</code> is a complementing character class; e.g.
+    <code>[^a-z]</code> matches anything but "a" through "z".
+  </li></ul>
+  <ul class="pl-4 mb-2"><li>
+    <code>\d</code> matches any decimal digit (equivalent to
+    <code>[0-9]</code>); <code>\D</code> is its complement (equivalent
+    to <code>[^0-9]</code>).
+  </li><li>
+    <code>\s</code> matches any whitespace character; <code>\S</code>
+    is its complement.
+  </li><li>
+    <code>\w</code> matches any alphanumeric (i.e. "word" or "letter")
+    character; <code>\W</code> is its complement.
+  </li></ul>
+  <ul class="pl-4 mb-2"><li>
+    <code>|</code> is alternation; e.g. <code>foo|bar|baz</code>
+    matches "foo", "bar", or "baz".
+  </li><li>
+    <code>(...)</code> is grouping; e.g. <code>ab*</code> matches "a",
+    "ab", "abb", etc. whereas <code>(ab)*</code> matches "", "ab",
+    "abab", etc.; <code>^foo|bar$</code> matches "foo" at the
+    beginning of a line or "bar" at the end, whereas
+    <code>^(foo|bar)$</code> matches either "foo" or "bar" as a whole
+    line; a backslash followed by the number of the group (starting
+    from 1) can be used later in the pattern to refer back to what it
+    (actually) matched; e.g.  <code>[a-z]{2}</code> matches "aa",
+    "ab", "za", etc. whereas <code>([a-z])\1</code> matches "aa",
+    "bb", etc. (but not "ab" or "za").
+  </li></ul>
+  <ul class="pl-4 mb-2"><li>
+    <code>\p{...}</code> matches a unicode property; e.g.
+    <code>\p{Han}</code> matches kanji, <code>\p{Hiragana}</code>
+    matches hiragana, and <code>\p{Katakana}</code> matches katakana;
+    <code>\P{...}</code> is its complement.
+  </li><li>
+    For easy matching of Japanese, jiten supports these non-standard
+    aliases: <code>\pK</code> for <code>\p{Han}</code>,
+    <code>\ph</code> for <code>\p{Hiragana}</code>, and
+    <code>\pk</code> for <code>\p{Katakana}</code>.
+  </li></ul>
+  <h6 class="mt-4">Examples</h6>
+  <ul class="pl-4 mb-2"><li>
+    <code>+w cat</code> (<code>\bcat\b</code>) matches "cat" in "the
+    cat" (but not in e.g. "indicates").
+  </li><li>
+    <code>+1 cat</code> (<code>^cat\b</code>) matches "cat" in "cat"
+    or "cat (esp. the domestic cat, Felis catus)" (but not in e.g.
+    "category").
+  </li><li>
+    <code>+= cat</code> (<code>^cat$</code>) matches "cat" exactly.
+  </li></ul>
+  <ul class="pl-4 mb-2"><li class="jap">
+    <code>+= 猫\pK</code> (<code>^猫\pK$</code>) matches "猫" followed
+    by exactly one other kanji.
+  </li><li class="jap">
+    <code>+= (\pK)\1</code> (<code>^(\pK)\1$</code>) matches e.g.
+    "人人".
+  </li></ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -115,6 +115,11 @@ input[type=number] {
   width: 2rem; /* TODO */
 }
 
+.btn-link:focus {
+  border-color: transparent;
+  box-shadow: none;
+}
+
 code, .nowrap {
   display: inline-block;
 }
