@@ -2,7 +2,7 @@
 
   File        : templates/_macros.html
   Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-  Date        : 2021-01-05
+  Date        : 2021-01-19
 
   Copyright   : Copyright (C) 2021  Felix C. Stegerman
   Version     : v0.3.5
@@ -59,23 +59,32 @@
         <label class="sr-only" for="{{ id }}">{{ label }}</label>
         {% set imb = mb or "sm-0 mb-2" %}{# TODO #}
         {{ input(id, name, value, ph, af, mb = imb) }}
-        <div class="btn-group mb-{{ mb }}">
-          <button class="search-button btn btn-{{ btn }}"
-            data-text="{{ go }}">{{ go }}</button>
-          <button data-toggle="dropdown"
-              class="btn btn-{{ btn }} dropdown-toggle dropdown-toggle-split"
-              aria-haspopup="true" aria-expanded="false">
-            <span class="sr-only">Toggle Dropdown</span>
-          </button>
-          <div class="dropdown-menu">
-            <h5 class="dropdown-header">Switch to</h5>
-            {% for x in SEARCH %}
-              {% if go != x[1] %}
-                <a class="search-alt dropdown-item"
-                  data-route="{{ x[0] }}"
-                  href="/{{ x[0] }}">{{ x[1] }}</a>
-              {% endif %}
-            {% endfor %}
+        <div class="mb-{{ mb }}">
+          {% if id == "kanji-query" %}
+            <div class="d-inline-block mr-2" title="select radicals"
+                data-toggle="tooltip" data-placement="top">
+              <button type="button" class="jap btn btn-secondary"
+                data-toggle="modal" data-target="#radical-modal">部</button>
+            </div>
+          {%- endif -%}
+          <div class="btn-group">
+            <button class="search-button btn btn-{{ btn }}"
+              data-text="{{ go }}">{{ go }}</button>
+            <button data-toggle="dropdown"
+                class="btn btn-{{ btn }} dropdown-toggle dropdown-toggle-split"
+                aria-haspopup="true" aria-expanded="false">
+              <span class="sr-only">Toggle Dropdown</span>
+            </button>
+            <div class="dropdown-menu">
+              <h5 class="dropdown-header">Switch to</h5>
+              {% for x in SEARCH %}
+                {% if go != x[1] %}
+                  <a class="search-alt dropdown-item {{ "jap" if M.isjap(x[1]) else "" }}"
+                    data-route="{{ x[0] }}"
+                    href="/{{ x[0] }}">{{ x[1] }}</a>
+                {% endif %}
+              {% endfor %}
+            </div>
           </div>
         </div>
       </div>

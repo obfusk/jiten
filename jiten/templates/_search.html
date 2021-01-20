@@ -2,7 +2,7 @@
 
   File        : templates/_search.html
   Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-  Date        : 2021-01-18
+  Date        : 2021-01-19
 
   Copyright   : Copyright (C) 2021  Felix C. Stegerman
   Version     : v0.3.5
@@ -157,10 +157,12 @@
       </span>
       <span class="nowrap">
         To search by
-        <a class="btn btn-outline-success btn-sm py-0"
-            href="#" data-toggle="modal" data-target="#radical-modal">
-          radical
-        </a>
+        <span title="select radicals" data-toggle="tooltip" data-placement="top">
+          <a class="btn btn-outline-success btn-sm py-0"
+              href="#" data-toggle="modal" data-target="#radical-modal">
+            radical
+          </a>
+        </span>
         use e.g.
         <a class="query-example" href="/kanji?query=%2Br+犭艹田"
           ><kbd>+r <span class="jap">犭艹田</span></kbd></a>.
@@ -219,6 +221,7 @@
 {% macro stroke(query = "", af = True) %}
   {% call search("/stroke", "Text", "筆順を示す",
                  "stroke-query", "query", query,
-                 "漢字か仮名を入力", af, mb = 0) %}
+                 "漢字か仮名を入力", af,
+                 btn = "primary jap", mb = 0) %}
   {% endcall %}
 {% endmacro %}
