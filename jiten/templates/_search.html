@@ -2,7 +2,7 @@
 
   File        : templates/_search.html
   Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-  Date        : 2021-01-19
+  Date        : 2021-01-20
 
   Copyright   : Copyright (C) 2021  Felix C. Stegerman
   Version     : v0.3.5
@@ -132,7 +132,7 @@
         <legend>match</legend>
         <div class="form-check form-check-inline">
           <input type="checkbox" data-command="+w"
-            class="form-check-input"
+            class="form-check-input clear-input-unchecked"
             id="kanji-word" name="word" value="yes"
             {% if query.startswith("+w") %}checked{% endif %} />
           <label class="form-check-label" for="kanji-word"
@@ -140,7 +140,7 @@
         </div>
         <div class="form-check form-check-inline">
           <input type="checkbox" data-command="+="
-            class="form-check-input"
+            class="form-check-input clear-input-unchecked"
             id="kanji-exact" name="exact" value="yes"
             {% if query.startswith("+=") %}checked{% endif %} />
           <label class="form-check-label" for="kanji-exact"
