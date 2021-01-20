@@ -185,7 +185,7 @@ const populateHistoryList = () => {
   $("#history").empty()
   for (const [q, l] of getHistory()) {
     const li  = $('<li class="jap list-group-item p-2"></li>')
-    const a   = $('<a></a>')
+    const a   = $('<a class="jap"></a>')
     a.text(l.split("?")[0].slice(1) + ": " + q); a.attr("href", l)
     li.append(a); $("#history").append(li)
   }
