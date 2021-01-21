@@ -5,7 +5,7 @@
 #
 # File        : jiten/app.py
 # Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-# Date        : 2021-01-19
+# Date        : 2021-01-21
 #
 # Copyright   : Copyright (C) 2021  Felix C. Stegerman
 # Version     : v0.3.5
@@ -43,7 +43,7 @@ MAX           = 50
 NAME          = "jiten"
 HTTPS         = NAME.upper() + "_HTTPS"
 DOMAIN        = NAME.upper() + "_DOMAIN"
-PREFS         = "lang dark roma max".split()
+PREFS         = "lang dark roma nor2h max".split()
 
 GUI_TOKEN     = os.environ.get("JITEN_GUI_TOKEN") or None
 ANDROID_PRIV  = os.environ.get("ANDROID_PRIVATE") or None
@@ -110,16 +110,19 @@ def yesno(b):
 def respond(template, **data):
   prefs       = get_prefs()
   langs       = get_langs(prefs)
-  dark, roma  = prefs.get("dark") == "yes", prefs.get("roma") == "yes"
+  dark        = prefs.get("dark") == "yes"
+  roma        = prefs.get("roma") == "yes"
+  nor2h       = prefs.get("nor2h") == "yes"
   pref_langs  = prefs.get("lang", "").split() or [J.LANGS[0]]
   pref_max    = int(prefs.get("max", MAX))
   return make_response(render_template(
     template, mode = "dark" if dark else "light", langs = langs,
-    roma = roma, pref_langs = pref_langs, pref_max = pref_max,
-    int = int, ord = ord, hex = hex, J = J, K = K, M = M, P = P, S = S,
-    START = START, VERSION = __version__, PY_VERSION = py_version,
-    kana2romaji = kana2romaji, SEARCH = SEARCH, GUI = bool(GUI_TOKEN),
-    **data
+    roma = roma, nor2h = nor2h, pref_langs = pref_langs,
+    pref_max = pref_max, int = int, ord = ord, hex = hex,
+    J = J, K = K, M = M, P = P, S = S, START = START,
+    VERSION = __version__, PY_VERSION = py_version,
+    kana2romaji = kana2romaji, SEARCH = SEARCH,
+    GUI = bool(GUI_TOKEN), **data
   ))
 
 def get_langs(prefs = None):
@@ -276,6 +279,7 @@ def r_save_prefs():
                         if l in J.LANGS ),
     dark  = yesno(request.form.get("dark") == "yes"),
     roma  = yesno(request.form.get("roma") == "yes"),
+    nor2h = yesno(request.form.get("nor2h") == "yes"),
     max   = str(request.form.get("max", MAX, type = int)),
   ), redirect(request.form.get("url", url_for("r_index"))))
 

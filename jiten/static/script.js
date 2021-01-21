@@ -300,8 +300,8 @@ const convertModeToFunction = {
 const updateConvertMode = (e, i) => {
   const [b, v, a] = selection(i)
   const t = /^\s*(?:\+(?:[=1ws]|r(?:andom)?)\s*)?(.*?)\s*$/.exec(v)[1]
-  e.dataset.convertMode = /[a-z]/.test(t) ? "r2h" :
-    containsHiragana(t) ? "h2k" : "k2h"
+  e.dataset.convertMode = e.dataset.r2h == "yes" && /[a-z]/.test(t) ?
+    "r2h" : containsHiragana(t) ? "h2k" : "k2h"
 }
 
 const convertRomajiOrKana = (e, i) => {

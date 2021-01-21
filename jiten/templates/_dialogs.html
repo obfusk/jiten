@@ -109,16 +109,6 @@
             {% endfor %}
           </fieldset>
           <fieldset class="d-inline border p-2 pl-3">
-            <legend>defaults</legend>
-            <div class="form-check form-check-inline">
-              <input type="checkbox" class="form-check-input"
-                id="prefs-roma" name="roma" value="yes"
-                {% if roma %}checked{% endif %} />
-              <label class="form-check-label"
-                for="prefs-roma">show romaji</label>
-            </div>
-          </fieldset>
-          <fieldset class="d-inline border p-2 pl-3">
             <legend>theme</legend>
             <div class="form-check form-check-inline">
               <input type="checkbox" class="form-check-input"
@@ -126,6 +116,23 @@
                 {% if mode == "dark" %}checked{% endif %} />
               <label class="form-check-label"
                 for="prefs-dark">dark mode</label>
+            </div>
+          </fieldset>
+          <fieldset class="d-inline border p-2 pl-3">
+            <legend>romaji</legend>
+            <div class="form-check form-check-inline">
+              <input type="checkbox" class="form-check-input"
+                id="prefs-roma" name="roma" value="yes"
+                {% if roma %}checked{% endif %} />
+              <label class="form-check-label"
+                for="prefs-roma">show romaji</label>
+            </div>
+            <div class="form-check form-check-inline">
+              <input type="checkbox" class="form-check-input"
+                id="prefs-nor2h" name="nor2h" value="yes"
+                {% if nor2h %}checked{% endif %} />
+              <label class="form-check-label jap"
+                for="prefs-nor2h">disable a→あ</label>
             </div>
           </fieldset>
           <fieldset class="d-inline border p-2 pl-3">
