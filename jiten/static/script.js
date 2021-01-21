@@ -2,7 +2,7 @@
 //
 //  File        : static/script.js
 //  Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-//  Date        : 2021-01-19
+//  Date        : 2021-01-20
 //
 //  Copyright   : Copyright (C) 2021  Felix C. Stegerman
 //  Version     : v0.3.5
@@ -15,9 +15,11 @@
 
 // === kana conversion ===
 
+const containsHiragana = t =>
+  [...t].findIndex(c => HIRAGANA.indexOf(c) != -1) != -1
+
 const convertKana = t =>
-  ([...t].findIndex(c => HIRAGANA.indexOf(c) != -1) != -1 ?
-    hiraganaToKatakana : katakanaToHiragana)(t)
+  (containsHiragana(t) ? hiraganaToKatakana : katakanaToHiragana)(t)
 
 const hiraganaToKatakana = t => {
   let col = null
@@ -250,14 +252,6 @@ console.log("OK")
 
 $(document).ready(() => {
 
-// === window.JITEN ===
-
-window.JITEN = {
-  convertKana, hiraganaToKatakana, katakanaToHiragana,
-  romajiToHiragana, romajiToKatakana, playAudio,
-  clearHistory, getHistory, alert, confirm
-}
-
 // === fetch ===
 
 const fetch_post = (info, path, data = "") =>
@@ -295,10 +289,32 @@ $(".play-audio").click(e => {
   return false
 })
 
-$(".convert-kana").click(e => {
-  const i = $("input[type=text]", $(e.delegateTarget).parents(".input-group"))
+const convertModeToFunction = {
+  r2h: romajiToHiragana,
+  h2k: hiraganaToKatakana,
+  k2h: katakanaToHiragana
+}
+
+// FIXME
+const updateConvertMode = (e, i) => {
   const [b, v, a] = selection(i)
-  i.val(b + convertKana(v) + a).focus()
+  const t = /^\s*(\+[=1wr]\s*)?(.*?)\s*$/.exec(v)[2]
+  e.dataset.convertMode = /[a-z]/.test(t) ? "r2h" :
+    containsHiragana(t) ? "h2k" : "k2h"
+}
+
+const convertRomajiOrKana = (e, i) => {
+  const [b, v, a] = selection(i)
+  const f = convertModeToFunction[e.dataset.convertMode]
+  i.val(b + f(v) + a).focus()
+  updateConvertMode(e, i)
+}
+
+$(".convert-kana").each((_i, e) => {
+  const i = $(`#${e.dataset.convertInput}`)
+  $(e).click(() => convertRomajiOrKana(e, i))
+  i.on("input select", () => updateConvertMode(e, i))
+  updateConvertMode(e, i)
 })
 
 $(".clear-input").click(evt => {
@@ -326,11 +342,13 @@ if (copyToClipboard) {
   }).show()
 }
 
+/*
 $("#romaji-convert").click(() =>
   $("#romaji").val(romajiToHiragana($("#romaji").val()))
 )
 
 $("#romaji-modal").on("shown.bs.modal", () => $("#romaji").focus())
+*/
 
 $(".radical").click(e => {
   const q = $("#kanji-query"), v = q.val().trim() ? q.val() : "+r "

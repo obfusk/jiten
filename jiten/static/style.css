@@ -77,6 +77,13 @@ a[aria-expanded=false] .collapse-close {
   word-break: keep-all;
 }
 
+.convert-kana::before {
+  content: "あ";
+}
+.convert-kana[data-convert-mode="h2k"]::before {
+  content: "ア";
+}
+
 fieldset {
   vertical-align: top;
   min-height: 5em;

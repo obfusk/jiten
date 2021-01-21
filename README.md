@@ -2,7 +2,7 @@
 
     File        : README.md
     Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-    Date        : 2021-01-17
+    Date        : 2021-01-20
 
     Copyright   : Copyright (C) 2021  Felix C. Stegerman
     Version     : v0.3.5
@@ -51,11 +51,11 @@ selected manually).
   - simple searches don't require knowledge of regexes
   - quick reference available in the web interface and android app
 * JMDict multilingual japanese dictionary
-  - kanji, readings, meanings (english, dutch and/or german) & more
+  - kanji, readings (romaji optional), meanings (english, dutch and/or german) & more
   - pitch accent (from Wadoku)
   - browse by frequency/jlpt
 * Kanji dictionary
-  - readings, meanings (english), jmdict entries, radicals & more
+  - readings (romaji optional), meanings (english), jmdict entries, radicals & more
   - search using
     [SKIP codes](https://en.wikipedia.org/wiki/Kodansha_Kanji_Learner%27s_Dictionary#SKIP)
   - search by radical
@@ -65,19 +65,25 @@ selected manually).
   - some with audio
 * Stroke order
   - input a word or sentence and see how it's written
+
+## Interfaces
+
 * Android app
   - wraps the web interface (running locally on your device) in a webview
   - completely offline, no internet access required
+  - easily share and open `jiten.obfusk.dev` links
 * Web interface
   - available online at https://jiten.obfusk.dev
   - light/dark mode
   - search history (stored locally)
-  - tooltips to quickly see meanings and readings for kanji in words and sentences
+  - tooltips to quickly see meanings and readings for kanji and words
   - use long press for tooltips on mobile
-  - can be run on your own computer (or e.g. android phone)
+  - converts romaji to hiragana and between hiragana and katakana
+  - can be run on your own computer
 * Command-line interface
 * WebView GUI
-  - wraps the web interface
+  - wraps the web interface (running locally on your computer)
+
 
 ## CLI
 
@@ -101,10 +107,16 @@ $ jiten -v kanji --max 1 --exact cat
 $ jiten -v kanji --max 1 --word 日
 ```
 
-## Web Interface
+### Web Interface
 
 ```bash
 $ jiten -v serve
+```
+
+### Help
+
+```bash
+$ jiten --help
 ```
 
 ## WebView GUI for Linux/macOS/Windows
@@ -113,13 +125,7 @@ NB: requires [`pywebview`](https://pywebview.flowrl.com)
 (Debian/Ubuntu users can `apt install python3-webview`).
 
 ```bash
-$ jiten gui
-```
-
-## Help
-
-```bash
-$ jiten --help
+$ jiten-gui
 ```
 
 ## Bugs & Feature Requests

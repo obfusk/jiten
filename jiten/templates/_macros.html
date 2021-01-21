@@ -2,7 +2,7 @@
 
   File        : templates/_macros.html
   Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-  Date        : 2021-01-19
+  Date        : 2021-01-20
 
   Copyright   : Copyright (C) 2021  Felix C. Stegerman
   Version     : v0.3.5
@@ -25,10 +25,11 @@
 {% macro input(id, name, value, ph, af = True, copy = False, mb = 2) %}
   <div class="input-group mr-sm-2 mb-{{ mb }} flex-grow-1">
     <div class="input-group-prepend">
-      <button type="button" title="あ↔ア"
+      <button type="button" title="a→あ & あ↔ア"
+          data-convert-mode="k2h" data-convert-input="{{ id }}"
           data-toggle="tooltip" data-placement="top"
           class="jap convert-kana input-group-text btn btn-dark"
-        >あ</button>
+        ></button>
     </div>
     <input type="text" class="jap form-control"
       id="{{ id }}" name="{{ name }}" value="{{ value }}" required

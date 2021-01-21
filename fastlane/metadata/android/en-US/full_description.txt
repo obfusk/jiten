@@ -7,12 +7,12 @@ The large download size is because it includes all the dictionary data, includin
 Features:
 
 JMDict multilingual japanese dictionary
-• kanji, readings, meanings (english, dutch and/or german) & more
+• kanji, readings (romaji optional), meanings (english, dutch and/or german) & more
 • pitch accent (from Wadoku)
 • browse by frequency/jlpt
 
 Kanji dictionary
-• readings, meanings (english), jmdict entries, radicals & more
+• readings (romaji optional), meanings (english), jmdict entries, radicals & more
 • search using SKIP codes
 • search by radical
 • browse by frequency/level/jlpt
@@ -28,12 +28,11 @@ Fine-grained search using regexes (regular expressions)
 • simple searches don't require knowledge of regexes
 • quick reference available
 
-Dark mode
-
-Search history (stored locally)
-
-Use long press for tooltips
-• quickly see meanings and readings for kanji in words and sentences
+• Dark mode
+• Search history (stored locally)
+• Use long press for tooltips: quickly see meanings and readings for kanji and words
+• Easily share and open jiten.obfusk.dev links
+• Convert romaji to hiragana and between hiragana and katakana
 
 
 No ads.  No trackers.  The source code is 100% Free and Open Source (AGPLv3+) and the data is available under Creative Commons or similar licenses (some non-commercial); for details, see https://github.com/obfusk/jiten#readme

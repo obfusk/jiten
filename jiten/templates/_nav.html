@@ -2,7 +2,7 @@
 
   File        : templates/_nav.html
   Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-  Date        : 2021-01-19
+  Date        : 2021-01-20
 
   Copyright   : Copyright (C) 2021  Felix C. Stegerman
   Version     : v0.3.5
@@ -102,9 +102,11 @@
     </ul>
     <button type="button" data-toggle="modal" data-target="#help-modal"
       class="btn btn-light btn-sm my-2 my-lg-0 ml-lg-2">Help</button>
+    {#-
     <button type="button" data-toggle="modal" data-target="#romaji-modal"
       class="jap btn btn-light btn-sm my-2 my-lg-0 ml-2"
       title="romaji" style="white-space: nowrap;">a→あ</button>
+    #}
     <button type="button" data-toggle="modal" data-target="#history-modal"
       class="btn btn-light btn-sm my-2 my-lg-0 ml-2">History</button>
     <button type="button" data-toggle="modal" data-target="#settings-modal"
@@ -121,6 +123,7 @@
   </div>
 </nav>
 {% include "_help.html" %}
+{#-
 <div class="modal" tabindex="-1" role="dialog" id="romaji-modal">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
@@ -140,6 +143,7 @@
     </div>
   </div>
 </div>
+#}
 <div class="modal" tabindex="-1" role="dialog" id="radical-modal">
   <div class="modal-dialog modal-lg" role="document">
     <div class="modal-content">
@@ -219,7 +223,7 @@
             {% endfor %}
           </fieldset>
           <fieldset class="d-inline border p-2 pl-3">
-            <legend>other</legend>
+            <legend>dark mode</legend>
             <div class="form-check form-check-inline">
               <input type="checkbox" class="form-check-input"
                 id="prefs-dark" name="dark" value="yes"
@@ -227,6 +231,9 @@
               <label class="form-check-label"
                 for="prefs-dark">dark mode</label>
             </div>
+          </fieldset>
+          <fieldset class="d-inline border p-2 pl-3">
+            <legend>romaji</legend>
             <div class="form-check form-check-inline">
               <input type="checkbox" class="form-check-input"
                 id="prefs-roma" name="roma" value="yes"
