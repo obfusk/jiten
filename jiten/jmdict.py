@@ -5,7 +5,7 @@
 #
 # File        : jiten/jmdict.py
 # Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-# Date        : 2021-01-19
+# Date        : 2021-01-21
 #
 # Copyright   : Copyright (C) 2021  Felix C. Stegerman
 # Version     : v0.3.5
@@ -188,6 +188,12 @@ word containing out-dated kanji
 来る
 くる
 旨く行く
+
+>>> from .kana import kana2romaji
+>>> len([ kana2romaji(r.elem) for e in jmdict for r in e.reading ])
+228225
+>>> len([ kana2romaji(p) for e in jmdict for p in e.pitch() ])
+88402
 
 """                                                             # }}}1
 
