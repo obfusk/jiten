@@ -5,7 +5,7 @@
 #
 # File        : android/main.py
 # Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-# Date        : 2021-01-19
+# Date        : 2021-01-21
 #
 # Copyright   : Copyright (C) 2021  Felix C. Stegerman
 # Version     : v0.3.5
@@ -79,6 +79,7 @@ def setup_activities(act, dbg, token):
             act.loadUrl(url)
           else:
             URL = url
+          break
 
   android.activity.bind(on_new_intent = on_new_intent)
   if intent := act.getIntent(): on_new_intent(intent)
