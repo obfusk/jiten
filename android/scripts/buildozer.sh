@@ -8,7 +8,7 @@ buildozer android p4a -- --version  # install requirements
 dir="$PWD" p=( patch -N -r- -p1 )
 (
   cd .p4a
-  git status && git restore . && git clean -f && git status
+  git status && git checkout -- . && git clean -f && git status
   if [ -n "$tags" ]; then
     git reset --hard "$commit"  # pin p4a commit for releases (tags)
   fi
