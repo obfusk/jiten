@@ -5,7 +5,7 @@
 #
 # File        : jiten/cli.py
 # Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-# Date        : 2021-01-19
+# Date        : 2021-01-21
 #
 # Copyright   : Copyright (C) 2021  Felix C. Stegerman
 # Version     : v0.3.5
@@ -330,7 +330,7 @@ def cli(ctx, colour, **kw):
 @click.option("-n", "--jlpt", type = M.JLPT_LEVEL,
               help = "Select entries by JLPT level(s); e.g. 1 or 3-5.")
 @click.option("--romaji", is_flag = True, help = "Show romaji.")
-@click.argument("query", required = False, metavar = "REGEX")
+@click.argument("query", required = False)
 @click.pass_context
 def jmdict(ctx, query, **kw):
   setup_db(ctx.obj["verbose"])
@@ -413,7 +413,7 @@ def indent_and_wrap_jap(w, xs, pre, fg):
 @click.option("-m", "--max", "max_results", default = None,
               type = click.INT, help = "Maximum number of results.")
 @click.option("--romaji", is_flag = True, help = "Show romaji.")
-@click.argument("query", required = False, metavar = "REGEX")
+@click.argument("query", required = False)
 @click.pass_context
 def kanji(ctx, query, **kw):
   setup_db(ctx.obj["verbose"])
@@ -486,7 +486,7 @@ def kanji_search(q, verbose, word, exact, fstwd, max_results,
               help = "Filter language(s) ("+", ".join(S.LANGS)+").")
 @click.option("-m", "--max", "max_results", default = None,
               type = click.INT, help = "Maximum number of results.")
-@click.argument("query", required = False, metavar = "STRING")
+@click.argument("query", required = False)
 @click.pass_context
 def sentences(ctx, query, **kw):
   setup_db(ctx.obj["verbose"])
@@ -538,19 +538,33 @@ def serve_app(host = HOST, port = PORT, verbose = True, **opts):
 @cli.command(help = """
   WebView GUI.  Wraps the web interface.  Requires pywebview.
 """)
+@click.argument("link", required = False)
 @click.pass_context
-def gui(ctx):
+def gui(ctx, link):
   setup_db(ctx.obj["verbose"])
   _fix_profile()
+
   import platform, webview
   os.environ["JITEN_GUI_TOKEN"] = webview.token
   from .app import app
-  opts = dict(debug = os.environ.get("FLASK_ENV") == "development")
+
+  title = "Jiten Japanese Dictionary"
+  wopts = dict(width = 1280, height = 720, text_select = True)
+  opts  = dict(debug = os.environ.get("FLASK_ENV") == "development")
   if platform.system() == "Linux" and "PYWEBVIEW_GUI" not in os.environ:
     opts["gui"] = "qt"
-  webview.create_window("Jiten Japanese Dictionary", app,
-                        width = 1280, height = 720, text_select = True)
-  webview.start(**opts)
+
+  def f():
+    if link:
+      base_url = window.get_current_url().rstrip("/")
+      for server in M.SERVERS:
+        if link.startswith(server):
+          url = link.replace(server, base_url, 1).split("#")[0]
+          window.load_url(url)
+          break
+
+  window = webview.create_window(title, app, **wopts)
+  webview.start(f, **opts)
 
 # FIXME
 def _fix_profile():

@@ -1,2 +1,2 @@
 #!/bin/bash
-exec jiten gui
+exec jiten gui "$@"
