@@ -25,6 +25,13 @@ a[aria-expanded=false] .collapse-close {
   display: none;
 }
 
+#toggle-romaji[data-roma="show"]::before {
+  content: "Hide ";
+}
+#toggle-romaji[data-roma="hide"]::before {
+  content: "Show ";
+}
+
 #jmdict-collapse.show {
   display: inline;
 }

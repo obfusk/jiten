@@ -2,7 +2,7 @@
 //
 //  File        : static/script.js
 //  Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-//  Date        : 2021-01-20
+//  Date        : 2021-01-21
 //
 //  Copyright   : Copyright (C) 2021  Felix C. Stegerman
 //  Version     : v0.3.5
@@ -136,7 +136,8 @@ const ROMP  = {
 }
 const ROSP  = { nn:"ん", "-":"ー", "~":"〜", ",":"、", ".":"。",
                 "?":"？", "!":"！", "(":"（", ")":"）" }      //  TODO
-const RORX  = "(" + Object.keys(ROSP).map(esc).join("|") + "|n\\b)|" +
+const RORX  = "(" + Object.keys(ROSP).map(esc).join("|")
+                  + "|n(?![aiueoy]))|" +
               "(" + Object.keys(ROMP).join("|") + ")|" +
               "((" + COLS.slice(1).join("|") + ")\\4?)?y?" +
               "[" + ROWS + "]|(.)"
@@ -315,14 +316,14 @@ $(".convert-kana").each((_i, e) => {
   $(e).click(() => convertRomajiOrKana(e, i))
   i.on("input select focus", () => updateConvertMode(e, i))
   updateConvertMode(e, i)
-})
+}).removeClass("disabled")
 
 $(".clear-input").click(evt => {
   const e = $(evt.delegateTarget), f = e.parents("form")
   $(".clear-input-checked"  , f).prop("checked", true)
   $(".clear-input-unchecked", f).prop("checked", false)
   $("input[type=text]", e.parents(".input-group")).val("").focus()
-})
+}).removeClass("disabled")
 
 $(":checkbox[data-command]").change(evt => {
   const e = evt.delegateTarget, i = $("input[type=text]", $(e).parents("form"))
@@ -379,6 +380,17 @@ $(".query-example").click(evt => {
   return false
 })
 
+$("#toggle-romaji").click(evt => {
+  const e = evt.delegateTarget
+  if (e.dataset.roma == "show") {
+    e.dataset.roma = "hide"
+    $(".romaji").addClass("d-none")
+  } else {
+    e.dataset.roma = "show"
+    $(".romaji").removeClass("d-none")
+  }
+}).removeClass("disabled")
+
 $("#expand-all").click(() => {
   $(".container .collapseall").collapse("show")
   return false
@@ -388,6 +400,8 @@ $("#collapse-all").click(() => {
   $(".container .collapseall").collapse("hide")
   return false
 }).removeClass("disabled")
+
+$(".collapsebtn").removeClass("disabled")
 
 $("[data-toggle='tooltip']").tooltip().click(evt =>
   $(evt.delegateTarget).tooltip("hide")

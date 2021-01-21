@@ -4,7 +4,7 @@
 
     File        : templates/kanji.html
     Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-    Date        : 2021-01-19
+    Date        : 2021-01-21
 
     Copyright   : Copyright (C) 2021  Felix C. Stegerman
     Version     : v0.3.5
@@ -19,14 +19,19 @@
     </style>
   </head>
   <body>
-    {% from "_macros.html" import topbtn, collapsebtn, collapseallbtn
-                           with context %}
+    {% from "_macros.html" import topbtn, collapsebtn, collapseallbtns,
+                           toggleromajibtn with context %}
     {% from "_search.html" import kanji with context %}
     {% include "_nav.html" %}
     <div class="container">
       {{ kanji(query) }}
       {% if query %}
-        {{ collapseallbtn() }}
+        <div class="d-flex pt-2 pb-3">
+          {{ toggleromajibtn() }}
+          <span class="ml-auto">
+            {{ collapseallbtns() }}
+          </span>
+        </div>
         {% for e in results %}
           <div class="card">
             <div class="card-body">
@@ -48,10 +53,9 @@
                       <a class="jap selbtn btn btn-warning py-1 mb-1 mr-1"
                           href="/jmdict?query={{ rc }}&exact=yes">
                         {{ r }}
-                        {% if roma %}
-                          <span class="badge badge-primary"
-                            >{{ kana2romaji(r) }}</span>
-                        {% endif %}
+                        {% set v = "" if roma else "d-none" %}
+                        <span class="romaji badge badge-primary {{ v }}"
+                          >{{ kana2romaji(r) }}</span>
                       </a>
                       {% if loop.last %}
                         <span class="ml-auto align-self-end">
@@ -70,10 +74,9 @@
                       <a class="jap selbtn btn btn-success py-1 mb-1 mr-1"
                           href="/jmdict?query={{ rc }}&exact=yes">
                         {{ r }}
-                        {% if roma %}
-                          <span class="badge badge-primary"
-                            >{{ kana2romaji(r) }}</span>
-                        {% endif %}
+                        {% set v = "" if roma else "d-none" %}
+                        <span class="romaji badge badge-primary {{ v }}"
+                          >{{ kana2romaji(r) }}</span>
                       </a>
                       {% if loop.last %}
                         <span class="ml-auto align-self-end">
@@ -92,10 +95,9 @@
                       <a class="jap selbtn btn btn-info py-1 mb-1 mr-1"
                           href="/jmdict?query={{ rc }}&exact=yes">
                         {{ r }}
-                        {% if roma %}
-                          <span class="badge badge-primary"
-                            >{{ kana2romaji(r) }}</span>
-                        {% endif %}
+                        {% set v = "" if roma else "d-none" %}
+                        <span class="romaji badge badge-primary {{ v }}"
+                          >{{ kana2romaji(r) }}</span>
                       </a>
                       {% if loop.last %}
                         <span class="ml-auto align-self-end">
