@@ -291,23 +291,28 @@ $(".play-audio").click(e => {
 })
 
 const convertModeToFunction = {
-  r2h: romajiToHiragana,
+  r2h: t => romajiToHiragana(t.toLowerCase()),
   h2k: hiraganaToKatakana,
   k2h: katakanaToHiragana
 }
 
+const convertPart = t =>
+  /^(\s*(?:\+(?:[=1ws]|r(?:andom)?)\s*)?)(.*?)(\s*)$/.exec(t)
+
 // FIXME
 const updateConvertMode = (e, i) => {
   const [b, v, a] = selection(i)
-  const t = /^\s*(?:\+(?:[=1ws]|r(?:andom)?)\s*)?(.*?)\s*$/.exec(v)[1]
-  e.dataset.convertMode = e.dataset.r2h == "yes" && /[a-z]/.test(t) ?
-    "r2h" : containsHiragana(t) ? "h2k" : "k2h"
+  const t = convertPart(v)[2]
+  e.dataset.convertMode =
+    e.dataset.r2h == "yes" && /[a-zA-Z]/.test(t) ? "r2h" :
+    containsHiragana(t) ? "h2k" : "k2h"
 }
 
 const convertRomajiOrKana = (e, i) => {
   const [b, v, a] = selection(i)
   const f = convertModeToFunction[e.dataset.convertMode]
-  i.val(b + f(v) + a).focus()
+  const p = convertPart(v)
+  i.val(b + p[1] + f(p[2]) + p[3] + a).focus()
   updateConvertMode(e, i)
 }
 
