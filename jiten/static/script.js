@@ -298,7 +298,7 @@ const convertModeToFunction = {
 // FIXME
 const updateConvertMode = (e, i) => {
   const [b, v, a] = selection(i)
-  const t = /^\s*(\+[=1wr]\s*)?(.*?)\s*$/.exec(v)[2]
+  const t = /^\s*(?:\+(?:[=1ws]|r(?:andom)?)\s*)?(.*?)\s*$/.exec(v)[1]
   e.dataset.convertMode = /[a-z]/.test(t) ? "r2h" :
     containsHiragana(t) ? "h2k" : "k2h"
 }
@@ -313,7 +313,7 @@ const convertRomajiOrKana = (e, i) => {
 $(".convert-kana").each((_i, e) => {
   const i = $(`#${e.dataset.convertInput}`)
   $(e).click(() => convertRomajiOrKana(e, i))
-  i.on("input select", () => updateConvertMode(e, i))
+  i.on("input select focus", () => updateConvertMode(e, i))
   updateConvertMode(e, i)
 })
 
