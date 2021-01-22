@@ -5,7 +5,7 @@
 #
 # File        : jiten/jmdict.py
 # Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-# Date        : 2021-01-21
+# Date        : 2021-01-22
 #
 # Copyright   : Copyright (C) 2021  Felix C. Stegerman
 # Version     : v0.3.5
@@ -612,9 +612,10 @@ def search(q, langs = [LANGS[0]], max_results = None,           # {{{1
       lang  = ",".join( "'" + l + "'" for l in langs if l in LANGS )
       limit = "LIMIT " + str(int(max_results)) if max_results else ""
       fltr  = search_filter(noun, verb, prio, jlpt)
-                        # vvvvvvvvvvvvvvv NB: 1 > 0 > NULL
-      ordr  = """ORDER BY prio >= {} DESC, rank ASC, jlpt DESC,
-                          prio DESC, seq ASC""".format(MINPRIO) # TODO
+      ordr  = """ORDER BY IFNULL(prio, 0) >= {} DESC,
+                          IFNULL(rank, {}) ASC,
+                          jlpt DESC, prio DESC, seq ASC
+              """.format(MINPRIO, F.NOFREQ)                     # TODO
       if len(q) == 1 and M.iskanji(q):
         query = ("""
           SELECT rank, seq, jlpt FROM (
