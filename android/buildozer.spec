@@ -13,7 +13,7 @@ requirements =
   android,genericndkbuild,
   itsdangerous==1.1.0,jinja2==2.11.2,markupsafe==1.1.1,werkzeug==1.0.1,
   libffi==v3.3,pyjnius==1.3.0,
-  setuptools==51.0.0,six==1.15.0
+  setuptools==51.3.3,six==1.15.0
 requirements.source.jiten = ..
 icon.filename = %(source.dir)s/icon.png
 orientation = portrait
