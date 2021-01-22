@@ -321,14 +321,14 @@ $(".convert-kana").each((_i, e) => {
   $(e).click(() => convertRomajiOrKana(e, i))
   i.on("input select focus", () => updateConvertMode(e, i))
   updateConvertMode(e, i)
-}).removeClass("disabled")
+})
 
 $(".clear-input").click(evt => {
   const e = $(evt.delegateTarget), f = e.parents("form")
   $(".clear-input-checked"  , f).prop("checked", true)
   $(".clear-input-unchecked", f).prop("checked", false)
   $("input[type=text]", e.parents(".input-group")).val("").focus()
-}).removeClass("disabled")
+})
 
 $(":checkbox[data-command]").change(evt => {
   const e = evt.delegateTarget, i = $("input[type=text]", $(e).parents("form"))
