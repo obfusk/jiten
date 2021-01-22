@@ -11,14 +11,17 @@
 --> #}
 {% from "_macros.html" import input, copybtn with context %}
 {% if "/by-" in page %}
-  <div id="loading" style="z-index: 1050;"
-      class="d-none justify-content-center position-fixed w-100 mt-5">
-    <div class="alert alert-info px-5 py-4">Loading...</div>
+  <div class="d-none modal" tabindex="-1" role="dialog" id="loading">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-body pb-0 text-center">
+          <div class="alert alert-info">Loading...</div>
+        </div>
+      </div>
+    </div>
   </div>
-  <div class="d-none modal-backdrop"></div>
   <script>
-    $(".modal-backdrop").addClass("show").removeClass("d-none")
-    $("#loading").addClass("d-flex").removeClass("d-none")
+    $("#loading").removeClass("d-none").modal()
   </script>
 {% endif %}
 <nav class="navbar navbar-expand-lg navbar-dark fixed-top bg-primary">

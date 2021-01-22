@@ -470,7 +470,7 @@ $(window).on("pywebviewready", () => {
 // === loaded ===
 
 undoLoading()
-$("#loading, .modal-backdrop").remove()
+$("#loading").modal("hide").remove()
 
 })  // $(document).ready
 
