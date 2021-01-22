@@ -613,8 +613,8 @@ def search(q, langs = [LANGS[0]], max_results = None,           # {{{1
       limit = "LIMIT " + str(int(max_results)) if max_results else ""
       fltr  = search_filter(noun, verb, prio, jlpt)
       ordr  = """ORDER BY IFNULL(prio, 0) >= {} DESC,
-                          IFNULL(rank, {}) ASC,
-                          jlpt DESC, prio DESC, seq ASC
+                          rank = {} ASC, prio IS NULL ASC,
+                          rank ASC, jlpt DESC, prio DESC, seq ASC
               """.format(MINPRIO, F.NOFREQ)                     # TODO
       if len(q) == 1 and M.iskanji(q):
         query = ("""
