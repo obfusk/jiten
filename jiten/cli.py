@@ -5,7 +5,7 @@
 #
 # File        : jiten/cli.py
 # Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-# Date        : 2021-01-21
+# Date        : 2021-01-22
 #
 # Copyright   : Copyright (C) 2021  Felix C. Stegerman
 # Version     : v0.3.5
@@ -542,51 +542,8 @@ def serve_app(host = HOST, port = PORT, verbose = True, **opts):
 @click.pass_context
 def gui(ctx, link):
   setup_db(ctx.obj["verbose"])
-  _fix_profile()
-
-  import platform, webview
-  os.environ["JITEN_GUI_TOKEN"] = webview.token
-  from .app import app
-
-  title = "Jiten Japanese Dictionary"
-  wopts = dict(width = 1280, height = 720, text_select = True)
-  opts  = dict(debug = os.environ.get("FLASK_ENV") == "development")
-  if platform.system() == "Linux" and "PYWEBVIEW_GUI" not in os.environ:
-    opts["gui"] = "qt"
-
-  def f():
-    if link:
-      base_url = window.get_current_url().rstrip("/")
-      for server in M.SERVERS:
-        if link.startswith(server):
-          url = link.replace(server, base_url, 1).split("#")[0]
-          window.load_url(url)
-          break
-
-  window = webview.create_window(title, app, **wopts)
-  webview.start(f, **opts)
-
-# FIXME
-def _fix_profile():
-  """use OTR profile"""
-  import platform
-  gui, system = os.environ.get("PYWEBVIEW_GUI"), platform.system()
-  if system == "Windows": return
-  if system == "Linux" and gui and gui != "qt": return
-  if system != "Linux" and gui != "qt": return
-  try:
-    from PyQt5.QtWidgets import QApplication
-    from PyQt5.QtWebEngineWidgets import QWebEnginePage, QWebEngineProfile
-  except ImportError:
-    pass
-  else:
-    app       = _fix_profile.app      = QApplication([])
-    profile   = _fix_profile.profile  = QWebEngineProfile()
-    old_init  = QWebEnginePage.__init__
-    def new_init(self, *a):
-      if len(a) == 1: a = (profile, *a)
-      old_init(self, *a)
-    QWebEnginePage.__init__ = new_init
+  from .gui import start
+  start(link)
 
 @cli.command(help = "Build (or download) sqlite databases.")
 @click.option("--download", is_flag = True,
