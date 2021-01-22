@@ -413,16 +413,21 @@ $("[data-toggle='tooltip']").tooltip().click(evt =>
   $(evt.delegateTarget).tooltip("hide")
 )
 
-// NB: must undo
-$("#jmdict-query").parents("form").submit(() =>
+const disableJLPT = () =>
   $("select[name=jlpt]").filter((i, x) => !x.value)
     .prop("disabled", true)
-)
+const enableJLPT = () =>
+  $("select[name=jlpt]").prop("disabled", false)
+$("#jmdict-query").parents("form").submit(disableJLPT)
 
-// NB: must undo
 const showLoading = () => {
   $("form.search-form .dropdown-toggle").addClass("disabled")
   $(".search-button").addClass("disabled").text("Loading...")
+}
+const undoLoading = () => {
+  $("form.search-form .dropdown-toggle").removeClass("disabled")
+  $(".search-button").removeClass("disabled")
+    .each((i, x) => $(x).text(x.dataset.text))
 }
 $("form.search-form").submit(showLoading)
 
@@ -439,12 +444,7 @@ $(".search-alt").click(evt => {
 })
 
 // NB: undo modifications for firefox page cache
-$(window).on("pageshow", () => {
-  $("select[name=jlpt]").prop("disabled", false)
-  $("form.search-form .dropdown-toggle").removeClass("disabled")
-  $(".search-button").removeClass("disabled")
-    .each((i, x) => $(x).text(x.dataset.text))
-})
+$(window).on("pageshow", () => { enableJLPT(); undoLoading() })
 
 // === save history & pywebview & token ===
 
@@ -466,6 +466,11 @@ $(window).on("pywebviewready", () => {
     })
   }
 })
+
+// === loaded ===
+
+undoLoading()
+$("#loading, .modal-backdrop").remove()
 
 })  // $(document).ready
 
