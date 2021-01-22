@@ -2,7 +2,7 @@
 //
 //  File        : static/script.js
 //  Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-//  Date        : 2021-01-21
+//  Date        : 2021-01-22
 //
 //  Copyright   : Copyright (C) 2021  Felix C. Stegerman
 //  Version     : v0.3.5
@@ -394,6 +394,7 @@ $("#toggle-romaji").click(evt => {
     e.dataset.roma = "show"
     $(".romaji").removeClass("d-none")
   }
+  return false
 }).removeClass("disabled")
 
 $("#expand-all").click(() => {
