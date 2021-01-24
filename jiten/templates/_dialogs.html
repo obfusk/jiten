@@ -2,10 +2,10 @@
 
   File        : templates/_dialogs.html
   Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-  Date        : 2021-01-21
+  Date        : 2021-01-24
 
   Copyright   : Copyright (C) 2021  Felix C. Stegerman
-  Version     : v0.3.5
+  Version     : v0.4.0
   License     : AGPLv3+
 
 --> #}
@@ -41,8 +41,11 @@
         </button>
       </div>
       <div class="modal-body">
-        <p>Click on a radical to add it to the query input field.</p>
-        <div>
+        <p>
+          Click on a radical to add it to (or remove it from) the
+          query input field.
+        </p>
+        <div id="radicals">
           {% set c = dict(rad = "primary", alt = "info", var = "secondary") %}
           {% for g in K.RADTABLE %}
             <span class="active notbtn btn btn-warning px-0 py-1 mb-1">

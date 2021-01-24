@@ -127,6 +127,14 @@ input[type=number] {
   width: 2rem; /* TODO */
 }
 
+#radicals > .btn {
+  border-width: 3px;
+}
+
+.radical.chosen {
+  border-color: #c87f0a;
+}
+
 .btn-link:focus {
   border-color: transparent;
   box-shadow: none;

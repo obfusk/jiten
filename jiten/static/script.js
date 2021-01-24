@@ -2,10 +2,10 @@
 //
 //  File        : static/script.js
 //  Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-//  Date        : 2021-01-22
+//  Date        : 2021-01-24
 //
 //  Copyright   : Copyright (C) 2021  Felix C. Stegerman
-//  Version     : v0.3.5
+//  Version     : v0.4.0
 //  License     : AGPLv3+
 //
 //  --                                                          ; }}}1
@@ -356,12 +356,24 @@ $("#romaji-convert").click(() =>
 $("#romaji-modal").on("shown.bs.modal", () => $("#romaji").focus())
 */
 
-$(".radical").click(e => {
-  const q = $("#kanji-query"), v = q.val().trim() ? q.val() : "+r "
-  q.val(v + e.delegateTarget.innerText.trim())
-})
+const chooseRadicals = (elems, toggle = true) => {
+  const q = $("#kanji-query"), v = q.val().trim().replace(/^\+r\s*/, "")
+  let rs = [...v]
+  elems.each((i, e) => {
+    const r = e.innerText.trim(), inc = rs.includes(r)
+    if (toggle) {
+      if (inc) { rs = rs.filter(c => c != r) } else { rs.push(r) }
+    }
+    $(e)[((toggle ? !inc : inc) ? "add" : "remove") + "Class"]("chosen")
+  })
+  if (toggle) { q.val("+r " + rs.join("")) }
+}
 
-$("#radical-modal").on("hidden.bs.modal", () =>
+$(".radical").click(e => chooseRadicals($(e.delegateTarget)))
+
+$("#radical-modal").on("shown.bs.modal", () =>
+  chooseRadicals($(".radical"), false)
+).on("hidden.bs.modal", () =>
   setTimeout(() => $("#kanji-query").focus())
 )
 
