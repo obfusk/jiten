@@ -5,10 +5,10 @@
 #
 # File        : jiten/cli.py
 # Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-# Date        : 2021-01-22
+# Date        : 2021-01-24
 #
 # Copyright   : Copyright (C) 2021  Felix C. Stegerman
-# Version     : v0.3.5
+# Version     : v0.4.0
 # License     : AGPLv3+
 #
 # --                                                            ; }}}1
@@ -36,8 +36,6 @@ CLI
 = bottom | submissive partner of a homosexual relationship
 --> noun (common) (futsuumeishi) | abbreviation | word usually written using
     kana alone | colloquialism
-<BLANKLINE>
-<BLANKLINE>
 
 >>> run("-v jmdict -m1 -w cat")
 DB v11 up to date.
@@ -57,8 +55,6 @@ query: +w cat
     kana alone | colloquialism
 see 猫車 | 猫火鉢
 seq# 1467640, freq# 2201, jlpt N5, prio; 1
-<BLANKLINE>
-<BLANKLINE>
 
 >>> run("-v jmdict -m1 -w kat -l dut")
 DB v11 up to date.
@@ -75,8 +71,6 @@ query: +w kat
 --> noun (common) (futsuumeishi)
 see 猫車 | 猫火鉢
 seq# 1467640, freq# 2201, jlpt N5, prio; 1
-<BLANKLINE>
-<BLANKLINE>
 
 >>> run("-v jmdict -m1 -w idiot")
 DB v11 up to date.
@@ -97,8 +91,6 @@ query: +w idiot
 ~~> ateji (phonetic) reading
 see 馬鹿貝
 seq# 1601260, freq# 2472, jlpt N3, prio; 1
-<BLANKLINE>
-<BLANKLINE>
 
 >>> run("-v jmdict -m1 -e 誤魔化す")
 DB v11 up to date.
@@ -116,8 +108,6 @@ query: += 誤魔化す
     kana alone
 ~~> ateji (phonetic) reading
 seq# 1271480, freq# 10495, jlpt N1, prio; 1
-<BLANKLINE>
-<BLANKLINE>
 
 >>> run("-v jmdict -m1 -w まる")
 DB v11 up to date.
@@ -139,8 +129,6 @@ query: +w まる
     esp. 丸
 see ○ | まる | スッポン | 麻呂
 seq# 1216250, freq# 63, jlpt N3, prio; 1
-<BLANKLINE>
-<BLANKLINE>
 
 >>> run("-v jmdict -m1 -w cat --verb")
 DB v11 up to date.
@@ -155,8 +143,6 @@ query: +w cat
     suru
 ~~> word containing irregular kana usage
 seq# 1227180, freq# 30500; 1
-<BLANKLINE>
-<BLANKLINE>
 
 >>> run("-v jmdict -m1 -w みる --noun")
 DB v11 up to date.
@@ -171,13 +157,10 @@ query: +w みる
   oyster thief
 --> noun (common) (futsuumeishi) | word usually written using kana alone
 seq# 1772790, freq# 75; 1
-<BLANKLINE>
-<BLANKLINE>
 
 >>> run("-v jmdict -m1 -w みる --noun --prio")
 DB v11 up to date.
 query: +w みる
-<BLANKLINE>
 <BLANKLINE>
 
 
@@ -189,8 +172,6 @@ query: +w みる
 ねこ
 [no name readings]
 = cat
-<BLANKLINE>
-<BLANKLINE>
 
 >>> run("-v kanji -m1 -e cat")
 DB v11 up to date.
@@ -214,8 +195,6 @@ query: += cat
 variants: 貓
 0x732b CJK UNIFIED IDEOGRAPH-732B; 1
 11 strokes, level 常用, freq# 1702, old jlpt N2, jlpt N3, skip 1-3-8
-<BLANKLINE>
-<BLANKLINE>
 
 >>> run("-v kanji -m1 -w 日")
 DB v11 up to date.
@@ -237,8 +216,6 @@ query: +w 日
 部: 日 (72)
 0x65e5 CJK UNIFIED IDEOGRAPH-65E5; 1
 4 strokes, level 常用1, freq# 1, old jlpt N4, jlpt N5, skip 3-3-1
-<BLANKLINE>
-<BLANKLINE>
 
 """                                                             # }}}1
 
@@ -301,15 +278,18 @@ def android_link_dbs():
 @click.option("-v", "--verbose", is_flag = True, help = "Be verbose.")
 @click.option("-c", "--colour/--no-colour", is_flag = True,
               default = None, help = "Use terminal colours.")
+@click.option("-p", "--pager", default = "less -FR",
+              show_default = True,
+              help = "Set $PAGER (unless empty).")
 @click.version_option(
   "{} [{}] [DB v{}]".format(__version__, py_version, J.DBVERSION),
   message = "%(prog)s 「辞典」 %(version)s"
 )
 @click.pass_context
-def cli(ctx, colour, **kw):
+def cli(ctx, colour, pager, **kw):
   if colour is not None: ctx.color = colour
+  if pager: os.environ["PAGER"] = pager
   ctx.obj = dict(kw)
-  os.environ["PAGER"] = "less -FR"                              # TODO
 
 @cli.command(help = "Search JMDict.")
 @click.option("-l", "--lang", "langs", multiple = True,
@@ -336,12 +316,12 @@ def jmdict(ctx, query, **kw):
   setup_db(ctx.obj["verbose"])
   ctx.obj.update(kw)
   if query:
-    click.echo_via_pager(jmdict_search(query, **ctx.obj))
+    echo_via_pager(jmdict_search(query, **ctx.obj))
   else:
     while True:
       q = click.prompt("query", "", show_default = False).strip()
       if not q: break
-      click.echo_via_pager(jmdict_search(q, **ctx.obj))
+      echo_via_pager(jmdict_search(q, **ctx.obj))
 
 def jmdict_search(q, verbose, word, exact, fstwd, langs, romaji,
                   **kw):                                        # {{{1
@@ -352,6 +332,7 @@ def jmdict_search(q, verbose, word, exact, fstwd, langs, romaji,
   if verbose:
     yield "query: " + click.style(q, fg = "bright_red") + "\n\n"
   for i, (e, rank) in enumerate(J.search(q, langs = langs, **kw)):
+    if i != 0: yield "\n"
     yield (" | ".join(
       click.style(k.elem, fg = "bright_yellow") for k in e.kanji
     ) or "[no kanji]") + "\n"
@@ -382,7 +363,6 @@ def jmdict_search(q, verbose, word, exact, fstwd, langs, romaji,
         + (", jlpt " + click.style("N"+str(e.jlpt), fg = "yellow")
                     if e.jlpt else "")
         + (", prio" if e.isprio() else "") + "; " + str(i+1) + "\n")
-    yield "\n"
                                                                 # }}}1
 
 # TODO: handle width properly!
@@ -419,12 +399,12 @@ def kanji(ctx, query, **kw):
   setup_db(ctx.obj["verbose"])
   ctx.obj.update(kw)
   if query:
-    click.echo_via_pager(kanji_search(query, **ctx.obj))
+    echo_via_pager(kanji_search(query, **ctx.obj))
   else:
     while True:
       q = click.prompt("query", "", show_default = False).strip()
       if not q: break
-      click.echo_via_pager(kanji_search(q, **ctx.obj))
+      echo_via_pager(kanji_search(q, **ctx.obj))
 
 def kanji_search(q, verbose, word, exact, fstwd, max_results,
                  romaji):                                       # {{{1
@@ -434,6 +414,7 @@ def kanji_search(q, verbose, word, exact, fstwd, max_results,
   if verbose:
     yield "query: " + click.style(q, fg = "bright_red") + "\n\n"
   for i, e in enumerate(K.search(q, max_results)):
+    if i != 0: yield "\n"
     yield e.char + "\n"
     yield (" | ".join(
       click.style(f(r), fg = "bright_yellow") for r in e.on
@@ -476,7 +457,6 @@ def kanji_search(q, verbose, word, exact, fstwd, max_results,
            if e.new_jlpt else "")
         + (", skip " + click.style(e.skip, fg = "yellow")
            if e.skip else "") + "\n")
-    yield "\n"
                                                                 # }}}1
 
 @cli.command(help = "Search Tatoeba example sentences.")
@@ -492,12 +472,12 @@ def sentences(ctx, query, **kw):
   setup_db(ctx.obj["verbose"])
   ctx.obj.update(kw)
   if query:
-    click.echo_via_pager(sentence_search(query, **ctx.obj))
+    echo_via_pager(sentence_search(query, **ctx.obj))
   else:
     while True:
       q = click.prompt("query", "", show_default = False).strip()
       if not q: break
-      click.echo_via_pager(sentence_search(q, **ctx.obj))
+      echo_via_pager(sentence_search(q, **ctx.obj))
 
 # TODO: audio
 def sentence_search(q, verbose, langs, max_results):            # {{{1
@@ -505,6 +485,7 @@ def sentence_search(q, verbose, langs, max_results):            # {{{1
   if verbose:
     yield "query: " + click.style(q, fg = "bright_red") + "\n\n"
   for i, e in enumerate(S.search(q, langs, max_results)):
+    if i != 0: yield "\n"
     yield click.style("[jap] ", "bright_yellow") + e.jap + "\n"
     for l in S.LANGS:
       x = getattr(e, l)
@@ -512,7 +493,6 @@ def sentence_search(q, verbose, langs, max_results):            # {{{1
              else "[no "+l+"]") + "\n"
     if verbose:
       yield "tatoeba #" + str(e.id) + "; " + str(i+1) + "\n"
-    yield "\n"
                                                                 # }}}1
 
 @cli.command(help = "Serve the web interface.")
@@ -558,6 +538,15 @@ def doctest(ctx):
   setup_db(ctx.obj["verbose"])
   import doctest
   if doctest.testmod(verbose = ctx.obj["verbose"])[0]: ctx.exit(1)
+
+# NB: workaround for click adding a "\n"
+def echo_via_pager(xs):
+  def f():
+    it = iter(xs); y = next(it)
+    for x in it:
+      yield y; y = x
+    yield y[:-1] if y.endswith("\n") else y
+  click.echo_via_pager(f())
 
 if __name__ == "__main__":
   try:
