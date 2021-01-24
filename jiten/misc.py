@@ -5,10 +5,10 @@
 #
 # File        : jiten/misc.py
 # Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-# Date        : 2020-12-06
+# Date        : 2021-01-24
 #
-# Copyright   : Copyright (C) 2020  Felix C. Stegerman
-# Version     : v0.3.5
+# Copyright   : Copyright (C) 2021  Felix C. Stegerman
+# Version     : v0.4.0
 # License     : AGPLv3+
 #
 # --                                                            ; }}}1
@@ -203,17 +203,25 @@ SERVER    = SERVERS[0]
 
 DB_URLFMT = "https://github.com/obfusk/jiten/releases/download/{}/{}.sqlite3"
 DB_URLS   = {
-  8: { k: DB_URLFMT.format("v0.3.5", k)
-       for k in "jmdict kanji pitch sentences".split() }
+   8: { k: DB_URLFMT.format("v0.3.5", k)
+       for k in "jmdict kanji pitch sentences".split() },
+  11: { k: DB_URLFMT.format("v0.4.0", k)
+       for k in "jmdict kanji pitch sentences".split() },
 }
 
 DB_SHA512SUMS = {
-  8: dict(
+   8: dict(
     jmdict    = "c94830335a9176001fbc4400a4176a135b475e87a5f91d7fe3eccdcdc777219d7132a2ef56f99563bde7d6ed614dfd1ae8a9fed3a9ae4331159b9e675e60e9e7",
     kanji     = "f16fcca818bf9dc8a63dbcae37a1d9220db1bb5b76a006ced6ac26b6d7fc549522f9cf6620277a2b692e902224e185a7263463643715f0ff502950971f2ba9d6",
     pitch     = "8bac0a6a1cd74c901ffa5d222a336cf3b2c033ceb00a10c7f442056aae764d5110519085892777bfa4b0b8b7adfcaf3266da3ac5388bb094343e383dbc87777b",
     sentences = "5f9d1968832457f096f55b30af90311ac681dc1456fdc12f293879adba93ed5a267984b87872ef514f84b5ecaba7fe7d2f17601018ea0fccb6198059d6a8b79a",
-  )
+  ),
+  11: dict(
+    jmdict    = "a1d36a38fd26ec43f227dc207b0ce727502c6a20c5980b3dc00040ebbe14d7f9a255dce183b902b50e121068fdfc085852b2adce2f7d9c3fef3b4e1e19dfee35",
+    kanji     = "c114afe09979851fdd433257e6328c745b45b700754d9387a51a93473a0be14ce80602da3b1609fb61546d7d5b6c539b6f8b686bd4cc221184b5938b828ecd0b",
+    pitch     = "79727c3b52c0f3ed27acc531b81f935aef7692e92cba7f1fd90ad91264d21a1aba84c9dbfd7fa74a47dc06b17447d11a02a489b7b50180957b9f15d21bc15729",
+    sentences = "5b022b897b7dc819681288f1e7b26a9552e33b7b0d89b53560aea3d02e5cd578d4ecda5dfc2939091e21fc4a8dd7c42a08560413a2445ffb6534ae4ceb63ccf0",
+  ),
 }
 
 DEPENDENCIES = dict(                                            # {{{1
