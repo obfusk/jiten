@@ -1,3 +1,7 @@
+master
+
+• improved radical dialog
+
 v0.4.0
 
 • updated databases: 2020 version of kyouiku kanji, more pitch data, etc.
