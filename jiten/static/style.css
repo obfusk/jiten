@@ -133,6 +133,7 @@ input[type=number] {
 
 .radical.chosen {
   border-color: #c87f0a;
+  opacity: 0.9;
 }
 
 .btn-link:focus {
