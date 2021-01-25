@@ -5,7 +5,7 @@
 #
 # File        : jiten/misc.py
 # Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-# Date        : 2021-01-24
+# Date        : 2021-01-25
 #
 # Copyright   : Copyright (C) 2021  Felix C. Stegerman
 # Version     : v0.4.0
@@ -118,7 +118,12 @@ def process_query(q, word, exact, fstwd, cli = False):
   return q
 
 def without_e1w(q):
-  return q[2:].lstrip() if any( q.startswith("+"+x) for x in "=1w" ) else q
+  return split_e1w(q)[1]
+
+def split_e1w(q):
+  if any( q.startswith("+"+x) for x in "=1w" ):
+    return q[:2] + " ", q[2:].lstrip()
+  return "", q
 
 LIKERX = re.compile("(?P<one>" + "|".join([
   r"\.", r"\[\^?\]?[^]]*\]", r"\\[dDsSwW]", r"\\p[khK]",

@@ -2,7 +2,7 @@
 //
 //  File        : static/script.js
 //  Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-//  Date        : 2021-01-24
+//  Date        : 2021-01-25
 //
 //  Copyright   : Copyright (C) 2021  Felix C. Stegerman
 //  Version     : v0.4.0
@@ -36,7 +36,7 @@ const katakanaToHiragana = t => {
   return [...t].map(c => HIRAGANA[KATAKANA.indexOf(c)] || c).join("")
 }
 
-// TODO: n(n), ヴャ, punctuation?!
+// TODO: ヴャ, punctuation?!
 const romajiToHiragana = t => {                               //  {{{1
   const r = [], rx = RegExp(RORX, "uy")
   let m
@@ -47,7 +47,7 @@ const romajiToHiragana = t => {                               //  {{{1
       let s = "", x = m[2] ? ROMP[m[2]] : m[0]
       if (x.length == 1) {
         s = HIRAGANA[ROWS.indexOf(x)]
-      } else if (x.length == 3 && x.slice(-2, -1) == "y" && x[0] != "x") {
+      } else if (x.length == 3 && x[1] == "y" && x[0] != "x") {
         s = HIRAGANA[5*COLS.indexOf(x[0])+1] +
             HIRAGANA[5*(COLS.indexOf("y")+1)+ROWS.indexOf(x[2])]
       } else {
@@ -136,11 +136,11 @@ const ROMP  = {
 }
 const ROSP  = { nn:"ん", "-":"ー", "~":"〜", ",":"、", ".":"。",
                 "?":"？", "!":"！", "(":"（", ")":"）" }      //  TODO
-const RORX  = "(" + Object.keys(ROSP).map(esc).join("|")
-                  + "|n(?![aiueoy]))|" +
-              "(" + Object.keys(ROMP).join("|") + ")|" +
-              "((" + COLS.slice(1).join("|") + ")\\4?)?y?" +
-              "[" + ROWS + "]|(.)"
+const RORX  = "("  + Object.keys(ROSP).map(esc).join("|")
+                   + "|n(?![aiueoy]))|" +
+              "("  + Object.keys(ROMP).join("|") + ")|" +
+              "((" + COLS.slice(1).join("|") + ")\\4?)?y?"
+                   + "[" + ROWS + "]|(.)"
 
 // === miscellaneous ===
 

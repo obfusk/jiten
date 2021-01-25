@@ -5,7 +5,7 @@
 #
 # File        : jiten/cli.py
 # Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-# Date        : 2021-01-24
+# Date        : 2021-01-25
 #
 # Copyright   : Copyright (C) 2021  Felix C. Stegerman
 # Version     : v0.4.0
@@ -232,7 +232,7 @@ from . import misc      as M
 from . import pitch     as P
 from . import sentences as S
 
-from .kana import with_romaji
+from .kana import with_romaji, romaji2hiragana, romaji2katakana
 from .misc import SERVER
 
 HOST, PORT    = "localhost", 5000
@@ -310,18 +310,14 @@ def cli(ctx, colour, pager, **kw):
 @click.option("-n", "--jlpt", type = M.JLPT_LEVEL,
               help = "Select entries by JLPT level(s); e.g. 1 or 3-5.")
 @click.option("--romaji", is_flag = True, help = "Show romaji.")
+@click.option("-h", "--hiragana", is_flag = True,
+              help = "Convert query to hiragana.")
+@click.option("-k", "--katakana", is_flag = True,
+              help = "Convert query to katakana.")
 @click.argument("query", required = False)
 @click.pass_context
 def jmdict(ctx, query, **kw):
-  setup_db(ctx.obj["verbose"])
-  ctx.obj.update(kw)
-  if query:
-    echo_via_pager(jmdict_search(query, **ctx.obj))
-  else:
-    while True:
-      q = click.prompt("query", "", show_default = False).strip()
-      if not q: break
-      echo_via_pager(jmdict_search(q, **ctx.obj))
+  search(jmdict_search, ctx, query, **kw)
 
 def jmdict_search(q, verbose, word, exact, fstwd, langs, romaji,
                   **kw):                                        # {{{1
@@ -365,6 +361,30 @@ def jmdict_search(q, verbose, word, exact, fstwd, langs, romaji,
         + (", prio" if e.isprio() else "") + "; " + str(i+1) + "\n")
                                                                 # }}}1
 
+def search(f, ctx, q, hiragana, katakana, **kw):
+  if q: q = q.strip()
+  setup_db(ctx.obj["verbose"])
+  ctx.obj.update(kw)
+  def g(): echo_via_pager(f(convert_query(q, hiragana, katakana), **ctx.obj))
+  if q: g()
+  else:
+    while True:
+      q = click.prompt("query", "", show_default = False).strip()
+      if not q: break
+      g()
+      click.echo()
+
+# TODO: document!
+def convert_query(q, hiragana, katakana):
+  if q.startswith("+h"):
+    hiragana, q = True, q[2:].lstrip()
+  elif q.startswith("+k"):
+    katakana, q = True, q[2:].lstrip()
+  c, q = M.split_e1w(q)
+  if   hiragana: return c + romaji2hiragana(q)
+  elif katakana: return c + romaji2katakana(q)
+  return c + q
+
 # TODO: handle width properly!
 def indent_and_wrap(w, xs, pre, fg):
   xs = list(xs)
@@ -393,18 +413,14 @@ def indent_and_wrap_jap(w, xs, pre, fg):
 @click.option("-m", "--max", "max_results", default = None,
               type = click.INT, help = "Maximum number of results.")
 @click.option("--romaji", is_flag = True, help = "Show romaji.")
+@click.option("-h", "--hiragana", is_flag = True,
+              help = "Convert query to hiragana.")
+@click.option("-k", "--katakana", is_flag = True,
+              help = "Convert query to katakana.")
 @click.argument("query", required = False)
 @click.pass_context
 def kanji(ctx, query, **kw):
-  setup_db(ctx.obj["verbose"])
-  ctx.obj.update(kw)
-  if query:
-    echo_via_pager(kanji_search(query, **ctx.obj))
-  else:
-    while True:
-      q = click.prompt("query", "", show_default = False).strip()
-      if not q: break
-      echo_via_pager(kanji_search(q, **ctx.obj))
+  search(kanji_search, ctx, query, **kw)
 
 def kanji_search(q, verbose, word, exact, fstwd, max_results,
                  romaji):                                       # {{{1
@@ -466,22 +482,17 @@ def kanji_search(q, verbose, word, exact, fstwd, max_results,
               help = "Filter language(s) ("+", ".join(S.LANGS)+").")
 @click.option("-m", "--max", "max_results", default = None,
               type = click.INT, help = "Maximum number of results.")
+@click.option("-h", "--hiragana", is_flag = True,
+              help = "Convert query to hiragana.")
+@click.option("-k", "--katakana", is_flag = True,
+              help = "Convert query to katakana.")
 @click.argument("query", required = False)
 @click.pass_context
 def sentences(ctx, query, **kw):
-  setup_db(ctx.obj["verbose"])
-  ctx.obj.update(kw)
-  if query:
-    echo_via_pager(sentence_search(query, **ctx.obj))
-  else:
-    while True:
-      q = click.prompt("query", "", show_default = False).strip()
-      if not q: break
-      echo_via_pager(sentence_search(q, **ctx.obj))
+  search(sentence_search, ctx, query, **kw)
 
 # TODO: audio
 def sentence_search(q, verbose, langs, max_results):            # {{{1
-  q = q.strip()
   if verbose:
     yield "query: " + click.style(q, fg = "bright_red") + "\n\n"
   for i, e in enumerate(S.search(q, langs, max_results)):

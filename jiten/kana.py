@@ -5,10 +5,10 @@
 #
 # File        : jiten/kana.py
 # Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-# Date        : 2021-01-21
+# Date        : 2021-01-25
 #
 # Copyright   : Copyright (C) 2021  Felix C. Stegerman
-# Version     : v0.3.5
+# Version     : v0.4.0
 # License     : AGPLv3+
 #
 # --                                                            ; }}}1
@@ -41,9 +41,33 @@ Kana conversion functions.
 >>> kana2romaji("ゃ ゎ っ")
 'xya xwa xtsu'
 
+
+>>> romaji2hiragana("ikanakya")
+'いかなきゃ'
+>>> romaji2katakana("ferikkusu")
+'フェリックス'
+>>> romaji2katakana("vaiorinn")
+'ヴァイオリン'
+>>> romaji2katakana("uwisukii")
+'ウヰスキー'
+>>> romaji2katakana("kousu")
+'コース'
+
+>>> romaji2hiragana("konnnichiha")
+'こんにちは'
+>>> romaji2katakana("uxirusu")
+'ウィルス'
+>>> romaji2hiragana("koucha")
+'こうちゃ'
+
+>>> romaji2hiragana("shi ji chi tsu fu")
+'し じ ち つ ふ'
+>>> romaji2hiragana("xya xwa xtsu")
+'ゃ ゎ っ'
+
 """                                                             # }}}1
 
-import sys
+import re, sys
 
 from functools import reduce
 
@@ -77,6 +101,59 @@ def _k2r_lookup(c):
   if not M.iskana1(c) or c in "ー・ヶ": return c
   i = (HIRAGANA if M.ishiragana1(c) else KATAKANA).index(c)
   return (COLS[i // 5] + ROWS[i % 5]).replace("-", "")
+
+def hiragana2katakana(t):
+  return "".join(_h2k(t))
+
+def _h2k(t):                                                    # {{{1
+  col = None
+  for c in t:
+    if c in HIRAGANA:
+      i = HIRAGANA.index(c)
+      o = col == 4 and i == 2
+      k = "ー" if i == col or o else KATAKANA[i]
+      if not o: col = i % 5
+      yield k
+    else:
+      col = None
+      yield c
+                                                                # }}}1
+
+def katakana2hiragana(t):
+  return "".join( HIRAGANA[KATAKANA.index(c)] if c in KATAKANA else c
+                  for c in t )
+
+def romaji2hiragana(t):
+  return "".join(_r2h(t))
+
+# TODO: ヴャ, punctuation?!
+def _r2h(t):                                                    # {{{1
+  i, rx = 0, re.compile(RORX)
+  while True:
+    m = rx.match(t, i)
+    if not m: break
+    g, i = (m.group(0),) + m.groups(), m.end()
+    if g[1] or g[5]:
+      yield g[5] or ROSP["nn" if g[1] == "n" else g[1]]
+    else:
+      s, x = "", (ROMP[g[2]] if g[2] else g[0])
+      if len(x) == 1:
+        s = HIRAGANA[ROWS.index(x)]
+      elif len(x) == 3 and x[1] == "y" and x[0] != "x":
+        s = HIRAGANA[5*COLS.index(x[0])+1] \
+          + HIRAGANA[5*(COLS.index("y")+1)+ROWS.index(x[2])]
+      else:
+        if len(x) == 3 and x[0] == x[1]:
+          s, x = "っ", x[1:]
+        if len(x) == 2 or (len(x) == 3 and x[0] == "x"):
+          s += HIRAGANA[5*COLS.index(x[:-1])+ROWS.index(x[-1])]
+        else:
+          s = "〇"
+      yield g[0] if "〇" in s else s
+                                                                # }}}1
+
+def romaji2katakana(t):
+  return hiragana2katakana(romaji2hiragana(t))
 
 # KANA TABLES                                                   # {{{1
 HIRAGANA = """
@@ -133,15 +210,22 @@ KATAKANA = """
                                                                 # }}}1
 
 ROWS, COLS_ = "aiueo", "-xvkgsztdTnhbpfmyYrwWN-"
-COLS = [ "x" + c.lower() if c in "TYW" else c for c in COLS_ ]
-ROMP = dict(
+COLS  = [ "x" + c.lower() if c in "TYW" else c for c in COLS_ ]
+ROMP  = dict(
   shi =  "si",  ji =  "zi", chi =  "ti", tsu = "tu", xtsu = "xtu",
   sha = "sya", sho = "syo", shu = "syu",
    ja = "zya",  jo = "zyo",  ju = "zyu",
   cha = "tya", cho = "tyo", chu = "tyu",
    fu =  "hu",
 )
-PMOR = { v: k for k, v in ROMP.items() }; PMOR.update(Na = "nn")
+PMOR  = { v: k for k, v in ROMP.items() }; PMOR.update(Na = "nn")
+ROSP  = { "nn":"ん", "-":"ー", "~":"〜", ",":"、", ".":"。", "?":"？",
+          "!":"！", "(":"（", ")":"）" }                        # TODO
+RORX  = r"("  + r"|".join(map(re.escape, ROSP.keys())) \
+              + r"|n(?![aiueoy]))|" + \
+        r"("  + r"|".join(ROMP.keys()) + r")|" + \
+        r"((" + r"|".join(COLS[1:-2]) + r")\4?)?y?" \
+              + r"[" + ROWS + r"]|(.)"
 
 if __name__ == "__main__":
   if "--doctest" in sys.argv:
