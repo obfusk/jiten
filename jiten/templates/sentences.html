@@ -4,10 +4,10 @@
 
     File        : templates/sentences.html
     Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-    Date        : 2020-12-07
+    Date        : 2021-01-25
 
-    Copyright   : Copyright (C) 2020  Felix C. Stegerman
-    Version     : v0.3.5
+    Copyright   : Copyright (C) 2021  Felix C. Stegerman
+    Version     : v0.4.0
     License     : AGPLv3+
 
   -->
@@ -57,7 +57,7 @@
             </div>
             <div class="card-body">
               <ul class="list-group">
-                {% for lang in "english dutch german".split() %}
+                {% for lang in "english dutch german french spanish".split() %}
                   <li class="list-group-item p-2 d-flex"
                       title="{{ lang }}">
                     {% if e|attr(lang[:3]) %}

@@ -7,7 +7,8 @@ The large download size is because it includes all the dictionary data, includin
 Features:
 
 JMDict multilingual japanese dictionary
-• kanji, readings (romaji optional), meanings (english, dutch and/or german) & more
+• kanji, readings (romaji optional), meanings & more
+• meanings in english, dutch, german, french and/or spanish
 • pitch accent (from Wadoku)
 • browse by frequency/jlpt
 
@@ -18,7 +19,7 @@ Kanji dictionary
 • browse by frequency/level/jlpt
 
 Example sentences (from Tatoeba)
-• with english, dutch and/or german translation
+• with english, dutch, german, french and/or spanish translation
 • some with audio
 
 Stroke order

@@ -2,7 +2,7 @@
 
     File        : README.md
     Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-    Date        : 2021-01-24
+    Date        : 2021-01-25
 
     Copyright   : Copyright (C) 2021  Felix C. Stegerman
     Version     : v0.4.0
@@ -51,7 +51,8 @@ selected manually).
   - simple searches don't require knowledge of regexes
   - quick reference available in the web interface and android app
 * JMDict multilingual japanese dictionary
-  - kanji, readings (romaji optional), meanings (english, dutch and/or german) & more
+  - kanji, readings (romaji optional), meanings & more
+  - meanings in english, dutch, german, french and/or spanish
   - pitch accent (from Wadoku)
   - browse by frequency/jlpt
 * Kanji dictionary
@@ -61,7 +62,7 @@ selected manually).
   - search by radical
   - browse by frequency/level/jlpt
 * Example sentences (from Tatoeba)
-  - with english, dutch and/or german translation
+  - with english, dutch, german, french and/or spanish translation
   - some with audio
 * Stroke order
   - input a word or sentence and see how it's written

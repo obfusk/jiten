@@ -2,10 +2,10 @@
 
   File        : templates/_search.html
   Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-  Date        : 2021-01-20
+  Date        : 2021-01-25
 
   Copyright   : Copyright (C) 2021  Felix C. Stegerman
-  Version     : v0.3.5
+  Version     : v0.4.0
   License     : AGPLv3+
 
 --> #}
@@ -13,7 +13,7 @@
 {% macro jmdict(langs, query = "", af = True) %}
   {% call search("/jmdict", "Query (Regex)", "Search JMDict",
                  "jmdict-query", "query", query,
-                 "regex to match japanese/english/dutch/german", af,
+                 "regex to match japanese/english/etc.", af,
                  btn = "info") %}
     <div class="float-right mt-1 ml-1">
       {{ collapsebtn("jmdict-collapse") }}
@@ -190,7 +190,7 @@
 {% macro sentences(query = "", af = True) %}
   {% call search("/sentences", "Query", "Search Sentences",
                  "sentences-query", "query", query,
-                 "substring to match japanese/english/dutch/german", af) %}
+                 "substring to match japanese/english/etc.", af) %}
     <div class="form-group mb-0">
       <fieldset class="d-inline border p-2 pl-3">
         <legend>select</legend>
