@@ -160,8 +160,8 @@ $ jiten-gui
 * To build the SQLite PCRE C extension: a C compiler (e.g.
   `gcc`/`clang`) and the `sqlite3` & `pcre` libraries & headers.
 * Basic build tools like `make` and `patch`.
-* To run the WebView GUI: [pywebview](https://pywebview.flowrl.com)
-  >= 3.3.5.
+* To run the WebView GUI:
+  [pywebview](https://pywebview.flowrl.com) >= 3.3.5.
 
 ### Debian/Ubuntu
 
