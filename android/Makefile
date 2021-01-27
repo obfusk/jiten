@@ -41,6 +41,16 @@ debug-arm64-v8a:
 	APP_ANDROID_NUMERIC_VERSION=$$(( $(NUMERIC) + 2 )) \
 	./scripts/buildozer.sh debug
 
+debug-x86:
+	APP_ANDROID_ARCH=x86 \
+	APP_ANDROID_NUMERIC_VERSION=$$(( $(NUMERIC) + 3 )) \
+	./scripts/buildozer.sh debug
+
+debug-x86_64:
+	APP_ANDROID_ARCH=x86_64 \
+	APP_ANDROID_NUMERIC_VERSION=$$(( $(NUMERIC) + 4 )) \
+	./scripts/buildozer.sh debug
+
 release-armeabi-v7a:
 	APP_ANDROID_ARCH=armeabi-v7a \
 	APP_ANDROID_NUMERIC_VERSION=$$(( $(NUMERIC) + 1 )) \
@@ -48,6 +58,16 @@ release-armeabi-v7a:
 
 release-arm64-v8a:
 	APP_ANDROID_NUMERIC_VERSION=$$(( $(NUMERIC) + 2 )) \
+	./scripts/buildozer.sh release
+
+release-x86:
+	APP_ANDROID_ARCH=x86 \
+	APP_ANDROID_NUMERIC_VERSION=$$(( $(NUMERIC) + 3 )) \
+	./scripts/buildozer.sh release
+
+release-x86_64:
+	APP_ANDROID_ARCH=x86_64 \
+	APP_ANDROID_NUMERIC_VERSION=$$(( $(NUMERIC) + 4 )) \
 	./scripts/buildozer.sh release
 
 .PHONY: _setup_root _setup_user
