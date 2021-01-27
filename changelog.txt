@@ -2,6 +2,7 @@ master
 
 • new: french & spanish (jmdict meanings & sentences)
 • improved radical dialog
+• fixed crash on android 8.1
 
 v0.4.0
 
