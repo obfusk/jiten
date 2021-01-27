@@ -5,10 +5,10 @@
 #
 # File        : android/main.py
 # Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-# Date        : 2021-01-21
+# Date        : 2021-01-27
 #
 # Copyright   : Copyright (C) 2021  Felix C. Stegerman
-# Version     : v0.3.5
+# Version     : v0.4.0
 # License     : AGPLv3+
 #
 # --                                                            ; }}}1
@@ -102,6 +102,8 @@ if __name__ == "__main__":
   if ANDROID:
     fix_stdio()
     import android.activity, android.config, certifi, jnius
+    from android.runnable import run_on_ui_thread
+    setup_clipboard = run_on_ui_thread(setup_clipboard)
     os.environ["SSL_CERT_FILE"] = certifi.where()
     cls   = jnius.autoclass(android.config.ACTIVITY_CLASS_NAME)
     act   = cls.mActivity
