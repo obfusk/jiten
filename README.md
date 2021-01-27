@@ -111,6 +111,8 @@ $ jiten -v kanji --max 1 --word 日
 
 $ jiten -v kanji --max 1 '+r 犭艹田'    # search by radicals
 $ jiten -v kanji --max 1 '+s 2-3-3'     # search by SKIP code
+
+$ jiten radicals                        # show radicals table
 ```
 
 ### Sentences

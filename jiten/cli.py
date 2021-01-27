@@ -5,7 +5,7 @@
 #
 # File        : jiten/cli.py
 # Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-# Date        : 2021-01-25
+# Date        : 2021-01-27
 #
 # Copyright   : Copyright (C) 2021  Felix C. Stegerman
 # Version     : v0.4.0
@@ -505,6 +505,18 @@ def sentence_search(q, verbose, langs, max_results):            # {{{1
     if verbose:
       yield "tatoeba #" + str(e.id) + "; " + str(i+1) + "\n"
                                                                 # }}}1
+
+@cli.command(help = "Show radical table.")
+def radicals():
+  c = dict(rad = "bright_blue", alt = "cyan", var = "")
+  def f():
+    for i, g in enumerate(K.RADTABLE):
+      if i != 0: yield "\n"
+      yield click.style("{:2}".format(i + 1), "bright_yellow") + " "
+      for j, (r, x) in enumerate(g):
+        if j != 0 and j % 20 == 0: yield "\n   "
+        yield click.style(r, fg = c[x])
+  echo_via_pager(f())
 
 @cli.command(help = "Serve the web interface.")
 @click.option("-h", "--host", default = HOST, metavar = "HOST",
