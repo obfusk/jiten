@@ -2,7 +2,7 @@
 
     File        : README.md
     Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-    Date        : 2021-01-25
+    Date        : 2021-01-27
 
     Copyright   : Copyright (C) 2021  Felix C. Stegerman
     Version     : v0.4.0
@@ -85,7 +85,6 @@ selected manually).
 * WebView GUI
   - wraps the web interface (running locally on your computer)
 
-
 ## CLI
 
 ### JMDict
@@ -96,8 +95,11 @@ $ jiten -v jmdict --max 1 --word kat --lang dut
 $ jiten -v jmdict --max 1 --exact 誤魔化す
 
 $ jiten -v jmdict +random         # random entry
-$ jiten -v jmdict --prio +random  # random "priority" entry"
+$ jiten -v jmdict --prio +random  # random "priority" entry
 $ jiten -v jmdict -n 4-5 +random  # random JLPT N4 or N5 entry
+
+# convert romaji to hiragana & show romaji readings
+$ jiten -v jmdict --max 1 --hiragana --romaji --word neko
 ```
 
 ### Kanji
@@ -106,6 +108,15 @@ $ jiten -v jmdict -n 4-5 +random  # random JLPT N4 or N5 entry
 $ jiten -v kanji --max 1 --word cat
 $ jiten -v kanji --max 1 --exact cat
 $ jiten -v kanji --max 1 --word 日
+
+$ jiten -v kanji --max 1 '+r 犭艹田'    # search by radicals
+$ jiten -v kanji --max 1 '+s 2-3-3'     # search by SKIP code
+```
+
+### Sentences
+
+```bash
+$ jiten -v sentences --max 1 kitten
 ```
 
 ### Web Interface
@@ -118,12 +129,14 @@ $ jiten -v serve
 
 ```bash
 $ jiten --help
+$ jiten jmdict    --help
+$ jiten kanji     --help
+$ jiten sentences --help
 ```
 
 ## WebView GUI for Linux/macOS/Windows
 
-NB: requires [`pywebview`](https://pywebview.flowrl.com)
-(Debian/Ubuntu users can `apt install python3-webview`).
+NB: requires pywebview.
 
 ```bash
 $ jiten-gui
@@ -141,18 +154,27 @@ $ jiten-gui
 
 ## Requirements
 
-Python >= 3.5 + Flask + click.
-
-To build the (not yet optional) SQLite PCRE C extension: a C compiler
-(e.g. `gcc`/`clang`) and the `sqlite3` & `pcre` libraries & headers.
-
-Basic build tools like `make` and `patch`.
+* Python >= 3.5 + Flask + click.
+* To build the SQLite PCRE C extension: a C compiler (e.g.
+  `gcc`/`clang`) and the `sqlite3` & `pcre` libraries & headers.
+* Basic build tools like `make` and `patch`.
+* To run the WebView GUI: [pywebview](https://pywebview.flowrl.com)
+  >= 3.3.5.
 
 ### Debian/Ubuntu
 
 ```bash
 $ apt install python3-dev build-essential libsqlite3-dev libpcre3-dev
 $ apt install python3-flask   # optional: Flask & click w/o pip
+```
+
+#### Optional: WebView GUI
+
+```bash
+$ apt install python3-pyqt5.qtwebengine   # recommended: qtwebengine
+
+$ apt install python3-webview             # if >= 3.5.5
+$ pip3 --user install pywebview           # otherwise
 ```
 
 ## Installing
@@ -162,6 +184,9 @@ $ apt install python3-flask   # optional: Flask & click w/o pip
 ```bash
 $ pip install jiten
 ```
+
+NB: depending on your system you may need to use e.g. `pip3 --user`
+instead of just `pip`.
 
 ### From git
 
@@ -185,6 +210,11 @@ $ cd jiten
 $ git pull --rebase
 $ make
 ```
+
+### NixOS
+
+Jiten will hopefully be available in nixpkgs soon.  For now you can
+use [this nix expression](https://gist.github.com/obfusk/c51d353e75d576bd5cb8e92456cdec47).
 
 ## Miscellaneous
 
