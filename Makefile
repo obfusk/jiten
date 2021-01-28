@@ -13,13 +13,14 @@ H5VCMD  := html5validator --show-warnings --log INFO --no-langdetect
 
 PYCOV   := $(PYTHON) -mcoverage run --source jiten
 
-.PHONY: all test ci-test coverage clean cleanup validate-css tmp-html
-.PHONY: check-html validate-html validate-html-curl validate-html-py
+.PHONY: all test test-js ci-test coverage clean cleanup
+.PHONY: validate-css tmp-html check-html validate-html
+.PHONY: validate-html-curl validate-html-py
 
 all: ext
 	$(PYTHON) -m jiten.cli setup
 
-test: all
+test: all test-js
 	$(PYTHON) -m jiten.app       $(VERBOSE) --doctest
 	$(PYTHON) -m jiten.cli       $(VERBOSE)  _doctest
 	$(PYTHON) -m jiten.freq      $(VERBOSE) --doctest
@@ -29,9 +30,11 @@ test: all
 	$(PYTHON) -m jiten.misc      $(VERBOSE) --doctest
 	$(PYTHON) -m jiten.pitch     $(VERBOSE) --doctest
 	$(PYTHON) -m jiten.sentences $(VERBOSE) --doctest
+
+test-js:
 	node jiten/static/script.js
 
-ci-test: coverage validate-css validate-html check-html
+ci-test: test-js coverage validate-css validate-html check-html
 
 coverage: tmp-html
 	$(PYCOV) -a -m jiten.app       --doctest
