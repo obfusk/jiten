@@ -5,10 +5,10 @@
 #
 # File        : jiten/app.py
 # Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-# Date        : 2021-01-21
+# Date        : 2021-01-28
 #
 # Copyright   : Copyright (C) 2021  Felix C. Stegerman
-# Version     : v0.3.5
+# Version     : v0.4.0
 # License     : AGPLv3+
 #
 # --                                                            ; }}}1
@@ -143,10 +143,13 @@ def get_max():
   return int(arg("max", get_prefs().get("max", MAX), type = int))
 
 def get_filters():
-  jlpt = "-".join(filter(None, request.args.getlist("jlpt"))) or None
-  if jlpt: jlpt = M.JLPT_LEVEL.convert(jlpt)
-  return dict(noun = arg_bool("noun"), verb = arg_bool("verb"),
-              prio = arg_bool("prio"), jlpt = jlpt)
+  n, v, p = arg("noun"), arg("verb"), arg("prio")
+  j       = "-".join(filter(None, request.args.getlist("jlpt"))) or None
+  jlpt    = M.JLPT_LEVEL.convert(j) if j else j
+  args    = dict(noun = n, verb = v, prio = p, jlpt = j)
+  filters = dict(noun = n == "yes", verb = v == "yes",
+                 prio = p == "yes", jlpt = jlpt)
+  return filters, { k: v for k, v in args.items() if v is not None }
 
 @app.errorhandler(M.RegexError)
 def handle_regexerror(e):
@@ -175,10 +178,11 @@ def r_index():
 
 @app.route("/jmdict")
 def r_jmdict():
-  filters = get_filters()
+  filters, fargs = get_filters()
   if arg("query", "").strip().lower() == "+random":
     q = "+#{}".format(J.random_seq(**filters))
-    return redirect(url_for("r_jmdict", query = q, lang = get_langs()))
+    return redirect(url_for("r_jmdict", query = q, lang = get_langs(),
+                            **fargs))
   query, max_r = get_query_max()
   opts = dict(langs = get_langs(), max_results = max_r, **filters)
   data = dict(page = "jmdict", query = query)

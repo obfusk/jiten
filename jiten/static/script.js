@@ -2,7 +2,7 @@
 //
 //  File        : static/script.js
 //  Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-//  Date        : 2021-01-25
+//  Date        : 2021-01-28
 //
 //  Copyright   : Copyright (C) 2021  Felix C. Stegerman
 //  Version     : v0.4.0
@@ -175,8 +175,9 @@ const saveHistory = (max = 500) => {
     if (query.trim().startsWith("+#")) {
       const entry = $($(".entry")[0]).text().trim()
       if (entry) query += " (" + entry + ")"
+      params.delete("noun"); params.delete("verb")
+      params.delete("prio"); params.delete("jlpt")
     }
-    params.delete("save"); params.delete("dark")
     const link = location.pathname + "?" + params.toString()
     updateHistory(hist =>
       uniq([[query, link], ...hist], x => x[1]).slice(0, max)

@@ -2,7 +2,7 @@
 
   File        : templates/_search.html
   Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-  Date        : 2021-01-25
+  Date        : 2021-01-28
 
   Copyright   : Copyright (C) 2021  Felix C. Stegerman
   Version     : v0.4.0
@@ -79,7 +79,8 @@
       <fieldset class="d-inline border p-2 px-3">
         <legend>jlpt level(s)</legend>
         <div class="form-inline d-flex flex-nowrap">
-          {% set jlpt = request.args.getlist("jlpt", int)|select|sort %}
+          {% set jlpt = "-".join(request.args.getlist("jlpt")) %}
+          {% set jlpt = jlpt.split("-")|map('int')|select|list %}
           {% for x in (jlpt|min, jlpt|max) %}
             <select class="form-control form-control-sm" name="jlpt">
               <option value="">&nbsp;</option>
