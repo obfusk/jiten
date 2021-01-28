@@ -11,7 +11,7 @@ HTMLOK  := The document is valid HTML5
 URL     := http://localhost:5000
 H5VCMD  := html5validator --show-warnings --log INFO --no-langdetect
 
-PYCOV   := $(PYTHON) -mcoverage run --source .
+PYCOV   := $(PYTHON) -mcoverage run --source jiten
 
 .PHONY: all test ci-test coverage clean cleanup validate-css tmp-html
 .PHONY: check-html validate-html validate-html-curl validate-html-py
