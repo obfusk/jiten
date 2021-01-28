@@ -33,8 +33,8 @@ test: all
 
 ci-test: test validate-css validate-html check-html
 
-coverage:
-	$(PYCOV)    -m jiten.app       --doctest
+coverage: tmp-html
+	$(PYCOV) -a -m jiten.app       --doctest
 	$(PYCOV) -a -m jiten.cli        _doctest
 	$(PYCOV) -a -m jiten.freq      --doctest
 	$(PYCOV) -a -m jiten.jmdict    --doctest
@@ -44,6 +44,7 @@ coverage:
 	$(PYCOV) -a -m jiten.pitch     --doctest
 	$(PYCOV) -a -m jiten.sentences --doctest
 	$(PYTHON) -mcoverage html
+	$(PYTHON) -mcoverage report
 
 clean: cleanup
 	rm -f jiten/res/*.sqlite3
@@ -63,19 +64,21 @@ validate-css:
 	curl -sF "file=@jiten/static/style.css;type=text/css" \
 	  -- "$(CSSV)" | grep -qF '$(CSSOK)'
 
+# TODO
 tmp-html:
-	$(PYTHON) -m jiten.cli serve & pid=$$!; \
-	trap "kill $$pid" EXIT; mkdir -p tmp-html; sleep 5; \
+	$(PYCOV) -m jiten.cli _serve_for 15 & pid=$$!; \
+	mkdir -p tmp-html; sleep 5; \
 	curl -sG $(URL) > tmp-html/index.html; \
 	curl -sG $(URL)/jmdict -d max=10 -d word=yes \
-	  --data-urlencode query=cat   > tmp-html/cat.html  ; \
+	  --data-urlencode query=cat   > tmp-html/cat.html    ; \
 	curl -sG $(URL)/jmdict -d max=10 -d word=yes \
-	  --data-urlencode query=idiot > tmp-html/idiot.html; \
+	  --data-urlencode query=idiot > tmp-html/idiot.html  ; \
 	curl -sG $(URL)/kanji  -d max=10 -d word=yes \
-	  --data-urlencode query=ねこ  > tmp-html/neko.html ; \
+	  --data-urlencode query=ねこ  > tmp-html/neko.html   ; \
 	curl -sG $(URL)/kanji  -d max=10 -d word=yes \
-	  --data-urlencode query=日    > tmp-html/hi.html   ; \
-	curl -sG $(URL)/stroke > tmp-html/stroke.html
+	  --data-urlencode query=日    > tmp-html/hi.html     ; \
+	curl -sG $(URL)/stroke         > tmp-html/stroke.html ; \
+	wait $$pid
 
 # TODO
 check-html:

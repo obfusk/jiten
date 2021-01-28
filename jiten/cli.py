@@ -560,6 +560,20 @@ def doctest(ctx):
   import doctest
   if doctest.testmod(verbose = ctx.obj["verbose"])[0]: ctx.exit(1)
 
+@cli.command("_serve_for", hidden = True)
+@click.argument("seconds", type = click.INT)
+def serve_for(seconds):
+  setup_db(True)
+  import threading, time
+  from werkzeug.serving import make_server
+  from .app import app
+  s = make_server(HOST, PORT, app)
+  t = threading.Thread(target = s.serve_forever)
+  t.start()
+  time.sleep(seconds)
+  s.shutdown()
+  t.join()
+
 # NB: workaround for click adding a "\n"
 def echo_via_pager(xs):
   def f(it):
