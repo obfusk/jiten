@@ -264,12 +264,12 @@ def usually_kana(e): return _usukana(e.sense)
 def _usukana(sense): return any( USUKANA in s.info for s in sense )
 
 def gloss_pos_info(e, langs):
-  gloss, pos, info = {}, [], []
+  gloss, pos, info = { l: [] for l in langs }, [], []
   for l in langs:
     for s in e.sense:
-      if not s.lang == l: continue
+      if s.lang != l: continue
       pos.extend(s.pos); info.extend(s.info)
-      gloss.setdefault(l, []).append(s.gloss)
+      gloss[l].append(s.gloss)
   return gloss, tuple(M.uniq(pos + info))
 
 def isnoun(e):

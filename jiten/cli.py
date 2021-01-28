@@ -343,6 +343,7 @@ def jmdict_search(q, verbose, word, exact, fstwd, langs, romaji,
       yield "[pitch data unavailable]\n"
     gloss, info = e.gloss_pos_info(langs)
     for l in langs:
+      if not gloss[l]: continue
       yield click.style("[" + l + "]", fg = "blue") + "\n"
       for g in gloss[l]:
         yield indent_and_wrap(w, g, "= ", "magenta")
