@@ -71,8 +71,9 @@ SQLITE_FILE     = M.resource_path("res/sentences.sqlite3")
 SENTENCES_FILE  = M.resource_path("res/sentences/SENTENCES")
 DATA_FILES      = (SQLITE_FILE, SENTENCES_FILE)
 
-LANGS = "eng dut ger fre spa swe".split()
-Entry = namedtuple("Entry", "id jap".split() + LANGS + ["audio"])
+LANGSFULL = "english dutch german french spanish swedish".split()
+LANGS     = [ l[:3] for l in LANGSFULL ]
+Entry     = namedtuple("Entry", "id jap".split() + LANGS + ["audio"])
 
 def parse_sentences(file = SENTENCES_FILE):
   data = []
