@@ -18,7 +18,7 @@ r"""
 
 CLI
 
->>> click.get_terminal_size = lambda: [80, None]
+>>> click.get_terminal_size = lambda: [84, None]
 >>> run = lambda a: cli(args = a.split(), standalone_mode = False, prog_name = name)
 
 === JMDict ===
@@ -323,7 +323,7 @@ def jmdict_search(q, verbose, word, exact, fstwd, langs, romaji,
                   **kw):                                        # {{{1
   langs = [ l for ls in langs for l in ls.split(",") ]
   q     = M.process_query(q, word, exact, fstwd, True)
-  w     = click.get_terminal_size()[0]
+  w     = terminal_width()
   f     = with_romaji if romaji else lambda x: x
   if verbose:
     yield "query: " + click.style(q, fg = "bright_red") + "\n\n"
@@ -404,6 +404,9 @@ def indent_and_wrap_jap(w, xs, pre, fg):
   w = len(pre) + n + (n // k * 2)   # 2 extra chars per word per line
   return indent_and_wrap(w, xs, pre, fg).replace("_【", " 【")
 
+def terminal_width():
+  return click.get_terminal_size()[0] - 4
+
 @cli.command(help = "Search kanji.")
 @click.option("-w", "--word", is_flag = True,
               help = "Match whole word (same as \\b...\\b).")
@@ -426,7 +429,7 @@ def kanji(ctx, query, **kw):
 def kanji_search(q, verbose, word, exact, fstwd, max_results,
                  romaji):                                       # {{{1
   q = M.process_query(q, word, exact, fstwd, True)
-  w = click.get_terminal_size()[0]
+  w = terminal_width()
   f = with_romaji if romaji else lambda x: x
   if verbose:
     yield "query: " + click.style(q, fg = "bright_red") + "\n\n"
