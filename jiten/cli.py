@@ -5,7 +5,7 @@
 #
 # File        : jiten/cli.py
 # Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-# Date        : 2021-01-27
+# Date        : 2021-01-28
 #
 # Copyright   : Copyright (C) 2021  Felix C. Stegerman
 # Version     : v0.4.0
@@ -564,12 +564,16 @@ def doctest(ctx):
 
 # NB: workaround for click adding a "\n"
 def echo_via_pager(xs):
-  def f():
-    it = iter(xs); y = next(it)
+  def f(it):
+    try:
+      y = next(it)
+    except StopIteration:
+      return
     for x in it:
-      yield y; y = x
+      yield y
+      y = x
     yield y[:-1] if y.endswith("\n") else y
-  click.echo_via_pager(f())
+  click.echo_via_pager(f(iter(xs)))
 
 if __name__ == "__main__":
   try:
