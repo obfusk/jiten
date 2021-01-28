@@ -1,8 +1,10 @@
 master
 
-• new: french & spanish (jmdict meanings & sentences)
+• new: french & spanish (& swedish) (jmdict meanings & sentences)
 • improved radical dialog
-• fixed crash on android 8.1
+• fixed crash on android 8
+
+• cli: radicals, --hiragana/--katakana
 
 v0.4.0
 

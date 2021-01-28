@@ -5,7 +5,7 @@
 #
 # File        : jiten/jmdict.py
 # Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-# Date        : 2021-01-25
+# Date        : 2021-01-27
 #
 # Copyright   : Copyright (C) 2021  Felix C. Stegerman
 # Version     : v0.4.0
@@ -19,7 +19,7 @@ r"""
 JMDict.
 
 >>> DBVERSION
-12
+13
 
 >>> jmdict = parse_jmdict()
 >>> len(jmdict)
@@ -209,7 +209,7 @@ from . import misc  as M
 from . import pitch as P
 from .sql import sqlite_do, load_pcre_extension
 
-DBVERSION       = 12 # NB: update this when data/schema changes
+DBVERSION       = 13 # NB: update this when data/schema changes
 SQLITE_FILE     = M.resource_path("res/jmdict.sqlite3")
 JMDICT_FILE     = M.resource_path("res/jmdict/jmdict.xml.gz")
 JLPT_FILE_BASE  = M.resource_path("res/jlpt/N")
@@ -220,7 +220,7 @@ PRIO            = dict(news1 = 10, news2 = 1, ichi1 = 10, ichi2 = 1,
                        spec1 = 10, spec2 = 5, gai1  = 10, gai2  = 1)
 MINPRIO         = 5
 USUKANA         = "word usually written using kana alone"
-LANGS           = "eng dut ger fre spa".split()
+LANGS           = "eng dut ger fre spa swe".split()
 JLPTKK, JLPTUK  = JLPTKANA = "[katakana]", "[usukana]"
 
 Entry   = namedtuple("Entry"  , """seq jlpt kanji reading sense""".split())

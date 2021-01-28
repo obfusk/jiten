@@ -5,7 +5,7 @@
 #
 # File        : jiten/sentences.py
 # Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-# Date        : 2021-01-25
+# Date        : 2021-01-28
 #
 # Copyright   : Copyright (C) 2021  Felix C. Stegerman
 # Version     : v0.4.0
@@ -34,6 +34,8 @@ Sentences from Tatoeba.
 37128
 >>> len([ x for x in sentences if x.spa ])
 31911
+>>> len([ x for x in sentences if x.swe ])
+913
 >>> len([ x for x in sentences if x.audio ])
 1281
 >>> len([ x for x in sentences if x.eng and x.dut and x.ger ])
@@ -46,10 +48,10 @@ Sentences from Tatoeba.
 202
 
 >>> [ x for x in sentences if "子猫" in x.jap ][0]
-Entry(id=74794, jap='「お前、どこの子だ？」足に纏わりついてきたのは、小さな子猫だった。灰色の縞模様のふわふわした猫だ。', eng='"Who do you belong to?" Wrapped around his feet was a small cat. It was a fluffy grey striped cat.', dut=None, ger=None, fre=None, spa=None, audio=None)
+Entry(id=74794, jap='「お前、どこの子だ？」足に纏わりついてきたのは、小さな子猫だった。灰色の縞模様のふわふわした猫だ。', eng='"Who do you belong to?" Wrapped around his feet was a small cat. It was a fluffy grey striped cat.', dut=None, ger=None, fre=None, spa=None, swe=None, audio=None)
 
 >>> [ x for x in sentences if "猫" in x.jap and x.ger and x.audio ][0]
-Entry(id=2260050, jap='最後にあの猫を見たのはいつですか？', eng='When was the last time you saw the cat?', dut=None, ger='Wann hast du die Katze zum letzten Mal gesehen?', fre=None, spa=None, audio='Mizu (CC BY-NC 4.0)')
+Entry(id=2260050, jap='最後にあの猫を見たのはいつですか？', eng='When was the last time you saw the cat?', dut=None, ger='Wann hast du die Katze zum letzten Mal gesehen?', fre=None, spa=None, swe=None, audio='Mizu (CC BY-NC 4.0)')
 
 >>> sorted(set( x.audio for x in sentences if x.audio ))
 ['Mizu (CC BY-NC 4.0)', 'huizi99 (CC BY-NC 4.0)', 'yomi (CC BY-NC 4.0)']
@@ -69,7 +71,7 @@ SQLITE_FILE     = M.resource_path("res/sentences.sqlite3")
 SENTENCES_FILE  = M.resource_path("res/sentences/SENTENCES")
 DATA_FILES      = (SQLITE_FILE, SENTENCES_FILE)
 
-LANGS = "eng dut ger fre spa".split()
+LANGS = "eng dut ger fre spa swe".split()
 Entry = namedtuple("Entry", "id jap".split() + LANGS + ["audio"])
 
 def parse_sentences(file = SENTENCES_FILE):
@@ -87,7 +89,7 @@ def sentences2sqldb(data, file = SQLITE_FILE):
     c.executescript(SENTENCES_CREATE_SQL)
     with click.progressbar(data, width = 0, label = "writing sentences") as bar:
       for e in bar:
-        c.execute("INSERT INTO entry VALUES (?,?,?,?,?,?,?,?)", e)
+        c.execute("INSERT INTO entry VALUES (?,?,?,?,?,?,?,?,?)", e)
 
                                                                 # {{{1
 SENTENCES_CREATE_SQL = """
@@ -100,6 +102,7 @@ SENTENCES_CREATE_SQL = """
     ger TEXT,
     fre TEXT,
     spa TEXT,
+    swe TEXT,
     audio TEXT
   );
 """                                                             # }}}1
