@@ -356,6 +356,10 @@ tatoeba #9365736; 1
 ネコ
 >>> run("k2h ねこ")
 ねこ
+>>> run("k2r ねこ")
+neko
+>>> run("k2r ネコ")
+neko
 
 """                                                             # }}}1
 
@@ -696,23 +700,23 @@ def setup(download):
 
 @cli.command(help = "Convert romaji to hiragana.")
 @click.argument("text", required = False)
-def r2h(text):
-  convert(kana.romaji2hiragana, text)
+def r2h(text): convert(kana.romaji2hiragana, text)
 
 @cli.command(help = "Convert romaji to katakana.")
 @click.argument("text", required = False)
-def r2k(text):
-  convert(kana.romaji2katakana, text)
+def r2k(text): convert(kana.romaji2katakana, text)
 
 @cli.command(help = "Convert hiragana to katakana.")
 @click.argument("text", required = False)
-def h2k(text):
-  convert(kana.hiragana2katakana, text)
+def h2k(text): convert(kana.hiragana2katakana, text)
 
 @cli.command(help = "Convert katakana to hiragana.")
 @click.argument("text", required = False)
-def k2h(text):
-  convert(kana.katakana2hiragana, text)
+def k2h(text): convert(kana.katakana2hiragana, text)
+
+@cli.command(help = "Convert kana to romaji.")
+@click.argument("text", required = False)
+def k2r(text): convert(kana.kana2romaji, text)
 
 def convert(f, text):
   for line in [text] if text else sys.stdin:

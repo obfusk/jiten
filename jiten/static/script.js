@@ -41,24 +41,30 @@ const romajiToHiragana = t => {                               //  {{{1
   const r = [], rx = RegExp(RORX, "uy")
   let m
   while (m = rx.exec(t)) {
-    if (m[1] || m[5]) {
-      r.push(m[5] || ROSP[m[1] == "n" ? "nn" : m[1]])
+    if (m[1] || m[4]) {
+      r.push(m[4] || ROSP[m[1] == "n" ? "nn" : m[1]])
+    } else if (m[0].length == 1) {
+      r.push(HIRAGANA[ROWS.indexOf(m[0])])
     } else {
       let s = "", x = m[2] ? ROMP[m[2]] : m[0]
-      if (x.length == 1) {
-        s = HIRAGANA[ROWS.indexOf(x)]
-      } else if (x.length == 3 && x[1] == "y" && x[0] != "x") {
-        s = HIRAGANA[5*COLS.indexOf(x[0])+1] +
-            HIRAGANA[5*(COLS.indexOf("y")+1)+ROWS.indexOf(x[2])]
-      } else {
-        if (x.length == 3 && x[0] == x[1]) {
-          s = "っ"; x = x.slice(1)
-        }
-        if (x.length == 2 || (x.length == 3 && x[0] == "x")) {
-          s += HIRAGANA[5*COLS.indexOf(x.slice(0, -1))
-                         +ROWS.indexOf(x.slice(-1))]
+      if (x[0] == x[1]) {
+        s = "っ"; x = x.slice(1)
+      }
+      try {
+        if (x.length == 3 && x[1] == "y" && x[0] != "x") {
+          s += get(HIRAGANA, 5*indexOf(COLS, x[0])+1) +
+               get(HIRAGANA, 5*(indexOf(COLS, "y")+1)
+                              +indexOf(ROWS, x[2]))
         } else {
-          s = "〇"
+          s += get(HIRAGANA, 5*indexOf(COLS, x.slice(0, -1))
+                              +indexOf(ROWS, x.slice(-1)))
+        }
+      } catch(e) {
+        if (e instanceof LookupError) {
+          r.push(m[0])                                        //  TODO
+          continue
+        } else {
+          throw e
         }
       }
       r.push(s.includes("〇") ? m[0] : s)                     //  TODO
@@ -128,21 +134,45 @@ const esc   = s => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
 const ROWS  = "aiueo", COLS_ = "-xvkgsztdTnhbpfmyYrwW"
 const COLS  = [...COLS_].map(c => "TYW".includes(c) ?
                                   "x" + c.toLowerCase() : c)
+
 const ROMP  = {
   shi:  "si",  ji:  "zi", chi:  "ti", tsu: "tu", xtsu: "xtu",
   sha: "sya", sho: "syo", shu: "syu",
    ja: "zya",  jo: "zyo",  ju: "zyu",
   cha: "tya", cho: "tyo", chu: "tyu",
+   fu:  "hu",
 }
+for (const k of Object.keys(ROMP)) {
+  if (k[0] != "x") { ROMP[k[0]+k] = ROMP[k][0]+ROMP[k] }
+}
+const ROMPK = Object.keys(ROMP).sort().reverse()
+
+const COLSX = COLS.slice(1).filter(x => x[0] != "x").map(x => x[0]+x)
+const COLS2 = COLS.slice(1).concat(COLSX).sort().reverse()
+
 const ROSP  = { nn:"ん", "-":"ー", "~":"〜", ",":"、", ".":"。",
                 "?":"？", "!":"！", "(":"（", ")":"）" }      //  TODO
-const RORX  = "("  + Object.keys(ROSP).map(esc).join("|")
-                   + "|n(?![aiueoy]))|" +
-              "("  + Object.keys(ROMP).join("|") + ")|" +
-              "((" + COLS.slice(1).join("|") + ")\\4?)?y?"
-                   + "[" + ROWS + "]|(.)"
+
+const RORX  = "(" + Object.keys(ROSP).map(esc).join("|")
+                  + "|n(?![aiueoy]))|" +
+              "(" + ROMPK.join("|") + ")|" +
+              "(" + COLS2.join("|") + ")?y?"
+                  + "[" + ROWS + "]|(.)"
 
 // === miscellaneous ===
+
+class LookupError extends Error {}
+
+const get = (o, k) => {
+  if (!(k in o)) { throw new LookupError() }
+  return o[k]
+}
+
+const indexOf = (a, x) => {
+  const i = a.indexOf(x)
+  if (i == -1) { throw new LookupError() }
+  return i
+}
 
 const uniq = (a, key = x => x) => a.filter((v, i, a) =>
   a.findIndex(x => key(x) == key(v)) === i

@@ -5,7 +5,7 @@
 #
 # File        : jiten/kana.py
 # Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-# Date        : 2021-01-25
+# Date        : 2021-01-28
 #
 # Copyright   : Copyright (C) 2021  Felix C. Stegerman
 # Version     : v0.4.0
@@ -133,23 +133,24 @@ def _r2h(t):                                                    # {{{1
     m = rx.match(t, i)
     if not m: break
     g, i = (m.group(0),) + m.groups(), m.end()
-    if g[1] or g[5]:
-      yield g[5] or ROSP["nn" if g[1] == "n" else g[1]]
+    if g[1] or g[4]:
+      yield g[4] or ROSP["nn" if g[1] == "n" else g[1]]
+    elif len(g[0]) == 1:
+      yield HIRAGANA[ROWS.index(g[0])]
     else:
       s, x = "", (ROMP[g[2]] if g[2] else g[0])
-      if len(x) == 1:
-        s = HIRAGANA[ROWS.index(x)]
-      elif len(x) == 3 and x[1] == "y" and x[0] != "x":
-        s = HIRAGANA[5*COLS.index(x[0])+1] \
-          + HIRAGANA[5*(COLS.index("y")+1)+ROWS.index(x[2])]
-      else:
-        if len(x) == 3 and x[0] == x[1]:
-          s, x = "っ", x[1:]
-        if len(x) == 2 or (len(x) == 3 and x[0] == "x"):
-          s += HIRAGANA[5*COLS.index(x[:-1])+ROWS.index(x[-1])]
+      if x[0] == x[1]:
+        s, x = "っ", x[1:]
+      try:
+        if len(x) == 3 and x[1] == "y" and x[0] != "x":
+          s += HIRAGANA[5*COLS.index(x[0])+1] \
+             + HIRAGANA[5*(COLS.index("y")+1)+ROWS.index(x[2])]
         else:
-          s = "〇"
-      yield g[0] if "〇" in s else s
+          s += HIRAGANA[5*COLS.index(x[:-1])+ROWS.index(x[-1])]
+      except (KeyError, ValueError):
+        yield g[0]                                              # TODO
+      else:
+        yield g[0] if "〇" in s else s                          # TODO
                                                                 # }}}1
 
 def romaji2katakana(t):
@@ -211,21 +212,28 @@ KATAKANA = """
 
 ROWS, COLS_ = "aiueo", "-xvkgsztdTnhbpfmyYrwWN-"
 COLS  = [ "x" + c.lower() if c in "TYW" else c for c in COLS_ ]
-ROMP  = dict(
+
+ROMP_ = dict(
   shi =  "si",  ji =  "zi", chi =  "ti", tsu = "tu", xtsu = "xtu",
   sha = "sya", sho = "syo", shu = "syu",
    ja = "zya",  jo = "zyo",  ju = "zyu",
   cha = "tya", cho = "tyo", chu = "tyu",
    fu =  "hu",
 )
+ROMP  = { **ROMP_, **{ k[0]+k : v[0]+v for k, v in ROMP_.items()
+                                       if not k[0] == "x" } }
 PMOR  = { v: k for k, v in ROMP.items() }; PMOR.update(Na = "nn")
+
+COLS2 = COLS[1:-2] + [ x[0]+x for x in COLS[1:-2] if x[0] != "x" ]
+
 ROSP  = { "nn":"ん", "-":"ー", "~":"〜", ",":"、", ".":"。", "?":"？",
           "!":"！", "(":"（", ")":"）" }                        # TODO
-RORX  = r"("  + r"|".join(map(re.escape, ROSP.keys())) \
-              + r"|n(?![aiueoy]))|" + \
-        r"("  + r"|".join(ROMP.keys()) + r")|" + \
-        r"((" + r"|".join(COLS[1:-2]) + r")\4?)?y?" \
-              + r"[" + ROWS + r"]|(.)"
+
+RORX  = r"(" + r"|".join(map(re.escape, ROSP.keys())) \
+             + r"|n(?![aiueoy]))|" + \
+        r"(" + r"|".join(reversed(sorted(ROMP.keys()))) + r")|" + \
+        r"(" + r"|".join(reversed(sorted(COLS2))) + r")?y?" \
+             + r"[" + ROWS + r"]|(.)"
 
 if __name__ == "__main__":
   if "--doctest" in sys.argv:
