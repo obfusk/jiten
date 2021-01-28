@@ -332,6 +332,19 @@ query: congratulations
 [swe] Grattis!
 tatoeba #4854; 1
 
+>>> run("-v sentences -m1 +#9365736")
+DB v13 up to date.
+query: +#9365736
+<BLANKLINE>
+[jap] 子ネコは大好きだな。
+[eng] I love kittens.
+[no dut]
+[ger] Ich liebe kleine Kätzchen.
+[no fre]
+[spa] Amo los gatitos.
+[no swe]
+tatoeba #9365736; 1
+
 """                                                             # }}}1
 
 import os, sys
