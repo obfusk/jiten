@@ -163,6 +163,32 @@ DB v13 up to date.
 query: +w みる
 <BLANKLINE>
 
+>>> run("-v jmdict -n5 +random") # doctest: +ELLIPSIS
+DB v13 up to date.
+query: +random
+<BLANKLINE>
+...
+seq# ... jlpt N5...
+
+>>> run("-v jmdict -m1 --hiragana --romaji -w neko")
+DB v13 up to date.
+query: +w ねこ
+<BLANKLINE>
+猫
+ねこ [neko] | ネコ [neko]
+ねꜜこ [neꜜko]
+[eng]
+= cat (esp. the domestic cat, Felis catus)
+= shamisen
+= geisha
+= wheelbarrow
+= clay bed-warmer
+= bottom | submissive partner of a homosexual relationship
+--> noun (common) (futsuumeishi) | abbreviation | word usually written using
+    kana alone | colloquialism
+see 猫車 | 猫火鉢
+seq# 1467640, freq# 2201, jlpt N5, prio; 1
+
 
 === Kanji ===
 
@@ -216,6 +242,95 @@ query: +w 日
 部: 日 (72)
 0x65e5 CJK UNIFIED IDEOGRAPH-65E5; 1
 4 strokes, level 常用1, freq# 1, old jlpt N4, jlpt N5, skip 3-3-1
+
+>>> run("-v kanji -m1 +r犭艹田")
+DB v13 up to date.
+query: +r犭艹田
+<BLANKLINE>
+猫
+ビョウ
+ねこ
+[no name readings]
+= cat
+--> 猫 【ねこ】 | 子猫 【こねこ】 | 猫背 【ねこぜ】 |
+    山猫 【やまねこ】 | 猫舌 【ねこじた】 | 野良猫 【のらねこ】 |
+    黒猫 【くろねこ】 | 飼い猫 【かいねこ】 | 猫 【ねこま】 |
+    猫撫で声 【ねこなでごえ】 | 猫又 【ねこまた】 | 招き猫 【まねきねこ】 |
+    猫足 【ねこあし】 | 斑猫 【はんみょう】 | 猫かぶり 【ねこかぶり】 |
+    海猫 【うみねこ】 | 猫柳 【ねこやなぎ】 | 猫板 【ねこいた】 |
+    トラ猫 【トラねこ】 | 猫可愛がり 【ねこかわいがり】 |
+    シャム猫 【シャムねこ】 | 猫娘 【ねこむすめ】 | どら猫 【どらねこ】 |
+    メス猫 【メスねこ】 | 猫じゃらし 【ねこじゃらし】
+部: 犬 (94) ⺨ 犯 田 艸 艹 艾 苗
+variants: 貓
+0x732b CJK UNIFIED IDEOGRAPH-732B; 1
+11 strokes, level 常用, freq# 1702, old jlpt N2, jlpt N3, skip 1-3-8
+
+>>> run("-v kanji -m1 +s2-3-3")
+DB v13 up to date.
+query: +s2-3-3
+<BLANKLINE>
+当
+トウ
+あ.たる | あ.たり | あ.てる | あ.て | まさ.に | まさ.にべし
+たい
+= hit | right | appropriate | himself
+--> 当時 【とうじ】 | 本当 【ほんとう】 | 当然 【とうぜん】 |
+    本当に 【ほんとうに】 | 担当 【たんとう】 | 当局 【とうきょく】 |
+    相当 【そうとう】 | 当初 【とうしょ】 | 当たる 【あたる】 |
+    当選 【とうせん】 | 当てる 【あてる】 | 当たり 【あたり】 |
+    当面 【とうめん】 | 正に 【まさに】 | 担当者 【たんとうしゃ】 |
+    当たり前 【あたりまえ】 | 適当 【てきとう】 | 弁当 【べんとう】 |
+    当て 【あて】 | 当日 【とうじつ】 | 正当 【せいとう】 |
+    見当 【けんとう】 | 当分 【とうぶん】 | 当事者 【とうじしゃ】 |
+    不当 【ふとう】
+部: 彐 (58) ⺌ ⺕ ヨ 小 尚
+variants: 當
+0x5f53 CJK UNIFIED IDEOGRAPH-5F53; 1
+6 strokes, level 常用2, freq# 91, old jlpt N2, jlpt N3, skip 2-3-3
+
+>>> run("radicals")
+ 1 ノ一丨丶丿乙亅
+ 2 ハマユ个乃九乞二亠人亻儿入八冂冖冫几凵刀
+   刂刈力勹匕化匚匸十卜卩厂厶又并
+ 3 ⺌⻌⻏⻖ヨ久也亡及口囗土士夂夊夕大女子宀
+   寸小尚尢尸屮山巛川工己已巾干幺广廴廾弋弓
+   彐彑彡彳忄忙扌扎氵汁犭犯艹艾込邦阡
+ 4 五井元勿尤屯巴心戈戶戸手支攴攵文斗斤方无
+   日曰月木杰欠止歹殳毋比毛氏气水火灬爪父爻
+   爿片牙牛犬王礻礼老耂辶
+ 5 世冊初巨母氺牙玄玉玊瓜瓦甘生用田疋疒疔癶
+   白皮皿目矛矢石示禸禹禾穴立罒衤買
+ 6 瓜竹米糸缶网羊羽老而耒耳聿肉臣自至臼舌舛
+   舟艮色艸虍虫血行衣襾西
+ 7 臣舛見角言谷豆豕豸貝赤走足身車辛辰辵邑酉
+   釆里麦
+ 8 免奄岡斉金長門阜隶隹雨靑青非鼡
+ 9 品面革韋韭音頁風飛食首香
+10 竜韋馬骨高髟鬥鬯鬲鬼
+11 亀滴魚鳥鹵鹿麥麻黄黒
+12 歯無黃黍黑黹
+13 黽鼎鼓鼠
+14 鼻齊
+15 齒
+16 龍龜
+17 龠
+
+
+=== Sentences ===
+
+>>> run("-v sentences -m1 -l eng,dut,ger,fre,spa,swe congratulations")
+DB v13 up to date.
+query: congratulations
+<BLANKLINE>
+[jap] おめでとうございます。
+[eng] Congratulations!
+[dut] Gefeliciteerd.
+[ger] Herzlichen Glückwunsch.
+[fre] Félicitations.
+[spa] ¡Felicidades!
+[swe] Grattis!
+tatoeba #4854; 1
 
 """                                                             # }}}1
 
@@ -491,6 +606,7 @@ def sentences(ctx, query, **kw):
 
 # TODO: audio
 def sentence_search(q, verbose, langs, max_results):            # {{{1
+  langs = [ l for ls in langs for l in ls.split(",") ]
   if verbose:
     yield "query: " + style(q, fg = "bright_red") + "\n\n"
   for i, e in enumerate(S.search(q, langs, max_results)):
