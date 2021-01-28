@@ -1,5 +1,6 @@
 SHELL   := /bin/bash
 PYTHON  ?= python3
+VERBOSE ?= --verbose
 
 CSSV    := https://jigsaw.w3.org/css-validator/validator
 CSSOK   := Congratulations! No Error Found.
@@ -10,25 +11,39 @@ HTMLOK  := The document is valid HTML5
 URL     := http://localhost:5000
 H5VCMD  := html5validator --show-warnings --log INFO --no-langdetect
 
-.PHONY: all test ci-test clean cleanup validate-css tmp-html
+PYCOV   := $(PYTHON) -mcoverage run --source .
+
+.PHONY: all test ci-test coverage clean cleanup validate-css tmp-html
 .PHONY: check-html validate-html validate-html-curl validate-html-py
 
 all: ext
 	$(PYTHON) -m jiten.cli setup
 
 test: all
-	$(PYTHON) -m jiten.app       --verbose --doctest
-	$(PYTHON) -m jiten.cli       --verbose  _doctest
-	$(PYTHON) -m jiten.freq      --verbose --doctest
-	$(PYTHON) -m jiten.jmdict    --verbose --doctest
-	$(PYTHON) -m jiten.kana      --verbose --doctest
-	$(PYTHON) -m jiten.kanji     --verbose --doctest
-	$(PYTHON) -m jiten.misc      --verbose --doctest
-	$(PYTHON) -m jiten.pitch     --verbose --doctest
-	$(PYTHON) -m jiten.sentences --verbose --doctest
+	$(PYTHON) -m jiten.app       $(VERBOSE) --doctest
+	$(PYTHON) -m jiten.cli       $(VERBOSE)  _doctest
+	$(PYTHON) -m jiten.freq      $(VERBOSE) --doctest
+	$(PYTHON) -m jiten.jmdict    $(VERBOSE) --doctest
+	$(PYTHON) -m jiten.kana      $(VERBOSE) --doctest
+	$(PYTHON) -m jiten.kanji     $(VERBOSE) --doctest
+	$(PYTHON) -m jiten.misc      $(VERBOSE) --doctest
+	$(PYTHON) -m jiten.pitch     $(VERBOSE) --doctest
+	$(PYTHON) -m jiten.sentences $(VERBOSE) --doctest
 	node jiten/static/script.js
 
 ci-test: test validate-css validate-html check-html
+
+coverage:
+	$(PYCOV)    -m jiten.app       --doctest
+	$(PYCOV) -a -m jiten.cli        _doctest
+	$(PYCOV) -a -m jiten.freq      --doctest
+	$(PYCOV) -a -m jiten.jmdict    --doctest
+	$(PYCOV) -a -m jiten.kana      --doctest
+	$(PYCOV) -a -m jiten.kanji     --doctest
+	$(PYCOV) -a -m jiten.misc      --doctest
+	$(PYCOV) -a -m jiten.pitch     --doctest
+	$(PYCOV) -a -m jiten.sentences --doctest
+	$(PYTHON) -mcoverage html
 
 clean: cleanup
 	rm -f jiten/res/*.sqlite3
@@ -40,6 +55,7 @@ cleanup:
 	find -name '*~' -delete -print
 	rm -fr jiten/__pycache__/ tmp-html/
 	rm -fr build/ dist/ jiten.egg-info/
+	rm -fr .coverage htmlcov/
 	rm -fr jiten/.version
 	$(MAKE) -C jiten/res/jmdict cleanup
 

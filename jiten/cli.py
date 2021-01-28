@@ -225,6 +225,7 @@ from .version import __version__, py_version
 name = "jiten"
 
 import click
+from click import style
 
 from . import jmdict    as J
 from . import kanji     as K
@@ -326,25 +327,25 @@ def jmdict_search(q, verbose, word, exact, fstwd, langs, romaji,
   w     = terminal_width()
   f     = with_romaji if romaji else lambda x: x
   if verbose:
-    yield "query: " + click.style(q, fg = "bright_red") + "\n\n"
+    yield "query: " + style(q, fg = "bright_red") + "\n\n"
   for i, (e, rank) in enumerate(J.search(q, langs = langs, **kw)):
     if i != 0: yield "\n"
     yield (" | ".join(
-      click.style(k.elem, fg = "bright_yellow") for k in e.kanji
+      style(k.elem, fg = "bright_yellow") for k in e.kanji
     ) or "[no kanji]") + "\n"
     yield (" | ".join(
-      click.style(f(r.elem), fg = "bright_green") for r in e.reading
+      style(f(r.elem), fg = "bright_green") for r in e.reading
     ) or "[no readings]") + "\n"
     if P.have_pitch():
       yield (" | ".join(
-        click.style(f(p), fg = "cyan") for p in e.pitch()
+        style(f(p), fg = "cyan") for p in e.pitch()
       ) or "[no pitch data]") + "\n"
     else:
       yield "[pitch data unavailable]\n"
     gloss, info = e.gloss_pos_info(langs)
     for l in langs:
       if not gloss[l]: continue
-      yield click.style("[" + l + "]", fg = "blue") + "\n"
+      yield style("[" + l + "]", fg = "blue") + "\n"
       for g in gloss[l]:
         yield indent_and_wrap(w, g, "= ", "magenta")
     t = indent_and_wrap(w, info, "--> ", "green")
@@ -354,12 +355,11 @@ def jmdict_search(q, verbose, word, exact, fstwd, langs, romaji,
       if ti: yield ti
       tx = indent_and_wrap(w, e.xrefs(), "see ", "yellow")
       if tx: yield tx
-      yield  ("seq# " + click.style(str(e.seq), fg = "blue")
-        + (", freq# " + click.style(str(rank ), fg = "cyan")
-                    if rank else "")
-        + (", jlpt " + click.style("N"+str(e.jlpt), fg = "yellow")
-                    if e.jlpt else "")
-        + (", prio" if e.isprio() else "") + "; " + str(i+1) + "\n")
+      yield "seq# " + style(str(e.seq), fg = "blue")
+      if rank:        yield ", freq# " + style(str(rank), fg = "cyan")
+      if e.jlpt:      yield ", jlpt " + style("N"+str(e.jlpt), fg = "yellow")
+      if e.isprio():  yield ", prio"
+      yield "; " + str(i+1) + "\n"
                                                                 # }}}1
 
 def search(f, ctx, q, hiragana, katakana, **kw):
@@ -390,10 +390,10 @@ def convert_query(q, hiragana, katakana):
 def indent_and_wrap(w, xs, pre, fg):
   xs = list(xs)
   if not xs: return None
-  t = click.wrap_text("| ".join(xs), w, initial_indent = pre,
-    subsequent_indent = " " * len(pre)
-  )[len(pre):].replace("|", click.style(" |", fg = fg))
-  return click.style(pre, fg = fg) + t + "\n"
+  t = click.wrap_text("|\x1e ".join(xs), w, initial_indent = pre,
+                      subsequent_indent = " " * len(pre))
+  t = t[len(pre):].replace("|\x1e", style(" |", fg = fg))
+  return style(pre, fg = fg) + t + "\n"
 
 # TODO: currently only works for "猫 【ねこ】 | ..." etc.
 def indent_and_wrap_jap(w, xs, pre, fg):
@@ -432,26 +432,26 @@ def kanji_search(q, verbose, word, exact, fstwd, max_results,
   w = terminal_width()
   f = with_romaji if romaji else lambda x: x
   if verbose:
-    yield "query: " + click.style(q, fg = "bright_red") + "\n\n"
+    yield "query: " + style(q, fg = "bright_red") + "\n\n"
   for i, e in enumerate(K.search(q, max_results)):
     if i != 0: yield "\n"
     yield e.char + "\n"
     yield (" | ".join(
-      click.style(f(r), fg = "bright_yellow") for r in e.on
+      style(f(r), fg = "bright_yellow") for r in e.on
     ) or "[no on readings]") + "\n"
     yield (" | ".join(
-      click.style(f(r), fg = "bright_green") for r in e.kun
+      style(f(r), fg = "bright_green") for r in e.kun
     ) or "[no kun readings]") + "\n"
     yield (" | ".join(
-      click.style(f(r), fg = "cyan") for r in e.nanori
+      style(f(r), fg = "cyan") for r in e.nanori
     ) or "[no name readings]") + "\n"
     if e.meaning:
-      yield click.style("= ", fg = "magenta") + \
-        click.style(" | ", fg = "magenta").join(e.meaning) + "\n"
+      yield style("= ", fg = "magenta") + \
+            style(" | ", fg = "magenta").join(e.meaning) + "\n"
     else:
       yield "[no meanings]\n"
     if verbose:
-      js = ( "{}_【{}】".format(e.kanji[0].elem, e.reading[0].elem)
+      js = ( "{}_【{}】".format(e.kanji[0].elem, e.reading[0].elem) \
              for e, r in e.jmdict() )
       tj = indent_and_wrap_jap(w, js, "--> ", "blue")
       if tj: yield tj
@@ -462,21 +462,15 @@ def kanji_search(q, verbose, word, exact, fstwd, max_results,
       tv = (["canonical: " + ca] if ca != e.char else []) \
          + (["variants: " + " ".join(e.var)] if e.var else [])
       if tv: yield ", ".join(tv) + "\n"
-      yield (click.style(hex(ord(e.char)), fg = "blue")
-        + " " + click.style(e.name(), fg = "cyan")
-        + "; " + str(i+1) + "\n"
-        + click.style(str(e.strokes), fg = "yellow")
-        + " strokes"
-        + (", level " + click.style(e.level, fg = "cyan")
-           if e.level else "")
-        + (", freq# " + click.style(str(e.freq), fg = "magenta")
-           if e.freq else "")
-        + (", old jlpt " + click.style("N"+str(e.jlpt), fg = "blue")
-           if e.jlpt else "")
-        + (", jlpt " + click.style("N"+str(e.new_jlpt), fg = "cyan")
-           if e.new_jlpt else "")
-        + (", skip " + click.style(e.skip, fg = "yellow")
-           if e.skip else "") + "\n")
+      yield style(hex(ord(e.char)), fg = "blue") + " "
+      yield style(e.name(), fg = "cyan") + "; " + str(i+1) + "\n"
+      yield style(str(e.strokes), fg = "yellow") + " strokes"
+      if e.level:     yield ", level " + style(e.level, fg = "cyan")
+      if e.freq:      yield ", freq# " + style(str(e.freq), fg = "magenta")
+      if e.jlpt:      yield ", old jlpt " + style("N"+str(e.jlpt), fg = "blue")
+      if e.new_jlpt:  yield ", jlpt " + style("N"+str(e.new_jlpt), fg = "cyan")
+      if e.skip:      yield ", skip " + style(e.skip, fg = "yellow")
+      yield "\n"
                                                                 # }}}1
 
 @cli.command(help = "Search Tatoeba example sentences.")
@@ -498,14 +492,14 @@ def sentences(ctx, query, **kw):
 # TODO: audio
 def sentence_search(q, verbose, langs, max_results):            # {{{1
   if verbose:
-    yield "query: " + click.style(q, fg = "bright_red") + "\n\n"
+    yield "query: " + style(q, fg = "bright_red") + "\n\n"
   for i, e in enumerate(S.search(q, langs, max_results)):
     if i != 0: yield "\n"
-    yield click.style("[jap] ", "bright_yellow") + e.jap + "\n"
+    yield style("[jap] ", "bright_yellow") + e.jap + "\n"
     for l in S.LANGS:
       x = getattr(e, l)
-      yield (click.style("["+l+"] ", fg = "bright_green") + x if x
-             else "[no "+l+"]") + "\n"
+      if x: yield style("["+l+"] ", fg = "bright_green") + x + "\n"
+      else: yield "[no "+l+"]" + "\n"
     if verbose:
       yield "tatoeba #" + str(e.id) + "; " + str(i+1) + "\n"
                                                                 # }}}1
@@ -516,10 +510,10 @@ def radicals():
   def f():
     for i, g in enumerate(K.RADTABLE):
       if i != 0: yield "\n"
-      yield click.style("{:2}".format(i + 1), "bright_yellow") + " "
+      yield style("{:2}".format(i + 1), "bright_yellow") + " "
       for j, (r, x) in enumerate(g):
         if j != 0 and j % 20 == 0: yield "\n   "
-        yield click.style(r, fg = c[x])
+        yield style(r, fg = c[x])
   echo_via_pager(f())
 
 @cli.command(help = "Serve the web interface.")

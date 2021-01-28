@@ -5,7 +5,7 @@
 #
 # File        : jiten/jmdict.py
 # Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-# Date        : 2021-01-27
+# Date        : 2021-01-28
 #
 # Copyright   : Copyright (C) 2021  Felix C. Stegerman
 # Version     : v0.4.0
@@ -383,14 +383,14 @@ def parse_jmdict(file = JMDICT_FILE):                           # {{{1
         for ke in e.findall("k_ele"):           # 0+ kanji elem
           keb   = ke.find("keb").text.strip()   # word/phrase w/ kanji
           info  = tuple( x.text.strip() for x in ke.findall("ke_inf") )
-          assert all( "\n" not in x and "" not in x for x in info )
+          assert all( "\n" not in x and "\x1e" not in x for x in info )
           kanji.append(Kanji(keb, _kanji_chars(keb), info, _prio_k(ke)))
         for re in e.findall("r_ele"):           # 1+ reading elem
           reb   = re.find("reb").text.strip()   # reading elem
           restr = tuple( x.text.strip() for x in re.findall("re_restr") )
                   # reading only applies to keb subset
           info  = tuple( x.text.strip() for x in re.findall("re_inf") )
-          assert all( "\n" not in x and "" not in x for xs in
+          assert all( "\n" not in x and "\x1e" not in x for xs in
                       [restr, info] for x in xs )
           reading.append(Reading(reb, restr, info, _prio_r(re)))
         for se in e.findall("sense"):           # 1+ sense elem
@@ -410,7 +410,7 @@ def parse_jmdict(file = JMDICT_FILE):                           # {{{1
                                    for y in x.text.split("・")
                                    if not y.strip().isdigit() )
           assert seq < MAXSEQ
-          assert all( "\n" not in x and "" not in x for xs in
+          assert all( "\n" not in x and "\x1e" not in x for xs in
                       [pos, gloss, s_inf, misc, xref] for x in xs )
           sense.append(Sense(pos, lang, tuple(gloss), s_inf + misc, xref))
         krs   = ( tuple(x) for x in [kanji, reading, sense] )
