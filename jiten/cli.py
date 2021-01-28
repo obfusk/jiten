@@ -345,6 +345,18 @@ query: +#9365736
 [no swe]
 tatoeba #9365736; 1
 
+
+=== Conversion ===
+
+>>> run("r2h neko")
+ねこ
+>>> run("r2k neko")
+ネコ
+>>> run("h2k ネコ")
+ネコ
+>>> run("k2h ねこ")
+ねこ
+
 """                                                             # }}}1
 
 import os, sys
@@ -356,12 +368,12 @@ import click
 from click import style
 
 from . import jmdict    as J
+from . import kana
 from . import kanji     as K
 from . import misc      as M
 from . import pitch     as P
 from . import sentences as S
 
-from .kana import with_romaji, romaji2hiragana, romaji2katakana
 from .misc import SERVER
 
 HOST, PORT    = "localhost", 5000
@@ -453,7 +465,7 @@ def jmdict_search(q, verbose, word, exact, fstwd, langs, romaji,
   langs = [ l for ls in langs for l in ls.split(",") ]
   q     = M.process_query(q, word, exact, fstwd, True)
   w     = terminal_width()
-  f     = with_romaji if romaji else lambda x: x
+  f     = kana.with_romaji if romaji else lambda x: x
   if verbose:
     yield "query: " + style(q, fg = "bright_red") + "\n\n"
   for i, (e, rank) in enumerate(J.search(q, langs = langs, **kw)):
@@ -510,8 +522,8 @@ def convert_query(q, hiragana, katakana):
   elif q.startswith("+k"):
     katakana, q = True, q[2:].lstrip()
   c, q = M.split_e1w(q)
-  if   hiragana: return c + romaji2hiragana(q)
-  elif katakana: return c + romaji2katakana(q)
+  if   hiragana: return c + kana.romaji2hiragana(q)
+  elif katakana: return c + kana.romaji2katakana(q)
   return c + q
 
 # TODO: handle width properly!
@@ -558,7 +570,7 @@ def kanji_search(q, verbose, word, exact, fstwd, max_results,
                  romaji):                                       # {{{1
   q = M.process_query(q, word, exact, fstwd, True)
   w = terminal_width()
-  f = with_romaji if romaji else lambda x: x
+  f = kana.with_romaji if romaji else lambda x: x
   if verbose:
     yield "query: " + style(q, fg = "bright_red") + "\n\n"
   for i, e in enumerate(K.search(q, max_results)):
@@ -682,6 +694,30 @@ def setup(download):
   click.echo("Creating databases...")
   setup_db(True, download)
 
+@cli.command(help = "Convert romaji to hiragana.")
+@click.argument("text", required = False)
+def r2h(text):
+  convert(kana.romaji2hiragana, text)
+
+@cli.command(help = "Convert romaji to katakana.")
+@click.argument("text", required = False)
+def r2k(text):
+  convert(kana.romaji2katakana, text)
+
+@cli.command(help = "Convert hiragana to katakana.")
+@click.argument("text", required = False)
+def h2k(text):
+  convert(kana.hiragana2katakana, text)
+
+@cli.command(help = "Convert katakana to hiragana.")
+@click.argument("text", required = False)
+def k2h(text):
+  convert(kana.katakana2hiragana, text)
+
+def convert(f, text):
+  for line in [text] if text else sys.stdin:
+    click.echo(f(line.rstrip("\n")))
+
 @cli.command("_doctest", hidden = True)
 @click.pass_context
 def doctest(ctx):
@@ -715,6 +751,12 @@ def echo_via_pager(xs):
       y = x
     yield y[:-1] if y.endswith("\n") else y
   click.echo_via_pager(f(iter(xs)))
+
+MAIN_CMDS = "jmdict kanji sentences radicals serve setup gui".split()
+CMDS = sorted(( c for c in cli.list_commands(None)
+                  if c not in MAIN_CMDS and not c.startswith("_") ),
+              key = lambda c: ("2" in c, c))
+cli.list_commands = lambda ctx: MAIN_CMDS + CMDS
 
 if __name__ == "__main__":
   try:
