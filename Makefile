@@ -31,7 +31,7 @@ test: all
 	$(PYTHON) -m jiten.sentences $(VERBOSE) --doctest
 	node jiten/static/script.js
 
-ci-test: test validate-css validate-html check-html
+ci-test: coverage validate-css validate-html check-html
 
 coverage: tmp-html
 	$(PYCOV) -a -m jiten.app       --doctest
