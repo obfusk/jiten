@@ -2,6 +2,7 @@ master
 
 • new: french & spanish (& swedish) (jmdict meanings & sentences)
 • improved radical dialog
+• improved romaji to hiragana conversion
 • fixed crash on android 8
 
 • cli: radicals, --hiragana/--katakana
