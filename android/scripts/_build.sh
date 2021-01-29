@@ -25,6 +25,12 @@ ndk_dir=android-ndk-r22
 ndk="$ndk_dir-linux-x86_64.zip"
 ndk_sha512=0bef6fdd80f7ceb8a9e1390ff8cfbbe0342d821a692cf26c1928e44ba3164284d8dbfc6669f16b2044a6a44b5bbd335d974db17d7893feecdd5a93770c78550f
 
+# test
+if [ "$( ssh "$remote" 'echo OK' || true )" != OK ]; then
+  echo 'not OK' 2>&1
+  exit 1
+fi
+
 # cache ndk
 if ! ssh "$remote" "test -d $android_dir/$ndk_dir"; then
   if ! test -e tmp/"$ndk"; then
