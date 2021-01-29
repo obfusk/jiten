@@ -9,7 +9,8 @@ HTMLV   := https://html5.validator.nu
 HTMLOK  := The document is valid HTML5
 
 URL     := http://localhost:5000
-H5VCMD  := html5validator --show-warnings --log INFO --no-langdetect
+H5VCMD  := html5validator --show-warnings --log INFO --no-langdetect \
+             --ignore 'Unicode Normalization Form'
 
 PYCOV   := $(PYTHON) -mcoverage run --source jiten
 
