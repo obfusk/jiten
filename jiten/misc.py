@@ -5,7 +5,7 @@
 #
 # File        : jiten/misc.py
 # Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-# Date        : 2021-01-25
+# Date        : 2021-01-29
 #
 # Copyright   : Copyright (C) 2021  Felix C. Stegerman
 # Version     : v0.4.0
@@ -245,6 +245,7 @@ DEPENDENCIES = dict(                                            # {{{1
   certifi       = dict(url = "https://github.com/certifi/python-certifi"),
   click         = dict(url = "https://github.com/pallets/click"),
   flask         = dict(url = "https://github.com/pallets/flask"),
+  fonttools     = dict(url = "https://github.com/fonttools/fonttools"),
   itsdangerous  = dict(url = "https://github.com/pallets/itsdangerous"),
   jinja2        = dict(url = "https://github.com/pallets/jinja"),
   markupsafe    = dict(url = "https://github.com/pallets/markupsafe"),

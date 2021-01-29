@@ -5,7 +5,7 @@
 #
 # File        : android/main.py
 # Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-# Date        : 2021-01-27
+# Date        : 2021-01-29
 #
 # Copyright   : Copyright (C) 2021  Felix C. Stegerman
 # Version     : v0.4.0
@@ -15,7 +15,7 @@
 
 import os, secrets, sys
 
-from jiten.misc import SERVERS
+from jiten.misc import SERVERS, resource_path
 
 HOST, PORT    = "127.0.0.1", 29483
 LOCAL         = "http://{}:{}".format(HOST, PORT)
@@ -39,6 +39,37 @@ def fix_stdio():                                                # {{{1
       def flush(self):
         return
     sys.stdout = sys.stderr = LogFile()
+                                                                # }}}1
+
+# FIXME: workaround for webview bug
+# https://github.com/obfusk/jiten/issues/41
+def fix_fonts():                                                # {{{1
+  from os.path import exists
+  from pathlib import Path
+
+  def get_font(ttc, name):
+    for f in ttc.fonts:
+      for n in f["name"].names:
+        if name in n.string: return f
+    return None
+
+  c1 = "/system/fonts/NotoSansCJK-Regular.ttc"
+  c2 = "/system/fonts/NotoSerifCJK-Regular.ttc"
+  fd = resource_path("static/font/noto")
+  f1 = resource_path("static/font/noto/NotoSansJP-Regular.otf")
+  f2 = resource_path("static/font/noto/NotoSerifJP-Regular.otf")
+  fc = ((f1, c1, b"Sans CJK JP"), (f2, c2, b"Serif CJK JP"))
+
+  try:
+    from fontTools.ttLib import TTCollection
+    for f, c, n in fc:
+      if not exists(f) and exists(c):
+        Path(fd).mkdir(parents = True, exist_ok = True)
+        if ttf := get_font(TTCollection(c), n):
+          print("*** saving {} ***".format(f))
+          ttf.save(f)
+  except Exception as e:
+    print("*** ERROR in fix_fonts ***\n  ", str(e))
                                                                 # }}}1
 
 def debug_mode(act):
@@ -101,6 +132,7 @@ def setup_webview(cls):
 if __name__ == "__main__":
   if ANDROID:
     fix_stdio()
+    fix_fonts()
     import android.activity, android.config, certifi, jnius
     from android.runnable import run_on_ui_thread
     setup_clipboard = run_on_ui_thread(setup_clipboard)
