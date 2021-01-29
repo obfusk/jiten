@@ -70,7 +70,7 @@ validate-css:
 
 # TODO
 tmp-html:
-	$(PYCOV) -m jiten.cli _serve_for 15 & pid=$$!; \
+	$(PYCOV) -m jiten.cli _serve_for 30 & pid=$$!; \
 	mkdir -p tmp-html; sleep 5; \
 	dl() { f="$$1"; shift; curl -sG $(URL)"$$@" > tmp-html/"$$f".html; }; \
 	dl index ; \
