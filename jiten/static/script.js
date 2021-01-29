@@ -2,7 +2,7 @@
 //
 //  File        : static/script.js
 //  Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-//  Date        : 2021-01-28
+//  Date        : 2021-01-29
 //
 //  Copyright   : Copyright (C) 2021  Felix C. Stegerman
 //  Version     : v0.4.0
@@ -273,6 +273,7 @@ assertEq(romajiToKatakana("uxirusu")      , "ウィルス")
 assertEq(romajiToHiragana("koucha")       , "こうちゃ")
 
 assertEq(romajiToHiragana("xya xwa xtsu") , "ゃ ゎ っ")
+assertEq(romajiToHiragana("nacchau")      , "なっちゃう")
 
 /* TODO */
 

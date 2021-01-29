@@ -5,7 +5,7 @@
 #
 # File        : jiten/kana.py
 # Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-# Date        : 2021-01-28
+# Date        : 2021-01-29
 #
 # Copyright   : Copyright (C) 2021  Felix C. Stegerman
 # Version     : v0.4.0
@@ -40,6 +40,8 @@ Kana conversion functions.
 'shi ji chi tsu fu'
 >>> kana2romaji("ゃ ゎ っ")
 'xya xwa xtsu'
+>>> kana2romaji("なっちゃう")
+'nacchau'
 
 
 >>> romaji2hiragana("ikanakya")
@@ -64,6 +66,8 @@ Kana conversion functions.
 'し じ ち つ ふ'
 >>> romaji2hiragana("xya xwa xtsu")
 'ゃ ゎ っ'
+>>> romaji2hiragana("nacchau")
+'なっちゃう'
 
 """                                                             # }}}1
 
