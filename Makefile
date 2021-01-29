@@ -71,16 +71,23 @@ validate-css:
 tmp-html:
 	$(PYCOV) -m jiten.cli _serve_for 15 & pid=$$!; \
 	mkdir -p tmp-html; sleep 5; \
-	curl -sG $(URL) > tmp-html/index.html; \
-	curl -sG $(URL)/jmdict -d max=10 -d word=yes \
-	  --data-urlencode query=cat   > tmp-html/cat.html    ; \
-	curl -sG $(URL)/jmdict -d max=10 -d word=yes \
-	  --data-urlencode query=idiot > tmp-html/idiot.html  ; \
-	curl -sG $(URL)/kanji  -d max=10 -d word=yes \
-	  --data-urlencode query=ねこ  > tmp-html/neko.html   ; \
-	curl -sG $(URL)/kanji  -d max=10 -d word=yes \
-	  --data-urlencode query=日    > tmp-html/hi.html     ; \
-	curl -sG $(URL)/stroke         > tmp-html/stroke.html ; \
+	dl() { f="$$1"; shift; curl -sG $(URL)"$$@" > tmp-html/"$$f".html; }; \
+	dl index ; \
+	dl cat    /jmdict    -d max=10 -d word=yes --data-urlencode query=cat    ; \
+	dl idiot  /jmdict    -d max=10 -d word=yes --data-urlencode query=idiot  ; \
+	dl neko   /kanji     -d max=10 -d word=yes --data-urlencode query=ねこ   ; \
+	dl hi     /kanji     -d max=10 -d word=yes --data-urlencode query=日     ; \
+	dl kitten /sentences -d max=10             --data-urlencode query=kitten ; \
+	dl stroke /stroke           ; \
+	dl j-b-f  /jmdict/by-freq   ; \
+	dl j-b-n1 /jmdict/by-jlpt/1 ; \
+	dl j-b-n2 /jmdict/by-jlpt/2 ; \
+	dl j-b-n3 /jmdict/by-jlpt/3 ; \
+	dl j-b-n4 /jmdict/by-jlpt/4 ; \
+	dl j-b-n5 /jmdict/by-jlpt/5 ; \
+	dl k-b-f  /kanji/by-freq    ; \
+	dl k-b-l  /kanji/by-level   ; \
+	dl k-b-j  /kanji/by-jlpt    ; \
 	wait $$pid
 
 # TODO

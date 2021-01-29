@@ -5,7 +5,7 @@
 #
 # File        : jiten/app.py
 # Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-# Date        : 2021-01-28
+# Date        : 2021-01-29
 #
 # Copyright   : Copyright (C) 2021  Felix C. Stegerman
 # Version     : v0.4.0
@@ -18,9 +18,149 @@ r"""
 
 Web interface.
 
+>>> import re
+
+>>> app.testing = True
+>>> client = app.test_client()
+
+>>> def get(*a, **k):
+...   r = client.get(*a, **k)
+...   print(r.status)
+...   return r.data.decode("utf8")
+
+>>> d = get("/")
+200 OK
+>>> "Jiten Japanese Dictionary" in d
+True
+>>> "Search JMDict" in d
+True
+>>> "Search Kanji" in d
+True
+>>> "Search Sentences" in d
+True
+>>> "筆順を示す" in d
+True
+
+>>> d = get("/jmdict?query=kitten&word=yes")
+200 OK
+>>> "こꜛねꜜこ" in d
+True
+>>> "koꜛneꜜko" in d
+True
+>>> "kitten" in d
+True
+>>> "small cat" in d
+True
+>>> "query=猫" in d
+True
+
+>>> d = get("/jmdict?query=%2Brandom&jlpt=5", follow_redirects = True)
+200 OK
+>>> re.search(r"»\s*jlpt\s*<[^>]*>\s*N5", d) is not None
+True
+
+>>> d = get("/kanji?query=ねこ")
+200 OK
+>>> "ビョウ" in d
+True
+>>> "ねこ" in d
+True
+>>> "neko" in d
+True
+>>> "0x732b" in d
+True
+>>> re.search(r"»\s*jlpt\s*<[^>]*>\s*N3", d) is not None
+True
+>>> re.search(r"»\s*skip\s*<[^>]*>\s*1-3-8", d) is not None
+True
+
+>>> d = get("/kanji?query=日")
+200 OK
+>>> "ニチ" in d
+True
+>>> "counter for days" in d
+True
+>>> "0x65e5" in d
+True
+>>> re.search(r"»\s*jlpt\s*<[^>]*>\s*N5", d) is not None
+True
+>>> re.search(r"»\s*skip\s*<[^>]*>\s*3-3-1", d) is not None
+True
+
+>>> d = get("/sentences?query=kitten")
+200 OK
+>>> "I will care for your kitten during your absence." in d
+True
+>>> re.search(r"任\s*<[^>]*>\s*せてください", d) is not None
+True
+
+>>> d = get("/stroke")
+200 OK
+>>> ">漢字と仮名の筆順<" in d
+True
+
+>>> d = get("/stroke?query=何か")
+200 OK
+>>> ">何か<" in d
+True
+
+>>> d = get("/jmdict/by-freq")
+200 OK
+>>> "する、為る" in d
+True
+
+>>> d = get("/jmdict/by-jlpt/1")
+200 OK
+>>> "あたし、あたくし、あたい、あて、私" in d
+True
+
+>>> d = get("/jmdict/by-jlpt/2")
+200 OK
+>>> "きっかけ、キッカケ、切っ掛け、切掛け、切っかけ、切掛、切っ掛、切かけ" in d
+True
+
+>>> d = get("/jmdict/by-jlpt/3")
+200 OK
+>>> "恐ろしい、怖ろしい" in d
+True
+
+>>> d = get("/jmdict/by-jlpt/4")
+200 OK
+>>> "ああ、あー、あぁ、アー、アア、アァ、嗚呼、噫、嗟" in d
+True
+
+>>> d = get("/jmdict/by-jlpt/5")
+200 OK
+>>> "みる、見る、観る、視る" in d
+True
+
+>>> d = get("/kanji/by-freq")
+200 OK
+>>> "1 | day; sun; Japan; counter for days" in d
+True
+
+>>> d = get("/kanji/by-level")
+200 OK
+>>> d.index("常用1") < d.index("森") < d.index("常用2")
+True
+
+>>> d = get("/kanji/by-jlpt")
+200 OK
+>>> d.index("JLPT N3") < d.index("歯", d.index("JLPT N5")) < d.index("JLPT N2")
+True
+
+>>> sorted( (c.name, c.value) for c in client.cookie_jar )
+[]
+>>> p = dict(dark = "yes", lang = "eng ger oops".split())
+>>> r = client.post("/_save_prefs", data = p, follow_redirects = True)
+>>> r.status
+'200 OK'
+>>> sorted( (c.name, c.value) for c in client.cookie_jar )
+[('dark', 'yes'), ('lang', '"eng ger"'), ('max', '50'), ('nor2h', 'no'), ('roma', 'no')]
+
 """                                                             # }}}1
 
-import json, os, time
+import json, os, sys, time
 
 from pathlib import Path
 
@@ -305,5 +445,11 @@ SEARCH = (
   ("sentences", "Search Sentences"),
   ("stroke"   , "筆順を示す"      ),
 )
+
+if __name__ == "__main__":
+  if "--doctest" in sys.argv:
+    verbose = "--verbose" in sys.argv
+    import doctest
+    if doctest.testmod(verbose = verbose)[0]: sys.exit(1)
 
 # vim: set tw=70 sw=2 sts=2 et fdm=marker :

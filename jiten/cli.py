@@ -5,7 +5,7 @@
 #
 # File        : jiten/cli.py
 # Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-# Date        : 2021-01-28
+# Date        : 2021-01-29
 #
 # Copyright   : Copyright (C) 2021  Felix C. Stegerman
 # Version     : v0.4.0
@@ -173,6 +173,44 @@ seq# ... jlpt N5...
 >>> run("-v jmdict -m1 --hiragana --romaji -w neko")
 DB v13 up to date.
 query: +w ねこ
+<BLANKLINE>
+猫
+ねこ [neko] | ネコ [neko]
+ねꜜこ [neꜜko]
+[eng]
+= cat (esp. the domestic cat, Felis catus)
+= shamisen
+= geisha
+= wheelbarrow
+= clay bed-warmer
+= bottom | submissive partner of a homosexual relationship
+--> noun (common) (futsuumeishi) | abbreviation | word usually written using
+    kana alone | colloquialism
+see 猫車 | 猫火鉢
+seq# 1467640, freq# 2201, jlpt N5, prio; 1
+
+>>> run("-v jmdict -m1 --romaji -w +hneko")
+DB v13 up to date.
+query: +w ねこ
+<BLANKLINE>
+猫
+ねこ [neko] | ネコ [neko]
+ねꜜこ [neꜜko]
+[eng]
+= cat (esp. the domestic cat, Felis catus)
+= shamisen
+= geisha
+= wheelbarrow
+= clay bed-warmer
+= bottom | submissive partner of a homosexual relationship
+--> noun (common) (futsuumeishi) | abbreviation | word usually written using
+    kana alone | colloquialism
+see 猫車 | 猫火鉢
+seq# 1467640, freq# 2201, jlpt N5, prio; 1
+
+>>> run("-v jmdict -m1 --romaji -w +kneko")
+DB v13 up to date.
+query: +w ネコ
 <BLANKLINE>
 猫
 ねこ [neko] | ネコ [neko]
