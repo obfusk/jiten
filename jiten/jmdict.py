@@ -211,9 +211,9 @@ word containing out-dated kanji
 15786
 >>> len([ r for r in hira if r2h(k2r(r)) != r ])
 0
->>> len([ r for r in kata if r2k(k2r(r.replace("ー", "-"))) != r ])
+>>> len([ r for r in kata if r2k(k2r(r, True)) != r ])
 0
->>> len([ r for r in mixd if r2k(k2r(r.replace("ー", "-"))) != h2k(r) ])
+>>> len([ r for r in mixd if r2k(k2r(r, True)) != h2k(r) ])
 0
 
 """                                                             # }}}1

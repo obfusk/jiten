@@ -77,10 +77,11 @@ from functools import reduce
 
 from . import misc as M
 
-def with_romaji(s):
-  return "{} [{}]".format(s, kana2romaji(s))
+def with_romaji(s, long = False):
+  return "{} [{}]".format(s, kana2romaji(s, long))
 
-def kana2romaji(s):
+def kana2romaji(s, long = False):
+  if long: s = s.replace("ー", "-")
   return "".join( PMOR.get(x, x) for x in _kana2romaji(s) )
 
 def _kana2romaji(s):
