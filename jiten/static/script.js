@@ -21,12 +21,12 @@ const containsHiragana = t =>
 const convertKana = t =>
   (containsHiragana(t) ? hiraganaToKatakana : katakanaToHiragana)(t)
 
-const hiraganaToKatakana = t => {
+const hiraganaToKatakana = (t, long = false) => {
   let col = null
   return [...t].map(c => {
     const i = HIRAGANA.indexOf(c)
     const o = col === 4 && i === 2
-    const k = i === col || o ? "ー" : KATAKANA[i] || c
+    const k = long && (i === col || o) ? "ー" : KATAKANA[i] || c
     if (!o) col = i === -1 ? null : i % 5
     return k
   }).join("")
@@ -73,7 +73,8 @@ const romajiToHiragana = t => {                               //  {{{1
   return r.join("")
 }                                                             //  }}}1
 
-const romajiToKatakana = t => hiraganaToKatakana(romajiToHiragana(t))
+const romajiToKatakana = (t, long = false) =>
+  hiraganaToKatakana(romajiToHiragana(t), long)
 
 // KANA TABLES                                                //  {{{1
 const HIRAGANA = `
@@ -265,8 +266,8 @@ const assertEq = (a, b) => {
 assertEq(romajiToHiragana("ikanakya")     , "いかなきゃ")
 assertEq(romajiToKatakana("ferikkusu")    , "フェリックス")
 assertEq(romajiToKatakana("vaiorinn")     , "ヴァイオリン")
-assertEq(romajiToKatakana("uwisukii")     , "ウヰスキー")
-assertEq(romajiToKatakana("kousu")        , "コース")
+assertEq(romajiToKatakana("uwisuki-")     , "ウヰスキー")
+assertEq(romajiToKatakana("ko-su")        , "コース")
 
 assertEq(romajiToHiragana("konnnichiha")  , "こんにちは")
 assertEq(romajiToKatakana("uxirusu")      , "ウィルス")

@@ -50,9 +50,9 @@ Kana conversion functions.
 'フェリックス'
 >>> romaji2katakana("vaiorinn")
 'ヴァイオリン'
->>> romaji2katakana("uwisukii")
+>>> romaji2katakana("uwisuki-")
 'ウヰスキー'
->>> romaji2katakana("kousu")
+>>> romaji2katakana("ko-su")
 'コース'
 
 >>> romaji2hiragana("konnnichiha")
@@ -90,32 +90,36 @@ def _kana2romaji(s):
 def _k2r_f(t, x):
   if not t: return [x]
   *ti, tl = t
-  if x[:2] == "xy":   return ti + [tl[:-1] + x[1:]]
-  elif tl == "xtu":   return ti + [x[0] + x]
-  elif x[0] == "x":
+  if x[:2] == "xy" and tl[-1] == "i":
+                      return ti + [tl[:-1] + x[1:]]
+  elif tl == "xtu" and not M.iskana(x):
+                      return ti + [x[0] + x]
+  elif x[0] == "x" and len(x) == 2 and x != "xu":
     if tl == "hu":    return ti + ["f" + x[1]]
     elif tl == "vu":  return ti + ["v" + x[1]]
   elif x == "ー":     return ti + [tl + tl[-1].replace("o", "u")]
+  elif x in "ゝヽ":   return t  + [tl]
+  elif x in "ゞヾ":   return t  + [voiced(tl)]
   return t + [x]
 
 # TODO
 def _k2r_lookup(c):
   if "a" <= c.lower() <= "z":
     raise ValueError("kana2romaji: ascii letter in input")
-  if not M.iskana1(c) or c in "ー・ヶ": return c
+  if not M.iskana1(c) or c in "ー・ヶゝゞヽヾ": return c
   i = (HIRAGANA if M.ishiragana1(c) else KATAKANA).index(c)
   return (COLS[i // 5] + ROWS[i % 5]).replace("-", "")
 
-def hiragana2katakana(t):
-  return "".join(_h2k(t))
+def hiragana2katakana(t, long = False):
+  return "".join(_h2k(t, long))
 
-def _h2k(t):                                                    # {{{1
+def _h2k(t, long = False):                                      # {{{1
   col = None
   for c in t:
     if c in HIRAGANA:
       i = HIRAGANA.index(c)
       o = col == 4 and i == 2
-      k = "ー" if i == col or o else KATAKANA[i]
+      k = "ー" if long and (i == col or o) else KATAKANA[i]
       if not o: col = i % 5
       yield k
     else:
@@ -157,8 +161,12 @@ def _r2h(t):                                                    # {{{1
         yield g[0] if "〇" in s else s                          # TODO
                                                                 # }}}1
 
-def romaji2katakana(t):
-  return hiragana2katakana(romaji2hiragana(t))
+def romaji2katakana(t, long = False):
+  return hiragana2katakana(romaji2hiragana(t), long)
+
+# TODO
+def voiced(x):
+  return COLS_[COLS_.index(x[0])+1]+x[1:]
 
 # KANA TABLES                                                   # {{{1
 HIRAGANA = """
@@ -226,7 +234,8 @@ ROMP_ = dict(
 )
 ROMP  = { **ROMP_, **{ k[0]+k : v[0]+v for k, v in ROMP_.items()
                                        if not k[0] == "x" } }
-PMOR  = { v: k for k, v in ROMP.items() }; PMOR.update(Na = "nn")
+PMOR  = { v: k for k, v in ROMP.items() }
+PMOR.update(Na = "nn", NNa = "xtsunn")
 
 COLS2 = COLS[1:-2] + [ x[0]+x for x in COLS[1:-2] if x[0] != "x" ]
 

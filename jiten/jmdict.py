@@ -189,11 +189,32 @@ word containing out-dated kanji
 くる
 旨く行く
 
->>> from .kana import kana2romaji
->>> len([ kana2romaji(r.elem) for e in jmdict for r in e.reading ])
+
+>>> from .kana import hiragana2katakana as h2k, katakana2hiragana as k2h
+>>> from .kana import romaji2hiragana   as r2h, romaji2katakana   as r2k
+>>> from .kana import kana2romaji       as k2r
+>>> rs   = [ r.elem for e in jmdict for r in e.reading ]
+>>> hira = [ r for r in rs if M.ishiragana(r) ]
+>>> kata = [ r for r in rs if M.iskatakana(r) ]
+>>> mixd = [ r for r in rs if not (M.ishiragana(r) or M.iskatakana(r)) ]
+>>> len(rs)
 228225
->>> len([ kana2romaji(p) for e in jmdict for p in e.pitch() ])
+>>> len([ k2r(r) for r in rs ])
+228225
+>>> len([ k2r(p) for e in jmdict for p in e.pitch() ])
 88402
+>>> len(hira)
+152312
+>>> len(kata)
+60127
+>>> len(mixd)
+15786
+>>> len([ r for r in hira if r2h(k2r(r)) != r ])
+0
+>>> len([ r for r in kata if r2k(k2r(r.replace("ー", "-"))) != r ])
+0
+>>> len([ r for r in mixd if r2k(k2r(r.replace("ー", "-"))) != h2k(r) ])
+0
 
 """                                                             # }}}1
 
