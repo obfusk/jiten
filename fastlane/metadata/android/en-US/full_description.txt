@@ -4,6 +4,8 @@ This is the offline android version of https://jiten.obfusk.dev.
 
 The large download size is because it includes all the dictionary data, including audio.
 
+NB: the app will take a while to load the first time it is started (or after an update), but it will load a lot faster afterwards.
+
 Features:
 
 JMDict multilingual japanese dictionary
