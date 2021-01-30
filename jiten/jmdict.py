@@ -5,7 +5,7 @@
 #
 # File        : jiten/jmdict.py
 # Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-# Date        : 2021-01-28
+# Date        : 2021-01-30
 #
 # Copyright   : Copyright (C) 2021  Felix C. Stegerman
 # Version     : v0.4.0
@@ -306,10 +306,10 @@ def xinfo(e):
 def xrefs(e): return M.uniq( x for s in e.sense for x in s.xref )
 
 # TODO
-def pitch(e):
+def pitch(e, conn = None):
   ks = tuple( x.elem for x in e.kanji or e.reading )
   for r in e.reading:
-    p = P.get_pitch(r.elem, ks)
+    p = P.get_pitch(r.elem, ks, conn = conn)
     if p: yield p
 
 # TODO

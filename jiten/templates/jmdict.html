@@ -4,10 +4,10 @@
 
     File        : templates/jmdict.html
     Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-    Date        : 2021-01-21
+    Date        : 2021-01-30
 
     Copyright   : Copyright (C) 2021  Felix C. Stegerman
-    Version     : v0.3.5
+    Version     : v0.4.0
     License     : AGPLv3+
 
   -->
@@ -78,7 +78,7 @@
                     <span class="text-muted">no readings</span>
                   {% endfor %}
                 </li>
-                {% set pitch = e.pitch()|list %}
+                {% set pitch = elem_pitch(e)|list %}
                 <li class="list-group-item d-flex flex-wrap {{
                       "pb-1 px-2 pt-2" if pitch else "p-2"
                     }}" title="pitch">

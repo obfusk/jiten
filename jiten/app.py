@@ -328,8 +328,8 @@ def r_jmdict():
   opts = dict(langs = get_langs(), max_results = max_r, **filters)
   data = dict(page = "jmdict", query = query)
   if query: data["results"] = J.search(query, **opts)
-  with K.readmeans() as f:
-    return respond("jmdict.html", krm = f, **data)
+  with K.readmeans() as f, P.pitches() as g:
+    return respond("jmdict.html", krm = f, elem_pitch = g, **data)
 
 @app.route("/jmdict/by-freq")
 def r_jmdict_by_freq():
