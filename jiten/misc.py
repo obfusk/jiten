@@ -5,7 +5,7 @@
 #
 # File        : jiten/misc.py
 # Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-# Date        : 2021-01-25
+# Date        : 2021-01-30
 #
 # Copyright   : Copyright (C) 2021  Felix C. Stegerman
 # Version     : v0.4.0
@@ -181,6 +181,15 @@ class IntOrRange(click.ParamType):                              # {{{1
 JLPT_LEVEL = IntOrRange(1, 5, "LEVEL")
 
 def download_file(url, file, sha512 = None, tmp = ".tmp"):      # {{{1
+  if sha512 and os.path.exists(file):
+    sha = hashlib.sha512()
+    with open(file, "rb") as f:
+      while True:
+        chunk = f.read(65536)
+        if not chunk: break
+        sha.update(chunk)
+    if sha.hexdigest() == sha512:
+      return sha512
   label = "downloading " + os.path.basename(file)
   sha   = hashlib.sha512()
   with open(file + tmp, "wb") as fo:
@@ -194,7 +203,7 @@ def download_file(url, file, sha512 = None, tmp = ".tmp"):      # {{{1
     except urllib.error.URLError as e:
       os.remove(file + tmp)
       raise DownloadError(str(e), file, url)
-  if sha512 is not None and sha.hexdigest() != sha512:
+  if sha512 and sha.hexdigest() != sha512:
     os.remove(file + tmp)
     raise DownloadError("sha512 did not match: expected {}, got {}"
                         .format(sha512, sha.hexdigest()), file, url)
