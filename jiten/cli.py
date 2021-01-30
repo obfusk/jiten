@@ -5,7 +5,7 @@
 #
 # File        : jiten/cli.py
 # Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-# Date        : 2021-01-29
+# Date        : 2021-01-30
 #
 # Copyright   : Copyright (C) 2021  Felix C. Stegerman
 # Version     : v0.4.0
@@ -717,7 +717,7 @@ def serve_app(host = HOST, port = PORT, verbose = True, **opts):
     app.config["DOWNLOAD_DBS"]  = download_dbs
   else:
     setup_db(verbose)
-  app.run(host = host, port = port, load_dotenv = False, **opts)
+  app.run(host = host, port = port, **opts)
 
 @cli.command(help = """
   WebView GUI.  Wraps the web interface.  Requires pywebview.
@@ -767,17 +767,20 @@ def doctest(ctx):
   import doctest
   if doctest.testmod(verbose = ctx.obj["verbose"])[0]: ctx.exit(1)
 
-@cli.command("_serve_for", hidden = True)
-@click.argument("seconds", type = click.INT)
-def serve_for(seconds):
+@cli.command("_serve_until_exists", hidden = True)
+@click.argument("lockfile")
+def serve_until_exists(lockfile):
   setup_db(True)
   import threading, time
   from werkzeug.serving import make_server
   from .app import app
   s = make_server(HOST, PORT, app)
   t = threading.Thread(target = s.serve_forever)
+  click.echo("Serving on {}:{} until {} exists..."
+             .format(HOST, PORT, lockfile))
   t.start()
-  time.sleep(seconds)
+  while not os.path.exists(lockfile): time.sleep(1)
+  click.echo("... {} now exists; shutting down.".format(lockfile))
   s.shutdown()
   t.join()
 

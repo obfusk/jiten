@@ -5,7 +5,7 @@
 #
 # File        : jiten/app.py
 # Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-# Date        : 2021-01-29
+# Date        : 2021-01-30
 #
 # Copyright   : Copyright (C) 2021  Felix C. Stegerman
 # Version     : v0.4.0
@@ -166,6 +166,7 @@ from pathlib import Path
 
 import click, jinja2, werkzeug
 
+os.environ["FLASK_SKIP_DOTENV"] = "yes"                       #  FIXME
 from flask import Flask, abort, escape, make_response, redirect, \
                   request, render_template, url_for
 

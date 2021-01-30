@@ -70,9 +70,10 @@ validate-css:
 
 # TODO
 tmp-html:
-	$(PYCOV) -m jiten.cli _serve_for 30 & pid=$$!; \
-	mkdir -p tmp-html; sleep 5; \
+	set -e; rm -fr tmp-html/; mkdir tmp-html; \
+	$(PYCOV) -m jiten.cli _serve_until_exists tmp-html/.done & pid=$$!; \
 	dl() { f="$$1"; shift; curl -sG $(URL)"$$@" > tmp-html/"$$f".html; }; \
+	sleep 5  ; \
 	dl index ; \
 	dl cat    /jmdict    -d max=10 -d word=yes --data-urlencode query=cat    ; \
 	dl idiot  /jmdict    -d max=10 -d word=yes --data-urlencode query=idiot  ; \
@@ -89,7 +90,7 @@ tmp-html:
 	dl k-b-f  /kanji/by-freq    ; \
 	dl k-b-l  /kanji/by-level   ; \
 	dl k-b-j  /kanji/by-jlpt    ; \
-	wait $$pid
+	touch tmp-html/.done ; wait $$pid
 
 # TODO
 check-html:
