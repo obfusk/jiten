@@ -767,20 +767,22 @@ def doctest(ctx):
   import doctest
   if doctest.testmod(verbose = ctx.obj["verbose"])[0]: ctx.exit(1)
 
-@cli.command("_serve_until_exists", hidden = True)
-@click.argument("lockfile")
-def serve_until_exists(lockfile):
+@cli.command("_serve", hidden = True)
+@click.argument("running")
+@click.argument("done")
+def serve(running, done):
   setup_db(True)
-  import threading, time
+  import pathlib, threading, time
   from werkzeug.serving import make_server
   from .app import app
   s = make_server(HOST, PORT, app)
   t = threading.Thread(target = s.serve_forever)
   click.echo("Serving on {}:{} until {} exists..."
-             .format(HOST, PORT, lockfile))
+             .format(HOST, PORT, done))
   t.start()
-  while not os.path.exists(lockfile): time.sleep(1)
-  click.echo("... {} now exists; shutting down.".format(lockfile))
+  pathlib.Path(running).touch()
+  while not os.path.exists(done): time.sleep(1)
+  click.echo("...{} now exists; shutting down.".format(done))
   s.shutdown()
   t.join()
 

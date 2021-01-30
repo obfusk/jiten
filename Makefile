@@ -71,9 +71,9 @@ validate-css:
 # TODO
 tmp-html:
 	set -e; rm -fr tmp-html/; mkdir tmp-html; \
-	$(PYCOV) -m jiten.cli _serve_until_exists tmp-html/.done & pid=$$!; \
+	$(PYCOV) -m jiten.cli _serve tmp-html/.{running,done} & pid=$$!; \
 	dl() { f="$$1"; shift; curl -sG $(URL)"$$@" > tmp-html/"$$f".html; }; \
-	sleep 5  ; \
+	while [ ! -e tmp-html/.running ]; do sleep 1; done ; \
 	dl index ; \
 	dl cat    /jmdict    -d max=10 -d word=yes --data-urlencode query=cat    ; \
 	dl idiot  /jmdict    -d max=10 -d word=yes --data-urlencode query=idiot  ; \
