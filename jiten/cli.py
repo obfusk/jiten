@@ -19,7 +19,8 @@ r"""
 CLI
 
 >>> click.get_terminal_size = lambda: [84, None]
->>> run = lambda a: cli(args = a.split(), standalone_mode = False, prog_name = name)
+>>> run = lambda a, *b: cli(args = a.split() + list(b),
+...                         standalone_mode = False, prog_name = name)
 
 === JMDict ===
 
@@ -227,6 +228,20 @@ query: +w ネコ
 see 猫車 | 猫火鉢
 seq# 1467640, freq# 2201, jlpt N5, prio; 1
 
+>>> run("-v jmdict -m1 --romaji", "+k +w ko-hi-")
+DB v13 up to date.
+query: +w コーヒー
+<BLANKLINE>
+珈琲
+コーヒー [kouhii]
+[no pitch data]
+[eng]
+= coffee
+--> noun (common) (futsuumeishi) | nouns which may take the genitive case
+    particle 'no' | word usually written using kana alone
+~~> ateji (phonetic) reading
+seq# 1049180, freq# 3762, jlpt N5, prio; 1
+
 
 === Kanji ===
 
@@ -386,18 +401,36 @@ tatoeba #9365736; 1
 
 === Conversion ===
 
->>> run("r2h neko")
-ねこ
->>> run("r2k neko")
+>>> run("h2k ねこ")
 ネコ
->>> run("h2k ネコ")
-ネコ
->>> run("k2h ねこ")
+>>> run("h2k こうひい")
+コウヒイ
+>>> run("h2k こうひい --long")
+コーヒー
+
+>>> run("k2h ネコ")
 ねこ
+
 >>> run("k2r ねこ")
 neko
 >>> run("k2r ネコ")
 neko
+>>> run("k2r コーヒー")
+kouhii
+>>> run("k2r コーヒー --long")
+ko-hi-
+
+>>> run("r2h neko")
+ねこ
+
+>>> run("r2k neko")
+ネコ
+>>> run("r2k kouhii")
+コウヒイ
+>>> run("r2k kouhii --long")
+コーヒー
+>>> run("r2k ko-hi-")
+コーヒー
 
 """                                                             # }}}1
 
@@ -474,11 +507,15 @@ def cli(ctx, colour, pager, **kw):
   if pager: os.environ["PAGER"] = pager
   ctx.obj = dict(kw)
 
-@cli.command(help = "Search JMDict.")
+@cli.command(help = """
+  Search JMDict.
+
+  For a random entry use +random.
+""")
 @click.option("-l", "--lang", "langs", multiple = True,
-              default = [J.LANGS[0]], metavar = "LANG",
-              envvar = name.upper() + "_LANGS",
-              help = "Choose language(s) ("+", ".join(J.LANGS)+").")
+              default = [J.LANGS[0]], show_default = True,
+              metavar = "LANG", envvar = name.upper() + "_LANGS",
+              help = "Choose language(s) ["+", ".join(J.LANGS)+"].")
 @click.option("-w", "--word", is_flag = True,
               help = "Match whole word (same as \\b...\\b).")
 @click.option("-1", "--1stword", "--first-word", "fstwd", is_flag = True,
@@ -589,7 +626,15 @@ def indent_and_wrap_jap(w, xs, pre, fg):
 def terminal_width():
   return click.get_terminal_size()[0] - 4
 
-@cli.command(help = "Search kanji.")
+@cli.command(help = """
+  Search kanji.
+
+  To search by SKIP code use e.g. '+s 2-3-3'.
+
+  To search by radical use e.g. '+r 犭艹田'.
+
+  For a random kanji use +random.
+""")
 @click.option("-w", "--word", is_flag = True,
               help = "Match whole word (same as \\b...\\b).")
 @click.option("-1", "--1stword", "--first-word", "fstwd", is_flag = True,
@@ -655,11 +700,15 @@ def kanji_search(q, verbose, word, exact, fstwd, max_results,
       yield "\n"
                                                                 # }}}1
 
-@cli.command(help = "Search Tatoeba example sentences.")
+@cli.command(help = """
+  Search Tatoeba example sentences.
+
+  For random sentences use +random.
+""")
 @click.option("-l", "--lang", "langs", multiple = True,
               default = [], metavar = "LANG",
               envvar = name.upper() + "_LANGS",
-              help = "Filter language(s) ("+", ".join(S.LANGS)+").")
+              help = "Filter language(s) ["+", ".join(S.LANGS)+"].")
 @click.option("-m", "--max", "max_results", default = None,
               type = click.INT, help = "Maximum number of results.")
 @click.option("-h", "--hiragana", is_flag = True,
@@ -736,29 +785,32 @@ def setup(download):
   click.echo("Creating databases...")
   setup_db(True, download)
 
-@cli.command(help = "Convert romaji to hiragana.")
-@click.argument("text", required = False)
-def r2h(text): convert(kana.romaji2hiragana, text)
-
-@cli.command(help = "Convert romaji to katakana.")
-@click.argument("text", required = False)
-def r2k(text): convert(kana.romaji2katakana, text)
-
 @cli.command(help = "Convert hiragana to katakana.")
+@click.option("--long", is_flag = True, help = "Convert long vowels to 'ー'.")
 @click.argument("text", required = False)
-def h2k(text): convert(kana.hiragana2katakana, text)
+def h2k(text, long): convert(kana.hiragana2katakana, text, long)
 
 @cli.command(help = "Convert katakana to hiragana.")
 @click.argument("text", required = False)
 def k2h(text): convert(kana.katakana2hiragana, text)
 
 @cli.command(help = "Convert kana to romaji.")
+@click.option("--long", is_flag = True, help = "Convert 'ー' to '-'.")
 @click.argument("text", required = False)
-def k2r(text): convert(kana.kana2romaji, text)
+def k2r(text, long): convert(kana.kana2romaji, text, long)
 
-def convert(f, text):
+@cli.command(help = "Convert romaji to hiragana.")
+@click.argument("text", required = False)
+def r2h(text): convert(kana.romaji2hiragana, text)
+
+@cli.command(help = "Convert romaji to katakana.")
+@click.option("--long", is_flag = True, help = "Convert long vowels to 'ー'.")
+@click.argument("text", required = False)
+def r2k(text, long): convert(kana.romaji2katakana, text, long)
+
+def convert(f, text, *a, **kw):
   for line in [text] if text else sys.stdin:
-    click.echo(f(line.rstrip("\n")))
+    click.echo(f(line.rstrip("\n"), *a, **kw))
 
 @cli.command("_doctest", hidden = True)
 @click.pass_context

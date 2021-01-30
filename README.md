@@ -2,7 +2,7 @@
 
     File        : README.md
     Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-    Date        : 2021-01-27
+    Date        : 2021-01-30
 
     Copyright   : Copyright (C) 2021  Felix C. Stegerman
     Version     : v0.4.0
@@ -100,6 +100,9 @@ $ jiten -v jmdict -n 4-5 +random  # random JLPT N4 or N5 entry
 
 # convert romaji to hiragana & show romaji readings
 $ jiten -v jmdict --max 1 --hiragana --romaji --word neko
+
+# prefix commands: +k (katakana), +h (hiragana), +w (word) etc.
+$ jiten -v jmdict --max 1 --romaji '+k +w ko-hi-'   # コーヒー
 ```
 
 ### Kanji
