@@ -31,7 +31,7 @@ Japanese-Multilingual Dictionary Project - Creation Date: 2021-01-19
 >>> len([ x for x in jmdict if x.isprio() ])
 22443
 >>> len([ x for x in jmdict if x.isprio() and list(x.pitch()) ])
-17415
+21269
 
 >>> len([ x for x in jmdict if x.jlpt == 1 ])
 3035
@@ -202,7 +202,7 @@ word containing out-dated kanji
 >>> len([ k2r(r) for r in rs ])
 228225
 >>> len([ k2r(p) for e in jmdict for p in e.pitch() ])
-88402
+115726
 >>> len(hira)
 152312
 >>> len(kata)
@@ -228,6 +228,7 @@ import click
 from . import freq  as F
 from . import misc  as M
 from . import pitch as P
+from .kana import katakana2hiragana
 from .sql import sqlite_do, load_pcre_extension
 
 DBVERSION       = 13 # NB: update this when data/schema changes
@@ -308,8 +309,10 @@ def xrefs(e): return M.uniq( x for s in e.sense for x in s.xref )
 # TODO
 def pitch(e, conn = None):
   ks = tuple( x.elem for x in e.kanji or e.reading )
-  for r in e.reading:
-    p = P.get_pitch(r.elem, ks, conn = conn)
+  rs = tuple( r.elem for r in e.reading )
+  hr = tuple( katakana2hiragana(r) for r in rs )
+  for r in rs + tuple( r for r in hr if r not in rs ):
+    p = P.get_pitch(r, ks, conn = conn)
     if p: yield p
 
 # TODO

@@ -233,8 +233,8 @@ DB v13 up to date.
 query: +w コーヒー
 <BLANKLINE>
 珈琲
-コーヒー [kouhii]
-[no pitch data]
+コーヒー [koohii]
+こꜛーひꜜー [koꜛohiꜜi]
 [eng]
 = coffee
 --> noun (common) (futsuumeishi) | nouns which may take the genitive case
@@ -416,7 +416,7 @@ neko
 >>> run("k2r ネコ")
 neko
 >>> run("k2r コーヒー")
-kouhii
+koohii
 >>> run("k2r コーヒー --long")
 ko-hi-
 
@@ -425,9 +425,9 @@ ko-hi-
 
 >>> run("r2k neko")
 ネコ
->>> run("r2k kouhii")
-コウヒイ
->>> run("r2k kouhii --long")
+>>> run("r2k koohii")
+コオヒイ
+>>> run("r2k koohii --long")
 コーヒー
 >>> run("r2k ko-hi-")
 コーヒー

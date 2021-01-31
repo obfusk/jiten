@@ -5,7 +5,7 @@
 #
 # File        : jiten/kana.py
 # Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-# Date        : 2021-01-29
+# Date        : 2021-01-30
 #
 # Copyright   : Copyright (C) 2021  Felix C. Stegerman
 # Version     : v0.4.0
@@ -27,7 +27,7 @@ Kana conversion functions.
 >>> kana2romaji("ウヰスキー")
 'uwisukii'
 >>> kana2romaji("コース")
-'kousu'
+'koosu'
 
 >>> kana2romaji("こんにちは")
 'konnnichiha'
@@ -89,19 +89,27 @@ def _kana2romaji(s):
 
 # TODO
 def _k2r_f(t, x):
-  if not t: return [x]
+  u, v = t[:], []
+  while u and not all( c in ROMA or c in "・" for c in u[-1] ):
+    v.append(u.pop())
+  w, y = _k2r_g(u, x)
+  return w + v[::-1] + [y]
+
+# TODO
+def _k2r_g(t, x):
+  if not t: return (t, x)
   *ti, tl = t
   if x[:2] == "xy" and tl[-1] == "i":
-                      return ti + [tl[:-1] + x[1:]]
+                      return (ti, tl[:-1] + x[1:])
   elif tl == "xtu" and not M.iskana(x):
-                      return ti + [x[0] + x]
+                      return (ti, x[0] + x)
   elif x[0] == "x" and len(x) == 2 and x != "xu":
-    if tl == "hu":    return ti + ["f" + x[1]]
-    elif tl == "vu":  return ti + ["v" + x[1]]
-  elif x == "ー":     return ti + [tl + tl[-1].replace("o", "u")]
-  elif x in "ゝヽ":   return t  + [tl]
-  elif x in "ゞヾ":   return t  + [voiced(tl)]
-  return t + [x]
+    if tl == "hu":    return (ti, "f" + x[1])
+    elif tl == "vu":  return (ti, "v" + x[1])
+  elif x == "ー":     return (t , tl[-1]) # .replace("o", "u")
+  elif x in "ゝヽ":   return (t , tl)
+  elif x in "ゞヾ":   return (t , voiced(tl))
+  return (t, x)
 
 # TODO
 def _k2r_lookup(c):
@@ -248,6 +256,9 @@ RORX  = r"(" + r"|".join(map(re.escape, ROSP.keys())) \
         r"(" + r"|".join(reversed(sorted(ROMP.keys()))) + r")|" + \
         r"(" + r"|".join(reversed(sorted(COLS2))) + r")?y?" \
              + r"[" + ROWS + r"]|(.)"
+
+ROMA  = frozenset(ROWS + COLS_.lower() + "".join(ROMP.keys())
+                                       + "".join(ROSP.keys()))
 
 if __name__ == "__main__":
   if "--doctest" in sys.argv:
