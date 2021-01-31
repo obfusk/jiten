@@ -202,7 +202,7 @@ word containing out-dated kanji
 >>> len([ k2r(r) for r in rs ])
 228225
 >>> len([ k2r(p) for e in jmdict for p in e.pitch() ])
-115726
+110153
 >>> len(hira)
 152312
 >>> len(kata)
@@ -306,8 +306,10 @@ def xinfo(e):
 
 def xrefs(e): return M.uniq( x for s in e.sense for x in s.xref )
 
+def pitch(e, conn = None): return M.uniq(pitch_w_dups(e, conn))
+
 # TODO
-def pitch(e, conn = None):
+def pitch_w_dups(e, conn = None):
   ks = tuple( x.elem for x in e.kanji or e.reading )
   rs = tuple( r.elem for r in e.reading )
   hr = tuple( katakana2hiragana(r) for r in rs )
