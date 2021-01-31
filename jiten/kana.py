@@ -5,7 +5,7 @@
 #
 # File        : jiten/kana.py
 # Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-# Date        : 2021-01-30
+# Date        : 2021-01-31
 #
 # Copyright   : Copyright (C) 2021  Felix C. Stegerman
 # Version     : v0.4.0
@@ -90,8 +90,7 @@ def _kana2romaji(s):
 # TODO
 def _k2r_f(t, x):
   u, v = t[:], []
-  while u and not all( c in ROMA or c in "・" for c in u[-1] ):
-    v.append(u.pop())
+  while u and u[-1] in "ꜛꜜ": v.append(u.pop())
   w, y = _k2r_g(u, x)
   return w + v[::-1] + [y]
 
@@ -101,7 +100,7 @@ def _k2r_g(t, x):
   *ti, tl = t
   if x[:2] == "xy" and tl[-1] == "i":
                       return (ti, tl[:-1] + x[1:])
-  elif tl == "xtu" and not M.iskana(x):
+  elif tl == "xtu" and isroma(x):
                       return (ti, x[0] + x)
   elif x[0] == "x" and len(x) == 2 and x != "xu":
     if tl == "hu":    return (ti, "f" + x[1])
@@ -174,8 +173,9 @@ def romaji2katakana(t, long = False):
   return hiragana2katakana(romaji2hiragana(t), long)
 
 # TODO
-def voiced(x):
-  return COLS_[COLS_.index(x[0])+1]+x[1:]
+def voiced(x): return COLS_[COLS_.index(x[0])+1]+x[1:]
+
+def isroma(t): return bool(t) and all( c in ROMA for c in t )
 
 # KANA TABLES                                                   # {{{1
 HIRAGANA = """
