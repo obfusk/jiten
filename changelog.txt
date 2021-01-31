@@ -1,8 +1,9 @@
 master
 
 • new: french & spanish (& swedish) (jmdict meanings & sentences)
+• new: pitch data for readings in katakana
 • improved radical dialog
-• improved romaji to hiragana conversion
+• improved romaji/kana conversion
 • fixed crash on android 8
 
 • cli: radicals, --hiragana/--katakana
