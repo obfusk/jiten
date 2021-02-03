@@ -5,7 +5,7 @@
 #
 # File        : jiten/pitch.py
 # Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-# Date        : 2021-01-30
+# Date        : 2021-02-04
 #
 # Copyright   : Copyright (C) 2021  Felix C. Stegerman
 # Version     : v0.4.0
@@ -143,8 +143,7 @@ def get_pitch(reading, kanjis, conn = None, file = SQLITE_FILE):
 def with_pitch(r):
   sr, sa  = r["reading"].split("—"), r["accent"].split("—")
   rs      = sr[:len(sa)-1] + ["･".join(sr[len(sa)-1:])]
-  return "･".join( with_accent(r, a if a is None else int(a))
-                   for r, a in zip(rs, sa) )
+  return "･".join( with_accent(r, int(a)) for r, a in zip(rs, sa) )
 
 @functools.lru_cache(maxsize = None)
 def have_pitch(file = SQLITE_FILE):
