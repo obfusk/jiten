@@ -318,6 +318,13 @@ def pitch_w_dups(e, conn = None):
     if p: yield p
 
 # TODO
+def pitch_related(e):
+  f = lambda k: not list(search("+=" + k, max_results = 1))
+  for k in e.kanji:
+    for x in P.get_related(k.elem, f):
+      yield x
+
+# TODO
 def jlpt_level(kanji, reading, usukana):                        # {{{1
   kana, prio  = not kanji or usukana, _isprio(kanji + reading)
   ls, ka      = set(), set( k.elem for k in kanji )

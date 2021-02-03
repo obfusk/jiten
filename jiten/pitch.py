@@ -140,6 +140,15 @@ def get_pitch(reading, kanjis, conn = None, file = SQLITE_FILE):
       return f(c)
   return None
 
+# TODO
+def get_related(k, f = None, file = SQLITE_FILE):
+  with sqlite_do(file) as c:
+    for r in c.execute("""
+          SELECT * FROM entry WHERE kanji LIKE ? AND kanji != ?
+        """, ("%"+k+"%", k)):
+      if not f or f(r["kanji"]):
+        yield r["kanji"], with_pitch(r)
+
 def with_pitch(r):
   sr, sa  = r["reading"].split("—"), r["accent"].split("—")
   rs      = sr[:len(sa)-1] + ["･".join(sr[len(sa)-1:])]
