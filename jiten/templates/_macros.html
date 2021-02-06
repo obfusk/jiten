@@ -2,10 +2,10 @@
 
   File        : templates/_macros.html
   Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-  Date        : 2021-01-22
+  Date        : 2021-02-07
 
   Copyright   : Copyright (C) 2021  Felix C. Stegerman
-  Version     : v0.3.5
+  Version     : v0.4.0
   License     : AGPLv3+
 
 --> #}
@@ -51,10 +51,10 @@
         </svg>
       </button>
     </div>
-    <script>
-      $(".convert-kana, .clear-input").removeClass("disabled")
-    </script>
   </div>
+  <script>
+    $(".convert-kana, .clear-input").removeClass("disabled")
+  </script>
 {% endmacro %}
 {% macro search(action, label, go, id, name, value, ph, af = True,
                 btn = "primary", mb = 2) %}
@@ -90,11 +90,11 @@
                 {% endif %}
               {% endfor %}
             </div>
-            <script>
-              $("form.search-form .dropdown-toggle").addClass("disabled")
-              $(".search-button").addClass("disabled").text("Loading...")
-            </script>
           </div>
+          <script>
+            $("form.search-form .dropdown-toggle").addClass("disabled")
+            $(".search-button").addClass("disabled").text("Loading...")
+          </script>
         </div>
       </div>
       {{ caller() }}
