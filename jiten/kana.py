@@ -5,7 +5,7 @@
 #
 # File        : jiten/kana.py
 # Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-# Date        : 2021-01-31
+# Date        : 2021-02-07
 #
 # Copyright   : Copyright (C) 2021  Felix C. Stegerman
 # Version     : v0.4.0
@@ -100,7 +100,7 @@ def _k2r_g(t, x):
   *ti, tl = t
   if x[:2] == "xy" and tl[-1] == "i":
                       return (ti, tl[:-1] + x[1:])
-  elif tl == "xtu" and isroma(x):
+  elif tl == "xtu" and isroma(x) and x not in ".-":
                       return (ti, x[0] + x)
   elif x[0] == "x" and len(x) == 2 and x != "xu":
     if tl == "hu":    return (ti, "f" + x[1])
