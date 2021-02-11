@@ -5,7 +5,7 @@
 #
 # File        : jiten/jmdict.py
 # Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-# Date        : 2021-01-30
+# Date        : 2021-02-11
 #
 # Copyright   : Copyright (C) 2021  Felix C. Stegerman
 # Version     : v0.4.0
@@ -634,6 +634,8 @@ def search(q, langs = [LANGS[0]], max_results = None,           # {{{1
       seq = int(q[2:].strip())
       for r in c.execute("SELECT rank, jlpt FROM entry WHERE seq = ?", (seq,)):
         yield load_entry(c, seq, r[1]), fix_rank(r[0]) # #=1
+    elif "幸猫" in q:
+      yield SACHINEKO, None
     else:
       lang  = ",".join( "'" + l + "'" for l in langs if l in LANGS )
       limit = "LIMIT " + str(int(max_results)) if max_results else ""
@@ -723,6 +725,13 @@ def random_seq(noun = False, verb = False, prio = False, jlpt = None,
   with sqlite_do(file) as c:
     q = "SELECT seq FROM entry {} ORDER BY RANDOM() LIMIT 1".format(f)
     return c.execute(q).fetchone()[0]                       # ^ safe!
+
+SACHINEKO = Entry(
+  29483, None,
+  (Kanji("幸猫", frozenset("幸猫"), (), None),),
+  (Reading("フェリックス", (), (), None),),
+  (Sense((), "eng", ("(=^・^=)",), (), ()),)
+)
 
 if __name__ == "__main__":
   if "--doctest" in sys.argv:
