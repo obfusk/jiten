@@ -2,7 +2,7 @@
 
   File        : templates/_search.html
   Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-  Date        : 2021-01-28
+  Date        : 2021-02-11
 
   Copyright   : Copyright (C) 2021  Felix C. Stegerman
   Version     : v0.4.0
@@ -14,10 +14,7 @@
   {% call search("/jmdict", "Query (Regex)", "Search JMDict",
                  "jmdict-query", "query", query,
                  "regex to match japanese/english/etc.", af,
-                 btn = "info") %}
-    <div class="float-right mt-1 ml-1">
-      {{ collapsebtn("jmdict-collapse") }}
-    </div>
+                 collapse = "jmdict-collapse", btn = "info") %}
     <div class="form-group mb-0 d-inline">
       <fieldset class="d-inline border p-2 pl-3">
         <legend>match</legend>
@@ -94,7 +91,7 @@
         </div>
       </fieldset>
       <fieldset class="d-inline border p-2 pl-3">
-        <legend>languages</legend>
+        <legend>choose languages</legend>
         {% for l in J.LANGS %}
           <div class="form-check form-check-inline">
             <input type="checkbox" class="form-check-input"
@@ -110,24 +107,13 @@
       <a class="query-example"
         href="/jmdict?query=%2Brandom"><kbd>+random</kbd></a>.
     </div>
-    {% if query %}
-      <script>
-        if (window.innerWidth <= 576) {
-          $("a[data-target='#jmdict-collapse']")
-            .attr("aria-expanded", "false")
-          $("#jmdict-collapse").removeClass("show")
-        }
-      </script>
-    {% endif %}
   {% endcall %}
 {% endmacro %}
 {% macro kanji(query = "", af = True) %}
   {% call search("/kanji", "Query (Regex)", "Search Kanji",
                  "kanji-query", "query", query,
-                 "kanji or regex to match kana/english", af) %}
-    <div class="float-right mt-1 ml-1">
-      {{ collapsebtn("kanji-collapse") }}
-    </div>
+                 "kanji or regex to match kana/english",
+                 af, collapse = "kanji-collapse") %}
     <div class="form-group mb-0 d-inline">
       <fieldset class="d-inline border p-2 pl-3">
         <legend>match</legend>
@@ -177,22 +163,14 @@
           href="/kanji?query=%2Brandom"><kbd>+random</kbd></a>.
       </span>
     </div>
-    {% if query %}
-      <script>
-        if (window.innerWidth <= 576) {
-          $("a[data-target='#kanji-collapse']")
-            .attr("aria-expanded", "false")
-          $("#kanji-collapse").removeClass("show")
-        }
-      </script>
-    {% endif %}
   {% endcall %}
 {% endmacro %}
 {% macro sentences(query = "", af = True) %}
   {% call search("/sentences", "Query", "Search Sentences",
                  "sentences-query", "query", query,
-                 "substring to match japanese/english/etc.", af) %}
-    <div class="form-group mb-0">
+                 "substring to match japanese/english/etc.",
+                 af, collapse = "sentences-collapse") %}
+    <div class="form-group mb-0 d-inline">
       <fieldset class="d-inline border p-2 pl-3">
         <legend>select</legend>
         <div class="form-check form-check-inline">
@@ -203,8 +181,10 @@
             title="with audio">audio</label>
         </div>
       </fieldset>
+    </div>
+    <div class="collapse show form-group mb-0" id="sentences-collapse">
       <fieldset class="d-inline border p-2 pl-3">
-        <legend>languages</legend>
+        <legend>filter languages</legend>
         {% for l in S.LANGS %}
           <div class="form-check form-check-inline">
             <input type="checkbox" class="form-check-input"

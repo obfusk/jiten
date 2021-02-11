@@ -32,7 +32,7 @@ a[aria-expanded=false] .collapse-close {
   content: "Show ";
 }
 
-#jmdict-collapse.show {
+#jmdict-collapse.show, #sentences-collapse.show {
   display: inline;
 }
 

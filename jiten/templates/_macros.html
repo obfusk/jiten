@@ -2,7 +2,7 @@
 
   File        : templates/_macros.html
   Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-  Date        : 2021-02-07
+  Date        : 2021-02-11
 
   Copyright   : Copyright (C) 2021  Felix C. Stegerman
   Version     : v0.4.0
@@ -57,7 +57,7 @@
   </script>
 {% endmacro %}
 {% macro search(action, label, go, id, name, value, ph, af = True,
-                btn = "primary", mb = 2) %}
+                collapse = None, btn = "primary", mb = 2) %}
   <div class="card">
     <form class="search-form card-body" action="{{ action }}">
       <div class="form-group form-inline justify-content-end mb-0">
@@ -97,7 +97,20 @@
           </script>
         </div>
       </div>
+      {% if collapse %}
+        <div class="float-right mt-1 ml-1">
+          {{ collapsebtn(collapse) }}
+        </div>
+      {% endif %}
       {{ caller() }}
+      {% if collapse and query %}
+        <script>
+          if (window.innerWidth <= 576) {
+            $("a[data-target='#{{ collapse }}']").attr("aria-expanded", "false")
+            $("#{{ collapse }}").removeClass("show")
+          }
+        </script>
+      {% endif %}
     </form>
   </div>
 {% endmacro %}
