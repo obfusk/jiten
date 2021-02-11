@@ -2,7 +2,7 @@
 
     File        : README.md
     Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-    Date        : 2021-01-30
+    Date        : 2021-02-11
 
     Copyright   : Copyright (C) 2021  Felix C. Stegerman
     Version     : v0.4.0
@@ -137,6 +137,26 @@ $ jiten --help
 $ jiten jmdict    --help
 $ jiten kanji     --help
 $ jiten sentences --help
+```
+
+### Tab Completion
+
+For Bash, add this to `~/.bashrc`:
+
+```bash
+eval "$(_JITEN_COMPLETE=source_bash jiten)"
+```
+
+For Zsh, add this to `~/.zshrc`:
+
+```zsh
+eval "$(_JITEN_COMPLETE=source_zsh jiten)"
+```
+
+For Fish, add this to `~/.config/fish/completions/jiten.fish`:
+
+```fish
+eval (env _JITEN_COMPLETE=source_fish jiten)
 ```
 
 ## WebView GUI for Linux/macOS/Windows
