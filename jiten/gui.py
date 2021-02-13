@@ -5,10 +5,10 @@
 #
 # File        : jiten/gui.py
 # Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-# Date        : 2021-01-22
+# Date        : 2021-02-13
 #
 # Copyright   : Copyright (C) 2021  Felix C. Stegerman
-# Version     : v0.3.5
+# Version     : v0.4.0
 # License     : AGPLv3+
 #
 # --                                                            ; }}}1
@@ -20,7 +20,7 @@ WebView GUI.
 
 """                                                             # }}}1
 
-import os, platform
+import os, platform, sys
 
 from . import misc as M
 
@@ -31,7 +31,15 @@ system    = platform.system()
 def start(link = None, title = title, win_opts = win_opts):
   _fix_profile()
 
-  import webview
+  try:
+    import webview
+  except ImportError as e:
+    if e.name != "webview" or "module named" not in e.msg: raise e
+    print("error: failed to load 'webview' module; "
+          "to use jiten's gui, please install pywebview",
+          file = sys.stderr)
+    sys.exit(1)
+
   os.environ["JITEN_GUI_TOKEN"] = webview.token
   from .app import app
 
