@@ -105,10 +105,12 @@
       {{ caller() }}
       {% if collapse and query %}
         <script>
+          // @license magnet:?xt=urn:btih:0b31508aeb0634b347b8270c7bee4d411b5d4109&dn=agpl-3.0.txt AGPLv3+
           if (window.innerWidth <= 576) {
             $("a[data-target='#{{ collapse }}']").attr("aria-expanded", "false")
             $("#{{ collapse }}").removeClass("show")
           }
+          // @license-end
         </script>
       {% endif %}
     </form>
