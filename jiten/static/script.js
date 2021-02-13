@@ -1,8 +1,10 @@
+// @license magnet:?xt=urn:btih:0b31508aeb0634b347b8270c7bee4d411b5d4109&dn=agpl-3.0.txt AGPLv3+
+
 //  --                                                          ; {{{1
 //
 //  File        : static/script.js
 //  Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-//  Date        : 2021-01-29
+//  Date        : 2021-02-13
 //
 //  Copyright   : Copyright (C) 2021  Felix C. Stegerman
 //  Version     : v0.4.0
@@ -524,3 +526,4 @@ $("#loading").modal("hide").remove()
 })()
 
 // vim: set tw=70 sw=2 sts=2 et fdm=marker :
+// @license-end
