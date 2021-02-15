@@ -1,6 +1,0 @@
-#!/bin/bash
-rlwrap=()
-if [ -z "$_JITEN_COMPLETE" ] && command -v rlwrap >/dev/null; then
-  rlwrap=( rlwrap -C jiten )
-fi
-exec "${rlwrap[@]}" python3 -m jiten.cli "$@"

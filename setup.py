@@ -83,8 +83,12 @@ setuptools.setup(
   keywords          = "japanese kanji dictionary cli web jmdict kanjidic",
   packages          = setuptools.find_packages(),
   package_data      = dict(jiten = data),
-  scripts           = ["bin/jiten", "bin/jiten-gui"],
+  entry_points      = dict(
+    console_scripts = ["jiten = jiten.cli:main"],
+    gui_scripts     = ["jiten-gui = jiten.cli:gui_main [gui]"],
+  ),
   python_requires   = ">=3.5",
   install_requires  = ["Flask", "click>=6.0"],
+  extras_require    = dict(gui = ["pywebview>=3.3.5"]),
   ext_modules       = [pcre],
 )

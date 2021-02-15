@@ -5,7 +5,7 @@
 #
 # File        : jiten/cli.py
 # Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-# Date        : 2021-01-30
+# Date        : 2021-02-15
 #
 # Copyright   : Copyright (C) 2021  Felix C. Stegerman
 # Version     : v0.4.0
@@ -452,6 +452,7 @@ from . import sentences as S
 from .misc import SERVER
 
 HOST, PORT    = "localhost", 5000
+HISTFILE      = os.path.join(os.path.expanduser("~"), ".jiten_history")
 MODS          = [K, P, S, J] # J last!
 ANDROID_PRIV  = os.environ.get("ANDROID_PRIVATE") or None
 
@@ -589,7 +590,7 @@ def search(f, ctx, q, hiragana, katakana, **kw):
   if q: g()
   else:
     while True:
-      q = click.prompt("query", "", show_default = False).strip()
+      q = input("query: ").strip()
       if not q: break
       g()
       click.echo()
@@ -774,7 +775,7 @@ def serve_app(host = HOST, port = PORT, verbose = True, **opts):
 @click.argument("link", required = False)
 @click.pass_context
 def gui(ctx, link):
-  setup_db(ctx.obj["verbose"])
+  setup_db(ctx.obj["verbose"] if ctx.obj is not None else False)
   from .gui import start
   start(link)
 
@@ -857,11 +858,30 @@ CMDS = sorted(( c for c in cli.list_commands(None)
               key = lambda c: ("2" in c, c))
 cli.list_commands = lambda ctx: MAIN_CMDS + CMDS
 
-if __name__ == "__main__":
+def main():
+  if "_JITEN_COMPLETE" not in os.environ: _setup_readline()
   try:
     cli(prog_name = name)
   except M.RegexError as e:
     click.echo("regex error: " + str(e), err = True)
     sys.exit(1)
+
+def gui_main():
+  gui(prog_name = name + "-gui")
+
+def _setup_readline():
+  import atexit, pathlib, readline
+  if os.path.exists(HISTFILE): readline.read_history_file(HISTFILE)
+  origlen = readline.get_current_history_length()
+
+  @atexit.register
+  def save_hist():
+    newlen = readline.get_current_history_length() - origlen
+    if newlen:
+      pathlib.Path(HISTFILE).touch()
+      readline.append_history_file(newlen, HISTFILE)
+
+if __name__ == "__main__":
+  main()
 
 # vim: set tw=70 sw=2 sts=2 et fdm=marker :
