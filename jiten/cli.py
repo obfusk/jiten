@@ -452,7 +452,8 @@ from . import sentences as S
 from .misc import SERVER
 
 HOST, PORT    = "localhost", 5000
-HISTFILE      = os.path.join(os.path.expanduser("~"), ".jiten_history")
+HISTFILE      = os.path.join(os.path.expanduser("~"),
+                             ".{}_history".format(name))      #  FIXME
 MODS          = [K, P, S, J] # J last!
 ANDROID_PRIV  = os.environ.get("ANDROID_PRIVATE") or None
 
@@ -859,7 +860,8 @@ CMDS = sorted(( c for c in cli.list_commands(None)
 cli.list_commands = lambda ctx: MAIN_CMDS + CMDS
 
 def main():
-  if "_JITEN_COMPLETE" not in os.environ: _setup_readline()
+  if "_JITEN_COMPLETE" not in os.environ and "PyPy" not in sys.version:
+    _setup_readline()                                         #  FIXME
   try:
     cli(prog_name = name)
   except M.RegexError as e:
