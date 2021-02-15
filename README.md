@@ -2,7 +2,7 @@
 
     File        : README.md
     Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-    Date        : 2021-02-11
+    Date        : 2021-02-15
 
     Copyright   : Copyright (C) 2021  Felix C. Stegerman
     Version     : v0.4.0
@@ -198,7 +198,7 @@ $ apt install python3-flask   # optional: Flask & click w/o pip
 ```bash
 $ apt install python3-pyqt5.qtwebengine   # recommended: qtwebengine
 
-$ apt install python3-webview             # if >= 3.5.5
+$ apt install python3-webview             # if >= 3.3.5
 $ pip3 --user install pywebview           # otherwise
 ```
 
