@@ -860,8 +860,7 @@ CMDS = sorted(( c for c in cli.list_commands(None)
 cli.list_commands = lambda ctx: MAIN_CMDS + CMDS
 
 def main():
-  if "_JITEN_COMPLETE" not in os.environ and "PyPy" not in sys.version:
-    _setup_readline()                                         #  FIXME
+  if "_JITEN_COMPLETE" not in os.environ: _setup_readline()
   try:
     cli(prog_name = name)
   except M.RegexError as e:
@@ -872,16 +871,25 @@ def gui_main():
   gui(prog_name = name + "-gui")
 
 def _setup_readline():
-  import atexit, pathlib, readline
-  if os.path.exists(HISTFILE): readline.read_history_file(HISTFILE)
-  origlen = readline.get_current_history_length()
+  if "__pypy__" in sys.builtin_module_names:
+    if "_JITEN_RLWRAPPED" in os.environ: return
+    import shutil
+    rlwrap = shutil.which("rlwrap")
+    if sys.executable and rlwrap:
+      os.environ["_JITEN_RLWRAPPED"] = "yes"
+      os.execv(rlwrap, [rlwrap, "-C", name, sys.executable,
+                        "-m", "jiten.cli"] + sys.argv[1:])
+  else:
+    import atexit, pathlib, readline
+    if os.path.exists(HISTFILE): readline.read_history_file(HISTFILE)
+    origlen = readline.get_current_history_length()
 
-  @atexit.register
-  def save_hist():
-    newlen = readline.get_current_history_length() - origlen
-    if newlen:
-      pathlib.Path(HISTFILE).touch()
-      readline.append_history_file(newlen, HISTFILE)
+    @atexit.register
+    def save_hist():
+      newlen = readline.get_current_history_length() - origlen
+      if newlen:
+        pathlib.Path(HISTFILE).touch()
+        readline.append_history_file(newlen, HISTFILE)
 
 if __name__ == "__main__":
   main()
