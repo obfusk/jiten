@@ -11,7 +11,7 @@ requirements =
   certifi==2020.12.5,libpcre==8.44,
   hostpython3==3.9.1,python3==3.9.1,
   android,genericndkbuild,
-  itsdangerous==1.1.0,jinja2==2.11.2,markupsafe==1.1.1,werkzeug==1.0.1,
+  itsdangerous==1.1.0,jinja2==2.11.3,markupsafe==1.1.1,werkzeug==1.0.1,
   libffi==v3.3,pyjnius==1.3.0,
   setuptools==51.3.3,six==1.15.0
 requirements.source.jiten = ..
