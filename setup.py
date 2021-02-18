@@ -3,6 +3,8 @@ import os, setuptools, subprocess, sys
 
 from jiten.version import __version__
 
+vsn   = __version__.replace("-", ".dev", 1).replace("-", "+", 1)
+
 clean = "clean" in sys.argv[1:]
 
 info  = Path(__file__).with_name("README.md").read_text(encoding = "utf8")
@@ -51,7 +53,7 @@ setuptools.setup(
   description       = "japanese cli&web dictionary based on jmdict/kanjidic",
   long_description  = info,
   long_description_content_type = "text/markdown",
-  version           = __version__,
+  version           = vsn,
   author            = "Felix C. Stegerman",
   author_email      = "flx@obfusk.net",
   license           = "AGPLv3+",
