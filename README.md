@@ -2,7 +2,7 @@
 
     File        : README.md
     Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-    Date        : 2021-02-15
+    Date        : 2021-02-18
 
     Copyright   : Copyright (C) 2021  Felix C. Stegerman
     Version     : v0.4.0
@@ -238,10 +238,22 @@ $ make
 
 ### NixOS
 
-Jiten will hopefully be available in nixpkgs soon.  For now you can
+Jiten will hopefully be available in nixpkgs soon.  For now, you can
 use [this nix expression](https://gist.github.com/obfusk/c51d353e75d576bd5cb8e92456cdec47).
 
 ## Miscellaneous
+
+### Online Android App
+
+There is also an online android app --
+[`Jiten [Online]`](https://github.com/obfusk/jiten-webview)
+-- which essentially provides the same functionality as opening the
+https://jiten.obfusk.dev website in a web browser.
+
+It does have some some small advantages (like long press for tooltips)
+and requires less storage space (and could be faster depending on your
+device and internet connection).  You can install both at the same
+time if you want.
 
 ### Web Interface on Android
 
