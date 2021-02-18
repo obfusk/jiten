@@ -4,7 +4,7 @@
 //
 //  File        : static/script.js
 //  Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-//  Date        : 2021-02-13
+//  Date        : 2021-02-18
 //
 //  Copyright   : Copyright (C) 2021  Felix C. Stegerman
 //  Version     : v0.4.0
@@ -420,7 +420,7 @@ $("#history-clear").click(async () => {
   }
 })
 
-$("#licenses-modal").on("shown.bs.modal", evt => {
+$(".lazy-iframe-modal").on("shown.bs.modal", evt => {
   const e = $(evt.delegateTarget).off("shown.bs.modal")
   $("iframe", e).each((i, x) => x.src = x.dataset.src)
 })

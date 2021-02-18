@@ -14,7 +14,7 @@ pcre  = setuptools.Extension("jiten._sqlite3_pcre", ["sqlite3-pcre.c"],
 data  = [ "res/jlpt/N" + l + "-" + x for l in "12345"
           for x in "kanji vocab-eng vocab-hiragana".split() ] \
       + [ "res/jlpt/" + x for x in "SOURCES *.sh *.html".split() ] \
-      + [ "static/*." + x for x in "svg png css js".split() ] \
+      + [ "static/*." + x for x in "svg png css js txt".split() ] \
       + [ "static/audio/*.mp3" ] \
       + [ "static/font/*." + x for x in "ttf txt".split() ] \
       + [ "static/licenses/*.txt" ] \
