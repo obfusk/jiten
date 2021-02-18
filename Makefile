@@ -14,6 +14,8 @@ H5VCMD  := html5validator --show-warnings --log INFO --no-langdetect \
 
 PYCOV   := $(PYTHON) -mcoverage run --source jiten
 
+export PYTHONWARNINGS := default
+
 .PHONY: all test test-js ci-test coverage clean cleanup
 .PHONY: validate-css tmp-html check-html validate-html
 .PHONY: validate-html-curl validate-html-py
