@@ -3,7 +3,8 @@ import os, setuptools, subprocess, sys
 
 from jiten.version import __version__
 
-vsn   = __version__.replace("-", ".dev", 1).replace("-", "+", 1)
+vsn   = __version__.replace("-", ".dev", 1).replace("-", "+", 1) \
+          if __version__.count("-") >= 2 else __version__
 
 clean = "clean" in sys.argv[1:]
 
