@@ -5,7 +5,7 @@
 #
 # File        : android/main.py
 # Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-# Date        : 2021-01-27
+# Date        : 2021-02-19
 #
 # Copyright   : Copyright (C) 2021  Felix C. Stegerman
 # Version     : v0.4.0
@@ -21,25 +21,6 @@ HOST, PORT    = "127.0.0.1", 29483
 LOCAL         = "http://{}:{}".format(HOST, PORT)
 ANDROID       = "ANDROID_APP_PATH" in os.environ
 RUNNING, URL  = False, None   # mutable state
-
-# FIXME: workaround for bug in older versions of p4a
-def fix_stdio():                                                # {{{1
-  if isinstance(getattr(sys.stdout, "buffer", None), str):
-    print("*** Fixing stdout/stderr ***")
-    import androidembed
-    class LogFile:
-      def __init__(self):
-        self.__buf = ""
-      def write(self, s):
-        s = self.__buf + s
-        lines = s.split("\n")
-        for l in lines[:-1]:
-          androidembed.log(l)
-        self.__buf = lines[-1]
-      def flush(self):
-        return
-    sys.stdout = sys.stderr = LogFile()
-                                                                # }}}1
 
 def debug_mode(act):
   priv = os.environ["ANDROID_PRIVATE"]
