@@ -81,7 +81,6 @@ def setup_webview(cls):
 
 if __name__ == "__main__":
   if ANDROID:
-    fix_stdio()
     import android.activity, android.config, certifi, jnius
     from android.runnable import run_on_ui_thread
     setup_clipboard = run_on_ui_thread(setup_clipboard)
