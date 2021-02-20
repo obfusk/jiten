@@ -28,6 +28,7 @@
 - [ ] description & screenshots in `README.md`
 - [ ] description & screenshots for f-droid (2x) & Play Store
 - [ ] description for Debian package
+- [ ] description for Nix package
 - [ ] changelog
 
 # Release
@@ -38,4 +39,5 @@
 - [ ] update obfusk's f-droid repo
 - [ ] update Play Store
 - [ ] update Debian package
+- [ ] update Nix package
 - [ ] update F-Droid (automatic?!)

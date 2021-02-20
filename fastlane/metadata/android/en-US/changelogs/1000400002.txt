@@ -1,16 +1,3 @@
-v1.0.0
-
-• new: french & spanish (& swedish) (jmdict meanings & sentences)
-• new: pitch data for readings in katakana
-• improved radical dialog
-• improved romaji/kana conversion
-• fixed crash on android 8
-• various improvements & fixes
-
-• cli: radicals, --hiragana/--katakana
-
-v0.4.0
-
 • updated databases: 2020 version of kyouiku kanji, more pitch data, etc.
 • improved help dialog
 • new: jlpt vocab data, search & browse by jlpt level
@@ -22,4 +9,4 @@ v0.4.0
 • improved tooltips
 • moved "select radical" button
 • fixed copying to clipboard
-• various small improvements & bug fixes
+• improvements & fixes

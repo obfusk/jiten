@@ -34,10 +34,10 @@ p4a.bootstrap = webview
 p4a.port = 29483
 
 # === DON'T FORGET TO UPDATE THIS ===
-version = 0.4.0
-android.numeric_version = 1000400002
+version = 1.0.0
+android.numeric_version = 1010000002
 # always "1" -------------^|||||||||
-# 0.4.0 ----> 00 04 00 ----^^^^^^|||
+# 1.0.0 ----> 01 00 00 ----^^^^^^|||
 # #commits since last tag -------^^|
 # 1 = armeabi-v7a, 2 = arm64-v8a --^
 # ===================================

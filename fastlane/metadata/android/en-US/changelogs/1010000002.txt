@@ -1,0 +1,6 @@
+• new: french & spanish (& swedish) (jmdict meanings & sentences)
+• new: pitch data for readings in katakana
+• improved radical dialog
+• improved romaji/kana conversion
+• fixed crash on android 8
+• various improvements & fixes
