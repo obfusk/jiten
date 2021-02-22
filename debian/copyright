@@ -83,8 +83,10 @@ Files:     jiten/static/audio/*.mp3
 Copyright: huizi99, Mizu & yomi
 License:   CC-BY-NC-4.0
 
-Files:     jiten/static/bootstrap.min.css
+Files:     jiten/static/bootstrap.js
+           jiten/static/bootstrap.min.css
            jiten/static/bootstrap.min.js
+           jiten/static/bootstrap.min.js.map
 Copyright: 2011-2020 The Bootstrap Authors
 License:   MIT
 
@@ -98,11 +100,21 @@ Copyright: 2004-2020 Ulrich Apel, the AAAA project and the Wadoku project
 License:   BSD-3-Clause
   https://www.nihilist.org.uk
 
-Files:     jiten/static/jquery-3.5.1.slim.min.js
+Files:     jiten/static/font/noto/NotoSansJP-Regular.otf
+           jiten/static/font/noto/NotoSerifJP-Regular.otf
+Copyright: Google
+License:   SIL OPEN FONT LICENSE Version 1.1
+  https://www.google.com/get/noto/help/cjk/
+
+Files:     jiten/static/jquery-3.5.1.slim.js
+           jiten/static/jquery-3.5.1.slim.min.js
+           jiten/static/jquery-3.5.1.slim.min.map
 Copyright: OpenJS Foundation and other contributors
 License:   MIT
 
-Files:     jiten/static/popper-1.16.0.min.js
+Files:     jiten/static/popper-1.16.0.js
+           jiten/static/popper-1.16.0.min.js
+           jiten/static/popper-1.16.0.min.js.map
 Copyright: 2019 Federico Zivolo
 License:   MIT
 
