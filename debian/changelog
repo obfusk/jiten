@@ -1,6 +1,5 @@
-jiten (1.0.2-1) UNRELEASED; urgency=medium
+jiten (1.0.2-1ppa.focal1) focal; urgency=medium
 
-  * Initial release. Closes: #nnnn
-    <nnnn is the bug number of your ITP>
+  * v1.0.2 for Ubuntu focal.
 
  -- Felix C. Stegerman <flx@obfusk.net>  Tue, 23 Feb 2021 04:16:13 +0100
