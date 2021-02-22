@@ -2,7 +2,7 @@ name: CI
 on: [push, pull_request, workflow_dispatch]
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     strategy:
       matrix:
         python-version:
@@ -24,6 +24,7 @@ jobs:
         python3 --version
         python3 -m pip install --upgrade pip
         pip install -r requirements.txt
+        pip install coverage
         pip install html5validator
     - name: Get DB version
       run: |

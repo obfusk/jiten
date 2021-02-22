@@ -6,6 +6,9 @@ BASE  := https://downloads.tatoeba.org/exports/per_language
 ENG   := $(BASE)/eng/eng_sentences.tsv.bz2
 DUT   := $(BASE)/nld/nld_sentences.tsv.bz2
 GER   := $(BASE)/deu/deu_sentences.tsv.bz2
+FRE   := $(BASE)/fra/fra_sentences.tsv.bz2
+SPA   := $(BASE)/spa/spa_sentences.tsv.bz2
+SWE   := $(BASE)/swe/swe_sentences.tsv.bz2
 JAP   := $(BASE)/jpn/jpn_sentences.tsv.bz2
 
 .PHONY: all download sentences audio clean
@@ -18,6 +21,9 @@ download: clean
 	wget -O "$$(basename "$(ENG)"  )" -- "$(ENG)"
 	wget -O "$$(basename "$(DUT)"  )" -- "$(DUT)"
 	wget -O "$$(basename "$(GER)"  )" -- "$(GER)"
+	wget -O "$$(basename "$(FRE)"  )" -- "$(FRE)"
+	wget -O "$$(basename "$(SPA)"  )" -- "$(SPA)"
+	wget -O "$$(basename "$(SWE)"  )" -- "$(SWE)"
 	wget -O "$$(basename "$(JAP)"  )" -- "$(JAP)"
 	tar xf links.tar.bz2 links.csv
 	rm -f  links.tar.bz2
@@ -26,6 +32,9 @@ download: clean
 	bunzip2 "$$(basename "$(ENG)")"
 	bunzip2 "$$(basename "$(DUT)")"
 	bunzip2 "$$(basename "$(GER)")"
+	bunzip2 "$$(basename "$(FRE)")"
+	bunzip2 "$$(basename "$(SPA)")"
+	bunzip2 "$$(basename "$(SWE)")"
 	bunzip2 "$$(basename "$(JAP)")"
 
 sentences:

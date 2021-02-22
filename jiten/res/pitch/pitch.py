@@ -6,7 +6,7 @@ import click
 
 NS = "{http://www.wadoku.de/xml/entry}"
 
-with open("wadoku-xml-20200705/wadoku.xml") as f:
+with open("wadoku-xml-20210110/wadoku.xml") as f:
   with click.progressbar(ET.parse(f).getroot(), width = 0,
                          label = "parsing wadoku") as bar:
     for e in bar:

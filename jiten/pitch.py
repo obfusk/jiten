@@ -5,10 +5,10 @@
 #
 # File        : jiten/pitch.py
 # Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-# Date        : 2021-01-17
+# Date        : 2021-02-04
 #
 # Copyright   : Copyright (C) 2021  Felix C. Stegerman
-# Version     : v0.3.5
+# Version     : v0.4.0
 # License     : AGPLv3+
 #
 # --                                                            ; }}}1
@@ -20,7 +20,7 @@ Pitch Accent from Wadoku.
 
 >>> pitch = parse_pitch()
 >>> len(pitch) + len(BLACKLIST)
-141798
+205092
 
 >>> [ x for x in pitch if x[0] == "小猫" ][0]
 ['小猫', 'こねこ', '2']
@@ -56,6 +56,8 @@ Pitch Accent from Wadoku.
 """                                                             # }}}1
 
 import functools, os, re, sys
+
+from contextlib import contextmanager
 
 import click
 
@@ -117,22 +119,31 @@ def setup(file = SQLITE_FILE):
   pitch = parse_pitch()
   pitch2sqldb(pitch, file)
 
+@contextmanager
+def pitches(file = SQLITE_FILE):
+  with sqlite_do(file) as c:
+    yield lambda e: e.pitch(conn = c)
+
 # TODO
-def get_pitch(reading, kanjis, file = SQLITE_FILE):
+def get_pitch(reading, kanjis, conn = None, file = SQLITE_FILE):
   rd = reading.replace("・", "")
+  def f(c):
+    for k in ( k.replace("・", "") for k in kanjis ):
+      for r in c.execute("SELECT * FROM entry WHERE kanji = ?", (k,)):
+        if r["reading"].replace("—", "") != rd: continue
+        return with_pitch(r)
+    return None
   if have_pitch(file):
+    if conn is not None:
+      return f(conn)
     with sqlite_do(file) as c:
-      for k in ( k.replace("・", "") for k in kanjis ):
-        for r in c.execute("SELECT * FROM entry WHERE kanji = ?", (k,)):
-          if r["reading"].replace("—", "") != rd: continue
-          return with_pitch(r)
+      return f(c)
   return None
 
 def with_pitch(r):
   sr, sa  = r["reading"].split("—"), r["accent"].split("—")
   rs      = sr[:len(sa)-1] + ["･".join(sr[len(sa)-1:])]
-  return "･".join( with_accent(r, a if a is None else int(a))
-                   for r, a in zip(rs, sa) )
+  return "･".join( with_accent(r, int(a)) for r, a in zip(rs, sa) )
 
 @functools.lru_cache(maxsize = None)
 def have_pitch(file = SQLITE_FILE):

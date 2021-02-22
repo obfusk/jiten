@@ -4,21 +4,24 @@ This is the offline android version of https://jiten.obfusk.dev.
 
 The large download size is because it includes all the dictionary data, including audio.
 
+NB: the app will take a while to load the first time it is started (or after an update), but it will load a lot faster afterwards.
+
 Features:
 
 JMDict multilingual japanese dictionary
-• kanji, readings, meanings (english, dutch and/or german) & more
+• kanji, readings (romaji optional), meanings & more
+• meanings in english, dutch, german, french and/or spanish
 • pitch accent (from Wadoku)
 • browse by frequency/jlpt
 
 Kanji dictionary
-• readings, meanings (english), jmdict entries, radicals & more
+• readings (romaji optional), meanings (english), jmdict entries, radicals & more
 • search using SKIP codes
 • search by radical
 • browse by frequency/level/jlpt
 
 Example sentences (from Tatoeba)
-• with english, dutch and/or german translation
+• with english, dutch, german, french and/or spanish translation
 • some with audio
 
 Stroke order
@@ -28,12 +31,14 @@ Fine-grained search using regexes (regular expressions)
 • simple searches don't require knowledge of regexes
 • quick reference available
 
-Dark mode
+• Dark mode
+• Search history (stored locally)
+• Use long press for tooltips: quickly see meanings and readings for kanji and words
+• Easily share and open jiten.obfusk.dev links
+• Convert romaji to hiragana and between hiragana and katakana
 
-Search history (stored locally)
 
-Use long press for tooltips
-• quickly see meanings and readings for kanji in words and sentences
+No ads.  No trackers.  The source code is 100% Free and Open Source (AGPLv3+) and the data is available under Creative Commons or similar licenses (some non-commercial); for details, see https://github.com/obfusk/jiten#readme
 
 
 To report bugs and request features, please use the issue tracker at

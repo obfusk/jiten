@@ -5,9 +5,9 @@
 #
 # File        : jiten/kanji.py
 # Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-# Date        : 2020-12-07
+# Date        : 2021-01-21
 #
-# Copyright   : Copyright (C) 2020  Felix C. Stegerman
+# Copyright   : Copyright (C) 2021  Felix C. Stegerman
 # Version     : v0.3.5
 # License     : AGPLv3+
 #
@@ -97,6 +97,14 @@ True
 True
 >>> all( ord(x[0]) - 0x2f00 == i for i, x in enumerate(RADICALS) )
 True
+
+>>> from .kana import kana2romaji
+>>> len([ kana2romaji(r) for e in kanjidic for r in e.on ])
+20994
+>>> len([ kana2romaji(r) for e in kanjidic for r in e.kun ])
+16024
+>>> len([ kana2romaji(r) for e in kanjidic for r in e.nanori ])
+3465
 
 """                                                             # }}}1
 

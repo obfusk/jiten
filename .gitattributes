@@ -1,0 +1,7 @@
+jiten/res/*/*.html      linguist-vendored
+jiten/static/Table*     linguist-vendored
+jiten/static/bootstrap* linguist-vendored
+jiten/static/font/*     linguist-vendored
+jiten/static/jquery*    linguist-vendored
+jiten/static/licenses/* linguist-vendored
+jiten/static/popper*    linguist-vendored

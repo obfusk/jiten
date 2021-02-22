@@ -25,7 +25,14 @@ a[aria-expanded=false] .collapse-close {
   display: none;
 }
 
-#jmdict-collapse.show {
+#toggle-romaji[data-roma="show"]::before {
+  content: "Hide ";
+}
+#toggle-romaji[data-roma="hide"]::before {
+  content: "Show ";
+}
+
+#jmdict-collapse.show, #sentences-collapse.show {
   display: inline;
 }
 
@@ -49,20 +56,18 @@ a[aria-expanded=false] .collapse-close {
   font-family: KanjiStrokeOrders;
   src: url("/static/font/KanjiStrokeOrders_v4.003.ttf");
 }
-/*
 @font-face {
   font-family: "__Noto Serif CJK JP";
-  src: url("/static/font/NotoSerifJP-Regular.otf") format("opentype");
+  src: url("/static/font/noto/NotoSerifJP-Regular.otf") format("opentype");
 }
 @font-face {
   font-family: "__Noto Sans CJK JP";
-  src: url("/static/font/NotoSansJP-Regular.otf") format("opentype");
+  src: url("/static/font/noto/NotoSansJP-Regular.otf") format("opentype");
 }
-*/
 .stroke, .kanji {
   font-family:
     KanjiStrokeOrders,
-    "Noto Serif CJK JP", /* "__Noto Serif CJK JP", */
+    "Noto Serif CJK JP", "__Noto Serif CJK JP",
     "Noto Serif CJK SC", "Noto Serif CJK TC",
     ipaexmincho, ipamincho, serif;
 }
@@ -70,13 +75,20 @@ a[aria-expanded=false] .collapse-close {
   font-family:
     -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
     "Helvetica Neue", Arial,
-    "Noto Sans CJK JP", /* "__Noto Sans CJK JP", */
+    "Noto Sans CJK JP", "__Noto Sans CJK JP",
     "Noto Sans CJK SC", "Noto Sans CJK TC",
     ipaexgothic, ipagothic, sans-serif,
     "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
 }
 .jap:not(.sentence), .tooltip {
   word-break: keep-all;
+}
+
+.convert-kana::before {
+  content: "あ";
+}
+.convert-kana[data-convert-mode="h2k"]::before {
+  content: "ア";
 }
 
 fieldset {
@@ -115,8 +127,25 @@ input[type=number] {
   width: 2rem; /* TODO */
 }
 
+#radicals > .btn {
+  border-width: 5px;
+}
+
+.radical.chosen {
+  border-color: #c87f0a;
+}
+
+.btn-link:focus {
+  border-color: transparent;
+  box-shadow: none;
+}
+
 code, .nowrap {
   display: inline-block;
+}
+
+iframe {
+  height: 20em;
 }
 
 footer {

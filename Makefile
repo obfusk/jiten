@@ -1,5 +1,6 @@
 SHELL   := /bin/bash
 PYTHON  ?= python3
+VERBOSE ?= --verbose
 
 CSSV    := https://jigsaw.w3.org/css-validator/validator
 CSSOK   := Congratulations! No Error Found.
@@ -8,27 +9,48 @@ HTMLV   := https://html5.validator.nu
 HTMLOK  := The document is valid HTML5
 
 URL     := http://localhost:5000
-H5VCMD  := html5validator --show-warnings --log INFO --no-langdetect
+H5VCMD  := html5validator --show-warnings --log INFO --no-langdetect \
+             --ignore 'Unicode Normalization Form'
 
-.PHONY: all test ci-test clean cleanup validate-css tmp-html
-.PHONY: check-html validate-html validate-html-curl validate-html-py
+PYCOV   := $(PYTHON) -mcoverage run --source jiten
+
+export PYTHONWARNINGS := default
+
+.PHONY: all test test-js ci-test coverage clean cleanup
+.PHONY: validate-css tmp-html check-html validate-html
+.PHONY: validate-html-curl validate-html-py
 
 all: ext
 	$(PYTHON) -m jiten.cli setup
 
-test: all
-	$(PYTHON) -m jiten.app       --verbose --doctest
-	$(PYTHON) -m jiten.cli       --verbose  _doctest
-	$(PYTHON) -m jiten.freq      --verbose --doctest
-	$(PYTHON) -m jiten.jmdict    --verbose --doctest
-	$(PYTHON) -m jiten.kana      --verbose --doctest
-	$(PYTHON) -m jiten.kanji     --verbose --doctest
-	$(PYTHON) -m jiten.misc      --verbose --doctest
-	$(PYTHON) -m jiten.pitch     --verbose --doctest
-	$(PYTHON) -m jiten.sentences --verbose --doctest
+test: all test-js
+	$(PYTHON) -m jiten.app       $(VERBOSE) --doctest
+	$(PYTHON) -m jiten.cli       $(VERBOSE)  _doctest
+	$(PYTHON) -m jiten.freq      $(VERBOSE) --doctest
+	$(PYTHON) -m jiten.jmdict    $(VERBOSE) --doctest
+	$(PYTHON) -m jiten.kana      $(VERBOSE) --doctest
+	$(PYTHON) -m jiten.kanji     $(VERBOSE) --doctest
+	$(PYTHON) -m jiten.misc      $(VERBOSE) --doctest
+	$(PYTHON) -m jiten.pitch     $(VERBOSE) --doctest
+	$(PYTHON) -m jiten.sentences $(VERBOSE) --doctest
+
+test-js:
 	node jiten/static/script.js
 
-ci-test: test validate-css validate-html check-html
+ci-test: test-js coverage validate-css validate-html check-html
+
+coverage: tmp-html
+	$(PYCOV) -a -m jiten.app       --doctest
+	$(PYCOV) -a -m jiten.cli        _doctest
+	$(PYCOV) -a -m jiten.freq      --doctest
+	$(PYCOV) -a -m jiten.jmdict    --doctest
+	$(PYCOV) -a -m jiten.kana      --doctest
+	$(PYCOV) -a -m jiten.kanji     --doctest
+	$(PYCOV) -a -m jiten.misc      --doctest
+	$(PYCOV) -a -m jiten.pitch     --doctest
+	$(PYCOV) -a -m jiten.sentences --doctest
+	$(PYTHON) -mcoverage html
+	$(PYTHON) -mcoverage report
 
 clean: cleanup
 	rm -f jiten/res/*.sqlite3
@@ -40,6 +62,7 @@ cleanup:
 	find -name '*~' -delete -print
 	rm -fr jiten/__pycache__/ tmp-html/
 	rm -fr build/ dist/ jiten.egg-info/
+	rm -fr .coverage htmlcov/
 	rm -fr jiten/.version
 	$(MAKE) -C jiten/res/jmdict cleanup
 
@@ -47,19 +70,29 @@ validate-css:
 	curl -sF "file=@jiten/static/style.css;type=text/css" \
 	  -- "$(CSSV)" | grep -qF '$(CSSOK)'
 
+# TODO
 tmp-html:
-	$(PYTHON) -m jiten.cli serve & pid=$$!; \
-	trap "kill $$pid" EXIT; mkdir -p tmp-html; sleep 5; \
-	curl -sG $(URL) > tmp-html/index.html; \
-	curl -sG $(URL)/jmdict -d max=10 -d word=yes \
-	  --data-urlencode query=cat   > tmp-html/cat.html  ; \
-	curl -sG $(URL)/jmdict -d max=10 -d word=yes \
-	  --data-urlencode query=idiot > tmp-html/idiot.html; \
-	curl -sG $(URL)/kanji  -d max=10 -d word=yes \
-	  --data-urlencode query=ねこ  > tmp-html/neko.html ; \
-	curl -sG $(URL)/kanji  -d max=10 -d word=yes \
-	  --data-urlencode query=日    > tmp-html/hi.html   ; \
-	curl -sG $(URL)/stroke > tmp-html/stroke.html
+	set -e; rm -fr tmp-html/; mkdir tmp-html; \
+	$(PYCOV) -m jiten.cli _serve tmp-html/.{running,done} & pid=$$!; \
+	dl() { f="$$1"; shift; curl -sG $(URL)"$$@" > tmp-html/"$$f".html; }; \
+	while [ ! -e tmp-html/.running ]; do sleep 1; done ; \
+	dl index ; \
+	dl cat    /jmdict    -d max=10 -d word=yes --data-urlencode query=cat    ; \
+	dl idiot  /jmdict    -d max=10 -d word=yes --data-urlencode query=idiot  ; \
+	dl neko   /kanji     -d max=10 -d word=yes --data-urlencode query=ねこ   ; \
+	dl hi     /kanji     -d max=10 -d word=yes --data-urlencode query=日     ; \
+	dl kitten /sentences -d max=10             --data-urlencode query=kitten ; \
+	dl stroke /stroke           ; \
+	dl j-b-f  /jmdict/by-freq   ; \
+	dl j-b-n1 /jmdict/by-jlpt/1 ; \
+	dl j-b-n2 /jmdict/by-jlpt/2 ; \
+	dl j-b-n3 /jmdict/by-jlpt/3 ; \
+	dl j-b-n4 /jmdict/by-jlpt/4 ; \
+	dl j-b-n5 /jmdict/by-jlpt/5 ; \
+	dl k-b-f  /kanji/by-freq    ; \
+	dl k-b-l  /kanji/by-level   ; \
+	dl k-b-j  /kanji/by-jlpt    ; \
+	touch tmp-html/.done ; wait $$pid
 
 # TODO
 check-html:

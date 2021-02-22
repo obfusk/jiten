@@ -5,10 +5,10 @@
 #
 # File        : android/main.py
 # Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-# Date        : 2020-12-03
+# Date        : 2021-02-19
 #
-# Copyright   : Copyright (C) 2020  Felix C. Stegerman
-# Version     : v0.3.5
+# Copyright   : Copyright (C) 2021  Felix C. Stegerman
+# Version     : v0.4.0
 # License     : AGPLv3+
 #
 # --                                                            ; }}}1
@@ -22,25 +22,6 @@ LOCAL         = "http://{}:{}".format(HOST, PORT)
 ANDROID       = "ANDROID_APP_PATH" in os.environ
 RUNNING, URL  = False, None   # mutable state
 
-# FIXME: workaround for bug in older versions of p4a
-def fix_stdio():                                                # {{{1
-  if isinstance(getattr(sys.stdout, "buffer", None), str):
-    print("*** Fixing stdout/stderr ***")
-    import androidembed
-    class LogFile:
-      def __init__(self):
-        self.__buf = ""
-      def write(self, s):
-        s = self.__buf + s
-        lines = s.split("\n")
-        for l in lines[:-1]:
-          androidembed.log(l)
-        self.__buf = lines[-1]
-      def flush(self):
-        return
-    sys.stdout = sys.stderr = LogFile()
-                                                                # }}}1
-
 def debug_mode(act):
   priv = os.environ["ANDROID_PRIVATE"]
   info = act.getApplicationInfo()
@@ -51,6 +32,8 @@ def setup_flask(dbg):
   global app, request
   if dbg: os.environ["FLASK_ENV"] = "development"
   from jiten.app import app, request
+  token = app.config["WEBVIEW_TOKEN"] = secrets.token_hex()
+  return token
 
 def setup_debug_mode():
   token = secrets.token_hex()
@@ -77,12 +60,12 @@ def setup_activities(act, dbg, token):
             act.loadUrl(url)
           else:
             URL = url
+          break
 
   android.activity.bind(on_new_intent = on_new_intent)
   if intent := act.getIntent(): on_new_intent(intent)
 
-def setup_clipboard(act):
-  token = secrets.token_hex()
+def setup_clipboard(act, token):
   CD    = jnius.autoclass("android.content.ClipData")
   ctx   = act.getApplicationContext()
   clp   = ctx.getSystemService(type(ctx).CLIPBOARD_SERVICE)
@@ -92,23 +75,22 @@ def setup_clipboard(act):
     clp.setPrimaryClip(CD.newPlainText("text", request.data))
     return "" # FIXME
 
-  return token
-
 def setup_webview(cls):
   cls.enableZoom()
   cls.mOpenExternalLinksInBrowser = True
 
 if __name__ == "__main__":
   if ANDROID:
-    fix_stdio()
     import android.activity, android.config, certifi, jnius
+    from android.runnable import run_on_ui_thread
+    setup_clipboard = run_on_ui_thread(setup_clipboard)
     os.environ["SSL_CERT_FILE"] = certifi.where()
-    cls = jnius.autoclass(android.config.ACTIVITY_CLASS_NAME)
-    act = cls.mActivity
-    dbg = debug_mode(act)
-    setup_flask(dbg)
+    cls   = jnius.autoclass(android.config.ACTIVITY_CLASS_NAME)
+    act   = cls.mActivity
+    dbg   = debug_mode(act)
+    token = setup_flask(dbg)
     if dbg: setup_debug_mode()
-    token = setup_clipboard(act)
+    setup_clipboard(act, token)
     setup_activities(act, dbg, token)
     setup_webview(cls)
 

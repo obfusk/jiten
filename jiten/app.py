@@ -5,10 +5,10 @@
 #
 # File        : jiten/app.py
 # Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-# Date        : 2021-01-18
+# Date        : 2021-01-30
 #
 # Copyright   : Copyright (C) 2021  Felix C. Stegerman
-# Version     : v0.3.5
+# Version     : v0.4.0
 # License     : AGPLv3+
 #
 # --                                                            ; }}}1
@@ -18,16 +18,157 @@ r"""
 
 Web interface.
 
+>>> import re
+
+>>> app.testing = True
+>>> client = app.test_client()
+
+>>> def get(*a, **k):
+...   r = client.get(*a, **k)
+...   print(r.status)
+...   return r.data.decode("utf8")
+
+>>> d = get("/")
+200 OK
+>>> "Jiten Japanese Dictionary" in d
+True
+>>> "Search JMDict" in d
+True
+>>> "Search Kanji" in d
+True
+>>> "Search Sentences" in d
+True
+>>> "筆順を示す" in d
+True
+
+>>> d = get("/jmdict?query=kitten&word=yes")
+200 OK
+>>> "こꜛねꜜこ" in d
+True
+>>> "koꜛneꜜko" in d
+True
+>>> "kitten" in d
+True
+>>> "small cat" in d
+True
+>>> "query=猫" in d
+True
+
+>>> d = get("/jmdict?query=%2Brandom&jlpt=5", follow_redirects = True)
+200 OK
+>>> re.search(r"»\s*jlpt\s*<[^>]*>\s*N5", d) is not None
+True
+
+>>> d = get("/kanji?query=ねこ")
+200 OK
+>>> "ビョウ" in d
+True
+>>> "ねこ" in d
+True
+>>> "neko" in d
+True
+>>> "0x732b" in d
+True
+>>> re.search(r"»\s*jlpt\s*<[^>]*>\s*N3", d) is not None
+True
+>>> re.search(r"»\s*skip\s*<[^>]*>\s*1-3-8", d) is not None
+True
+
+>>> d = get("/kanji?query=日")
+200 OK
+>>> "ニチ" in d
+True
+>>> "counter for days" in d
+True
+>>> "0x65e5" in d
+True
+>>> re.search(r"»\s*jlpt\s*<[^>]*>\s*N5", d) is not None
+True
+>>> re.search(r"»\s*skip\s*<[^>]*>\s*3-3-1", d) is not None
+True
+
+>>> d = get("/sentences?query=kitten")
+200 OK
+>>> "I will care for your kitten during your absence." in d
+True
+>>> re.search(r"任\s*<[^>]*>\s*せてください", d) is not None
+True
+
+>>> d = get("/stroke")
+200 OK
+>>> ">漢字と仮名の筆順<" in d
+True
+
+>>> d = get("/stroke?query=何か")
+200 OK
+>>> ">何か<" in d
+True
+
+>>> d = get("/jmdict/by-freq")
+200 OK
+>>> "する、為る" in d
+True
+
+>>> d = get("/jmdict/by-jlpt/1")
+200 OK
+>>> "あたし、あたくし、あたい、あて、私" in d
+True
+
+>>> d = get("/jmdict/by-jlpt/2")
+200 OK
+>>> "きっかけ、キッカケ、切っ掛け、切掛け、切っかけ、切掛、切っ掛、切かけ" in d
+True
+
+>>> d = get("/jmdict/by-jlpt/3")
+200 OK
+>>> "恐ろしい、怖ろしい" in d
+True
+
+>>> d = get("/jmdict/by-jlpt/4")
+200 OK
+>>> "ああ、あー、あぁ、アー、アア、アァ、嗚呼、噫、嗟" in d
+True
+
+>>> d = get("/jmdict/by-jlpt/5")
+200 OK
+>>> "みる、見る、観る、視る" in d
+True
+
+>>> d = get("/kanji/by-freq")
+200 OK
+>>> "1 | day; sun; Japan; counter for days" in d
+True
+
+>>> d = get("/kanji/by-level")
+200 OK
+>>> d.index("常用1") < d.index("森") < d.index("常用2")
+True
+
+>>> d = get("/kanji/by-jlpt")
+200 OK
+>>> d.index("JLPT N3") < d.index("歯", d.index("JLPT N5")) < d.index("JLPT N2")
+True
+
+>>> sorted( (c.name, c.value) for c in client.cookie_jar )
+[]
+>>> p = dict(dark = "yes", lang = "eng ger oops".split())
+>>> r = client.post("/_save_prefs", data = p, follow_redirects = True)
+>>> r.status
+'200 OK'
+>>> sorted( (c.name, c.value) for c in client.cookie_jar )
+[('dark', 'yes'), ('lang', '"eng ger"'), ('max', '50'), ('nor2h', 'no'), ('roma', 'no')]
+
 """                                                             # }}}1
 
-import json, os, time
+import json, os, sys, time
 
 from pathlib import Path
 
-import click, jinja2
+import click, jinja2, werkzeug
 
-from flask import Flask, escape, make_response, redirect, request, \
-                  render_template, url_for
+os.environ["FLASK_SKIP_DOTENV"] = "yes"                       #  FIXME
+from flask import Flask, abort, escape, make_response, redirect, \
+                  request, render_template, url_for
 
 from .version import __version__, py_version
 from .kana import kana2romaji
@@ -43,7 +184,7 @@ MAX           = 50
 NAME          = "jiten"
 HTTPS         = NAME.upper() + "_HTTPS"
 DOMAIN        = NAME.upper() + "_DOMAIN"
-PREFS         = "lang dark roma max".split()
+PREFS         = "lang dark roma nor2h max".split()
 
 GUI_TOKEN     = os.environ.get("JITEN_GUI_TOKEN") or None
 ANDROID_PRIV  = os.environ.get("ANDROID_PRIVATE") or None
@@ -61,7 +202,6 @@ else:
   CONF_PREFS  = None
 
 if CONF_PREFS:
-  # FIXME: CSRF protection needed?
   def get_prefs():
     try:
       with open(CONF_PREFS) as f: return json.load(f)
@@ -111,16 +251,19 @@ def yesno(b):
 def respond(template, **data):
   prefs       = get_prefs()
   langs       = get_langs(prefs)
-  dark, roma  = prefs.get("dark") == "yes", prefs.get("roma") == "yes"
+  dark        = prefs.get("dark") == "yes"
+  roma        = prefs.get("roma") == "yes"
+  nor2h       = prefs.get("nor2h") == "yes"
   pref_langs  = prefs.get("lang", "").split() or [J.LANGS[0]]
   pref_max    = int(prefs.get("max", MAX))
   return make_response(render_template(
     template, mode = "dark" if dark else "light", langs = langs,
-    roma = roma, pref_langs = pref_langs, pref_max = pref_max,
-    int = int, ord = ord, hex = hex, J = J, K = K, M = M, P = P, S = S,
-    START = START, VERSION = __version__, PY_VERSION = py_version,
-    kana2romaji = kana2romaji, SEARCH = SEARCH, GUI_TOKEN = GUI_TOKEN,
-    **data
+    roma = roma, nor2h = nor2h, pref_langs = pref_langs,
+    pref_max = pref_max, int = int, ord = ord, hex = hex,
+    J = J, K = K, M = M, P = P, S = S, START = START,
+    VERSION = __version__, PY_VERSION = py_version,
+    kana2romaji = kana2romaji, SEARCH = SEARCH,
+    GUI = bool(GUI_TOKEN), **data
   ))
 
 def get_langs(prefs = None):
@@ -141,10 +284,32 @@ def get_max():
   return int(arg("max", get_prefs().get("max", MAX), type = int))
 
 def get_filters():
-  jlpt = "-".join(filter(None, request.args.getlist("jlpt"))) or None
-  if jlpt: jlpt = M.JLPT_LEVEL.convert(jlpt)
-  return dict(noun = arg_bool("noun"), verb = arg_bool("verb"),
-              prio = arg_bool("prio"), jlpt = jlpt)
+  n, v, p = arg("noun"), arg("verb"), arg("prio")
+  j       = "-".join(filter(None, request.args.getlist("jlpt"))) or None
+  jlpt    = M.JLPT_LEVEL.convert(j) if j else j
+  args    = dict(noun = n, verb = v, prio = p, jlpt = j)
+  filters = dict(noun = n == "yes", verb = v == "yes",
+                 prio = p == "yes", jlpt = jlpt)
+  return filters, { k: v for k, v in args.items() if v is not None }
+
+@app.errorhandler(M.RegexError)
+def handle_regexerror(e):
+  return respond("error.html", name = "Regex Error", info = str(e)), 400
+
+@app.errorhandler(click.exceptions.BadParameter)
+def handle_paramerror(e):
+  return respond("error.html", name = "Param Error", info = str(e)), 400
+
+@app.errorhandler(werkzeug.exceptions.HTTPException)
+def handle_httperror(e):
+  return respond("error.html", name = e.name, info = e.description), e.code
+
+def check_token(f):
+  def g(*a, **k):
+    token = GUI_TOKEN or app.config.get("WEBVIEW_TOKEN")
+    if token and token != request.form.get("token"): abort(403)
+    return f(*a, **k)
+  return g
 
 @app.route("/")
 def r_index():
@@ -154,22 +319,17 @@ def r_index():
 
 @app.route("/jmdict")
 def r_jmdict():
-  try:
-    filters = get_filters()
-  except click.exceptions.BadParameter as e:
-    return "param error: " + escape(str(e)), 400
+  filters, fargs = get_filters()
   if arg("query", "").strip().lower() == "+random":
     q = "+#{}".format(J.random_seq(**filters))
-    return redirect(url_for("r_jmdict", query = q, lang = get_langs()))
+    return redirect(url_for("r_jmdict", query = q, lang = get_langs(),
+                            **fargs))
   query, max_r = get_query_max()
   opts = dict(langs = get_langs(), max_results = max_r, **filters)
   data = dict(page = "jmdict", query = query)
-  try:
-    if query: data["results"] = J.search(query, **opts)
-    with K.readmeans() as f:
-      return respond("jmdict.html", krm = f, **data)
-  except M.RegexError as e:
-    return "regex error: " + escape(str(e)), 400
+  if query: data["results"] = J.search(query, **opts)
+  with K.readmeans() as f, P.pitches() as g:
+    return respond("jmdict.html", krm = f, elem_pitch = g, **data)
 
 @app.route("/jmdict/by-freq")
 def r_jmdict_by_freq():
@@ -201,11 +361,8 @@ def r_kanji():
     return redirect(url_for("r_kanji", query = K.random().char))
   query, max_r = get_query_max()
   data = dict(page = "kanji", query = query)
-  try:
-    if query: data["results"] = K.search(query, max_results = max_r)
-    return respond("kanji.html", **data)
-  except M.RegexError as e:
-    return "regex error: " + escape(str(e)), 400
+  if query: data["results"] = K.search(query, max_results = max_r)
+  return respond("kanji.html", **data)
 
 @app.route("/kanji/by-freq")
 def r_kanji_by_freq():
@@ -253,18 +410,21 @@ def r_download_dbs():
   try:
     app.config["DOWNLOAD_DBS"]()
   except M.DownloadError as e:
-    return "download error: {} (file: {}, url: {})" \
-           .format(escape(str(e)), e.file, e.url), 500
+    name  = "Download Error"
+    info  = "{} (file: {}, url: {})".format(str(e), e.file, e.url)
+    return respond("error.html", name = name, info = info), 500
   del app.config["DBS_UP2DATE"], app.config["DOWNLOAD_DBS"]
   return redirect(url_for("r_index"))
 
 @app.route("/_save_prefs", methods = ["POST"])
+@check_token
 def r_save_prefs():
   return set_prefs(dict(
     lang  = " ".join( l for l in request.form.getlist("lang")
                         if l in J.LANGS ),
     dark  = yesno(request.form.get("dark") == "yes"),
     roma  = yesno(request.form.get("roma") == "yes"),
+    nor2h = yesno(request.form.get("nor2h") == "yes"),
     max   = str(request.form.get("max", MAX, type = int)),
   ), redirect(request.form.get("url", url_for("r_index"))))
 
@@ -286,5 +446,11 @@ SEARCH = (
   ("sentences", "Search Sentences"),
   ("stroke"   , "筆順を示す"      ),
 )
+
+if __name__ == "__main__":
+  if "--doctest" in sys.argv:
+    verbose = "--verbose" in sys.argv
+    import doctest
+    if doctest.testmod(verbose = verbose)[0]: sys.exit(1)
 
 # vim: set tw=70 sw=2 sts=2 et fdm=marker :

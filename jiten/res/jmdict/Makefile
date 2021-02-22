@@ -18,8 +18,8 @@ cleanup:
 	rm -f {jmdict,kanjidic2}{,-unpatched}.xml
 
 update: clean
-	wget -O    jmdict.xml.gz    "http://ftp.monash.edu/pub/nihongo/JMdict.gz"
-	wget -O    kanjidic2.xml.gz "http://www.edrdg.org/kanjidic/kanjidic2.xml.gz"
+	wget -O    jmdict.xml.gz    "https://www.edrdg.org/pub/Nihongo/JMdict.gz"
+	wget -O    kanjidic2.xml.gz "https://www.edrdg.org/pub/Nihongo/kanjidic2.xml.gz"
 	gunzip    {jmdict,kanjidic2}.xml.gz
 	gunzip -k {jmdict,kanjidic2}-unpatched.xml.gz
 	diff -Naur    jmdict{-unpatched,}.xml > jmdict.patch    || true

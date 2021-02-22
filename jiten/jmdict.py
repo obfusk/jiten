@@ -5,10 +5,10 @@
 #
 # File        : jiten/jmdict.py
 # Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-# Date        : 2020-12-07
+# Date        : 2021-02-11
 #
-# Copyright   : Copyright (C) 2020  Felix C. Stegerman
-# Version     : v0.3.5
+# Copyright   : Copyright (C) 2021  Felix C. Stegerman
+# Version     : v0.4.0
 # License     : AGPLv3+
 #
 # --                                                            ; }}}1
@@ -19,22 +19,22 @@ r"""
 JMDict.
 
 >>> DBVERSION
-10
+13
 
 >>> jmdict = parse_jmdict()
 >>> len(jmdict)
-190343
+190722
 
 >>> print(jmdict[-1].sense[0].gloss[0])
-Japanese-Multilingual Dictionary Project - Creation Date: 2020-12-03
+Japanese-Multilingual Dictionary Project - Creation Date: 2021-01-19
 
 >>> len([ x for x in jmdict if x.isprio() ])
-22437
+22443
 >>> len([ x for x in jmdict if x.isprio() and list(x.pitch()) ])
-14719
+21269
 
 >>> len([ x for x in jmdict if x.jlpt == 1 ])
-3034
+3035
 >>> len([ x for x in jmdict if x.jlpt == 2 ])
 1725
 >>> len([ x for x in jmdict if x.jlpt == 3 ])
@@ -189,6 +189,33 @@ word containing out-dated kanji
 くる
 旨く行く
 
+
+>>> from .kana import hiragana2katakana as h2k, katakana2hiragana as k2h
+>>> from .kana import romaji2hiragana   as r2h, romaji2katakana   as r2k
+>>> from .kana import kana2romaji       as k2r
+>>> rs   = [ r.elem for e in jmdict for r in e.reading ]
+>>> hira = [ r for r in rs if M.ishiragana(r) ]
+>>> kata = [ r for r in rs if M.iskatakana(r) ]
+>>> mixd = [ r for r in rs if not (M.ishiragana(r) or M.iskatakana(r)) ]
+>>> len(rs)
+228225
+>>> len([ k2r(r) for r in rs ])
+228225
+>>> len([ k2r(p) for e in jmdict for p in e.pitch() ])
+110153
+>>> len(hira)
+152312
+>>> len(kata)
+60127
+>>> len(mixd)
+15786
+>>> len([ r for r in hira if r2h(k2r(r)) != r ])
+0
+>>> len([ r for r in kata if r2k(k2r(r, True)) != r ])
+0
+>>> len([ r for r in mixd if r2k(k2r(r, True)) != h2k(r) ])
+0
+
 """                                                             # }}}1
 
 import gzip, os, re, sys
@@ -201,9 +228,10 @@ import click
 from . import freq  as F
 from . import misc  as M
 from . import pitch as P
+from .kana import katakana2hiragana
 from .sql import sqlite_do, load_pcre_extension
 
-DBVERSION       = 10 # NB: update this when data/schema changes
+DBVERSION       = 13 # NB: update this when data/schema changes
 SQLITE_FILE     = M.resource_path("res/jmdict.sqlite3")
 JMDICT_FILE     = M.resource_path("res/jmdict/jmdict.xml.gz")
 JLPT_FILE_BASE  = M.resource_path("res/jlpt/N")
@@ -214,7 +242,7 @@ PRIO            = dict(news1 = 10, news2 = 1, ichi1 = 10, ichi2 = 1,
                        spec1 = 10, spec2 = 5, gai1  = 10, gai2  = 1)
 MINPRIO         = 5
 USUKANA         = "word usually written using kana alone"
-LANGS           = "eng dut ger".split()
+LANGS           = "eng dut ger fre spa swe".split()
 JLPTKK, JLPTUK  = JLPTKANA = "[katakana]", "[usukana]"
 
 Entry   = namedtuple("Entry"  , """seq jlpt kanji reading sense""".split())
@@ -258,12 +286,12 @@ def usually_kana(e): return _usukana(e.sense)
 def _usukana(sense): return any( USUKANA in s.info for s in sense )
 
 def gloss_pos_info(e, langs):
-  gloss, pos, info = {}, [], []
+  gloss, pos, info = { l: [] for l in langs }, [], []
   for l in langs:
     for s in e.sense:
-      if not s.lang == l: continue
+      if s.lang != l: continue
       pos.extend(s.pos); info.extend(s.info)
-      gloss.setdefault(l, []).append(s.gloss)
+      gloss[l].append(s.gloss)
   return gloss, tuple(M.uniq(pos + info))
 
 def isnoun(e):
@@ -278,11 +306,15 @@ def xinfo(e):
 
 def xrefs(e): return M.uniq( x for s in e.sense for x in s.xref )
 
+def pitch(e, conn = None): return M.uniq(pitch_w_dups(e, conn))
+
 # TODO
-def pitch(e):
+def pitch_w_dups(e, conn = None):
   ks = tuple( x.elem for x in e.kanji or e.reading )
-  for r in e.reading:
-    p = P.get_pitch(r.elem, ks)
+  rs = tuple( r.elem for r in e.reading )
+  hr = tuple( katakana2hiragana(r) for r in rs )
+  for r in rs + tuple( r for r in hr if r not in rs ):
+    p = P.get_pitch(r, ks, conn = conn)
     if p: yield p
 
 # TODO
@@ -377,14 +409,14 @@ def parse_jmdict(file = JMDICT_FILE):                           # {{{1
         for ke in e.findall("k_ele"):           # 0+ kanji elem
           keb   = ke.find("keb").text.strip()   # word/phrase w/ kanji
           info  = tuple( x.text.strip() for x in ke.findall("ke_inf") )
-          assert all( "\n" not in x and "" not in x for x in info )
+          assert all( "\n" not in x and "\x1e" not in x for x in info )
           kanji.append(Kanji(keb, _kanji_chars(keb), info, _prio_k(ke)))
         for re in e.findall("r_ele"):           # 1+ reading elem
           reb   = re.find("reb").text.strip()   # reading elem
           restr = tuple( x.text.strip() for x in re.findall("re_restr") )
                   # reading only applies to keb subset
           info  = tuple( x.text.strip() for x in re.findall("re_inf") )
-          assert all( "\n" not in x and "" not in x for xs in
+          assert all( "\n" not in x and "\x1e" not in x for xs in
                       [restr, info] for x in xs )
           reading.append(Reading(reb, restr, info, _prio_r(re)))
         for se in e.findall("sense"):           # 1+ sense elem
@@ -404,7 +436,7 @@ def parse_jmdict(file = JMDICT_FILE):                           # {{{1
                                    for y in x.text.split("・")
                                    if not y.strip().isdigit() )
           assert seq < MAXSEQ
-          assert all( "\n" not in x and "" not in x for xs in
+          assert all( "\n" not in x and "\x1e" not in x for xs in
                       [pos, gloss, s_inf, misc, xref] for x in xs )
           sense.append(Sense(pos, lang, tuple(gloss), s_inf + misc, xref))
         krs   = ( tuple(x) for x in [kanji, reading, sense] )
@@ -602,13 +634,16 @@ def search(q, langs = [LANGS[0]], max_results = None,           # {{{1
       seq = int(q[2:].strip())
       for r in c.execute("SELECT rank, jlpt FROM entry WHERE seq = ?", (seq,)):
         yield load_entry(c, seq, r[1]), fix_rank(r[0]) # #=1
+    elif "幸猫" in q:
+      yield SACHINEKO, None
     else:
       lang  = ",".join( "'" + l + "'" for l in langs if l in LANGS )
       limit = "LIMIT " + str(int(max_results)) if max_results else ""
       fltr  = search_filter(noun, verb, prio, jlpt)
-                        # vvvvvvvvvvvvvvv NB: 1 > 0 > NULL
-      ordr  = """ORDER BY prio >= {} DESC, rank ASC, jlpt DESC,
-                          prio DESC, seq ASC""".format(MINPRIO) # TODO
+      ordr  = """ORDER BY IFNULL(prio, 0) >= {} DESC,
+                          rank = {} ASC, prio IS NULL ASC,
+                          rank ASC, jlpt DESC, prio DESC, seq ASC
+              """.format(MINPRIO, F.NOFREQ)                     # TODO
       if len(q) == 1 and M.iskanji(q):
         query = ("""
           SELECT rank, seq, jlpt FROM (
@@ -690,6 +725,13 @@ def random_seq(noun = False, verb = False, prio = False, jlpt = None,
   with sqlite_do(file) as c:
     q = "SELECT seq FROM entry {} ORDER BY RANDOM() LIMIT 1".format(f)
     return c.execute(q).fetchone()[0]                       # ^ safe!
+
+SACHINEKO = Entry(
+  29483, None,
+  (Kanji("幸猫", frozenset("幸猫"), (), None),),
+  (Reading("フェリックス", (), (), None),),
+  (Sense((), "eng", ("(=^・^=)",), (), ()),)
+)
 
 if __name__ == "__main__":
   if "--doctest" in sys.argv:

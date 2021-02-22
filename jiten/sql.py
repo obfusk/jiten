@@ -5,10 +5,10 @@
 #
 # File        : jiten/sql.py
 # Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-# Date        : 2020-10-24
+# Date        : 2021-02-19
 #
-# Copyright   : Copyright (C) 2020  Felix C. Stegerman
-# Version     : v0.3.4
+# Copyright   : Copyright (C) 2021  Felix C. Stegerman
+# Version     : v0.4.0
 # License     : AGPLv3+
 #
 # --                                                            ; }}}1
@@ -20,7 +20,7 @@ SQL helper functions.
 
 """                                                             # }}}1
 
-import importlib, sqlite3
+import importlib.util, sqlite3
 
 from contextlib import contextmanager
 

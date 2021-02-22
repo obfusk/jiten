@@ -4,21 +4,28 @@
 
     File        : templates/index.html
     Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-    Date        : 2020-12-30
+    Date        : 2021-01-26
 
-    Copyright   : Copyright (C) 2020  Felix C. Stegerman
-    Version     : v0.3.5
+    Copyright   : Copyright (C) 2021  Felix C. Stegerman
+    Version     : v0.4.0
     License     : AGPLv3+
 
   -->
   <head>
     {% include "_meta.html" %}
     <title>jiten</title>
+    <style>
+      #logo { height: 42px; width: 42px; background-color: #fff; }
+    </style>
   </head>
   <body>
     {% from "_search.html" import jmdict, kanji, sentences, stroke with context %}
     {% include "_nav.html" %}
     <div class="container">
+      <h4 class="text-center mb-4">
+        <img class="img-thumbnail" src="/static/icon.png" alt="logo"
+          id="logo" /> Jiten Japanese Dictionary
+      </h4>
       {{ jmdict(langs) }}
       <br/>
       {{ kanji(af = False) }}

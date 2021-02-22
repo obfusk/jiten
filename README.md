@@ -2,10 +2,10 @@
 
     File        : README.md
     Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-    Date        : 2021-01-17
+    Date        : 2021-02-20
 
     Copyright   : Copyright (C) 2021  Felix C. Stegerman
-    Version     : v0.3.5
+    Version     : v1.0.0
     License     : AGPLv3+
 
 }}}1 -->
@@ -51,33 +51,39 @@ selected manually).
   - simple searches don't require knowledge of regexes
   - quick reference available in the web interface and android app
 * JMDict multilingual japanese dictionary
-  - kanji, readings, meanings (english, dutch and/or german) & more
+  - kanji, readings (romaji optional), meanings & more
+  - meanings in english, dutch, german, french and/or spanish
   - pitch accent (from Wadoku)
   - browse by frequency/jlpt
 * Kanji dictionary
-  - readings, meanings (english), jmdict entries, radicals & more
+  - readings (romaji optional), meanings (english), jmdict entries, radicals & more
   - search using
     [SKIP codes](https://en.wikipedia.org/wiki/Kodansha_Kanji_Learner%27s_Dictionary#SKIP)
   - search by radical
   - browse by frequency/level/jlpt
 * Example sentences (from Tatoeba)
-  - with english, dutch and/or german translation
+  - with english, dutch, german, french and/or spanish translation
   - some with audio
 * Stroke order
   - input a word or sentence and see how it's written
+
+## Interfaces
+
 * Android app
   - wraps the web interface (running locally on your device) in a webview
   - completely offline, no internet access required
+  - easily share and open `jiten.obfusk.dev` links
 * Web interface
   - available online at https://jiten.obfusk.dev
   - light/dark mode
   - search history (stored locally)
-  - tooltips to quickly see meanings and readings for kanji in words and sentences
+  - tooltips to quickly see meanings and readings for kanji and words
   - use long press for tooltips on mobile
-  - can be run on your own computer (or e.g. android phone)
+  - converts romaji to hiragana and between hiragana and katakana
+  - can be run on your own computer
 * Command-line interface
 * WebView GUI
-  - wraps the web interface
+  - wraps the web interface (running locally on your computer)
 
 ## CLI
 
@@ -89,8 +95,14 @@ $ jiten -v jmdict --max 1 --word kat --lang dut
 $ jiten -v jmdict --max 1 --exact 誤魔化す
 
 $ jiten -v jmdict +random         # random entry
-$ jiten -v jmdict --prio +random  # random "priority" entry"
+$ jiten -v jmdict --prio +random  # random "priority" entry
 $ jiten -v jmdict -n 4-5 +random  # random JLPT N4 or N5 entry
+
+# convert romaji to hiragana & show romaji readings
+$ jiten -v jmdict --max 1 --hiragana --romaji --word neko
+
+# prefix commands: +k (katakana), +h (hiragana), +w (word) etc.
+$ jiten -v jmdict --max 1 --romaji '+k +w ko-hi-'   # コーヒー
 ```
 
 ### Kanji
@@ -99,27 +111,60 @@ $ jiten -v jmdict -n 4-5 +random  # random JLPT N4 or N5 entry
 $ jiten -v kanji --max 1 --word cat
 $ jiten -v kanji --max 1 --exact cat
 $ jiten -v kanji --max 1 --word 日
+
+$ jiten -v kanji --max 1 '+r 犭艹田'    # search by radicals
+$ jiten -v kanji --max 1 '+s 2-3-3'     # search by SKIP code
+
+$ jiten radicals                        # show radicals table
 ```
 
-## Web Interface
+### Sentences
+
+```bash
+$ jiten -v sentences --max 1 kitten
+```
+
+### Web Interface
 
 ```bash
 $ jiten -v serve
 ```
 
-## WebView GUI for Linux/macOS/Windows
-
-NB: requires [`pywebview`](https://pywebview.flowrl.com)
-(Debian/Ubuntu users can `apt install python3-webview`).
-
-```bash
-$ jiten gui
-```
-
-## Help
+### Help
 
 ```bash
 $ jiten --help
+$ jiten jmdict    --help
+$ jiten kanji     --help
+$ jiten sentences --help
+```
+
+### Tab Completion
+
+For Bash, add this to `~/.bashrc`:
+
+```bash
+eval "$(_JITEN_COMPLETE=source_bash jiten)"
+```
+
+For Zsh, add this to `~/.zshrc`:
+
+```zsh
+eval "$(_JITEN_COMPLETE=source_zsh jiten)"
+```
+
+For Fish, add this to `~/.config/fish/completions/jiten.fish`:
+
+```fish
+eval (env _JITEN_COMPLETE=source_fish jiten)
+```
+
+## WebView GUI for Linux/macOS/Windows
+
+NB: requires pywebview.
+
+```bash
+$ jiten-gui
 ```
 
 ## Bugs & Feature Requests
@@ -134,18 +179,27 @@ $ jiten --help
 
 ## Requirements
 
-Python >= 3.5 + Flask + click.
-
-To build the (not yet optional) SQLite PCRE C extension: a C compiler
-(e.g. `gcc`/`clang`) and the `sqlite3` & `pcre` libraries & headers.
-
-Basic build tools like `make` and `patch`.
+* Python >= 3.5 + Flask + click.
+* To build the SQLite PCRE C extension: a C compiler (e.g.
+  `gcc`/`clang`) and the `sqlite3` & `pcre` libraries & headers.
+* Basic build tools like `make` and `patch`.
+* To run the WebView GUI:
+  [pywebview](https://pywebview.flowrl.com) >= 3.3.5.
 
 ### Debian/Ubuntu
 
 ```bash
 $ apt install python3-dev build-essential libsqlite3-dev libpcre3-dev
 $ apt install python3-flask   # optional: Flask & click w/o pip
+```
+
+#### Optional: WebView GUI
+
+```bash
+$ apt install python3-pyqt5.qtwebengine   # recommended: qtwebengine
+
+$ apt install python3-webview             # if >= 3.3.5
+$ pip3 --user install pywebview           # otherwise
 ```
 
 ## Installing
@@ -155,6 +209,9 @@ $ apt install python3-flask   # optional: Flask & click w/o pip
 ```bash
 $ pip install jiten
 ```
+
+NB: depending on your system you may need to use e.g. `pip3 --user`
+instead of just `pip`.
 
 ### From git
 
@@ -179,7 +236,24 @@ $ git pull --rebase
 $ make
 ```
 
+### NixOS
+
+Jiten will hopefully be available in nixpkgs soon.  For now, you can
+use [this nix expression](https://gist.github.com/obfusk/c51d353e75d576bd5cb8e92456cdec47).
+
 ## Miscellaneous
+
+### Online Android App
+
+There is also an online android app --
+[`Jiten [Online]`](https://github.com/obfusk/jiten-webview)
+-- which essentially provides the same functionality as opening the
+https://jiten.obfusk.dev website in a web browser.
+
+It does have some some small advantages (like long press for tooltips)
+and requires less storage space (and could be faster depending on your
+device and internet connection).  You can install both at the same
+time if you want.
 
 ### Web Interface on Android
 

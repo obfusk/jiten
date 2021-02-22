@@ -1,0 +1,53 @@
+Jiten Japanese Dictionary - Privacy Policy
+==========================================
+
+Website
+-------
+
+When you use Jiten online in your browser at https://jiten.obfusk.dev:
+
+The web server uses standard log files (containing IP addresses, requested URLs, referrers, timestamps, and user agent information).
+
+The log files are only used for server monitoring and deleted after 1 week.
+
+The web server is hosted by Heroku in the European Union.
+
+Settings and search history are stored in your browser.
+
+No other personal data is collected or stored.
+
+
+Android App: Jiten Japanese Dictionary
+--------------------------------------
+
+The offline android app does not collect any personal data.
+
+Settings and search history are stored in the app.
+
+
+Android App: Jiten Japanese Dictionary [Online]
+-----------------------------------------------
+
+The online android app provides access to the website, just like a web browser.
+
+
+GDPR
+----
+
+Jiten aims to be compliant with the European Union's General Data Protection Regulation.
+
+For more information about the GDPR and your rights, see e.g. https://gdpr.eu.
+
+For information on Heroku's GDPR compliance, see https://devcenter.heroku.com/articles/gdpr.
+
+
+External Links
+--------------
+
+Jiten contains links to third-party sites, like github.com, which are subject to their own privacy policies.
+
+
+Contact
+-------
+
+jiten@obfusk.dev

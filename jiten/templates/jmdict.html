@@ -4,10 +4,10 @@
 
     File        : templates/jmdict.html
     Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-    Date        : 2021-01-17
+    Date        : 2021-01-30
 
     Copyright   : Copyright (C) 2021  Felix C. Stegerman
-    Version     : v0.3.5
+    Version     : v0.4.0
     License     : AGPLv3+
 
   -->
@@ -16,14 +16,19 @@
     <title>jiten - jmdict</title>
   </head>
   <body>
-    {% from "_macros.html" import topbtn, collapsebtn, collapseallbtn
-                           with context %}
+    {% from "_macros.html" import topbtn, collapsebtn, collapseallbtns,
+                           toggleromajibtn with context %}
     {% from "_search.html" import jmdict with context %}
     {% include "_nav.html" %}
     <div class="container">
       {{ jmdict(langs, query) }}
       {% if query %}
-        {{ collapseallbtn() }}
+        <div class="d-flex pt-2 pb-3">
+          {{ toggleromajibtn() }}
+          <span class="ml-auto">
+            {{ collapseallbtns() }}
+          </span>
+        </div>
         {% for e, rank in results %}
           <div class="card">
             <div class="card-body">
@@ -60,35 +65,33 @@
                     <a class="entry jap selbtn btn btn-success py-1 mb-1 mr-1"
                         href="/jmdict?query={{ r.elem }}&exact=yes">
                       {{ r.elem }}
-                      {% if roma %}
-                        <span class="badge badge-primary"
-                          >{{ kana2romaji(r.elem) }}</span>
-                      {% endif %}
+                      {% set v = "" if roma else "d-none" %}
+                      <span class="romaji badge badge-primary {{ v }}"
+                        >{{ kana2romaji(r.elem) }}</span>
                     </a>
                     {% if loop.last %}
                       <span class="ml-auto align-self-end">
-                        <small class="text-muted">読み</small>
+                        <small class="jap text-muted">読み</small>
                       </span>
                     {% endif %}
                   {% else %}
                     <span class="text-muted">no readings</span>
                   {% endfor %}
                 </li>
-                {% set pitch = e.pitch()|list %}
+                {% set pitch = elem_pitch(e)|list %}
                 <li class="list-group-item d-flex flex-wrap {{
                       "pb-1 px-2 pt-2" if pitch else "p-2"
                     }}" title="pitch">
                   {% for p in pitch %}
                     <span class="jap selbtn btn btn-info py-1 mb-1 mr-1">
                       {{ p }}
-                      {% if roma %}
-                        <span class="badge badge-primary"
-                          >{{ kana2romaji(p) }}</span>
-                      {% endif %}
+                      {% set v = "" if roma else "d-none" %}
+                      <span class="romaji badge badge-primary {{ v }}"
+                        >{{ kana2romaji(p) }}</span>
                     </span>
                     {% if loop.last %}
                       <span class="ml-auto align-self-end">
-                        <small class="text-muted">高低</small>
+                        <small class="jap text-muted">高低</small>
                       </span>
                     {% endif %}
                   {% else %}

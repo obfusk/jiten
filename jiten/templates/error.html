@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="en">
+  <!--
+
+    File        : templates/error.html
+    Maintainer  : Felix C. Stegerman <flx@obfusk.net>
+    Date        : 2021-01-18
+
+    Copyright   : Copyright (C) 2021  Felix C. Stegerman
+    Version     : v0.3.5
+    License     : AGPLv3+
+
+  -->
+  <head>
+    {% include "_meta.html" %}
+    <title>jiten - error</title>
+  </head>
+  <body>
+    {% include "_nav.html" %}
+    <div class="container">
+      <div class="alert alert-danger mb-0 p-4 text-center">
+        <h3>{{ name }}</h3>
+        <p class="mb-0">{{ info }}</p>
+      </div>
+    </div>
+    {% include "_footer.html" %}
+  </body>
+</html>

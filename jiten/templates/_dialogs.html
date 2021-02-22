@@ -1,0 +1,259 @@
+{# <!--
+
+  File        : templates/_dialogs.html
+  Maintainer  : Felix C. Stegerman <flx@obfusk.net>
+  Date        : 2021-02-18
+
+  Copyright   : Copyright (C) 2021  Felix C. Stegerman
+  Version     : v0.4.0
+  License     : AGPLv3+
+
+--> #}
+{#-
+<div class="modal" tabindex="-1" role="dialog" id="romaji-modal">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="jap modal-title">konnnichiha → こんにちは</h5>
+        <button type="button" class="close" data-dismiss="modal"
+            aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <form action="javascript:void(0);"
+          class="modal-body form-inline justify-content-end">
+        <label class="sr-only" for="romaji">Romaji</label>
+        {{ input("romaji", "_", "", "", False, True, "2 mb-lg-0") }}
+        <button id="romaji-convert" class="btn btn-primary">Convert</button>
+      </form>
+    </div>
+  </div>
+</div>
+#}
+<div class="modal" tabindex="-1" role="dialog" id="radical-modal">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="jap modal-title">部 Radicals</h5>
+        <button type="button" class="close" data-dismiss="modal"
+            aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p>
+          Click on a radical to add it to (or remove it from) the
+          query input field.
+        </p>
+        <div id="radicals">
+          {% set c = dict(rad = "primary", alt = "info", var = "secondary") %}
+          {% for g in K.RADTABLE %}
+            <span class="active notbtn btn btn-warning px-0 py-1 mb-1">
+              <span class="tworem">{{ loop.index }}</span>
+            </span>
+            {% for r, x in g %}
+              <button class="radical jap selbtn btn btn-{{ c[x] }} px-0 py-1 mb-1">
+                <span class="tworem">{{ r }}</span>
+              </button>
+            {% endfor %}
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="modal" tabindex="-1" role="dialog" id="history-modal">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="jap modal-title">検索履歴 Search History</h5>
+        <button type="button" class="close" data-dismiss="modal"
+            aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <ul class="list-group" id="history"></ul>
+      </div>
+      <div class="modal-footer">
+        <div class="d-flex justify-content-end">
+          <button id="history-clear" class="btn btn-danger">
+            Clear History
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="modal" tabindex="-1" role="dialog" id="settings-modal">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="jap modal-title">設定 Settings</h5>
+        <button type="button" class="close" data-dismiss="modal"
+            aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <form method="post" action="/_save_prefs">
+        <div class="modal-body">
+          <input type="hidden" name="url" value="{{ request.url }}" />
+          <input type="hidden" name="token" id="prefs-token" value="" />
+          <fieldset class="d-inline border p-2 pl-3">
+            <legend>languages</legend>
+            {% for l in J.LANGS %}
+              <div class="form-check form-check-inline">
+                <input type="checkbox" class="form-check-input"
+                  id="prefs-{{ l }}" name="lang" value="{{ l }}"
+                  {% if l in pref_langs %}checked{% endif %} />
+                <label class="form-check-label"
+                  for="prefs-{{ l }}">{{ l }}</label>
+              </div>
+            {% endfor %}
+          </fieldset>
+          <br/>
+          <fieldset class="d-inline border p-2 pl-3">
+            <legend>theme</legend>
+            <div class="form-check form-check-inline">
+              <input type="checkbox" class="form-check-input"
+                id="prefs-dark" name="dark" value="yes"
+                {% if mode == "dark" %}checked{% endif %} />
+              <label class="form-check-label"
+                for="prefs-dark">dark mode</label>
+            </div>
+          </fieldset>
+          <br/>
+          <fieldset class="d-inline border p-2 pl-3">
+            <legend>romaji</legend>
+            <div class="form-check form-check-inline">
+              <input type="checkbox" class="form-check-input"
+                id="prefs-roma" name="roma" value="yes"
+                {% if roma %}checked{% endif %} />
+              <label class="form-check-label"
+                for="prefs-roma">show romaji</label>
+            </div>
+            <div class="form-check form-check-inline">
+              <input type="checkbox" class="form-check-input"
+                id="prefs-nor2h" name="nor2h" value="yes"
+                {% if nor2h %}checked{% endif %} />
+              <label class="form-check-label jap"
+                for="prefs-nor2h">disable a→あ</label>
+            </div>
+          </fieldset>
+          <br/>
+          <fieldset class="d-inline border p-2 pl-3">
+            <legend>max results</legend>
+            <input type="number" min="20" max="1000"
+              id="prefs-max" name="max" value="{{ pref_max }}" />
+          </fieldset>
+        </div>
+        <div class="modal-footer">
+          <div class="d-flex justify-content-end">
+            <button class="btn btn-primary">Save</button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+<div class="modal" tabindex="-1" role="dialog" id="share-modal">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Share Link</h5>
+        <button type="button" class="close" data-dismiss="modal"
+            aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body form-inline justify-content-end">
+        {% set link = M.SERVER + request.full_path %}
+        <div class="input-group mr-sm-2 mb-2 mb-lg-0 flex-grow-1">
+          <input type="text" class="form-control" value="{{ link }}"
+            readonly />
+          <div class="input-group-append">
+            {{ copybtn() }}
+          </div>
+        </div>
+        <a href="{{ link }}" class="btn btn-primary"
+          target="_blank" rel="noopener">Open</a>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="modal lazy-iframe-modal" tabindex="-1" role="dialog" id="licenses-modal">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Free and Open Source Software Licenses</h5>
+        <button type="button" class="close" data-dismiss="modal"
+            aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        {% for k, v in M.DEPENDENCIES|dictsort %}
+          {% set name = v.get("name", k) %}
+          <h6>
+            <a href="{{ v.url }}" target="_blank" rel="noopener">
+              {{ name }}
+            </a>
+          </h6>
+          <iframe class="w-100" data-src="/static/licenses/{{ name }}.txt"></iframe>
+          {% if not loop.last %}<br/><br/>{% endif %}
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+</div>
+<div class="modal lazy-iframe-modal" tabindex="-1" role="dialog" id="privacy-modal">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Privacy</h5>
+        <button type="button" class="close" data-dismiss="modal"
+            aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <iframe class="w-100" data-src="/static/privacy.txt"></iframe>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="modal" tabindex="-1" role="dialog" id="alert-modal">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">[...]</h5>
+        <button type="button" class="close" data-dismiss="modal"
+            aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body d-flex justify-content-end">
+        <button class="btn btn-primary"
+          data-dismiss="modal">OK</button>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="modal" tabindex="-1" role="dialog" id="confirm-modal">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">[...]</h5>
+        <button type="button" class="close" data-dismiss="modal"
+            aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body d-flex justify-content-end">
+        <button class="btn btn-secondary mr-1"
+          data-dismiss="modal">Cancel</button>
+        <button id="confirm" class="btn btn-primary">OK</button>
+      </div>
+    </div>
+  </div>
+</div>

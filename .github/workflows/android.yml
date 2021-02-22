@@ -8,8 +8,6 @@ jobs:
     strategy:
       matrix:
         target:
-        - debug-armeabi-v7a
-        - debug-arm64-v8a
         - release-armeabi-v7a
         - release-arm64-v8a
         package:

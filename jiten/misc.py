@@ -5,10 +5,10 @@
 #
 # File        : jiten/misc.py
 # Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-# Date        : 2020-12-06
+# Date        : 2021-02-20
 #
-# Copyright   : Copyright (C) 2020  Felix C. Stegerman
-# Version     : v0.3.5
+# Copyright   : Copyright (C) 2021  Felix C. Stegerman
+# Version     : v1.0.0
 # License     : AGPLv3+
 #
 # --                                                            ; }}}1
@@ -118,7 +118,12 @@ def process_query(q, word, exact, fstwd, cli = False):
   return q
 
 def without_e1w(q):
-  return q[2:].lstrip() if any( q.startswith("+"+x) for x in "=1w" ) else q
+  return split_e1w(q)[1]
+
+def split_e1w(q):
+  if any( q.startswith("+"+x) for x in "=1w" ):
+    return q[:2] + " ", q[2:].lstrip()
+  return "", q
 
 LIKERX = re.compile("(?P<one>" + "|".join([
   r"\.", r"\[\^?\]?[^]]*\]", r"\\[dDsSwW]", r"\\p[khK]",
@@ -176,6 +181,15 @@ class IntOrRange(click.ParamType):                              # {{{1
 JLPT_LEVEL = IntOrRange(1, 5, "LEVEL")
 
 def download_file(url, file, sha512 = None, tmp = ".tmp"):      # {{{1
+  if sha512 and os.path.exists(file):
+    sha = hashlib.sha512()
+    with open(file, "rb") as f:
+      while True:
+        chunk = f.read(65536)
+        if not chunk: break
+        sha.update(chunk)
+    if sha.hexdigest() == sha512:
+      return sha512
   label = "downloading " + os.path.basename(file)
   sha   = hashlib.sha512()
   with open(file + tmp, "wb") as fo:
@@ -189,7 +203,7 @@ def download_file(url, file, sha512 = None, tmp = ".tmp"):      # {{{1
     except urllib.error.URLError as e:
       os.remove(file + tmp)
       raise DownloadError(str(e), file, url)
-  if sha512 is not None and sha.hexdigest() != sha512:
+  if sha512 and sha.hexdigest() != sha512:
     os.remove(file + tmp)
     raise DownloadError("sha512 did not match: expected {}, got {}"
                         .format(sha512, sha.hexdigest()), file, url)
@@ -203,18 +217,34 @@ SERVER    = SERVERS[0]
 
 DB_URLFMT = "https://github.com/obfusk/jiten/releases/download/{}/{}.sqlite3"
 DB_URLS   = {
-  8: { k: DB_URLFMT.format("v0.3.5", k)
-       for k in "jmdict kanji pitch sentences".split() }
+   8: { k: DB_URLFMT.format("v0.3.5", k)
+       for k in "jmdict kanji pitch sentences".split() },
+  11: { k: DB_URLFMT.format("v0.4.0", k)
+       for k in "jmdict kanji pitch sentences".split() },
+  13: { k: DB_URLFMT.format("v1.0.0", k)
+       for k in "jmdict kanji pitch sentences".split() },
 }
 
-DB_SHA512SUMS = {
-  8: dict(
+DB_SHA512SUMS = {                                               # {{{1
+   8: dict(
     jmdict    = "c94830335a9176001fbc4400a4176a135b475e87a5f91d7fe3eccdcdc777219d7132a2ef56f99563bde7d6ed614dfd1ae8a9fed3a9ae4331159b9e675e60e9e7",
     kanji     = "f16fcca818bf9dc8a63dbcae37a1d9220db1bb5b76a006ced6ac26b6d7fc549522f9cf6620277a2b692e902224e185a7263463643715f0ff502950971f2ba9d6",
     pitch     = "8bac0a6a1cd74c901ffa5d222a336cf3b2c033ceb00a10c7f442056aae764d5110519085892777bfa4b0b8b7adfcaf3266da3ac5388bb094343e383dbc87777b",
     sentences = "5f9d1968832457f096f55b30af90311ac681dc1456fdc12f293879adba93ed5a267984b87872ef514f84b5ecaba7fe7d2f17601018ea0fccb6198059d6a8b79a",
-  )
-}
+  ),
+  11: dict(
+    jmdict    = "a1d36a38fd26ec43f227dc207b0ce727502c6a20c5980b3dc00040ebbe14d7f9a255dce183b902b50e121068fdfc085852b2adce2f7d9c3fef3b4e1e19dfee35",
+    kanji     = "c114afe09979851fdd433257e6328c745b45b700754d9387a51a93473a0be14ce80602da3b1609fb61546d7d5b6c539b6f8b686bd4cc221184b5938b828ecd0b",
+    pitch     = "79727c3b52c0f3ed27acc531b81f935aef7692e92cba7f1fd90ad91264d21a1aba84c9dbfd7fa74a47dc06b17447d11a02a489b7b50180957b9f15d21bc15729",
+    sentences = "5b022b897b7dc819681288f1e7b26a9552e33b7b0d89b53560aea3d02e5cd578d4ecda5dfc2939091e21fc4a8dd7c42a08560413a2445ffb6534ae4ceb63ccf0",
+  ),
+  13: dict(
+    jmdict    = "5f4f5b5ffceb93fb6b7939507527b3740a8b0dcef8d11765c94d1890a6bccd4a74b01e9e3c37083e6950f9bc6081a2efecfd4605b1e47d768df6228d90fdc218",
+    kanji     = "c114afe09979851fdd433257e6328c745b45b700754d9387a51a93473a0be14ce80602da3b1609fb61546d7d5b6c539b6f8b686bd4cc221184b5938b828ecd0b",
+    pitch     = "79727c3b52c0f3ed27acc531b81f935aef7692e92cba7f1fd90ad91264d21a1aba84c9dbfd7fa74a47dc06b17447d11a02a489b7b50180957b9f15d21bc15729",
+    sentences = "8a1a8a0d6242d541103029230870285d236db8805fe4bac0ddd74802481326d6b8a3e9871f75c0ea0ebef98968fa0efb9bea657017639f7b921aa23f44f81c62",
+  ),
+}                                                               # }}}1
 
 DEPENDENCIES = dict(                                            # {{{1
   p4a = dict(

@@ -1,0 +1,12 @@
+• updated databases: 2020 version of kyouiku kanji, more pitch data, etc.
+• improved help dialog
+• new: jlpt vocab data, search & browse by jlpt level
+• new: share & open jiten.obfusk.dev links in app
+• new: quickly switch between search forms using dropdown
+• new: optionally show romaji
+• improved button to convert romaji to hiragana and between hiragana and katakana
+• improved search options
+• improved tooltips
+• moved "select radical" button
+• fixed copying to clipboard
+• improvements & fixes
