@@ -1,6 +1,6 @@
-jiten (1.0.1-1) UNRELEASED; urgency=medium
+jiten (1.0.2-1) UNRELEASED; urgency=medium
 
   * Initial release. Closes: #nnnn
     <nnnn is the bug number of your ITP>
 
- -- Felix C. Stegerman <flx@obfusk.net>  Tue, 23 Feb 2021 03:23:50 +0100
+ -- Felix C. Stegerman <flx@obfusk.net>  Tue, 23 Feb 2021 04:16:13 +0100
