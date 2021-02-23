@@ -17,11 +17,13 @@ Homepage: https://github.com/obfusk/jiten
 
 Package: jiten
 Architecture: any
-Depends: ${misc:Depends},
+Depends: jiten-data (= ${binary:Version}),
+         ${misc:Depends},
          ${python3:Depends},
          ${shlibs:Depends},
-Recommends: python3-webview (>= 3.3.5)
-Description: japanese android/cli/web dictionary based on jmdict/kanjidic
+Recommends: jiten-pitch (= ${binary:Version}),
+            python3-webview (>= 3.3.5),
+Description: Jiten Japanese Dictionary
   Jiten is a Japanese dictionary based on JMDict/Kanjidic
  .
   Features:
@@ -71,3 +73,19 @@ Description: japanese android/cli/web dictionary based on jmdict/kanjidic
   WebView GUI
   * wraps the web interface (running locally on your computer)
   * requires python3-webview
+
+Package: jiten-data
+Architecture: all
+Enhances: jiten
+Description: Data files for Jiten Japanese Dictionary
+  Jiten is a Japanese dictionary based on JMDict/Kanjidic
+ .
+  This package contains the databases and audio files.
+
+Package: jiten-pitch
+Architecture: all
+Enhances: jiten
+Description: Pitch database for Jiten Japanese Dictionary
+  Jiten is a Japanese dictionary based on JMDict/Kanjidic
+ .
+  This package contains the non-free pitch database.

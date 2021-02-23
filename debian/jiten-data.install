@@ -1,0 +1,4 @@
+usr/lib/python3/dist-packages/jiten/res/jmdict.sqlite3
+usr/lib/python3/dist-packages/jiten/res/kanji.sqlite3
+usr/lib/python3/dist-packages/jiten/res/sentences.sqlite3
+usr/lib/python3/dist-packages/jiten/static/audio/*.mp3
