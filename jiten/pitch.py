@@ -5,10 +5,10 @@
 #
 # File        : jiten/pitch.py
 # Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-# Date        : 2021-02-04
+# Date        : 2021-02-22
 #
 # Copyright   : Copyright (C) 2021  Felix C. Stegerman
-# Version     : v0.4.0
+# Version     : v1.0.1
 # License     : AGPLv3+
 #
 # --                                                            ; }}}1
@@ -121,8 +121,11 @@ def setup(file = SQLITE_FILE):
 
 @contextmanager
 def pitches(file = SQLITE_FILE):
-  with sqlite_do(file) as c:
-    yield lambda e: e.pitch(conn = c)
+  if have_pitch(file):
+    with sqlite_do(file) as c:
+      yield lambda e: e.pitch(conn = c)
+  else:
+    yield lambda e: ()
 
 # TODO
 def get_pitch(reading, kanjis, conn = None, file = SQLITE_FILE):
