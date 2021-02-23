@@ -1,9 +1,9 @@
 usr/bin/jiten
 usr/bin/jiten-gui
-usr/lib/python3/dist-packages/jiten-*.egg-info/
-usr/lib/python3/dist-packages/jiten/*.py
-usr/lib/python3/dist-packages/jiten/*.so
-usr/lib/python3/dist-packages/jiten/.version
-usr/lib/python3/dist-packages/jiten/res/jlpt/
-usr/lib/python3/dist-packages/jiten/static/
-usr/lib/python3/dist-packages/jiten/templates/
+usr/lib/python*/dist-packages/jiten-*.egg-info/
+usr/lib/python*/dist-packages/jiten/*.py
+usr/lib/python*/dist-packages/jiten/*.so
+usr/lib/python*/dist-packages/jiten/.version
+usr/lib/python*/dist-packages/jiten/res/jlpt/
+usr/lib/python*/dist-packages/jiten/static/
+usr/lib/python*/dist-packages/jiten/templates/
