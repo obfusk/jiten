@@ -46,5 +46,3 @@ https://github.com/obfusk/jiten/issues
 
 Questions and feedback are welcome at
 https://github.com/obfusk/jiten/discussions or jiten@obfusk.dev
-
-Donations are welcome at https://ko-fi.com/obfusk
