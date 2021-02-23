@@ -1,10 +1,11 @@
 from pathlib import Path
 import os, setuptools, subprocess, sys
 
-from jiten.version import __version__
-
-vsn   = __version__.replace("-", ".dev", 1).replace("-", "+", 1) \
-          if __version__.count("-") >= 2 else __version__
+vsn = os.environ.get("JITEN_VERSION")
+if not vsn:
+  from jiten.version import __version__
+  vsn = __version__.replace("-", ".dev", 1)
+vsn = vsn.replace("-", "+", 1)
 
 clean = "clean" in sys.argv[1:]
 
