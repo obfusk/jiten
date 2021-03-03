@@ -5,10 +5,10 @@
 #
 # File        : jiten/sentences.py
 # Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-# Date        : 2021-01-28
+# Date        : 2021-03-03
 #
 # Copyright   : Copyright (C) 2021  Felix C. Stegerman
-# Version     : v0.4.0
+# Version     : v1.0.2
 # License     : AGPLv3+
 #
 # --                                                            ; }}}1
@@ -86,7 +86,7 @@ def parse_sentences(file = SENTENCES_FILE):
   return data
 
 def sentences2sqldb(data, file = SQLITE_FILE):
-  with sqlite_do(file) as c:
+  with sqlite_do(file, write = True) as c:
     c.executescript(SENTENCES_CREATE_SQL)
     with click.progressbar(data, width = 0, label = "writing sentences") as bar:
       for e in bar:

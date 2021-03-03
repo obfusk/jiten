@@ -5,10 +5,10 @@
 #
 # File        : jiten/sql.py
 # Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-# Date        : 2021-02-19
+# Date        : 2021-03-03
 #
 # Copyright   : Copyright (C) 2021  Felix C. Stegerman
-# Version     : v0.4.0
+# Version     : v1.0.2
 # License     : AGPLv3+
 #
 # --                                                            ; }}}1
@@ -23,12 +23,17 @@ SQL helper functions.
 import importlib.util, sqlite3
 
 from contextlib import contextmanager
+from pathlib import Path
 
 from . import misc as M
 
 @contextmanager
-def sqlite_do(file):
-  conn = sqlite3.connect(file)
+def sqlite_do(file, write = False):
+  if write:
+    conn = sqlite3.connect(file)
+  else:
+    uri  = Path(file).as_uri() + "?mode=ro"
+    conn = sqlite3.connect(uri, uri = True)
   conn.row_factory = sqlite3.Row
   try:
     yield conn.cursor()
