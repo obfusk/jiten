@@ -6,7 +6,7 @@
 #   android/scripts/_build.sh USER@HOST TARGET...
 #
 # Example:
-#   android/scripts/_build.sh build@HOST clean {debug,release}-arm64-v8a
+#   android/scripts/_build.sh vagrant@HOST clean {debug,release}-arm64-v8a
 #
 # NB:
 #   assumes setup-root.sh packages installed
@@ -48,13 +48,24 @@ ssh "$remote" 'test -e _jiten.git || git init --bare _jiten.git'
 git push -f "$remote":_jiten.git "$branch":master --tags
 
 # clone
-ssh "$remote" 'rm -fr jiten && git clone _jiten.git jiten'
+ssh "$remote" '
+  set -e
+  rm -fr build
+  git clone _jiten.git build/dev.obfusk.jiten
+'
 
 # setup & build
 ssh "$remote" '
-  set -e && cd jiten/android
-  export PATH="$HOME/.local/bin:$PATH"
-  ./scripts/setup-user.sh
+  set -e && cd build/dev.obfusk.jiten/android
+  export PATH=/usr/local/bin:/bin:/usr/bin
+  if grep -q stretch /etc/os-release; then
+    [ -e ~/env ] || python3.7 -mvenv ~/env
+    source ~/env/bin/activate
+    PIP_INSTALL="pip3 install" ./scripts/setup-user.sh
+  else
+    export PATH="$HOME/.local/bin:$PATH"
+    PIP_INSTALL="pip3 install --user" ./scripts/setup-user.sh
+  fi
   for target in '"$*"'; do
     if [ "$target" = clean ]; then
       make "$target" || true
@@ -66,10 +77,10 @@ ssh "$remote" '
 
 # show shasums
 ssh "$remote" '
-  set -e && cd jiten/android/bin
+  set -e && cd build/dev.obfusk.jiten/android/bin
   sha1sum *.apk && sha256sum *.apk && sha512sum *.apk
 '
 
 # copy APKs
 mkdir -p tmp/_build
-scp "$remote:jiten/android/bin/*.apk" tmp/_build/
+scp "$remote:build/dev.obfusk.jiten/android/bin/*.apk" tmp/_build/
