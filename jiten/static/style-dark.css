@@ -14,3 +14,17 @@ hr {
 .border {
   border: 1px solid #444 !important;
 }
+
+.form-control {
+	background-color: #333 !important;
+	color: #ddd
+}
+
+.form-control:focus {
+	background-color: #333;
+	color: #ddd
+}
+
+.form-control::placeholder {
+	color: #888
+}
