@@ -8,5 +8,5 @@ def _patch():
   spec.loader.exec_module(mod)
   OpenSSLRecipe, recipe     = mod.OpenSSLRecipe, mod.recipe
   OpenSSLRecipe.name        = "openssl"
-  OpenSSLRecipe.url_version = "1.1.1j"
+  OpenSSLRecipe.url_version = "1.1.1k"
 _patch()
