@@ -22,6 +22,8 @@ data  = [ "res/jlpt/N" + l + "-" + x for l in "12345"
       + [ "static/licenses/*.txt" ] \
       + [ "templates/*.html" ]
 
+os.environ["PYTHON"] = sys.executable   # use same python in make
+
 if clean:
   subprocess.run("make clean", shell = True, check = True)
 else:
