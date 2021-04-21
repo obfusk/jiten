@@ -2,7 +2,7 @@
 
     File        : README.md
     Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-    Date        : 2021-03-11
+    Date        : 2021-04-21
 
     Copyright   : Copyright (C) 2021  Felix C. Stegerman
     Version     : v1.0.0
@@ -233,8 +233,8 @@ $ make
 
 ### NixOS
 
-Jiten will hopefully be available in nixpkgs soon.  For now, you can
-use [this nix expression](https://gist.github.com/obfusk/c51d353e75d576bd5cb8e92456cdec47).
+Jiten is now available in nixpkgs `master`.  You can also use
+[this nix expression](https://gist.github.com/obfusk/c51d353e75d576bd5cb8e92456cdec47).
 
 ## Miscellaneous
 
