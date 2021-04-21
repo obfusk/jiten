@@ -16,7 +16,7 @@ PYCOV   := $(PYTHON) -mcoverage run --source jiten
 
 export PYTHONWARNINGS := default
 
-.PHONY: all test test-js ci-test coverage clean cleanup
+.PHONY: all test test-js ci-test coverage clean cleanup install
 .PHONY: validate-css tmp-html check-html validate-html
 .PHONY: validate-html-curl validate-html-py
 
@@ -65,6 +65,9 @@ cleanup:
 	rm -fr .coverage htmlcov/
 	rm -fr jiten/.version
 	$(MAKE) -C jiten/res/jmdict cleanup
+
+install:
+	$(PYTHON) -mpip install -e .
 
 validate-css:
 	curl -sF "file=@jiten/static/style.css;type=text/css" \
