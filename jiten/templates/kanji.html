@@ -4,10 +4,10 @@
 
     File        : templates/kanji.html
     Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-    Date        : 2021-01-21
+    Date        : 2021-05-04
 
     Copyright   : Copyright (C) 2021  Felix C. Stegerman
-    Version     : v0.3.5
+    Version     : v1.0.0
     License     : AGPLv3+
 
   -->
@@ -50,7 +50,7 @@
                       }}" title="on readings">
                     {% for r in e.on %}
                       {% set rc = r.replace("-", "").replace(".", "") %}
-                      <a class="jap selbtn btn btn-warning py-1 mb-1 mr-1"
+                      <a class="reading jap selbtn btn btn-warning py-1 mb-1 mr-1"
                           href="/jmdict?query={{ rc }}&exact=yes">
                         {{ r }}
                         {% set v = "" if roma else "d-none" %}
@@ -71,7 +71,7 @@
                       }}" title="kun readings">
                     {% for r in e.kun %}
                       {% set rc = r.replace("-", "").replace(".", "") %}
-                      <a class="jap selbtn btn btn-success py-1 mb-1 mr-1"
+                      <a class="reading jap selbtn btn btn-success py-1 mb-1 mr-1"
                           href="/jmdict?query={{ rc }}&exact=yes">
                         {{ r }}
                         {% set v = "" if roma else "d-none" %}
@@ -92,7 +92,7 @@
                       }}" title="name readings">
                     {% for r in e.nanori %}
                       {% set rc = r.replace("-", "").replace(".", "") %}
-                      <a class="jap selbtn btn btn-info py-1 mb-1 mr-1"
+                      <a class="reading jap selbtn btn btn-info py-1 mb-1 mr-1"
                           href="/jmdict?query={{ rc }}&exact=yes">
                         {{ r }}
                         {% set v = "" if roma else "d-none" %}
@@ -134,7 +134,7 @@
                   <li class="list-group-item pb-1 px-2 pt-2 d-flex flex-wrap"
                       title="top 25 jmdict entries">
                     {% for e, r in js %}
-                      <a class="jap selbtn btn btn-primary px-2 py-1 mb-1 mr-1"
+                      <a class="link jap selbtn btn btn-primary px-2 py-1 mb-1 mr-1"
                         title="{{ "; ".join(e.meanings()|sum(start=())) }}"
                         data-toggle="tooltip" data-placement="top"
                         href="/jmdict?query={{ ("+#" + e.seq|string)|urlencode }}"

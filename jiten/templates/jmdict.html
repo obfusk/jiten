@@ -4,10 +4,10 @@
 
     File        : templates/jmdict.html
     Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-    Date        : 2021-01-30
+    Date        : 2021-05-04
 
     Copyright   : Copyright (C) 2021  Felix C. Stegerman
-    Version     : v0.4.0
+    Version     : v1.0.0
     License     : AGPLv3+
 
   -->
@@ -83,7 +83,7 @@
                       "pb-1 px-2 pt-2" if pitch else "p-2"
                     }}" title="pitch">
                   {% for p in pitch %}
-                    <span class="jap selbtn btn btn-info py-1 mb-1 mr-1">
+                    <span class="pitch jap selbtn btn btn-info py-1 mb-1 mr-1">
                       {{ p }}
                       {% set v = "" if roma else "d-none" %}
                       <span class="romaji badge badge-primary {{ v }}"

@@ -2,10 +2,10 @@
 
   File        : templates/_dialogs.html
   Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-  Date        : 2021-02-18
+  Date        : 2021-05-04
 
   Copyright   : Copyright (C) 2021  Felix C. Stegerman
-  Version     : v0.4.0
+  Version     : v1.0.0
   License     : AGPLv3+
 
 --> #}
@@ -113,13 +113,20 @@
           </fieldset>
           <br/>
           <fieldset class="d-inline border p-2 pl-3">
-            <legend>theme</legend>
+            <legend>appearance</legend>
             <div class="form-check form-check-inline">
               <input type="checkbox" class="form-check-input"
                 id="prefs-dark" name="dark" value="yes"
                 {% if mode == "dark" %}checked{% endif %} />
               <label class="form-check-label"
                 for="prefs-dark">dark mode</label>
+            </div>
+            <div class="form-check form-check-inline">
+              <input type="checkbox" class="form-check-input"
+                id="prefs-large" name="large" value="yes"
+                {% if large_jap %}checked{% endif %} />
+              <label class="form-check-label"
+                for="prefs-large">large japanese font</label>
             </div>
           </fieldset>
           <br/>

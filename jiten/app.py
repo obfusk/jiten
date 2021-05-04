@@ -5,10 +5,10 @@
 #
 # File        : jiten/app.py
 # Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-# Date        : 2021-01-30
+# Date        : 2021-05-04
 #
 # Copyright   : Copyright (C) 2021  Felix C. Stegerman
-# Version     : v0.4.0
+# Version     : v1.0.0
 # License     : AGPLv3+
 #
 # --                                                            ; }}}1
@@ -156,7 +156,7 @@ True
 >>> r.status
 '200 OK'
 >>> sorted( (c.name, c.value) for c in client.cookie_jar )
-[('dark', 'yes'), ('lang', '"eng ger"'), ('max', '50'), ('nor2h', 'no'), ('roma', 'no')]
+[('dark', 'yes'), ('lang', '"eng ger"'), ('large', 'no'), ('max', '50'), ('nor2h', 'no'), ('roma', 'no')]
 
 """                                                             # }}}1
 
@@ -184,7 +184,7 @@ MAX           = 50
 NAME          = "jiten"
 HTTPS         = NAME.upper() + "_HTTPS"
 DOMAIN        = NAME.upper() + "_DOMAIN"
-PREFS         = "lang dark roma nor2h max".split()
+PREFS         = "lang dark roma nor2h max large".split()
 
 GUI_TOKEN     = os.environ.get("JITEN_GUI_TOKEN") or None
 ANDROID_PRIV  = os.environ.get("ANDROID_PRIVATE") or None
@@ -254,16 +254,17 @@ def respond(template, **data):
   dark        = prefs.get("dark") == "yes"
   roma        = prefs.get("roma") == "yes"
   nor2h       = prefs.get("nor2h") == "yes"
+  large_jap   = prefs.get("large") == "yes"
   pref_langs  = prefs.get("lang", "").split() or [J.LANGS[0]]
   pref_max    = int(prefs.get("max", MAX))
   return make_response(render_template(
     template, mode = "dark" if dark else "light", langs = langs,
-    roma = roma, nor2h = nor2h, pref_langs = pref_langs,
-    pref_max = pref_max, int = int, ord = ord, hex = hex,
-    J = J, K = K, M = M, P = P, S = S, START = START,
-    VERSION = __version__, PY_VERSION = py_version,
-    kana2romaji = kana2romaji, SEARCH = SEARCH,
-    GUI = bool(GUI_TOKEN), **data
+    roma = roma, nor2h = nor2h, large_jap = large_jap,
+    pref_langs = pref_langs, pref_max = pref_max, int = int,
+    ord = ord, hex = hex, J = J, K = K, M = M, P = P, S = S,
+    START = START, VERSION = __version__, PY_VERSION = py_version,
+    kana2romaji = kana2romaji, SEARCH = SEARCH, GUI = bool(GUI_TOKEN),
+    **data
   ))
 
 def get_langs(prefs = None):
@@ -425,6 +426,7 @@ def r_save_prefs():
     dark  = yesno(request.form.get("dark") == "yes"),
     roma  = yesno(request.form.get("roma") == "yes"),
     nor2h = yesno(request.form.get("nor2h") == "yes"),
+    large = yesno(request.form.get("large") == "yes"),
     max   = str(request.form.get("max", MAX, type = int)),
   ), redirect(request.form.get("url", url_for("r_index"))))
 

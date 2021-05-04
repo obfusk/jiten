@@ -1,0 +1,6 @@
+.jap.entry, .jap.pitch, .jap.reading, .jap.link {
+  font-size: 120%;
+}
+.jap.entry.btn-lg, .jap.link.btn-lg {
+  font-size: 140%;
+}
