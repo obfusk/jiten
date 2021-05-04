@@ -1,6 +1,13 @@
-.jap.entry, .jap.pitch, .jap.reading, .jap.link {
+.jap.entry, .jap.pitch, .jap.reading, .jap.link,
+.search-form .form-control:not(.form-control-sm),
+.search-form .btn:not(.btn-sm) {
   font-size: 120%;
 }
+
+.jap.link.btn-sm {
+  font-size: 100%;
+}
+
 .jap.entry.btn-lg, .jap.link.btn-lg {
   font-size: 140%;
 }
