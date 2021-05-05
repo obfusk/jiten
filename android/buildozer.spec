@@ -9,7 +9,7 @@ source.exclude_patterns = makefile,p4a-commit,*.png,*.xml
 requirements =
   click==7.1.2,flask==1.1.2,jiten,openssl,sqlite3,
   certifi==2020.12.5,libpcre==8.44,
-  hostpython3==3.9.4,python3==3.9.4,
+  hostpython3==3.9.5,python3==3.9.5,
   android,genericndkbuild,
   itsdangerous==1.1.0,jinja2==2.11.3,markupsafe==1.1.1,werkzeug==1.0.1,
   libffi==v3.3,pyjnius==1.3.0,
