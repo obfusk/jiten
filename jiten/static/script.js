@@ -4,10 +4,10 @@
 //
 //  File        : static/script.js
 //  Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-//  Date        : 2021-02-18
+//  Date        : 2021-05-08
 //
 //  Copyright   : Copyright (C) 2021  Felix C. Stegerman
-//  Version     : v0.4.0
+//  Version     : v1.0.0
 //  License     : AGPLv3+
 //
 //  --                                                          ; }}}1
@@ -221,8 +221,8 @@ const saveHistory = (max = 500) => {
 const populateHistoryList = () => {
   $("#history").empty()
   for (const [q, l] of getHistory()) {
-    const li  = $('<li class="jap list-group-item p-2"></li>')
-    const a   = $('<a class="jap"></a>')
+    const li  = $('<li class="list-group-item p-2"></li>')
+    const a   = $('<a class="link jap"></a>')
     a.text(l.split("?")[0].slice(1) + ": " + q); a.attr("href", l)
     li.append(a); $("#history").append(li)
   }

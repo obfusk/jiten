@@ -131,9 +131,9 @@ input[type=number] {
   background-color: inherit !important;
 }
 
-#radical-modal .tworem {
+#radical-modal .square-btn {
   display: inline-block;
-  width: 2rem; /* TODO */
+  width: 1.9rem; /* TODO */
 }
 
 #radicals > .btn {
