@@ -5,7 +5,7 @@
 #
 # File        : jiten/app.py
 # Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-# Date        : 2021-05-04
+# Date        : 2021-05-10
 #
 # Copyright   : Copyright (C) 2021  Felix C. Stegerman
 # Version     : v1.0.0
@@ -164,6 +164,7 @@ import json, os, sys, time
 
 from pathlib import Path
 
+import kanjidraw
 import click, jinja2, werkzeug
 
 os.environ["FLASK_SKIP_DOTENV"] = "yes"                       #  FIXME
@@ -399,6 +400,16 @@ def r_sentences():
 def r_stroke():
   return respond("stroke.html", page = "stroke",
                  query = arg("query", "").strip())
+
+@app.route("/_kanji_matches", methods = ["POST"])
+def r_kanji_matches():
+  strokes = request.json
+  if not (isinstance(strokes, list) and
+          all( isinstance(line, list) and len(line) == 4 and
+               all( isinstance(x, (int, float)) and 0 <= x <= 255
+                    for x in line ) for line in strokes )):
+    abort(400)
+  return "".join( kanji for _, kanji in kanjidraw.matches(strokes) )
 
 @app.route("/_db/v<int:db_version>/<base>")
 def r_db(db_version, base):

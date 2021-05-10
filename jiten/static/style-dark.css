@@ -23,3 +23,7 @@ hr {
 .form-control, .form-control:focus, .input-group-text {
   border-color: #555;
 }
+
+#kanjidraw_canvas {
+  border: 1px solid #ddd;
+}

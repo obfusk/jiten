@@ -2,7 +2,7 @@
 
   File        : templates/_dialogs.html
   Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-  Date        : 2021-05-08
+  Date        : 2021-05-10
 
   Copyright   : Copyright (C) 2021  Felix C. Stegerman
   Version     : v1.0.0
@@ -30,6 +30,44 @@
   </div>
 </div>
 #}
+<div class="modal" tabindex="-1" role="dialog" id="kanjidraw-modal">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="jap modal-title">筆 Draw Kanji</h5>
+        <button type="button" class="close" data-dismiss="modal"
+            aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body text-center">
+        <div id="kanjidraw_draw">
+          <div>
+            <button id="kanjidraw_btn_undo"
+              class="btn btn-secondary">Undo</button>
+            <button id="kanjidraw_btn_clear"
+              class="btn btn-secondary">Clear</button>
+            <span id="kanjidraw_lbl_strokes"
+              class="mx-2">Strokes: 0</span>
+            <button id="kanjidraw_btn_done"
+              class="btn btn-primary">Done</button>
+          </div>
+          <hr/>
+          <canvas id="kanjidraw_canvas" width="300" height="300"></canvas>
+        </div>
+        <div id="kanjidraw_results" style="display: none;">
+          <div>
+            <button id="kanjidraw_btn_back"
+              class="btn btn-secondary">Go Back</button>
+            <span class="ml-2">Click to add to query input field.</span>
+          </div>
+          <hr/>
+          <table id="kanjidraw_table" class="mx-auto"></table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 <div class="modal" tabindex="-1" role="dialog" id="radical-modal">
   <div class="modal-dialog modal-lg" role="document">
     <div class="modal-content">

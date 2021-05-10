@@ -4,7 +4,7 @@
 //
 //  File        : static/script.js
 //  Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-//  Date        : 2021-05-08
+//  Date        : 2021-05-10
 //
 //  Copyright   : Copyright (C) 2021  Felix C. Stegerman
 //  Version     : v1.0.0
@@ -290,13 +290,16 @@ $(document).ready(() => {
 
 // === fetch ===
 
-const fetch_post = (info, path, data = "") =>
-  fetch(path, { method: "POST", body: data }).then(r => {
+const fetch_post = (info, path, data = "", json = false) => {
+  const init = { method: "POST", body: data }
+  if (json) init.headers = { "Content-Type": "application/json" }
+  return fetch(path, init).then(r => {
     if (!r.ok) {
       throw new Error(`response (${r.status} ${r.statusText}) was not ok`)
     }
     return r
   }).catch(e => console.error(`${info} POST failed:`, e))
+}
 
 // === clipboard & webview & token ===
 
@@ -390,6 +393,35 @@ $("#romaji-convert").click(() =>
 
 $("#romaji-modal").on("shown.bs.modal", () => $("#romaji").focus())
 */
+
+const kanjiMatches = strokes => fetch_post(
+    "kanji matches", "/_kanji_matches", JSON.stringify(strokes), true
+  ).then(r => r.text())
+
+let kanjiDrawCleanup = null
+
+$("#kanjidraw-modal").on("shown.bs.modal", () => {
+  kanjiDrawCleanup = kanjiDraw({
+    draw:         $("#kanjidraw_draw"),
+    btn_undo:     $("#kanjidraw_btn_undo"),
+    btn_clear:    $("#kanjidraw_btn_clear"),
+    lbl_strokes:  $("#kanjidraw_lbl_strokes"),
+    btn_done:     $("#kanjidraw_btn_done"),
+    canvas:       $("#kanjidraw_canvas"),
+    results:      $("#kanjidraw_results"),
+    btn_back:     $("#kanjidraw_btn_back"),
+    table:        $("#kanjidraw_table"),
+    strokeStyle:  $("#kanjidraw_canvas").css("border-top-color"),
+    buttonClass: "jap btn btn-primary btn-lg m-1", matches: kanjiMatches,
+    select: k => {
+      const q = $("#kanji-query"); q.val(q.val() + k)
+      $("#kanjidraw-modal").modal("hide")
+    },
+  })
+}).on("hidden.bs.modal", () => {
+  if (kanjiDrawCleanup) kanjiDrawCleanup()
+  setTimeout(() => $("#kanji-query").focus())
+})
 
 const chooseRadicals = (elems, toggle = true) => {
   const q = $("#kanji-query"), v = q.val().trim().replace(/^\+r\s*/, "")

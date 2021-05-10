@@ -2,10 +2,10 @@
 
   File        : templates/_macros.html
   Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-  Date        : 2021-02-11
+  Date        : 2021-05-10
 
   Copyright   : Copyright (C) 2021  Felix C. Stegerman
-  Version     : v0.4.0
+  Version     : v1.0.0
   License     : AGPLv3+
 
 --> #}
@@ -66,10 +66,15 @@
         {{ input(id, name, value, ph, af, mb = imb) }}
         <div class="mb-{{ mb }}">
           {% if id == "kanji-query" %}
-            <div class="d-inline-block mr-2" title="select radicals"
+            <div class="d-inline-block mr-1" title="select radicals"
                 data-toggle="tooltip" data-placement="top">
               <button type="button" class="jap btn btn-secondary"
                 data-toggle="modal" data-target="#radical-modal">部</button>
+            </div>
+            <div class="d-inline-block mr-2" title="draw kanji"
+                data-toggle="tooltip" data-placement="top">
+              <button type="button" class="jap btn btn-secondary"
+                data-toggle="modal" data-target="#kanjidraw-modal">筆</button>
             </div>
           {%- endif -%}
           <div class="btn-group">
