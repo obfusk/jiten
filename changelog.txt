@@ -1,3 +1,9 @@
+master
+
+• new: handwritten kanji recognition (kanjidraw)
+• new: larger japanese text setting
+• improved dark mode
+
 v1.0.0
 
 • new: french & spanish (& swedish) (jmdict meanings & sentences)
