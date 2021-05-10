@@ -25,6 +25,10 @@ a[aria-expanded=false] .collapse-close {
   display: none;
 }
 
+#kanjidraw_canvas {
+  touch-action: none;
+}
+
 #toggle-romaji[data-roma="show"]::before {
   content: "Hide ";
 }

@@ -25,7 +25,7 @@ const kanjiDraw = config => {                                 //  {{{1
   const ctx = canvas[0].getContext("2d")
   let drawing = false, x = 0, y = 0, strokes = [], lines = []
 
-  const onMousedown = e => {
+  const onPointerdown = e => {
     if (strokes.length >= maxStrokes) return
     drawing = true; x = e.offsetX; y = e.offsetY
     strokes.push([x * 255.0 / canvas[0].width,
@@ -34,9 +34,11 @@ const kanjiDraw = config => {                                 //  {{{1
     enableButtons()
   }
 
-  const onMousemove = e => { if (drawing) addLine(e.offsetX, e.offsetY) }
+  const onPointermove = e => {
+    if (drawing) addLine(e.offsetX, e.offsetY)
+  }
 
-  const onMouseup = e => {
+  const onPointerup = e => {
     if (!drawing) return
     drawing = false
     if (e.target === canvas[0]) addLine(e.offsetX, e.offsetY)
@@ -84,6 +86,8 @@ const kanjiDraw = config => {                                 //  {{{1
   }
 
   const addLine = (x2, y2) => {
+    if (!(0 <= x2 && x2 <= canvas[0].width &&
+          0 <= y2 && y2 <= canvas[0].height)) return
     drawLine(x, y, x2, y2)
     lines.slice(-1)[0].push([x, y, x2, y2])
     x = x2; y = y2
@@ -124,24 +128,24 @@ const kanjiDraw = config => {                                 //  {{{1
     ctx.clearRect(0, 0, canvas[0].width, canvas[0].height)
 
   const cleanup = () => {
-    btn_undo.off("click", onUndo)
-    btn_clear.off("click", onClear)
-    btn_done.off("click", onDone)
-    btn_back.off("click", onBack)
-    canvas.off("mousedown", onMousedown)
-    canvas.off("mousemove", onMousemove)
-    $(window).off("mouseup", onMouseup)
+    btn_undo  .off("click", onUndo)
+    btn_clear .off("click", onClear)
+    btn_done  .off("click", onDone)
+    btn_back  .off("click", onBack)
+    canvas    .off("pointerdown", onPointerdown)
+    canvas    .off("pointermove", onPointermove)
+    $(window) .off("pointerup"  , onPointerup)
   }
 
   onClear(); onBack()
 
-  btn_undo.click(onUndo)
-  btn_clear.click(onClear)
-  btn_done.click(onDone)
-  btn_back.click(onBack)
-  canvas.mousedown(onMousedown)
-  canvas.mousemove(onMousemove)
-  $(window).mouseup(onMouseup)
+  btn_undo  .on("click", onUndo)
+  btn_clear .on("click", onClear)
+  btn_done  .on("click", onDone)
+  btn_back  .on("click", onBack)
+  canvas    .on("pointerdown", onPointerdown)
+  canvas    .on("pointermove", onPointermove)
+  $(window) .on("pointerup"  , onPointerup)
 
   return cleanup
 }                                                             //  }}}1
