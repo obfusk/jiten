@@ -12,6 +12,7 @@
 - [ ] urls & sums in `scripts/buildozer.sh`
 - [ ] pinned p4a commit in `p4a-commit`
 - [ ] Python version in `runtime.txt`
+- [ ] pinned requirements in `requirements.txt`
 - [ ] heroku buildpack version in `bin/post_compile`
 - [ ] ndk/python/sqlite version in `scripts/*.sh`
 

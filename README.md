@@ -175,7 +175,8 @@ $ jiten-gui
 
 ## Requirements
 
-* Python >= 3.5 + Flask + click.
+* Python >= 3.5 + Flask + click +
+  [kanjidraw](https://github.com/obfusk/kanjidraw).
 * To build the SQLite PCRE C extension: a C compiler (e.g.
   `gcc`/`clang`) and the `sqlite3` & `pcre` libraries & headers.
 * Basic build tools like `make` and `patch`.
@@ -188,6 +189,10 @@ $ jiten-gui
 $ apt install python3-dev build-essential libsqlite3-dev libpcre3-dev
 $ apt install python3-flask   # optional: Flask & click w/o pip
 ```
+
+NB: currently, you'll need to install
+[kanjidraw](https://github.com/obfusk/kanjidraw) manually (i.e. using
+`pip` or from `git`).
 
 #### Optional: WebView GUI
 
