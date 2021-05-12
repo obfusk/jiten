@@ -1,7 +1,7 @@
 from pythonforandroid.recipe import PythonRecipe
 
 class FlaskRecipe(PythonRecipe):
-    version = '1.1.2'
+    version = '2.0.0'
     url = 'https://github.com/pallets/flask/archive/{version}.zip'
 
     depends = ['setuptools', 'click']

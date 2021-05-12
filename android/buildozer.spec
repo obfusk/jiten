@@ -7,13 +7,13 @@ source.include_exts = py
 source.exclude_dirs = bin,patches,p4a-recipes,scripts
 source.exclude_patterns = makefile,p4a-commit,*.png,*.xml
 requirements =
-  click==7.1.2,flask==1.1.2,jiten,openssl,sqlite3,
+  click==8.0.0,flask==2.0.0,jiten,openssl,sqlite3,
   certifi==2020.12.5,kanjidraw==0.1.1,libpcre==8.44,
   hostpython3==3.9.5,python3==3.9.5,
   android,genericndkbuild,
-  itsdangerous==1.1.0,jinja2==2.11.3,markupsafe==1.1.1,werkzeug==1.0.1,
+  itsdangerous==2.0.0,jinja2==3.0.0,markupsafe==2.0.0,werkzeug==2.0.0,
   libffi==v3.3,pyjnius==1.3.0,
-  setuptools==56.0.0,six==1.15.0
+  setuptools==56.2.0,six==1.16.0
 requirements.source.jiten = ..
 icon.filename = %(source.dir)s/icon.png
 orientation = portrait
