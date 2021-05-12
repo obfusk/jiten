@@ -417,7 +417,10 @@ $("#kanjidraw-modal").on("shown.bs.modal", e => {
       i.val(v.slice(0, p) + k + v.slice(p))
       $("#kanjidraw-modal").modal("hide")
       cleanup()
-      setTimeout(() => { i.focus(); i[0].selectionEnd = p + 1 })
+      setTimeout(() => {
+        i.focus()
+        i[0].selectionStart = i[0].selectionEnd = p + 1
+      })
     },
   })
 })
