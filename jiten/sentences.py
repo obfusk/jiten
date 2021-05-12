@@ -5,7 +5,7 @@
 #
 # File        : jiten/sentences.py
 # Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-# Date        : 2021-03-03
+# Date        : 2021-05-12
 #
 # Copyright   : Copyright (C) 2021  Felix C. Stegerman
 # Version     : v1.0.2
@@ -17,6 +17,11 @@
 r"""
 
 Sentences from Tatoeba.
+
+>>> from contextlib import contextmanager
+>>> @contextmanager
+... def _progressbar(it, **kw): yield it
+>>> click.progressbar = _progressbar
 
 >>> sentences = parse_sentences()
 >>> len(sentences)
