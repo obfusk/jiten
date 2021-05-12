@@ -4,7 +4,7 @@
 //
 //  File        : static/script.js
 //  Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-//  Date        : 2021-05-10
+//  Date        : 2021-05-12
 //
 //  Copyright   : Copyright (C) 2021  Felix C. Stegerman
 //  Version     : v1.0.0
@@ -398,10 +398,9 @@ const kanjiMatches = strokes => fetch_post(
     "kanji matches", "/_kanji_matches", JSON.stringify(strokes), true
   ).then(r => r.text())
 
-let kanjiDrawCleanup = null
-
-$("#kanjidraw-modal").on("shown.bs.modal", () => {
-  kanjiDrawCleanup = kanjiDraw({
+$("#kanjidraw-modal").on("shown.bs.modal", e => {
+  const i = $("input[type=text]", $(e.relatedTarget).parents(".search-form"))
+  const cleanup = kanjiDraw({
     draw:         $("#kanjidraw_draw"),
     btn_undo:     $("#kanjidraw_btn_undo"),
     btn_clear:    $("#kanjidraw_btn_clear"),
@@ -414,13 +413,13 @@ $("#kanjidraw-modal").on("shown.bs.modal", () => {
     strokeStyle:  $("#kanjidraw_canvas").css("border-top-color"),
     buttonClass: "jap btn btn-primary btn-lg m-1", matches: kanjiMatches,
     select: k => {
-      const q = $("#kanji-query"); q.val(q.val() + k)
+      const v = i.val(), p = i[0].selectionEnd
+      i.val(v.slice(0, p) + k + v.slice(p))
       $("#kanjidraw-modal").modal("hide")
+      cleanup()
+      setTimeout(() => { i.focus(); i[0].selectionEnd = p + 1 })
     },
   })
-}).on("hidden.bs.modal", () => {
-  if (kanjiDrawCleanup) kanjiDrawCleanup()
-  setTimeout(() => $("#kanji-query").focus())
 })
 
 const chooseRadicals = (elems, toggle = true) => {

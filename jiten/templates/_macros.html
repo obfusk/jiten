@@ -2,7 +2,7 @@
 
   File        : templates/_macros.html
   Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-  Date        : 2021-05-10
+  Date        : 2021-05-12
 
   Copyright   : Copyright (C) 2021  Felix C. Stegerman
   Version     : v1.0.0
@@ -71,6 +71,8 @@
               <button type="button" class="jap btn btn-secondary"
                 data-toggle="modal" data-target="#radical-modal">部</button>
             </div>
+          {%- endif -%}
+          {% if id != "stroke-query" %}
             <div class="d-inline-block mr-2" title="draw kanji"
                 data-toggle="tooltip" data-placement="top">
               <button type="button" class="jap btn btn-secondary"
@@ -99,6 +101,8 @@
           <script>
             $("form.search-form .dropdown-toggle").addClass("disabled")
             $(".search-button").addClass("disabled").text("Loading...")
+            $(".search-form input[type=text]").each((i, e) =>
+              e.selectionStart = e.selectionEnd = $(e).val().length)
           </script>
         </div>
       </div>
