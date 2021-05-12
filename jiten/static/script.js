@@ -398,9 +398,11 @@ const kanjiMatches = strokes => fetch_post(
     "kanji matches", "/_kanji_matches", JSON.stringify(strokes), true
   ).then(r => r.text())
 
+let kanjiDrawCleanup = null
+
 $("#kanjidraw-modal").on("shown.bs.modal", e => {
   const i = $("input[type=text]", $(e.relatedTarget).parents(".search-form"))
-  const cleanup = kanjiDraw({
+  kanjiDrawCleanup = kanjiDraw({
     draw:         $("#kanjidraw_draw"),
     btn_undo:     $("#kanjidraw_btn_undo"),
     btn_clear:    $("#kanjidraw_btn_clear"),
@@ -416,14 +418,13 @@ $("#kanjidraw-modal").on("shown.bs.modal", e => {
       const v = i.val(), p = i[0].selectionEnd
       i.val(v.slice(0, p) + k + v.slice(p))
       $("#kanjidraw-modal").modal("hide")
-      cleanup()
       setTimeout(() => {
         i.focus()
         i[0].selectionStart = i[0].selectionEnd = p + 1
       })
     },
   })
-})
+}).on("hidden.bs.modal", () => kanjiDrawCleanup())
 
 const chooseRadicals = (elems, toggle = true) => {
   const q = $("#kanji-query"), v = q.val().trim().replace(/^\+r\s*/, "")
