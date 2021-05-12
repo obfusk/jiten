@@ -2,7 +2,7 @@
 
     File        : README.md
     Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-    Date        : 2021-04-21
+    Date        : 2021-05-12
 
     Copyright   : Copyright (C) 2021  Felix C. Stegerman
     Version     : v1.0.0
@@ -55,6 +55,7 @@ manually).
   - search using
     [SKIP codes](https://en.wikipedia.org/wiki/Kodansha_Kanji_Learner%27s_Dictionary#SKIP)
   - search by radical
+  - handwritten kanji recognition
   - browse by frequency/level/jlpt
 * Example sentences (from Tatoeba)
   - with english, dutch, german, french and/or spanish translation
@@ -74,7 +75,7 @@ manually).
   - search history (stored locally)
   - tooltips to quickly see meanings and readings for kanji and words
   - use long press for tooltips on mobile
-  - converts romaji to hiragana and between hiragana and katakana
+  - convert romaji to hiragana and between hiragana and katakana
   - can be run on your own computer
 * Command-line interface
 * WebView GUI
