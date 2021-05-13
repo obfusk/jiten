@@ -5,7 +5,7 @@
 #
 # File        : jiten/app.py
 # Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-# Date        : 2021-05-10
+# Date        : 2021-05-13
 #
 # Copyright   : Copyright (C) 2021  Felix C. Stegerman
 # Version     : v1.0.0
@@ -403,13 +403,15 @@ def r_stroke():
 
 @app.route("/_kanji_matches", methods = ["POST"])
 def r_kanji_matches():
+  fuzzy, offby1 = arg_bool("fuzzy"), arg_bool("offby1")
   strokes = request.json
   if not (isinstance(strokes, list) and
           all( isinstance(line, list) and len(line) == 4 and
                all( isinstance(x, (int, float)) and 0 <= x <= 255
                     for x in line ) for line in strokes )):
     abort(400)
-  return "".join( kanji for _, kanji in kanjidraw.matches(strokes) )
+  ms = kanjidraw.matches(strokes, fuzzy = fuzzy, offby1 = offby1)
+  return "".join( kanji for _, kanji in ms )
 
 @app.route("/_db/v<int:db_version>/<base>")
 def r_db(db_version, base):

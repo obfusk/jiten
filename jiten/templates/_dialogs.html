@@ -2,7 +2,7 @@
 
   File        : templates/_dialogs.html
   Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-  Date        : 2021-05-10
+  Date        : 2021-05-13
 
   Copyright   : Copyright (C) 2021  Felix C. Stegerman
   Version     : v1.0.0
@@ -52,7 +52,21 @@
             <button id="kanjidraw_btn_done"
               class="btn btn-primary">Done</button>
           </div>
-          <hr/>
+          <div class="pt-3">
+            <div class="form-check form-check-inline">
+              <input type="checkbox" id="kanjidraw_chk_fuzzy"
+                class="form-check-input kanjidraw_chk">
+              <label class="form-check-label"
+                for="kanjidraw_chk_fuzzy">Fuzzy</label>
+            </div>
+            <div class="form-check form-check-inline">
+              <input type="checkbox" id="kanjidraw_chk_offby1"
+                class="form-check-input kanjidraw_chk">
+              <label class="form-check-label"
+                for="kanjidraw_chk_offby1">± 1 Stroke</label>
+            </div>
+          </div>
+          <hr class="mt-2"/>
           <canvas id="kanjidraw_canvas" width="300" height="300"></canvas>
         </div>
         <div id="kanjidraw_results" style="display: none;">

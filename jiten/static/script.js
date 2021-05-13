@@ -4,7 +4,7 @@
 //
 //  File        : static/script.js
 //  Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-//  Date        : 2021-05-12
+//  Date        : 2021-05-13
 //
 //  Copyright   : Copyright (C) 2021  Felix C. Stegerman
 //  Version     : v1.0.0
@@ -394,14 +394,20 @@ $("#romaji-convert").click(() =>
 $("#romaji-modal").on("shown.bs.modal", () => $("#romaji").focus())
 */
 
-const kanjiMatches = strokes => fetch_post(
-    "kanji matches", "/_kanji_matches", JSON.stringify(strokes), true
+const kanjiMatches = strokes => {
+  const fuzzy   = $("#kanjidraw_chk_fuzzy" )[0].checked ? "yes" : "no",
+        offby1  = $("#kanjidraw_chk_offby1")[0].checked ? "yes" : "no",
+        url     = `/_kanji_matches?fuzzy=${fuzzy}&offby1=${offby1}`
+  return fetch_post(
+    "kanji matches", url, JSON.stringify(strokes), true
   ).then(r => r.text())
+}
 
 let kanjiDrawCleanup = null
 
 $("#kanjidraw-modal").on("shown.bs.modal", e => {
   const i = $("input[type=text]", $(e.relatedTarget).parents(".search-form"))
+  $(".kanjidraw_chk").prop("checked", false)
   kanjiDrawCleanup = kanjiDraw({
     draw:         $("#kanjidraw_draw"),
     btn_undo:     $("#kanjidraw_btn_undo"),

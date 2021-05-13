@@ -4,10 +4,10 @@
 //
 //  File        : kanjidraw.js
 //  Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-//  Date        : 2021-05-10
+//  Date        : 2021-05-13
 //
 //  Copyright   : Copyright (C) 2021  Felix C. Stegerman
-//  Version     : v0.1.1
+//  Version     : v0.2.0
 //  License     : AGPLv3+
 //
 //  --                                                          ; }}}1
@@ -17,11 +17,11 @@
 const kanjiDraw = config => {                                 //  {{{1
   const { draw, btn_undo, btn_clear, lbl_strokes, btn_done, canvas,
           results, btn_back, table } = config
-  const columns     = config.columns      || 5,
-        buttonClass = config.buttonClass  || "",
-        maxStrokes  = config.maxStrokes   || 30,
+  const buttonClass = config.buttonClass  || "",
         strokeStyle = config.strokeStyle  || "black",
-        lineWidth   = config.lineWidth    || 5
+        lineWidth   = config.lineWidth    || 5,
+        columns     = config.columns      || 5,
+        maxStrokes  = config.maxStrokes   || 30
   const ctx = canvas[0].getContext("2d")
   let drawing = false, x = 0, y = 0, strokes = [], lines = []
 
