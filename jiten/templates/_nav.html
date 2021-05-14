@@ -2,10 +2,10 @@
 
   File        : templates/_nav.html
   Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-  Date        : 2021-01-22
+  Date        : 2021-05-14
 
   Copyright   : Copyright (C) 2021  Felix C. Stegerman
-  Version     : v0.3.5
+  Version     : v1.0.0
   License     : AGPLv3+
 
 --> #}
@@ -28,21 +28,31 @@
   {%- if GUI %}
     <span class="navbar-brand">
       <a class="btn btn-info" href="javascript:history.back()">
-        <!-- https://www.flaticon.com/free-icon/back-arrow_60577 -->
+        <!--
+          Source: https://fonts.gstatic.com/s/i/materialicons/arrow_back/v12/24px.svg
+          License: http://www.apache.org/licenses/LICENSE-2.0.txt
+        -->
         <svg xmlns="http://www.w3.org/2000/svg"
             style="height: 1.25rem; width: 1.25rem;"
-            viewBox="0 0 459 459" focusable="false">
+            viewBox="4 4 16 16" focusable="false">
           <title>Go backwards</title>
-          <path d="M178.5,140.25v-102L0,216.75l178.5,178.5V290.7c127.5,0,216.75,40.8,280.5,130.05C433.5,293.25,357,165.75,178.5,140.25z" fill="currentColor" />
+          <path d="M0 0h24v24H0z" fill="none"/>
+          <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"
+            fill="currentColor"/>
         </svg>
       </a>
       <a class="btn btn-info" href="javascript:history.forward()">
-        <!-- https://www.flaticon.com/free-icon/back-arrow_60577 -->
+        <!--
+          Source: https://fonts.gstatic.com/s/i/materialicons/arrow_forward/v11/24px.svg
+          License: http://www.apache.org/licenses/LICENSE-2.0.txt
+        -->
         <svg xmlns="http://www.w3.org/2000/svg"
-            style="height: 1.25rem; width: 1.25rem; transform: scaleX(-1);"
-            viewBox="0 0 459 459" focusable="false">
+            style="height: 1.25rem; width: 1.25rem;"
+            viewBox="4 4 16 16" focusable="false">
           <title>Go forwards</title>
-          <path d="M178.5,140.25v-102L0,216.75l178.5,178.5V290.7c127.5,0,216.75,40.8,280.5,130.05C433.5,293.25,357,165.75,178.5,140.25z" fill="currentColor" />
+          <path d="M0 0h24v24H0z" fill="none"/>
+          <path d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z"
+            fill="currentColor"/>
         </svg>
       </a>
     </span>
@@ -122,11 +132,16 @@
       class="btn btn-light btn-sm my-2 my-lg-0 ml-2">Settings</button>
     <button type="button" data-toggle="modal" data-target="#share-modal"
         class="btn btn-light btn-sm my-2 my-lg-0 ml-2" title="share">
-      <!-- https://www.flaticon.com/free-icon/share-button_61020 -->
+      <!--
+        Source: https://fonts.gstatic.com/s/i/materialicons/share/v13/24px.svg
+        License: http://www.apache.org/licenses/LICENSE-2.0.txt
+      -->
       <svg xmlns="http://www.w3.org/2000/svg"
-          style="height: 0.85rem; width: 0.85rem; transform: scaleX(-1);"
-          viewBox="0 0 507.45 507.45" focusable="false">
-        <path d="M408,178.5c-20.4,0-38.25,7.65-51,20.4L175.95,94.35c2.55-5.1,2.55-12.75,2.55-17.85C178.5,33.15,145.35,0,102,0 S25.5,33.15,25.5,76.5S58.65,153,102,153c20.4,0,38.25-7.65,51-20.4l181.05,104.55c-2.55,5.1-2.55,12.75-2.55,17.85 c0,5.1,0,12.75,2.55,17.85L153,379.95c-12.75-12.75-30.6-20.4-51-20.4c-40.8,0-73.95,33.15-73.95,73.95S61.2,507.45,102,507.45 s73.95-33.15,73.95-73.95c0-5.1,0-10.2-2.55-17.85L354.45,308.55c12.75,12.75,30.6,20.4,51,20.4c43.35,0,76.5-33.15,76.5-76.5 C481.95,209.1,451.35,178.5,408,178.5z" fill="currentColor" />
+          style="height: 1rem; width: 1rem;"
+          viewBox="0 0 24 24" focusable="false">
+        <path d="M0 0h24v24H0z" fill="none"/>
+        <path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92 1.61 0 2.92-1.31 2.92-2.92s-1.31-2.92-2.92-2.92z"
+          fill="currentColor"/>
       </svg>
     </button>
   </div>

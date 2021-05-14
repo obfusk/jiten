@@ -13,8 +13,8 @@ body {
 }
 
 .icon {
-  height: 0.7rem;
-  width: 0.7rem;
+  height: 1rem;
+  width: 1rem;
 }
 
 a[aria-expanded=true] .collapse-open {
