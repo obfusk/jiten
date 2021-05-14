@@ -4,7 +4,7 @@
 //
 //  File        : kanjidraw.js
 //  Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-//  Date        : 2021-05-13
+//  Date        : 2021-05-14
 //
 //  Copyright   : Copyright (C) 2021  Felix C. Stegerman
 //  Version     : v0.2.0
@@ -19,6 +19,7 @@ const kanjiDraw = config => {                                 //  {{{1
           results, btn_back, table } = config
   const buttonClass = config.buttonClass  || "",
         strokeStyle = config.strokeStyle  || "black",
+        gridColour  = config.gridColour   || "#999",
         lineWidth   = config.lineWidth    || 5,
         columns     = config.columns      || 5,
         maxStrokes  = config.maxStrokes   || 30
@@ -93,11 +94,13 @@ const kanjiDraw = config => {                                 //  {{{1
     x = x2; y = y2
   }
 
-  const drawLine = (x1, y1, x2, y2) => {
+  const drawLine = (x1, y1, x2, y2) =>
+    _drawLine(x1, y1, x2, y2, strokeStyle, lineWidth)
+
+  const _drawLine = (x1, y1, x2, y2, strokeStyle, lineWidth) => {
     ctx.beginPath()
-    ctx.strokeStyle = strokeStyle
-    ctx.lineWidth   = lineWidth
-    ctx.lineCap     = ctx.lineJoin = "round"
+    ctx.strokeStyle = strokeStyle; ctx.lineWidth = lineWidth
+    ctx.lineCap = ctx.lineJoin = "round"
     ctx.moveTo(x1, y1)
     ctx.lineTo(x2, y2)
     ctx.stroke()
@@ -124,8 +127,14 @@ const kanjiDraw = config => {                                 //  {{{1
         drawLine(...line)
   }
 
-  const clearCanvas = () =>
-    ctx.clearRect(0, 0, canvas[0].width, canvas[0].height)
+  const clearCanvas = () => {
+    const w = canvas[0].width, h = canvas[0].height
+    ctx.clearRect(0, 0, w, h)
+    for (const x of [Math.round(w / 3), Math.round(2 * w / 3)])
+      _drawLine(x, 0, x, h, gridColour, 1)
+    for (const y of [Math.round(h / 3), Math.round(2 * h / 3)])
+      _drawLine(0, y, w, y, gridColour, 1)
+  }
 
   const cleanup = () => {
     btn_undo  .off("click", onUndo)
