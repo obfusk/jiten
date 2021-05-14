@@ -6,6 +6,10 @@ hr {
   border-top: 1px solid rgba(0, 0, 0, 0.4);
 }
 
+kbd {
+  background-color: #444;
+}
+
 .card {
   background-color: #292929;
   border: 1px solid #444;
