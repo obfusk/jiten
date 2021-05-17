@@ -4,7 +4,7 @@
 //
 //  File        : static/script.js
 //  Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-//  Date        : 2021-05-13
+//  Date        : 2021-05-17
 //
 //  Copyright   : Copyright (C) 2021  Felix C. Stegerman
 //  Version     : v1.0.0
@@ -397,10 +397,15 @@ $("#romaji-modal").on("shown.bs.modal", () => $("#romaji").focus())
 const kanjiMatches = strokes => {
   const fuzzy   = $("#kanjidraw_chk_fuzzy" )[0].checked ? "yes" : "no",
         offby1  = $("#kanjidraw_chk_offby1")[0].checked ? "yes" : "no",
-        url     = `/_kanji_matches?fuzzy=${fuzzy}&offby1=${offby1}`
+        url     = `/_kanji_matches?fuzzy=${fuzzy}&offby1=${offby1}`,
+        done    = $("#kanjidraw_btn_done"), text = done.text()
+  done.addClass("disabled").text("Loading...")
   return fetch_post(
     "kanji matches", url, JSON.stringify(strokes), true
-  ).then(r => r.text())
+  ).then(r => {
+    done.removeClass("disabled").text(text)
+    return r.text()
+  })
 }
 
 let kanjiDrawCleanup = null
