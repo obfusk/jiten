@@ -2,7 +2,7 @@
 
     File        : README.md
     Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-    Date        : 2021-05-12
+    Date        : 2021-05-17
 
     Copyright   : Copyright (C) 2021  Felix C. Stegerman
     Version     : v1.0.0
@@ -352,6 +352,6 @@ Audio by huizi99, Mizu & yomi (CC BY-NC 4.0).
 
 © Google
 
-[![CC-BY](https://licensebuttons.net/l/by/3.0/88x31.png)](https://creativecommons.org/licenses/by/3.0/)
+[Apache 2.0](https://www.apache.org/licenses/LICENSE-2.0.txt)
 
 <!-- vim: set tw=70 sw=2 sts=2 et fdm=marker : -->
