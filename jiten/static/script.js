@@ -424,7 +424,10 @@ $("#kanjidraw-modal").on("shown.bs.modal", e => {
     btn_back:     $("#kanjidraw_btn_back"),
     table:        $("#kanjidraw_table"),
     strokeStyle:  $("#kanjidraw_canvas").css("border-top-color"),
-    buttonClass: "jap btn btn-primary btn-lg m-1", matches: kanjiMatches,
+    buttonClass:  "jap btn btn-primary btn-lg m-1",
+    gridColour:   $("#kanjidraw_canvas")[0].dataset.showGrid == "false" ?
+                    $(".modal-content").css("background-color") : null,
+    matches:      kanjiMatches,
     select: k => {
       const v = i.val(), p = i[0].selectionEnd
       i.val(v.slice(0, p) + k + v.slice(p))
