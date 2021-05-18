@@ -55,13 +55,14 @@ coverage: tmp-html
 clean: cleanup
 	rm -f jiten/res/*.sqlite3
 	rm -f jiten/_sqlite3_pcre.*.so
+	rm -fr jiten.egg-info/
 	$(MAKE) -C jiten/res/jmdict clean
 	$(MAKE) -C jiten/res/sentences clean
 
 cleanup:
 	find -name '*~' -delete -print
 	rm -fr jiten/__pycache__/ tmp-html/
-	rm -fr build/ dist/ jiten.egg-info/
+	rm -fr build/ dist/
 	rm -fr .coverage htmlcov/
 	rm -fr jiten/.version
 	$(MAKE) -C jiten/res/jmdict cleanup
