@@ -4,10 +4,10 @@
 //
 //  File        : kanjidraw.js
 //  Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-//  Date        : 2021-05-14
+//  Date        : 2021-05-18
 //
 //  Copyright   : Copyright (C) 2021  Felix C. Stegerman
-//  Version     : v0.2.0
+//  Version     : v0.2.1
 //  License     : AGPLv3+
 //
 //  --                                                          ; }}}1

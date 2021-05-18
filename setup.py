@@ -93,7 +93,7 @@ setuptools.setup(
     gui_scripts     = ["jiten-gui = jiten.cli:gui_main [gui]"],
   ),
   python_requires   = ">=3.6",
-  install_requires  = ["Flask", "click>=6.0", "kanjidraw>=0.2.0"],
+  install_requires  = ["Flask", "click>=6.0", "kanjidraw>=0.2.1"],
   extras_require    = dict(gui = ["pywebview>=3.3.5"]),
   ext_modules       = [pcre],
 )
