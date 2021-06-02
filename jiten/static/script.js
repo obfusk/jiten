@@ -4,7 +4,7 @@
 //
 //  File        : static/script.js
 //  Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-//  Date        : 2021-05-17
+//  Date        : 2021-06-02
 //
 //  Copyright   : Copyright (C) 2021  Felix C. Stegerman
 //  Version     : v1.0.0
@@ -201,17 +201,20 @@ const updateHistory = f =>
   localStorage.setItem("history", JSON.stringify(f(getHistory())))
 
 // TODO
+// NB: also sets document.title
 const saveHistory = (max = 500) => {
   const params  = new URLSearchParams(location.search)
-  let query     = params.get("query")
+  let query     = params.get("query").trim()
   if (query) {
-    if (query.trim().startsWith("+#")) {
+    if (query.startsWith("+#")) {
       const entry = $($(".entry")[0]).text().trim()
       if (entry) query += " (" + entry + ")"
       params.delete("noun"); params.delete("verb")
       params.delete("prio"); params.delete("jlpt")
     }
+    const what = document.title.split(" ").slice(-1)[0]
     const link = location.pathname + "?" + params.toString()
+    document.title = `「${query}」 jiten - ${what}`
     updateHistory(hist =>
       uniq([[query, link], ...hist], x => x[1]).slice(0, max)
     )
