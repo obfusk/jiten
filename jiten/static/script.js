@@ -204,7 +204,7 @@ const updateHistory = f =>
 // NB: also sets document.title
 const saveHistory = (max = 500) => {
   const params  = new URLSearchParams(location.search)
-  let query     = params.get("query").trim()
+  let query     = (params.get("query") || "").trim()
   if (query) {
     if (query.startsWith("+#")) {
       const entry = $($(".entry")[0]).text().trim()
@@ -212,7 +212,7 @@ const saveHistory = (max = 500) => {
       params.delete("noun"); params.delete("verb")
       params.delete("prio"); params.delete("jlpt")
     }
-    const what = document.title.split(" ").slice(-1)[0]
+    const what = document.title.split(" - ").slice(-1)[0]
     const link = location.pathname + "?" + params.toString()
     document.title = `「${query}」 jiten - ${what}`
     updateHistory(hist =>
