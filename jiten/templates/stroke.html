@@ -4,16 +4,16 @@
 
     File        : templates/stroke.html
     Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-    Date        : 2021-01-19
+    Date        : 2021-06-02
 
     Copyright   : Copyright (C) 2021  Felix C. Stegerman
-    Version     : v0.3.5
+    Version     : v1.0.0
     License     : AGPLv3+
 
   -->
   <head>
     {% include "_meta.html" %}
-    <title>jiten - stroke order</title>
+    <title>{% if query %}「{{ query }}」 {% endif %}jiten - stroke order</title>
     <style>
       #out { font-size: 9em; } /* TODO */
     </style>
