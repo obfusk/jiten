@@ -1,7 +1,7 @@
 from pythonforandroid.recipe import PythonRecipe
 
 class ClickRecipe(PythonRecipe):
-    version = '8.0.0'
+    version = '8.0.1'
     url = 'https://github.com/pallets/click/archive/{version}.zip'
 
     depends = ['setuptools']
