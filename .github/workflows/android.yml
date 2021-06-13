@@ -58,6 +58,8 @@ jobs:
         ~vagrant/build/dev.obfusk.jiten/android/scripts/setup-sqlite.sh
     - name: Install dependencies (2)
       run: |
+        mkdir /opt/android-sdk
+        chown vagrant:vagrant /opt/android-sdk
         su - vagrant -c '
           set -e
           ~/build/dev.obfusk.jiten/android/scripts/setup-ndk.sh

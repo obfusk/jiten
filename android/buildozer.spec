@@ -20,8 +20,11 @@ orientation = portrait
 fullscreen = 0
 android.api = 30
 android.minapi = 23
+
+# https://gitlab.com/fdroid/android-sdk-transparency-log/-/raw/master/checksums.json
 android.ndk = 22b
-android.ndk_path = /home/vagrant/android-ndk/r22b
+android.ndk_path = /opt/android-sdk/ndk/22.1.7171670
+
 #android.sdk_path =
 android.accept_sdk_license = True
 android.manifest.intent_filters = %(source.dir)s/intent.xml

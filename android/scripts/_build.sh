@@ -18,7 +18,8 @@ test "$#" -ge 2
 
 remote="$1"; shift
 branch="$( git branch --show-current )"
-ndk=r22b
+ndk_vsn=r22b
+ndk_rev=22.1.7171670
 
 # test
 if [ "$( ssh "$remote" 'echo OK' || true )" != OK ]; then
@@ -27,9 +28,9 @@ if [ "$( ssh "$remote" 'echo OK' || true )" != OK ]; then
 fi
 
 # cache ndk
-if ! ssh "$remote" "test -d android-ndk/$ndk"; then
-  if test -e tmp/android-ndk-$ndk-linux-x86_64.zip; then
-    scp tmp/android-ndk-$ndk-linux-x86_64.zip "$remote:"
+if ! ssh "$remote" "test -d /opt/android-sdk/ndk/$ndk_rev"; then
+  if test -e tmp/android-ndk-$ndk_vsn-linux-x86_64.zip; then
+    scp tmp/android-ndk-$ndk_vsn-linux-x86_64.zip "$remote:"
   fi
   scp android/scripts/setup-ndk.sh "$remote:"
   ssh "$remote" ./setup-ndk.sh
