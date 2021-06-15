@@ -19,7 +19,7 @@ Kanji dictionary
 • search using SKIP codes
 • search by radical
 • handwritten kanji recognition
-• browse by frequency/level/jlpt
+• browse by frequency/level/jlpt/SKIP
 
 Example sentences (from Tatoeba)
 • with english, dutch, german, french and/or spanish translation
