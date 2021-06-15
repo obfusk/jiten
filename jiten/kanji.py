@@ -5,7 +5,7 @@
 #
 # File        : jiten/kanji.py
 # Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-# Date        : 2021-05-12
+# Date        : 2021-06-15
 #
 # Copyright   : Copyright (C) 2021  Felix C. Stegerman
 # Version     : v1.0.2
@@ -419,6 +419,17 @@ def by_jlpt(file = SQLITE_FILE):
       data[level].append((char,) + readmean(char, c))
   for level in "54321":
     yield int(level), tuple(sorted(data[int(level)]))
+
+def by_skip(file = SQLITE_FILE):
+  data = []
+  with sqlite_do(file) as c:
+    for r in c.execute("""
+        SELECT char, on_, kun, meaning, skip FROM entry
+          WHERE skip IS NOT NULL ORDER BY skip ASC
+        """):
+      skip = tuple( int(n) for n in r["skip"].split("-") )
+      data.append((skip, r["char"]) + _readmean(r))
+  return sorted(data, key = lambda x: x[0])
 
 @contextmanager
 def readmeans(file = SQLITE_FILE):

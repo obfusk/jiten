@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="en">
+  <!--
+
+    File        : templates/kanji-by-skip.html
+    Maintainer  : Felix C. Stegerman <flx@obfusk.net>
+    Date        : 2021-06-15
+
+    Copyright   : Copyright (C) 2021  Felix C. Stegerman
+    Version     : v1.0.0
+    License     : AGPLv3+
+
+  -->
+  <head>
+    {% include "_meta.html" %}
+    <title>jiten - kanji by skip code</title>
+    <style>
+      #skip-quickref .large {
+        font-size: 1.4em;
+      }
+      .x3-btn {
+        display: inline-block;
+        width: 6.2rem; /* TODO */
+      }
+    </style>
+  </head>
+  <body>
+    {% from "_macros.html" import topbtn with context %}
+    {% include "_nav.html" %}
+    <div class="container">
+      <div class="alert alert-info" id="skip-quickref">
+        <span class="large">
+          <span class="badge badge-primary">
+            1-#left-#right (明 = 1-4-4)
+          </span>
+          <span class="badge badge-primary">
+            2-#top-#bottom (薬 = 2-3-13)
+          </span>
+          <span class="badge badge-primary">
+            3-#outside-#inside (風 = 3-2-7)
+          </span>
+          <span class="badge badge-primary">
+            4-#strokes-subpattern (本 = 4-5-3)
+          </span>
+        </span>
+        <br/>
+        <span class="large">
+          <span class="badge badge-secondary">
+            -1 top line (耳)
+          </span>
+          <span class="badge badge-secondary">
+            -2 bottom line (上)
+          </span>
+          <span class="badge badge-secondary">
+            -3 vertical line (本)
+          </span>
+          <span class="badge badge-secondary">
+            -4 other (女)
+          </span>
+        </span>
+      </div>
+      {% set ns = namespace(skip = None) %}
+      {% for row in K.by_skip()|batch(100) %}
+        <div class="card">
+          <div class="card-header d-flex flex-wrap">
+            <div>
+              <h4 class="card-title">
+                <span class="badge badge-warning">
+                  {{ row[0][0]|map("string")|join("-") }}
+                </span> ~
+                <span class="badge badge-warning">
+                  {{ row[-1][0]|map("string")|join("-") }}
+                </span>
+              </h4>
+              <h6 class="card-subtitle text-muted">
+                {{ loop.index0 * 100 + 1 }} -
+                {{ loop.index0 * 100 + row|length }}
+              </h6>
+            </div>
+            <span class="ml-auto">{{ topbtn() }}</span>
+          </div>
+          <div class="card-body">
+            {% for s, c, r, m in row %}
+              {% if s != ns.skip %}
+                {% set ns.skip = s %}
+                <span class="notbtn btn btn-warning btn-lg px-2 py-1 mb-1">
+                  <span class="x3-btn">
+                    {{ ns.skip|map("string")|join("-") }}
+                  </span>
+                </span>
+              {% endif %}
+              <a class="link jap selbtn btn btn-primary btn-lg px-2 py-1 mb-1"
+                title="{{ "; ".join(m) }} 【{{ "、".join(r) }}】"
+                data-toggle="tooltip" data-placement="top"
+                href="/kanji?query={{ c }}">{{ c }}</a>
+            {% endfor %}
+          </div>
+        </div>
+        {% if not loop.last %}<br/>{% endif %}
+      {% endfor %}
+    </div>
+    {% include "_footer.html" %}
+  </body>
+</html>

@@ -5,7 +5,7 @@
 #
 # File        : jiten/app.py
 # Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-# Date        : 2021-05-17
+# Date        : 2021-06-15
 #
 # Copyright   : Copyright (C) 2021  Felix C. Stegerman
 # Version     : v1.0.0
@@ -381,6 +381,10 @@ def r_kanji_by_level():
 @app.route("/kanji/by-jlpt")
 def r_kanji_by_jlpt():
   return respond("kanji-by-jlpt.html", page = "kanji/by-jlpt")
+
+@app.route("/kanji/by-skip")
+def r_kanji_by_skip():
+  return respond("kanji-by-skip.html", page = "kanji/by-skip")
 
 # FIXME: legacy route
 @app.route("/kanji/random")

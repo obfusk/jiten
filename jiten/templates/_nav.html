@@ -2,7 +2,7 @@
 
   File        : templates/_nav.html
   Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-  Date        : 2021-05-14
+  Date        : 2021-06-15
 
   Copyright   : Copyright (C) 2021  Felix C. Stegerman
   Version     : v1.0.0
@@ -96,6 +96,8 @@
             href="/kanji/by-level">Kanji by Level</a>
           <a class="dropdown-item {{ "active" if page == "kanji/by-jlpt" else "" }}"
             href="/kanji/by-jlpt">Kanji by JLPT</a>
+          <a class="dropdown-item {{ "active" if page == "kanji/by-skip" else "" }}"
+            href="/kanji/by-skip">Kanji by SKIP</a>
           <div class="dropdown-divider"></div>
           <a class="dropdown-item {{ "active" if page == "jmdict/by-freq" else "" }}"
             href="/jmdict/by-freq">JMDict by Frequency</a>
