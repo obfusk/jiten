@@ -96,8 +96,11 @@
             href="/kanji/by-level">Kanji by Level</a>
           <a class="dropdown-item {{ "active" if page == "kanji/by-jlpt" else "" }}"
             href="/kanji/by-jlpt">Kanji by JLPT</a>
-          <a class="dropdown-item {{ "active" if page == "kanji/by-skip" else "" }}"
-            href="/kanji/by-skip">Kanji by SKIP</a>
+          {% for n in "1234" %}
+            {% set p = "kanji/by-skip/" + n %}
+            <a class="dropdown-item {{ "active" if page == p else "" }}"
+              href="/{{ p }}">Kanji by SKIP - {{ n }}</a>
+          {% endfor %}
           <div class="dropdown-divider"></div>
           <a class="dropdown-item {{ "active" if page == "jmdict/by-freq" else "" }}"
             href="/jmdict/by-freq">JMDict by Frequency</a>

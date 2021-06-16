@@ -420,15 +420,15 @@ def by_jlpt(file = SQLITE_FILE):
   for level in "54321":
     yield int(level), tuple(sorted(data[int(level)]))
 
-def by_skip(file = SQLITE_FILE):
+def by_skip(category, file = SQLITE_FILE):
   data = []
   with sqlite_do(file) as c:
     for r in c.execute("""
         SELECT char, on_, kun, meaning, skip FROM entry
-          WHERE skip IS NOT NULL ORDER BY skip ASC
-        """):
+          WHERE skip IS NOT NULL and substr(skip, 1, 1) = ?
+        """, (str(category),)):
       skip = tuple( int(n) for n in r["skip"].split("-") )
-      data.append((skip, r["char"]) + _readmean(r))
+      data.append((skip, r["skip"], r["char"]) + _readmean(r))
   return sorted(data, key = lambda x: x[0])
 
 @contextmanager

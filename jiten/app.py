@@ -382,9 +382,13 @@ def r_kanji_by_level():
 def r_kanji_by_jlpt():
   return respond("kanji-by-jlpt.html", page = "kanji/by-jlpt")
 
-@app.route("/kanji/by-skip")
+@app.route("/kanji/by-skip/1")
+@app.route("/kanji/by-skip/2")
+@app.route("/kanji/by-skip/3")
+@app.route("/kanji/by-skip/4")
 def r_kanji_by_skip():
-  return respond("kanji-by-skip.html", page = "kanji/by-skip")
+  return respond("kanji-by-skip.html", page = request.path[1:],
+                 category = int(request.path.split("/")[-1]))
 
 # FIXME: legacy route
 @app.route("/kanji/random")

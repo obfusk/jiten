@@ -18,16 +18,16 @@
       #skip-quickref .large {
         font-size: 1.4em;
       }
-      .x3-btn {
+      #kanji-by-skip .square-btn {
         display: inline-block;
-        width: 6.2rem; /* TODO */
+        width: 1.6rem; /* TODO */
       }
     </style>
   </head>
   <body>
     {% from "_macros.html" import topbtn with context %}
     {% include "_nav.html" %}
-    <div class="container">
+    <div class="container" id="kanji-by-skip">
       <div class="alert alert-info" id="skip-quickref">
         <span class="large">
           <span class="badge badge-primary">
@@ -60,17 +60,13 @@
         </span>
       </div>
       {% set ns = namespace(skip = None) %}
-      {% for row in K.by_skip()|batch(100) %}
+      {% for row in K.by_skip(category)|batch(100) %}
         <div class="card">
           <div class="card-header d-flex flex-wrap">
             <div>
               <h4 class="card-title">
-                <span class="badge badge-warning">
-                  {{ row[0][0]|map("string")|join("-") }}
-                </span> ~
-                <span class="badge badge-warning">
-                  {{ row[-1][0]|map("string")|join("-") }}
-                </span>
+                <span class="badge badge-warning">{{ row[0][1] }}</span> ~
+                <span class="badge badge-warning">{{ row[-1][1] }}</span>
               </h4>
               <h6 class="card-subtitle text-muted">
                 {{ loop.index0 * 100 + 1 }} -
@@ -80,19 +76,22 @@
             <span class="ml-auto">{{ topbtn() }}</span>
           </div>
           <div class="card-body">
-            {% for s, c, r, m in row %}
+            {% for st, s, c, r, m in row %}
               {% if s != ns.skip %}
                 {% set ns.skip = s %}
                 <span class="notbtn btn btn-warning btn-lg px-2 py-1 mb-1">
-                  <span class="x3-btn">
-                    {{ ns.skip|map("string")|join("-") }}
-                  </span>
+                  <span class="square-btn">{{ st[1] }}</span>
+                </span>
+                <span class="notbtn btn btn-warning btn-lg px-2 py-1 mb-1">
+                  <span class="square-btn">{{ st[2] }}</span>
                 </span>
               {% endif %}
               <a class="link jap selbtn btn btn-primary btn-lg px-2 py-1 mb-1"
-                title="{{ "; ".join(m) }} 【{{ "、".join(r) }}】"
-                data-toggle="tooltip" data-placement="top"
-                href="/kanji?query={{ c }}">{{ c }}</a>
+                  title="{{ s }} | {{ "; ".join(m) }} 【{{ "、".join(r) }}】"
+                  data-toggle="tooltip" data-placement="top"
+                  href="/kanji?query={{ c }}">
+                <span class="square-btn">{{ c }}</span>
+              </a>
             {% endfor %}
           </div>
         </div>
