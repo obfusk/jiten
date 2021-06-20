@@ -2,7 +2,7 @@
 
     File        : README.md
     Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-    Date        : 2021-06-15
+    Date        : 2021-06-20
 
     Copyright   : Copyright (C) 2021  Felix C. Stegerman
     Version     : v1.0.0
@@ -55,7 +55,7 @@ manually).
   - search using
     [SKIP codes](https://en.wikipedia.org/wiki/Kodansha_Kanji_Learner%27s_Dictionary#SKIP)
   - search by radical
-  - handwritten kanji recognition
+  - [handwritten kanji recognition](https://github.com/obfusk/kanjidraw)
   - browse by frequency/level/jlpt/SKIP
 * Example sentences (from Tatoeba)
   - with english, dutch, german, french and/or spanish translation
