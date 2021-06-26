@@ -1,10 +1,21 @@
 <meta charset="UTF-8"/>
-<meta name="description"
-  content="Japanese dictionary with words, kanji, example sentences, stroke order, pitch accent, handwritten kanji recognition, and more."/>
-<meta name="keywords"
-  content="android,audio,cli,dictionary,dutch,english,german,japanese,jisho,jiten,jlpt,jmdict,kanji,kanjidic,pitch-accent,python,tatoeba,vocabulary,wadoku,web"/>
 <meta name="viewport"
   content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
+<meta name="description" content="{{ DESCRIPTION }}"/>
+<meta name="keywords" content="{{ KEYWORDS }}"/>
+<meta property="og:description" content="{{ DESCRIPTION }}"/>
+<meta property="og:image" content="{{ M.J_O_D }}/static/icon.png"/>
+{% if query and page_title %}
+  <title>「{{ query }}」 jiten - {{ page_title }}</title>
+  <meta property="og:title"
+    content="「{{ query }}」 {{ TITLE }} - {{ page_title }}"/>
+{% elif page_title %}
+  <title>jiten - {{ page_title }}</title>
+  <meta property="og:title" content="{{ TITLE }} - {{ page_title }}"/>
+{% else %}
+  <title>{{ TITLE }}</title>
+  <meta property="og:title" content="{{ TITLE }}"/>
+{% endif %}
 {% if mode == "dark" %}
   <link rel="stylesheet" href="/static/bootstrap-darkly.min.css" />
   <link rel="stylesheet" href="/static/style-dark.css?s={{ START }}" />
