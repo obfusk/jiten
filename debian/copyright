@@ -9,13 +9,10 @@ License:   AGPL-3.0-or-later
 
 Files:     jiten/res/freq/base_aggregates.txt
            jiten/res/freq/base_aggregates.txt.nobom
-Copyright: 2008 Michiel Kamermans
 License:   Public-Domain
 
 Files:     jiten/res/freq/wordfreq_ck
            jiten/res/freq/wordfreq_ck.utf8
-Copyright: 1998 Alexandre Girardi
-           2003 Charles Kelly
 License:   Public-Domain
 
 Files:     jiten/res/jlpt/N1-kanji
