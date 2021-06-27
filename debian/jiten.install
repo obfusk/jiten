@@ -4,12 +4,11 @@ usr/lib/python*/dist-packages/jiten-*.egg-info/
 usr/lib/python*/dist-packages/jiten/*.py
 usr/lib/python*/dist-packages/jiten/*.so
 usr/lib/python*/dist-packages/jiten/.version
-usr/lib/python*/dist-packages/jiten/res/jlpt/
+usr/lib/python*/dist-packages/jiten/res/jlpt/N*
 usr/lib/python*/dist-packages/jiten/static/*.css
 usr/lib/python*/dist-packages/jiten/static/*.js
 usr/lib/python*/dist-packages/jiten/static/*.png
 usr/lib/python*/dist-packages/jiten/static/*.svg
 usr/lib/python*/dist-packages/jiten/static/*.txt
-usr/lib/python*/dist-packages/jiten/static/font/
 usr/lib/python*/dist-packages/jiten/static/licenses/
 usr/lib/python*/dist-packages/jiten/templates/
