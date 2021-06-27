@@ -20,7 +20,8 @@ Rules-Requires-Root: no
 Package: jiten
 Architecture: any
 Depends: jiten-data (= ${binary:Version}),
-         fonts-kanjistrokeorders (= 4.003),
+         fonts-kanjistrokeorders (>= 4.003~),
+         fonts-kanjistrokeorders (<< 4.004),
          ${misc:Depends},
          ${python3:Depends},
          ${shlibs:Depends},
