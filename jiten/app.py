@@ -5,10 +5,10 @@
 #
 # File        : jiten/app.py
 # Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-# Date        : 2021-01-30
+# Date        : 2021-06-27
 #
 # Copyright   : Copyright (C) 2021  Felix C. Stegerman
-# Version     : v0.4.0
+# Version     : v1.0.0
 # License     : AGPLv3+
 #
 # --                                                            ; }}}1
@@ -156,7 +156,7 @@ True
 >>> r.status
 '200 OK'
 >>> sorted( (c.name, c.value) for c in client.cookie_jar )
-[('dark', 'yes'), ('lang', '"eng ger"'), ('max', '50'), ('nor2h', 'no'), ('roma', 'no')]
+[('dark', 'yes'), ('lang', '"eng ger"'), ('large', 'no'), ('max', '50'), ('nogrid', 'no'), ('nor2h', 'no'), ('roma', 'no')]
 
 """                                                             # }}}1
 
@@ -164,6 +164,7 @@ import json, os, sys, time
 
 from pathlib import Path
 
+import kanjidraw
 import click, jinja2, werkzeug
 
 os.environ["FLASK_SKIP_DOTENV"] = "yes"                       #  FIXME
@@ -184,7 +185,7 @@ MAX           = 50
 NAME          = "jiten"
 HTTPS         = NAME.upper() + "_HTTPS"
 DOMAIN        = NAME.upper() + "_DOMAIN"
-PREFS         = "lang dark roma nor2h max".split()
+PREFS         = "lang dark roma nor2h max large nogrid".split()
 
 GUI_TOKEN     = os.environ.get("JITEN_GUI_TOKEN") or None
 ANDROID_PRIV  = os.environ.get("ANDROID_PRIVATE") or None
@@ -248,22 +249,26 @@ def arg_bool(k, *a, **kw):
 def yesno(b):
   return "yes" if b else "no"
 
-def respond(template, **data):
+def respond(template, page_title, **data):
   prefs       = get_prefs()
   langs       = get_langs(prefs)
   dark        = prefs.get("dark") == "yes"
   roma        = prefs.get("roma") == "yes"
   nor2h       = prefs.get("nor2h") == "yes"
+  large_jap   = prefs.get("large") == "yes"
+  nogrid      = prefs.get("nogrid") == "yes"
   pref_langs  = prefs.get("lang", "").split() or [J.LANGS[0]]
   pref_max    = int(prefs.get("max", MAX))
   return make_response(render_template(
     template, mode = "dark" if dark else "light", langs = langs,
-    roma = roma, nor2h = nor2h, pref_langs = pref_langs,
-    pref_max = pref_max, int = int, ord = ord, hex = hex,
-    J = J, K = K, M = M, P = P, S = S, START = START,
-    VERSION = __version__, PY_VERSION = py_version,
-    kana2romaji = kana2romaji, SEARCH = SEARCH,
-    GUI = bool(GUI_TOKEN), **data
+    roma = roma, nor2h = nor2h, large_jap = large_jap,
+    kanjidraw_nogrid = nogrid, pref_langs = pref_langs,
+    pref_max = pref_max, int = int, ord = ord, hex = hex, J = J,
+    K = K, M = M, P = P, S = S, START = START, VERSION = __version__,
+    PY_VERSION = py_version, kana2romaji = kana2romaji,
+    SEARCH = SEARCH, GUI = bool(GUI_TOKEN), DESCRIPTION = DESCRIPTION,
+    KEYWORDS = KEYWORDS, TITLE = TITLE, page_title = page_title,
+    **data
   ))
 
 def get_langs(prefs = None):
@@ -294,15 +299,18 @@ def get_filters():
 
 @app.errorhandler(M.RegexError)
 def handle_regexerror(e):
-  return respond("error.html", name = "Regex Error", info = str(e)), 400
+  return respond("error.html", "error", name = "Regex Error",
+                 info = str(e)), 400
 
 @app.errorhandler(click.exceptions.BadParameter)
 def handle_paramerror(e):
-  return respond("error.html", name = "Param Error", info = str(e)), 400
+  return respond("error.html", "error", name = "Param Error",
+                 info = str(e)), 400
 
 @app.errorhandler(werkzeug.exceptions.HTTPException)
 def handle_httperror(e):
-  return respond("error.html", name = e.name, info = e.description), e.code
+  return respond("error.html", "error", name = e.name,
+                 info = e.description), e.code
 
 def check_token(f):
   def g(*a, **k):
@@ -314,8 +322,8 @@ def check_token(f):
 @app.route("/")
 def r_index():
   if not app.config.get("DBS_UP2DATE", True):
-    return respond("download_dbs.html")
-  return respond("index.html", page = "index")
+    return respond("download_dbs.html", "download databases")
+  return respond("index.html", None, page = "index")
 
 @app.route("/jmdict")
 def r_jmdict():
@@ -329,14 +337,15 @@ def r_jmdict():
   data = dict(page = "jmdict", query = query)
   if query: data["results"] = J.search(query, **opts)
   with K.readmeans() as f, P.pitches() as g:
-    return respond("jmdict.html", krm = f, elem_pitch = g, **data)
+    return respond("jmdict.html", "jmdict", krm = f, elem_pitch = g, **data)
 
 @app.route("/jmdict/by-freq")
 def r_jmdict_by_freq():
   offset  = arg("offset", 0, type = int)
   results = list(J.by_freq(offset, 1000))
-  return respond("jmdict-by-freq.html", page = "jmdict/by-freq",
-                 offset = offset, results = results)
+  return respond("jmdict-by-freq.html", "jmdict by frequency",
+                 page = "jmdict/by-freq", offset = offset,
+                 results = results)
 
 @app.route("/jmdict/by-jlpt/1")
 @app.route("/jmdict/by-jlpt/2")
@@ -347,7 +356,8 @@ def r_jmdict_by_jlpt():
   n       = int(request.path.split("/")[-1])
   offset  = arg("offset", 0, type = int)
   results = list(J.by_jlpt(n, offset, 1000))
-  return respond("jmdict-by-jlpt.html", page = request.path[1:],
+  title   = "jmdict by jlpt - n{}".format(n)
+  return respond("jmdict-by-jlpt.html", title, page = request.path[1:],
                  level = n, offset = offset, results = results)
 
 # FIXME: legacy route
@@ -362,22 +372,33 @@ def r_kanji():
   query, max_r = get_query_max()
   data = dict(page = "kanji", query = query)
   if query: data["results"] = K.search(query, max_results = max_r)
-  return respond("kanji.html", **data)
+  return respond("kanji.html", "kanji", **data)
 
 @app.route("/kanji/by-freq")
 def r_kanji_by_freq():
-  return respond("kanji-by-freq.html", page = "kanji/by-freq",
-                 kanji = K.by_freq())
+  return respond("kanji-by-freq.html", "kanji by frequency",
+                 page = "kanji/by-freq", kanji = K.by_freq())
 
 @app.route("/kanji/by-level")
 def r_kanji_by_level():
   levels = [ (l, list(K.by_level(l))) for l in K.LEVELS ]
-  return respond("kanji-by-level.html", page = "kanji/by-level",
-                 levels = levels)
+  return respond("kanji-by-level.html", "kanji by level",
+                 page = "kanji/by-level", levels = levels)
 
 @app.route("/kanji/by-jlpt")
 def r_kanji_by_jlpt():
-  return respond("kanji-by-jlpt.html", page = "kanji/by-jlpt")
+  return respond("kanji-by-jlpt.html", "kanji by jlpt",
+                 page = "kanji/by-jlpt")
+
+@app.route("/kanji/by-skip/1")
+@app.route("/kanji/by-skip/2")
+@app.route("/kanji/by-skip/3")
+@app.route("/kanji/by-skip/4")
+def r_kanji_by_skip():
+  category  = int(request.path.split("/")[-1])
+  title     = "kanji by skip code - {}".format(category)
+  return respond("kanji-by-skip.html", title, page = request.path[1:],
+                 category = category)
 
 # FIXME: legacy route
 @app.route("/kanji/random")
@@ -392,12 +413,24 @@ def r_sentences():
   data = dict(page = "sentences", query = query)
   if query: data["results"] = S.search(query, **opts)
   with K.readmeans() as f:
-    return respond("sentences.html", krm = f, **data)
+    return respond("sentences.html", "sentences", krm = f, **data)
 
 @app.route("/stroke")
 def r_stroke():
-  return respond("stroke.html", page = "stroke",
+  return respond("stroke.html", "stroke order", page = "stroke",
                  query = arg("query", "").strip())
+
+@app.route("/_kanji_matches", methods = ["POST"])
+def r_kanji_matches():
+  fuzzy, offby1 = arg_bool("fuzzy"), arg_bool("offby1")
+  strokes = request.json
+  if not (isinstance(strokes, list) and
+          all( isinstance(line, list) and len(line) == 4 and
+               all( isinstance(x, (int, float)) and 0 <= x <= 255
+                    for x in line ) for line in strokes )):
+    abort(400)
+  ms = kanjidraw.matches(strokes, fuzzy = fuzzy, offby1 = offby1)
+  return "".join( kanji for _, kanji in ms )
 
 @app.route("/_db/v<int:db_version>/<base>")
 def r_db(db_version, base):
@@ -412,7 +445,7 @@ def r_download_dbs():
   except M.DownloadError as e:
     name  = "Download Error"
     info  = "{} (file: {}, url: {})".format(str(e), e.file, e.url)
-    return respond("error.html", name = name, info = info), 500
+    return respond("error.html", "error", name = name, info = info), 500
   del app.config["DBS_UP2DATE"], app.config["DOWNLOAD_DBS"]
   return redirect(url_for("r_index"))
 
@@ -420,12 +453,14 @@ def r_download_dbs():
 @check_token
 def r_save_prefs():
   return set_prefs(dict(
-    lang  = " ".join( l for l in request.form.getlist("lang")
-                        if l in J.LANGS ),
-    dark  = yesno(request.form.get("dark") == "yes"),
-    roma  = yesno(request.form.get("roma") == "yes"),
-    nor2h = yesno(request.form.get("nor2h") == "yes"),
-    max   = str(request.form.get("max", MAX, type = int)),
+    lang    = " ".join( l for l in request.form.getlist("lang")
+                          if l in J.LANGS ),
+    dark    = yesno(request.form.get("dark") == "yes"),
+    roma    = yesno(request.form.get("roma") == "yes"),
+    nor2h   = yesno(request.form.get("nor2h") == "yes"),
+    large   = yesno(request.form.get("large") == "yes"),
+    nogrid  = yesno(request.form.get("nogrid") == "yes"),
+    max     = str(request.form.get("max", MAX, type = int)),
   ), redirect(request.form.get("url", url_for("r_index"))))
 
 if GUI_TOKEN:
@@ -446,6 +481,19 @@ SEARCH = (
   ("sentences", "Search Sentences"),
   ("stroke"   , "筆順を示す"      ),
 )
+
+TITLE = "Jiten Japanese Dictionary"
+
+DESCRIPTION = " ".join("""
+  Japanese dictionary with words, kanji, example sentences, stroke
+  order, pitch accent, handwritten kanji recognition, and more.
+""".split())
+
+KEYWORDS = ",".join("""
+  android audio cli dictionary dutch english german japanese jisho
+  jiten jlpt jmdict kanji kanjidic pitch-accent python tatoeba
+  vocabulary wadoku web
+""".split())
 
 if __name__ == "__main__":
   if "--doctest" in sys.argv:

@@ -5,10 +5,10 @@
 #
 # File        : jiten/pitch.py
 # Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-# Date        : 2021-02-22
+# Date        : 2021-05-12
 #
 # Copyright   : Copyright (C) 2021  Felix C. Stegerman
-# Version     : v1.0.1
+# Version     : v1.0.2
 # License     : AGPLv3+
 #
 # --                                                            ; }}}1
@@ -17,6 +17,11 @@
 r"""
 
 Pitch Accent from Wadoku.
+
+>>> from contextlib import contextmanager
+>>> @contextmanager
+... def _progressbar(it, **kw): yield it
+>>> click.progressbar = _progressbar
 
 >>> pitch = parse_pitch()
 >>> len(pitch) + len(BLACKLIST)
@@ -98,7 +103,7 @@ def parse_pitch(file = PITCH_FILE):
   return data
 
 def pitch2sqldb(data, file = SQLITE_FILE):
-  with sqlite_do(file) as c:
+  with sqlite_do(file, write = True) as c:
     c.executescript(PITCH_CREATE_SQL)
     with click.progressbar(data, width = 0, label = "writing pitch") as bar:
       for e in bar:

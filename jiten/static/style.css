@@ -13,8 +13,8 @@ body {
 }
 
 .icon {
-  height: 0.7rem;
-  width: 0.7rem;
+  height: 1rem;
+  width: 1rem;
 }
 
 a[aria-expanded=true] .collapse-open {
@@ -25,9 +25,14 @@ a[aria-expanded=false] .collapse-close {
   display: none;
 }
 
+#kanjidraw_canvas {
+  touch-action: none;
+}
+
 #toggle-romaji[data-roma="show"]::before {
   content: "Hide ";
 }
+
 #toggle-romaji[data-roma="hide"]::before {
   content: "Show ";
 }
@@ -56,14 +61,17 @@ a[aria-expanded=false] .collapse-close {
   font-family: KanjiStrokeOrders;
   src: url("/static/font/KanjiStrokeOrders_v4.003.ttf");
 }
+
 @font-face {
   font-family: "__Noto Serif CJK JP";
   src: url("/static/font/noto/NotoSerifJP-Regular.otf") format("opentype");
 }
+
 @font-face {
   font-family: "__Noto Sans CJK JP";
   src: url("/static/font/noto/NotoSansJP-Regular.otf") format("opentype");
 }
+
 .stroke, .kanji {
   font-family:
     KanjiStrokeOrders,
@@ -71,6 +79,7 @@ a[aria-expanded=false] .collapse-close {
     "Noto Serif CJK SC", "Noto Serif CJK TC",
     ipaexmincho, ipamincho, serif;
 }
+
 .jap, .kanji:hover, .tooltip {
   font-family:
     -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
@@ -80,6 +89,7 @@ a[aria-expanded=false] .collapse-close {
     ipaexgothic, ipagothic, sans-serif,
     "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
 }
+
 .jap:not(.sentence), .tooltip {
   word-break: keep-all;
 }
@@ -87,6 +97,7 @@ a[aria-expanded=false] .collapse-close {
 .convert-kana::before {
   content: "あ";
 }
+
 .convert-kana[data-convert-mode="h2k"]::before {
   content: "ア";
 }
@@ -114,17 +125,19 @@ input[type=number] {
   -ms-user-select: unset !important;
   user-select: unset !important;
 }
+
 .fakebtn, .notbtn {
   cursor: unset !important;
 }
+
 .fakebtn:hover, .fakebtn:active {
   color: inherit !important;
   background-color: inherit !important;
 }
 
-#radical-modal .tworem {
+#radical-modal .square-btn {
   display: inline-block;
-  width: 2rem; /* TODO */
+  width: 1.9rem; /* TODO */
 }
 
 #radicals > .btn {

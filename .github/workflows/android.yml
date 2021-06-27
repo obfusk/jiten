@@ -4,7 +4,7 @@ jobs:
   build:
     runs-on: ubuntu-20.04
     container:
-      image: debian:buster
+      image: debian:${{ matrix.container }}
     strategy:
       matrix:
         target:
@@ -12,38 +12,73 @@ jobs:
         - release-arm64-v8a
         package:
         - jiten
-        - jiten_nodb
+      # - jiten_nodb
+        container:
+      # - stretch
+        - buster
     steps:
     - name: Install git etc.
       run: |
+        if grep -q stretch /etc/os-release; then
+          echo 'deb http://deb.debian.org/debian stretch-backports main' \
+            > /etc/apt/sources.list.d/stretch-backports.list
+        fi
         apt-get update || apt-get update
         apt-get upgrade -y
-        apt-get install -y usrmerge
-        apt-get install -y git lsb-release
+        if ! grep -q stretch /etc/os-release; then
+          apt-get install -y usrmerge
+        fi
+        apt-get install -y git lsb-release wget
       env:
         DEBIAN_FRONTEND: noninteractive
     - name: Setup user
       run: |
-        adduser --disabled-password --gecos '' build
-    - uses: actions/checkout@v2
-      with:
-        fetch-depth: 0
-    - name: Move repo
+        adduser --disabled-password --gecos '' vagrant
+    - name: Clone repo
       run: |
-        mv /__w/jiten/jiten ~build/
-        ln -s ~build/jiten /__w/jiten/
-        chown -R build:build ~build
-    - name: Install dependencies
+        su - vagrant -c "
+          set -e
+          mkdir build
+          git init build/dev.obfusk.jiten
+          cd build/dev.obfusk.jiten
+          git remote add origin https://github.com/$GITHUB_REPOSITORY
+          git config --local gc.auto 0
+          git fetch --prune --progress --no-recurse-submodules origin \
+            +$GITHUB_SHA:refs/remotes/origin/${GITHUB_REF##*/}
+          git checkout --progress --force -B ${GITHUB_REF##*/} \
+            refs/remotes/origin/${GITHUB_REF##*/}
+          git log -1 --format=%H
+        "
+    - name: Install dependencies (1)
       run: |
-        ./android/scripts/setup-root.sh
-        su - build -c '
-          set -e && cd jiten
-          ./android/scripts/setup-user.sh
+        ~vagrant/build/dev.obfusk.jiten/android/scripts/setup-root.sh
+        if grep -q stretch /etc/os-release; then
+          ~vagrant/build/dev.obfusk.jiten/android/scripts/setup-python.sh
+        fi
+        ~vagrant/build/dev.obfusk.jiten/android/scripts/setup-sqlite.sh
+    - name: Install dependencies (2)
+      run: |
+        mkdir /opt/android-sdk
+        chown vagrant:vagrant /opt/android-sdk
+        su - vagrant -c '
+          set -e
+          ~/build/dev.obfusk.jiten/android/scripts/setup-ndk.sh
+          cd build/dev.obfusk.jiten/android
+          if grep -q stretch /etc/os-release; then
+            python3.7 -mvenv ~/env
+            source ~/env/bin/activate
+            PIP_INSTALL="pip3 install" ./scripts/setup-user.sh
+          else
+            PIP_INSTALL="pip3 install --user" ./scripts/setup-user.sh
+          fi
         '
     - name: System info
       run: |
-        su - build -c '
-          set -e && cd jiten
+        su - vagrant -c '
+          set -e && cd build/dev.obfusk.jiten/android
+          if grep -q stretch /etc/os-release; then
+            source ~/env/bin/activate
+          fi
           uname -a && lsb_release -a
           git --version && python3 --version
           java -version && javac -version
@@ -51,35 +86,35 @@ jobs:
         '
     - name: Build
       run: |
-        su -w APP_PACKAGE_NAME - build -c '
-          set -e && cd jiten
-          export PATH="$HOME/.local/bin:$PATH"
-          make -C android ${{ matrix.target }}
+        su - vagrant -c '
+          set -e && cd build/dev.obfusk.jiten/android
+          export PATH=/usr/local/bin:/bin:/usr/bin
+          if grep -q stretch /etc/os-release; then
+            source ~/env/bin/activate
+          else
+            export PATH="$HOME/.local/bin:$PATH"
+          fi
+          make ${{ matrix.target }} APP_PACKAGE_NAME=${{ matrix.package }}
         '
-      env:
-        APP_PACKAGE_NAME: ${{ matrix.package }}
-    - name: Move repo back
-      run: |
-        rm /__w/jiten/jiten
-        mv ~build/jiten /__w/jiten/
-        chown -R root:root /__w/jiten/jiten
+        mkdir bin
+        mv ~vagrant/build/dev.obfusk.jiten/android/bin/*.apk bin/
     - name: SHASUMS
       run: |
-        sha1sum   android/bin/*.apk
-        sha256sum android/bin/*.apk
-        sha512sum android/bin/*.apk
+        sha1sum   bin/*.apk
+        sha256sum bin/*.apk
+        sha512sum bin/*.apk
     - name: Version
       run: touch VERSION_"$(git describe --always)"
     - uses: actions/upload-artifact@v2
       with:
-        name: jiten-APK
+        name: jiten-${{ matrix.container }}-APK
         path: |
           VERSION_*
-          android/bin/*.apk
-          !android/bin/*nodb*.apk
+          bin/*.apk
+          !bin/*nodb*.apk
     - uses: actions/upload-artifact@v2
       with:
-        name: jiten-nodb-APK
+        name: jiten-${{ matrix.container }}-nodb-APK
         path: |
           VERSION_*
-          android/bin/*nodb*.apk
+          bin/*nodb*.apk

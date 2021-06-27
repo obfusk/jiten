@@ -5,10 +5,10 @@
 #
 # File        : jiten/jmdict.py
 # Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-# Date        : 2021-02-11
+# Date        : 2021-05-12
 #
 # Copyright   : Copyright (C) 2021  Felix C. Stegerman
-# Version     : v0.4.0
+# Version     : v1.0.2
 # License     : AGPLv3+
 #
 # --                                                            ; }}}1
@@ -17,6 +17,11 @@
 r"""
 
 JMDict.
+
+>>> from contextlib import contextmanager
+>>> @contextmanager
+... def _progressbar(it, **kw): yield it
+>>> click.progressbar = _progressbar
 
 >>> DBVERSION
 13
@@ -488,7 +493,7 @@ JLPT = load_jlpt()                                              # TODO
 
 # NB: kanji/reading/sense are retrieved in insertion (i.e. rowid) order!
 def jmdict2sqldb(data, file = SQLITE_FILE):                     # {{{1
-  with sqlite_do(file) as c:
+  with sqlite_do(file, write = True) as c:
     c.executescript(JMDICT_CREATE_SQL)
     with click.progressbar(data, width = 0, label = "writing jmdict") as bar:
       for e in bar:

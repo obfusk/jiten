@@ -2,10 +2,10 @@
 
   File        : templates/_help.html
   Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-  Date        : 2021-01-30
+  Date        : 2021-06-15
 
   Copyright   : Copyright (C) 2021  Felix C. Stegerman
-  Version     : v0.4.0
+  Version     : v1.0.0
   License     : AGPLv3+
 
 --> #}
@@ -46,6 +46,26 @@
       <strong>most kanji</strong> (including in sentences) <strong>and
       many Japanese words for</strong> a tooltip with <strong>their
       meanings and/or readings</strong>.
+    </li>
+  </ul>
+  <h6 class="mt-4">Draw Kanji</h6>
+  <ul class="pl-4 mb-2">
+    <li>
+      Use the <kbd class="jap">筆</kbd> button to open the kanji
+      drawing dialog.
+    </li><li>
+      Draw a kanji (using the correct number and order of strokes) and
+      click on <kbd>Done</kbd>.
+    </li><li>
+      Click on one of the suggested kanji to add it to the query input
+      field (and close the dialog).
+    </li><li>
+      NB: if you're not sure about the order, direction, and/or number
+      of strokes, try using
+      <span class="nowrap"><kbd>Ignore stroke order & direction</kbd></span>
+      and/or
+      <span class="nowrap"><kbd>± 1 stroke</kbd></span>
+      (which matches <em>only</em> kanji with 1 stroke fewer or more).
     </li>
   </ul>
   <h6 class="mt-4">Search Kanji by Radical</h6>
@@ -151,7 +171,8 @@
             target="_blank" rel="noopener">SKIP codes</a>
         </li>
         <li>search by radical</li>
-        <li>browse by frequency/level/jlpt</li>
+        <li>handwritten kanji recognition</li>
+        <li>browse by frequency/level/jlpt/SKIP</li>
       </ul>
     </li><li>
       Example sentences (from Tatoeba)
@@ -170,7 +191,7 @@
       <ul class="pl-4 mb-2">
         <li>light/dark mode</li>
         <li>search history (stored locally)</li>
-        <li>converts romaji to hiragana and between hiragana and
+        <li>convert romaji to hiragana and between hiragana and
         katakana</li>
         <li>optionally shows readings with romaji</li>
         <li>easily share and open <code>jiten.obfusk.dev</code>

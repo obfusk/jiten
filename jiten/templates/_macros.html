@@ -2,10 +2,10 @@
 
   File        : templates/_macros.html
   Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-  Date        : 2021-02-11
+  Date        : 2021-05-14
 
   Copyright   : Copyright (C) 2021  Felix C. Stegerman
-  Version     : v0.4.0
+  Version     : v1.0.0
   License     : AGPLv3+
 
 --> #}
@@ -13,12 +13,15 @@
   <button type="button" style="display: none;" title="copy"
       data-toggle="tooltip" data-placement="top"
       class="copy-input input-group-text btn btn-dark">
-    <!-- https://www.flaticon.com/free-icon/copy-content_60990 -->
+    <!--
+      Source: https://fonts.gstatic.com/s/i/materialiconssharp/content_copy/v15/24px.svg
+      License: http://www.apache.org/licenses/LICENSE-2.0.txt
+    -->
     <svg xmlns="http://www.w3.org/2000/svg" class="icon"
-        viewbox="0 0 561 561" focusable="false">
-      <path
-        d="M395.25,0h-306c-28.05,0-51,22.95-51,51v357h51V51h306V0z M471.75,102h-280.5c-28.05,0-51,22.95-51,51v357 c0,28.05,22.95,51,51,51h280.5c28.05,0,51-22.95,51-51V153C522.75,124.95,499.8,102,471.75,102z M471.75,510h-280.5V153h280.5V510 z"
-        fill="currentColor" />
+        viewBox="0 0 24 24" focusable="false">
+      <path d="M0 0h24v24H0V0z" fill="none"/>
+      <path d="M16 1H2v16h2V3h12V1zm5 4H6v18h15V5zm-2 16H8V7h11v14z"
+        fill="currentColor"/>
     </svg>
   </button>
 {% endmacro %}
@@ -42,12 +45,15 @@
       <button type="button" title="clear"
           data-toggle="tooltip" data-placement="top"
           class="clear-input input-group-text btn btn-dark disabled">
-        <!-- https://www.flaticon.com/free-icon/close-button_61155 -->
+        <!--
+          Source: https://fonts.gstatic.com/s/i/materialiconssharp/close/v14/24px.svg
+          License: http://www.apache.org/licenses/LICENSE-2.0.txt
+        -->
         <svg xmlns="http://www.w3.org/2000/svg" class="icon"
-            viewbox="0 0 357 357" focusable="false">
-          <polygon
-            points="357,35.7 321.3,0 178.5,142.8 35.7,0 0,35.7 142.8,178.5 0,321.3 35.7,357 178.5,214.2 321.3,357 357,321.3 214.2,178.5"
-            fill="currentColor" />
+            viewBox="2 2 20 20" focusable="false">
+          <path d="M0 0h24v24H0V0z" fill="none"/>
+          <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z"
+            fill="currentColor"/>
         </svg>
       </button>
     </div>
@@ -66,10 +72,17 @@
         {{ input(id, name, value, ph, af, mb = imb) }}
         <div class="mb-{{ mb }}">
           {% if id == "kanji-query" %}
-            <div class="d-inline-block mr-2" title="select radicals"
+            <div class="d-inline-block mr-1" title="select radicals"
                 data-toggle="tooltip" data-placement="top">
               <button type="button" class="jap btn btn-secondary"
                 data-toggle="modal" data-target="#radical-modal">部</button>
+            </div>
+          {%- endif -%}
+          {% if id != "stroke-query" %}
+            <div class="d-inline-block mr-2" title="draw kanji"
+                data-toggle="tooltip" data-placement="top">
+              <button type="button" class="jap btn btn-secondary"
+                data-toggle="modal" data-target="#kanjidraw-modal">筆</button>
             </div>
           {%- endif -%}
           <div class="btn-group">
@@ -94,6 +107,8 @@
           <script>
             $("form.search-form .dropdown-toggle").addClass("disabled")
             $(".search-button").addClass("disabled").text("Loading...")
+            $(".search-form input[type=text]").each((i, e) =>
+              e.selectionStart = e.selectionEnd = $(e).val().length)
           </script>
         </div>
       </div>
@@ -120,28 +135,39 @@
   <a href="#" title="go to top"
       data-toggle="tooltip" data-placement="top"
       class="btn btn-sm btn-outline-primary">
-    <!-- https://www.flaticon.com/free-icon/top_565737 -->
+    <!--
+      Source: https://fonts.gstatic.com/s/i/materialiconssharp/vertical_align_top/v10/24px.svg
+      License: http://www.apache.org/licenses/LICENSE-2.0.txt
+    -->
     <svg xmlns="http://www.w3.org/2000/svg" class="icon"
-        viewbox="0 0 384 384" focusable="false">
-      <g fill="currentColor">
-        <rect x="21.333" y="0" width="341.333" height="42.667"/>
-        <polygon points="106.667,170.667 170.667,170.667 170.667,384 213.333,384 213.333,170.667 277.333,170.667 192,85.333"/>
-      </g>
+        viewBox="0 0 24 24" focusable="false">
+      <path d="M8 11h3v10h2V11h3l-4-4-4 4zM4 3v2h16V3H4z"
+        fill="currentColor"/>
     </svg>
   </a>
 {% endmacro %}
 {% macro collapseopen() %}
-  <!-- https://www.flaticon.com/free-icon/expand-button_60781 -->
+  <!--
+    Source: https://fonts.gstatic.com/s/i/materialiconssharp/expand_more/v12/24px.svg
+    License: http://www.apache.org/licenses/LICENSE-2.0.txt
+  -->
   <svg xmlns="http://www.w3.org/2000/svg" class="icon collapse-open"
-      viewbox="0 0 306 306" focusable="false">
-    <polygon points="270.3,58.65 153,175.95 35.7,58.65 0,94.35 153,247.35 306,94.35" fill="currentColor"/>
+      viewBox="4 4 16 16" focusable="false">
+    <path d="M24 24H0V0h24v24z" fill="none" opacity=".87"/>
+    <path d="M16.59 8.59L12 13.17 7.41 8.59 6 10l6 6 6-6-1.41-1.41z"
+      fill="currentColor"/>
   </svg>
 {% endmacro %}
 {% macro collapseclose() %}
-  <!-- https://www.flaticon.com/free-icon/expand-arrow_60799 -->
+  <!--
+    Source: https://fonts.gstatic.com/s/i/materialiconssharp/expand_less/v10/24px.svg
+    License: http://www.apache.org/licenses/LICENSE-2.0.txt
+  -->
   <svg xmlns="http://www.w3.org/2000/svg" class="icon collapse-close"
-      viewbox="0 0 306 306" focusable="false">
-    <polygon points="153,58.65 0,211.65 35.7,247.35 153,130.05 270.3,247.35 306,211.65" fill="currentColor"/>
+      viewBox="4 4 16 16" focusable="false">
+    <path d="M0 0h24v24H0V0z" fill="none"/>
+    <path d="M12 8l-6 6 1.41 1.41L12 10.83l4.59 4.58L18 14l-6-6z"
+      fill="currentColor"/>
   </svg>
 {% endmacro %}
 {% macro collapsebtn(target, info = None) %}

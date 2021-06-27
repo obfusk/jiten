@@ -4,10 +4,10 @@
 //
 //  File        : static/script.js
 //  Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-//  Date        : 2021-02-18
+//  Date        : 2021-06-02
 //
 //  Copyright   : Copyright (C) 2021  Felix C. Stegerman
-//  Version     : v0.4.0
+//  Version     : v1.0.0
 //  License     : AGPLv3+
 //
 //  --                                                          ; }}}1
@@ -201,17 +201,20 @@ const updateHistory = f =>
   localStorage.setItem("history", JSON.stringify(f(getHistory())))
 
 // TODO
+// NB: also sets document.title
 const saveHistory = (max = 500) => {
   const params  = new URLSearchParams(location.search)
-  let query     = params.get("query")
+  let query     = (params.get("query") || "").trim()
   if (query) {
-    if (query.trim().startsWith("+#")) {
+    if (query.startsWith("+#")) {
       const entry = $($(".entry")[0]).text().trim()
       if (entry) query += " (" + entry + ")"
       params.delete("noun"); params.delete("verb")
       params.delete("prio"); params.delete("jlpt")
     }
+    const what = document.title.split(" - ").slice(-1)[0]
     const link = location.pathname + "?" + params.toString()
+    document.title = `「${query}」 jiten - ${what}`
     updateHistory(hist =>
       uniq([[query, link], ...hist], x => x[1]).slice(0, max)
     )
@@ -221,8 +224,8 @@ const saveHistory = (max = 500) => {
 const populateHistoryList = () => {
   $("#history").empty()
   for (const [q, l] of getHistory()) {
-    const li  = $('<li class="jap list-group-item p-2"></li>')
-    const a   = $('<a class="jap"></a>')
+    const li  = $('<li class="list-group-item p-2"></li>')
+    const a   = $('<a class="link jap"></a>')
     a.text(l.split("?")[0].slice(1) + ": " + q); a.attr("href", l)
     li.append(a); $("#history").append(li)
   }
@@ -290,13 +293,16 @@ $(document).ready(() => {
 
 // === fetch ===
 
-const fetch_post = (info, path, data = "") =>
-  fetch(path, { method: "POST", body: data }).then(r => {
+const fetch_post = (info, path, data = "", json = false) => {
+  const init = { method: "POST", body: data }
+  if (json) init.headers = { "Content-Type": "application/json" }
+  return fetch(path, init).then(r => {
     if (!r.ok) {
       throw new Error(`response (${r.status} ${r.statusText}) was not ok`)
     }
     return r
   }).catch(e => console.error(`${info} POST failed:`, e))
+}
 
 // === clipboard & webview & token ===
 
@@ -390,6 +396,52 @@ $("#romaji-convert").click(() =>
 
 $("#romaji-modal").on("shown.bs.modal", () => $("#romaji").focus())
 */
+
+const kanjiMatches = strokes => {
+  const fuzzy   = $("#kanjidraw_chk_fuzzy" )[0].checked ? "yes" : "no",
+        offby1  = $("#kanjidraw_chk_offby1")[0].checked ? "yes" : "no",
+        url     = `/_kanji_matches?fuzzy=${fuzzy}&offby1=${offby1}`,
+        done    = $("#kanjidraw_btn_done"), text = done.text()
+  done.addClass("disabled").text("Loading...")
+  return fetch_post(
+    "kanji matches", url, JSON.stringify(strokes), true
+  ).then(r => {
+    done.removeClass("disabled").text(text)
+    return r.text()
+  })
+}
+
+let kanjiDrawCleanup = null
+
+$("#kanjidraw-modal").on("shown.bs.modal", e => {
+  const i = $("input[type=text]", $(e.relatedTarget).parents(".search-form"))
+  $(".kanjidraw_chk").prop("checked", false)
+  kanjiDrawCleanup = kanjiDraw({
+    draw:         $("#kanjidraw_draw"),
+    btn_undo:     $("#kanjidraw_btn_undo"),
+    btn_clear:    $("#kanjidraw_btn_clear"),
+    lbl_strokes:  $("#kanjidraw_lbl_strokes"),
+    btn_done:     $("#kanjidraw_btn_done"),
+    canvas:       $("#kanjidraw_canvas"),
+    results:      $("#kanjidraw_results"),
+    btn_back:     $("#kanjidraw_btn_back"),
+    table:        $("#kanjidraw_table"),
+    strokeStyle:  $("#kanjidraw_canvas").css("border-top-color"),
+    buttonClass:  "jap btn btn-primary btn-lg m-1",
+    gridColour:   $("#kanjidraw_canvas")[0].dataset.showGrid == "false" ?
+                    $(".modal-content").css("background-color") : null,
+    matches:      kanjiMatches,
+    select: k => {
+      const v = i.val(), p = i[0].selectionEnd
+      i.val(v.slice(0, p) + k + v.slice(p))
+      $("#kanjidraw-modal").modal("hide")
+      setTimeout(() => {
+        i.focus()
+        i[0].selectionStart = i[0].selectionEnd = p + 1
+      })
+    },
+  })
+}).on("hidden.bs.modal", () => kanjiDrawCleanup())
 
 const chooseRadicals = (elems, toggle = true) => {
   const q = $("#kanji-query"), v = q.val().trim().replace(/^\+r\s*/, "")

@@ -2,10 +2,10 @@
 
   File        : templates/_dialogs.html
   Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-  Date        : 2021-02-18
+  Date        : 2021-05-17
 
   Copyright   : Copyright (C) 2021  Felix C. Stegerman
-  Version     : v0.4.0
+  Version     : v1.0.0
   License     : AGPLv3+
 
 --> #}
@@ -30,6 +30,61 @@
   </div>
 </div>
 #}
+<div class="modal" tabindex="-1" role="dialog" id="kanjidraw-modal">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="jap modal-title">筆 Draw Kanji</h5>
+        <button type="button" class="close" data-dismiss="modal"
+            aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body text-center">
+        <div id="kanjidraw_draw">
+          <div>
+            <button id="kanjidraw_btn_undo"
+              class="btn btn-secondary">Undo</button>
+            <button id="kanjidraw_btn_clear"
+              class="btn btn-secondary">Clear</button>
+            <span id="kanjidraw_lbl_strokes"
+              class="mx-2">Strokes: 0</span>
+            <button id="kanjidraw_btn_done"
+              class="btn btn-primary">Done</button>
+          </div>
+          <div class="pt-3">
+            <div class="form-check form-check-inline">
+              <input type="checkbox" id="kanjidraw_chk_fuzzy"
+                class="form-check-input kanjidraw_chk">
+              <label class="form-check-label" for="kanjidraw_chk_fuzzy">
+                Ignore stroke order & direction
+              </label>
+            </div>
+            <div class="form-check form-check-inline">
+              <input type="checkbox" id="kanjidraw_chk_offby1"
+                class="form-check-input kanjidraw_chk">
+              <label class="form-check-label"
+                for="kanjidraw_chk_offby1">± 1 stroke</label>
+            </div>
+          </div>
+          <hr class="mt-2"/>
+          <canvas id="kanjidraw_canvas" width="300" height="300"
+            data-show-grid="{{ "false" if kanjidraw_nogrid else "true" }}">
+          </canvas>
+        </div>
+        <div id="kanjidraw_results" style="display: none;">
+          <div>
+            <button id="kanjidraw_btn_back"
+              class="btn btn-secondary">Go Back</button>
+            <span class="ml-2">Click to add to query input field.</span>
+          </div>
+          <hr/>
+          <table id="kanjidraw_table" class="mx-auto"></table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 <div class="modal" tabindex="-1" role="dialog" id="radical-modal">
   <div class="modal-dialog modal-lg" role="document">
     <div class="modal-content">
@@ -48,12 +103,12 @@
         <div id="radicals">
           {% set c = dict(rad = "primary", alt = "info", var = "secondary") %}
           {% for g in K.RADTABLE %}
-            <span class="active notbtn btn btn-warning px-0 py-1 mb-1">
-              <span class="tworem">{{ loop.index }}</span>
+            <span class="radical-count active notbtn btn btn-warning px-0 py-1 mb-1">
+              <span class="square-btn">{{ loop.index }}</span>
             </span>
             {% for r, x in g %}
               <button class="radical jap selbtn btn btn-{{ c[x] }} px-0 py-1 mb-1">
-                <span class="tworem">{{ r }}</span>
+                <span class="square-btn">{{ r }}</span>
               </button>
             {% endfor %}
           {% endfor %}
@@ -113,13 +168,20 @@
           </fieldset>
           <br/>
           <fieldset class="d-inline border p-2 pl-3">
-            <legend>theme</legend>
+            <legend>appearance</legend>
             <div class="form-check form-check-inline">
               <input type="checkbox" class="form-check-input"
                 id="prefs-dark" name="dark" value="yes"
                 {% if mode == "dark" %}checked{% endif %} />
               <label class="form-check-label"
                 for="prefs-dark">dark mode</label>
+            </div>
+            <div class="form-check form-check-inline">
+              <input type="checkbox" class="form-check-input"
+                id="prefs-large" name="large" value="yes"
+                {% if large_jap %}checked{% endif %} />
+              <label class="form-check-label"
+                for="prefs-large">larger japanese text</label>
             </div>
           </fieldset>
           <br/>
@@ -138,6 +200,17 @@
                 {% if nor2h %}checked{% endif %} />
               <label class="form-check-label jap"
                 for="prefs-nor2h">disable a→あ</label>
+            </div>
+          </fieldset>
+          <br/>
+          <fieldset class="d-inline border p-2 pl-3">
+            <legend>kanji drawing</legend>
+            <div class="form-check form-check-inline">
+              <input type="checkbox" class="form-check-input"
+                id="prefs-nogrid" name="nogrid" value="yes"
+                {% if kanjidraw_nogrid %}checked{% endif %} />
+              <label class="form-check-label"
+                for="prefs-nogrid">disable grid</label>
             </div>
           </fieldset>
           <br/>

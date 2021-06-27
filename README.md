@@ -2,7 +2,7 @@
 
     File        : README.md
     Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-    Date        : 2021-02-20
+    Date        : 2021-06-20
 
     Copyright   : Copyright (C) 2021  Felix C. Stegerman
     Version     : v1.0.0
@@ -11,6 +11,7 @@
 }}}1 -->
 
 [![GitHub Release](https://img.shields.io/github/release/obfusk/jiten.svg?logo=github)](https://github.com/obfusk/jiten/releases)
+[![F-Droid Version](https://img.shields.io/f-droid/v/dev.obfusk.jiten.svg)](https://f-droid.org/app/dev.obfusk.jiten)
 [![PyPI Version](https://img.shields.io/pypi/v/jiten.svg)](https://pypi.python.org/pypi/jiten)
 [![Python Versions](https://img.shields.io/pypi/pyversions/jiten.svg)](https://pypi.python.org/pypi/jiten)
 [![CI](https://github.com/obfusk/jiten/workflows/CI/badge.svg)](https://github.com/obfusk/jiten/actions?query=workflow%3ACI)
@@ -18,25 +19,19 @@
 [![AGPLv3+](https://img.shields.io/badge/license-AGPLv3+-blue.svg)](https://www.gnu.org/licenses/agpl-3.0.html)
 [![Sponsor](https://img.shields.io/badge/%E2%99%A5-support-violet.svg)](https://ko-fi.com/obfusk)
 
-<!--
-[![F-Droid Version](https://img.shields.io/f-droid/v/dev.obfusk.jiten.svg)](https://f-droid.org/app/dev.obfusk.jiten)
--->
-
 ## jiten - japanese android/cli/web dictionary based on jmdict/kanjidic
 
 → available online at https://jiten.obfusk.dev
 
+[<img src="badges/fdroid.png" alt="Get it on F-Droid" height="60">](https://f-droid.org/app/dev.obfusk.jiten)
 [<img src="badges/google-play.png" alt="Get it on Google Play" height="60">](https://play.google.com/store/apps/details?id=dev.obfusk.jiten)
-[<img src="badges/fdroid.png" alt="Get it on F-Droid" height="60">](#not-yet-available)
 
-<!-- [](https://f-droid.org/app/dev.obfusk.jiten) -->
-
-NB: unfortunately, **jiten is not (yet) available in the official
-F-Droid repository**.  You can use
-[**obfusk's f-droid repo**](https://obfusk.dev/fdroid/repo?fingerprint=2A21B7FFC93B878724B1991C05DAE113C72B93A556C193F49B5D3342884798B7)
-instead: this contains the exact same APKs available via Google Play,
-as well as occasional beta versions (which are only installed when
-selected manually).
+NB: jiten is now available in the official F-Droid repository, but you
+can also get it via [**obfusk's f-droid
+repo**](https://obfusk.dev/fdroid/repo?fingerprint=2A21B7FFC93B878724B1991C05DAE113C72B93A556C193F49B5D3342884798B7):
+this contains the exact same APKs available via Google Play, as well
+as occasional beta versions (which are only installed when selected
+manually).
 
 ## Screenshots
 
@@ -60,7 +55,8 @@ selected manually).
   - search using
     [SKIP codes](https://en.wikipedia.org/wiki/Kodansha_Kanji_Learner%27s_Dictionary#SKIP)
   - search by radical
-  - browse by frequency/level/jlpt
+  - [handwritten kanji recognition](https://github.com/obfusk/kanjidraw)
+  - browse by frequency/level/jlpt/SKIP
 * Example sentences (from Tatoeba)
   - with english, dutch, german, french and/or spanish translation
   - some with audio
@@ -79,7 +75,7 @@ selected manually).
   - search history (stored locally)
   - tooltips to quickly see meanings and readings for kanji and words
   - use long press for tooltips on mobile
-  - converts romaji to hiragana and between hiragana and katakana
+  - convert romaji to hiragana and between hiragana and katakana
   - can be run on your own computer
 * Command-line interface
 * WebView GUI
@@ -179,7 +175,8 @@ $ jiten-gui
 
 ## Requirements
 
-* Python >= 3.5 + Flask + click.
+* Python >= 3.6 + Flask + click +
+  [kanjidraw](https://github.com/obfusk/kanjidraw).
 * To build the SQLite PCRE C extension: a C compiler (e.g.
   `gcc`/`clang`) and the `sqlite3` & `pcre` libraries & headers.
 * Basic build tools like `make` and `patch`.
@@ -192,6 +189,10 @@ $ jiten-gui
 $ apt install python3-dev build-essential libsqlite3-dev libpcre3-dev
 $ apt install python3-flask   # optional: Flask & click w/o pip
 ```
+
+NB: currently, you'll need to install
+[kanjidraw](https://github.com/obfusk/kanjidraw) manually (i.e. using
+`pip` or from `git`).
 
 #### Optional: WebView GUI
 
@@ -238,8 +239,8 @@ $ make
 
 ### NixOS
 
-Jiten will hopefully be available in nixpkgs soon.  For now, you can
-use [this nix expression](https://gist.github.com/obfusk/c51d353e75d576bd5cb8e92456cdec47).
+Jiten is now available in nixpkgs `master`.  You can also use
+[this nix expression](https://gist.github.com/obfusk/c51d353e75d576bd5cb8e92456cdec47).
 
 ## Miscellaneous
 
@@ -351,6 +352,6 @@ Audio by huizi99, Mizu & yomi (CC BY-NC 4.0).
 
 © Google
 
-[![CC-BY](https://licensebuttons.net/l/by/3.0/88x31.png)](https://creativecommons.org/licenses/by/3.0/)
+[Apache 2.0](https://www.apache.org/licenses/LICENSE-2.0.txt)
 
 <!-- vim: set tw=70 sw=2 sts=2 et fdm=marker : -->

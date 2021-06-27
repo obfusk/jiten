@@ -5,10 +5,10 @@
 #
 # File        : jiten/kanji.py
 # Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-# Date        : 2021-01-21
+# Date        : 2021-06-15
 #
 # Copyright   : Copyright (C) 2021  Felix C. Stegerman
-# Version     : v0.3.5
+# Version     : v1.0.2
 # License     : AGPLv3+
 #
 # --                                                            ; }}}1
@@ -17,6 +17,11 @@
 r"""
 
 KanjiDic.
+
+>>> from contextlib import contextmanager
+>>> @contextmanager
+... def _progressbar(it, **kw): yield it
+>>> click.progressbar = _progressbar
 
 >>> kanjivg = parse_kanjivg()
 >>> len(kanjivg)
@@ -287,7 +292,7 @@ def load_jlpt(base = JLPT_FILE_BASE):
 JLPT = load_jlpt()
 
 def kanjidic2sqldb(data, file = SQLITE_FILE):                   # {{{1
-  with sqlite_do(file) as c:
+  with sqlite_do(file, write = True) as c:
     c.executescript(KANJIDIC_CREATE_SQL)
     with click.progressbar(data, width = 0, label = "writing kanjidic") as bar:
       for e in bar:
@@ -414,6 +419,17 @@ def by_jlpt(file = SQLITE_FILE):
       data[level].append((char,) + readmean(char, c))
   for level in "54321":
     yield int(level), tuple(sorted(data[int(level)]))
+
+def by_skip(category, file = SQLITE_FILE):
+  data = []
+  with sqlite_do(file) as c:
+    for r in c.execute("""
+        SELECT char, on_, kun, meaning, skip FROM entry
+          WHERE skip IS NOT NULL and substr(skip, 1, 1) = ?
+        """, (str(category),)):
+      skip = tuple( int(n) for n in r["skip"].split("-") )
+      data.append((skip, r["skip"], r["char"]) + _readmean(r))
+  return sorted(data, key = lambda x: x[0])
 
 @contextmanager
 def readmeans(file = SQLITE_FILE):

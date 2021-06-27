@@ -16,7 +16,7 @@ PYCOV   := $(PYTHON) -mcoverage run --source jiten
 
 export PYTHONWARNINGS := default
 
-.PHONY: all test test-js ci-test coverage clean cleanup
+.PHONY: all test test-js ci-test coverage clean cleanup install
 .PHONY: validate-css tmp-html check-html validate-html
 .PHONY: validate-html-curl validate-html-py
 
@@ -55,16 +55,20 @@ coverage: tmp-html
 clean: cleanup
 	rm -f jiten/res/*.sqlite3
 	rm -f jiten/_sqlite3_pcre.*.so
+	rm -fr jiten.egg-info/
 	$(MAKE) -C jiten/res/jmdict clean
 	$(MAKE) -C jiten/res/sentences clean
 
 cleanup:
 	find -name '*~' -delete -print
 	rm -fr jiten/__pycache__/ tmp-html/
-	rm -fr build/ dist/ jiten.egg-info/
+	rm -fr build/ dist/
 	rm -fr .coverage htmlcov/
 	rm -fr jiten/.version
 	$(MAKE) -C jiten/res/jmdict cleanup
+
+install:
+	$(PYTHON) -mpip install -e .
 
 validate-css:
 	curl -sF "file=@jiten/static/style.css;type=text/css" \

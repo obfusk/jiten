@@ -5,10 +5,10 @@
 #
 # File        : jiten/cli.py
 # Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-# Date        : 2021-02-15
+# Date        : 2021-05-12
 #
 # Copyright   : Copyright (C) 2021  Felix C. Stegerman
-# Version     : v0.4.0
+# Version     : v1.0.0
 # License     : AGPLv3+
 #
 # --                                                            ; }}}1
@@ -18,7 +18,7 @@ r"""
 
 CLI
 
->>> click.get_terminal_size = lambda: [84, None]
+>>> shutil.get_terminal_size = lambda: (84, None)
 >>> run = lambda a, *b: cli(args = a.split() + list(b),
 ...                         standalone_mode = False, prog_name = name)
 
@@ -434,7 +434,7 @@ ko-hi-
 
 """                                                             # }}}1
 
-import os, sys
+import os, shutil, sys
 
 from .version import __version__, py_version
 name = "jiten"
@@ -626,7 +626,7 @@ def indent_and_wrap_jap(w, xs, pre, fg):
   return indent_and_wrap(w, xs, pre, fg).replace("_【", " 【")
 
 def terminal_width():
-  return click.get_terminal_size()[0] - 4
+  return shutil.get_terminal_size()[0] - 4
 
 @cli.command(help = """
   Search kanji.
@@ -873,7 +873,6 @@ def gui_main():
 def _setup_readline():
   if "__pypy__" in sys.builtin_module_names:
     if "_JITEN_RLWRAPPED" in os.environ: return
-    import shutil
     rlwrap = shutil.which("rlwrap")
     if sys.executable and rlwrap:
       os.environ["_JITEN_RLWRAPPED"] = "yes"
