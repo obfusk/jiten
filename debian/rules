@@ -1,6 +1,9 @@
 #!/usr/bin/make -f
 export JITEN_VERSION := $(shell dpkg-parsechangelog -S Version)
 export JITEN_FINAL   := yes
-
+execute_after_dh_auto_clean:
+	$(MAKE) clean
+override_dh_auto_test:
+	$(MAKE) test
 %:
 	dh $@ --with python3 --buildsystem=pybuild
