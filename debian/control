@@ -6,7 +6,7 @@ Build-Depends: debhelper-compat (= 13),
                dh-python,
                python3-all,
                python3-click,
-               python3-kanjidraw (>= 0.2.1),
+#              python3-kanjidraw (>= 0.2.1), # FIXME
                python3-setuptools,
                libsqlite3-dev,
                libpcre3-dev,
