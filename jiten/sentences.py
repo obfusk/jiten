@@ -5,7 +5,7 @@
 #
 # File        : jiten/sentences.py
 # Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-# Date        : 2021-05-12
+# Date        : 2021-05-27
 #
 # Copyright   : Copyright (C) 2021  Felix C. Stegerman
 # Version     : v1.0.2
@@ -63,7 +63,7 @@ Entry(id=2260050, jap='最後にあの猫を見たのはいつですか？', eng
 
 """                                                             # }}}1
 
-import re, sys
+import functools, os, re, sys
 
 from collections import namedtuple
 
@@ -74,6 +74,7 @@ from .sql import sqlite_do
 
 SQLITE_FILE     = M.resource_path("res/sentences.sqlite3")
 SENTENCES_FILE  = M.resource_path("res/sentences/SENTENCES")
+AUDIO_DIR       = M.resource_path("static/audio")
 DATA_FILES      = (SQLITE_FILE, SENTENCES_FILE)
 
 LANGSFULL = "english dutch german french spanish swedish".split()
@@ -141,6 +142,10 @@ def search(q, langs = [], max_results = None, audio = False,
           SELECT * FROM entry WHERE ({}) {} {} ORDER BY id {}
           """.format(s, lang, aud, lim), dict(q="%"+q+"%")):  # safe!
         yield Entry(*r)
+
+@functools.lru_cache(maxsize = None)
+def have_audio(id):
+  return os.path.exists(os.path.join(AUDIO_DIR, "{}.mp3".format(id)))
 
 if __name__ == "__main__":
   if "--doctest" in sys.argv:
