@@ -5,7 +5,7 @@
 #
 # File        : jiten/kanji.py
 # Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-# Date        : 2021-06-15
+# Date        : 2021-06-27
 #
 # Copyright   : Copyright (C) 2021  Felix C. Stegerman
 # Version     : v1.0.2
@@ -129,10 +129,8 @@ SQLITE_FILE     = M.resource_path("res/kanji.sqlite3")
 KANJIDIC_FILE   = M.resource_path("res/jmdict/kanjidic2.xml.gz")
 KANJIVG_FILE    = M.resource_path("res/radicals/kanjivg.xml.gz")
 KRADFILE        = M.resource_path("res/radicals/kradfile.utf8")
-KRADFILE2       = M.resource_path("res/radicals/kradfile2.utf8")
 JLPT_FILE_BASE  = M.resource_path("res/jlpt/N")
-DATA_FILES      = (SQLITE_FILE, KANJIDIC_FILE, KANJIVG_FILE, KRADFILE,
-                   KRADFILE2)
+DATA_FILES      = (SQLITE_FILE, KANJIDIC_FILE, KANJIVG_FILE, KRADFILE)
 
 MAXE   = 25                                                     # TODO
 NOFREQ = 9999
@@ -243,9 +241,8 @@ def parse_kanjidic(kanjivg = None, file = KANJIDIC_FILE):       # {{{1
       return data
                                                                 # }}}1
 
-# NB: kanjivg & kradfile & kradfile2
-def parse_kanjivg(file = KANJIVG_FILE, kradfile = KRADFILE,     # {{{1
-                  kradfile2 = KRADFILE):
+# NB: kanjivg & kradfile
+def parse_kanjivg(file = KANJIVG_FILE, kradfile = KRADFILE):    # {{{1
   elem = "{http://kanjivg.tagaini.net}element"
   data = {}
   with gzip.open(file) as f:
@@ -262,16 +259,15 @@ def parse_kanjivg(file = KANJIVG_FILE, kradfile = KRADFILE,     # {{{1
       assert all( M.isideo(c) or M.iskana(c) or M.isradical(c)
                   for c in elems )
       data[char] = elems
-  with open(kradfile) as f1:
-    with open(kradfile2) as f2:
-      for line in ( line for f in [f1, f2] for line in f ):
-        if re.match(r"^$|^#", line): continue
-        char, rest = line.split(" : ")
-        elems = set( rest.replace("｜", "丨").split() )
-        assert M.iskanji(char)
-        assert char in data[char]
-        assert all( M.iskanji(c) or M.iskana(c) for c in elems )
-        data[char].update(elems)
+  with open(kradfile) as f:
+    for line in f:
+      if re.match(r"^$|^#", line): continue
+      char, rest = line.split(" : ")
+      elems = set( rest.replace("｜", "丨").split() )
+      assert M.iskanji(char)
+      assert char in data[char]
+      assert all( M.iskanji(c) or M.iskana(c) for c in elems )
+      data[char].update(elems)
   for elems in data.values():
     elems.update(set( VAR2RAD[x] for x in elems if x in VAR2RAD ))
     elems.update(set( KAN2RAD[x] for x in elems if x in KAN2RAD ))
