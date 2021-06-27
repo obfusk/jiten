@@ -2,7 +2,7 @@ master
 
 • new: handwritten kanji recognition (kanjidraw)
 • new: larger japanese text setting
-• new: browse by SKIP code
+• new: browse kanji by SKIP code
 • improved dark mode
 
 v1.0.0
