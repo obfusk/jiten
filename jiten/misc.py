@@ -5,7 +5,7 @@
 #
 # File        : jiten/misc.py
 # Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-# Date        : 2021-02-20
+# Date        : 2021-05-14
 #
 # Copyright   : Copyright (C) 2021  Felix C. Stegerman
 # Version     : v1.0.0
@@ -268,6 +268,9 @@ DEPENDENCIES = dict(                                            # {{{1
   setuptools    = dict(url = "https://github.com/pypa/setuptools"),
   six           = dict(url = "https://github.com/benjaminp/six"),
   werkzeug      = dict(url = "https://github.com/pallets/werkzeug"),
+
+  kanjidraw     = dict(url = "https://github.com/obfusk/kanjidraw"),
+  kanjivg       = dict(url = "https://github.com/KanjiVG/kanjivg"),
 )                                                               # }}}1
 
 if __name__ == "__main__":

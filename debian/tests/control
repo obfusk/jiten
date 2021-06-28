@@ -1,0 +1,3 @@
+Tests: smoke
+Depends: jiten
+Restrictions: allow-stderr, superficial

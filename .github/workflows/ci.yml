@@ -6,7 +6,6 @@ jobs:
     strategy:
       matrix:
         python-version:
-        - 3.5
         - 3.6
         - 3.7
         - 3.8
@@ -15,6 +14,8 @@ jobs:
         - pypy3
     steps:
     - uses: actions/checkout@v2
+      with:
+        submodules: true
     - name: Set up Python ${{ matrix.python-version }}
       uses: actions/setup-python@v2
       with:

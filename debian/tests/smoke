@@ -1,0 +1,3 @@
+#!/bin/bash
+set -ex
+jiten jmdict -m1 -w cat

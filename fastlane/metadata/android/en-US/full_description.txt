@@ -18,7 +18,8 @@ Kanji dictionary
 • readings (romaji optional), meanings (english), jmdict entries, radicals & more
 • search using SKIP codes
 • search by radical
-• browse by frequency/level/jlpt
+• handwritten kanji recognition
+• browse by frequency/level/jlpt/SKIP
 
 Example sentences (from Tatoeba)
 • with english, dutch, german, french and/or spanish translation

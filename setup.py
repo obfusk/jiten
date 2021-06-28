@@ -22,6 +22,8 @@ data  = [ "res/jlpt/N" + l + "-" + x for l in "12345"
       + [ "static/licenses/*.txt" ] \
       + [ "templates/*.html" ]
 
+os.environ["PYTHON"] = sys.executable   # use same python in make
+
 if clean:
   subprocess.run("make clean", shell = True, check = True)
 else:
@@ -71,9 +73,11 @@ setuptools.setup(
     "Natural Language :: German",
     "Natural Language :: Japanese",
     "Operating System :: Android",
+    "Operating System :: MacOS :: MacOS X",
     "Operating System :: POSIX :: Linux",
+    "Operating System :: POSIX",
+    "Operating System :: Unix",
     "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3.5",
     "Programming Language :: Python :: 3.6",
     "Programming Language :: Python :: 3.7",
     "Programming Language :: Python :: 3.8",
@@ -91,8 +95,8 @@ setuptools.setup(
     console_scripts = ["jiten = jiten.cli:main"],
     gui_scripts     = ["jiten-gui = jiten.cli:gui_main [gui]"],
   ),
-  python_requires   = ">=3.5",
-  install_requires  = ["Flask", "click>=6.0"],
+  python_requires   = ">=3.6",
+  install_requires  = ["Flask", "click>=6.0", "kanjidraw>=0.2.1"],
   extras_require    = dict(gui = ["pywebview>=3.3.5"]),
   ext_modules       = [pcre],
 )

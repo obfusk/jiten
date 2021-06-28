@@ -1,6 +1,21 @@
 <meta charset="UTF-8"/>
 <meta name="viewport"
   content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
+<meta name="description" content="{{ DESCRIPTION }}"/>
+<meta name="keywords" content="{{ KEYWORDS }}"/>
+<meta property="og:description" content="{{ DESCRIPTION }}"/>
+<meta property="og:image" content="{{ M.J_O_D }}/static/icon.png"/>
+{% if query and page_title %}
+  <title>「{{ query }}」 jiten - {{ page_title }}</title>
+  <meta property="og:title"
+    content="「{{ query }}」 {{ TITLE }} - {{ page_title }}"/>
+{% elif page_title %}
+  <title>jiten - {{ page_title }}</title>
+  <meta property="og:title" content="{{ TITLE }} - {{ page_title }}"/>
+{% else %}
+  <title>{{ TITLE }}</title>
+  <meta property="og:title" content="{{ TITLE }}"/>
+{% endif %}
 {% if mode == "dark" %}
   <link rel="stylesheet" href="/static/bootstrap-darkly.min.css" />
   <link rel="stylesheet" href="/static/style-dark.css?s={{ START }}" />
@@ -9,8 +24,12 @@
   <link rel="stylesheet" href="/static/style-light.css?s={{ START }}" />
 {% endif %}
 <link rel="stylesheet" href="/static/style.css?s={{ START }}" />
+{% if large_jap %}
+  <link rel="stylesheet" href="/static/style-large.css?s={{ START }}" />
+{% endif %}
 <link rel="icon" type="image/png" href="/static/icon.png" />
 <script src="/static/jquery-3.5.1.slim.min.js"></script>
 <script src="/static/popper-1.16.0.min.js"></script>
 <script src="/static/bootstrap.min.js"></script>
+<script src="/static/kanjidraw.js?s={{ START }}"></script>
 <script src="/static/script.js?s={{ START }}"></script>

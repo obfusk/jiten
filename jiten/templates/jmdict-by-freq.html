@@ -4,16 +4,15 @@
 
     File        : templates/jmdict-by-freq.html
     Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-    Date        : 2020-12-07
+    Date        : 2021-06-27
 
     Copyright   : Copyright (C) 2020  Felix C. Stegerman
-    Version     : v0.3.5
+    Version     : v1.0.0
     License     : AGPLv3+
 
   -->
   <head>
     {% include "_meta.html" %}
-    <title>jiten - jmdict by frequency</title>
   </head>
   <body>
     {% from "_macros.html" import topbtn with context %}
@@ -33,7 +32,7 @@
               <!-- TODO: langs for meanings()?! -->
               {% set mean = e.meanings()|sum(start=()) %}
               {% set read = e.reading|map(attribute="elem") %}
-              <a class="jap selbtn btn btn-primary px-2 py-1 mb-1"
+              <a class="link jap selbtn btn btn-primary px-2 py-1 mb-1"
                 title="{{ r }} | {{ "; ".join(mean) }} 【{{ "、".join(read) }}】"
                 data-toggle="tooltip" data-placement="top"
                 href="/jmdict?query={{ ("+#" + e.seq|string)|urlencode }}"

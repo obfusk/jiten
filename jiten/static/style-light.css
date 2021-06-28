@@ -13,3 +13,7 @@
 .dropdown-item {
   color: #212529;
 }
+
+#kanjidraw_canvas {
+  border: 1px solid black;
+}

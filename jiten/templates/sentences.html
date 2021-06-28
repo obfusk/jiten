@@ -4,20 +4,18 @@
 
     File        : templates/sentences.html
     Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-    Date        : 2021-01-28
+    Date        : 2021-06-27
 
     Copyright   : Copyright (C) 2021  Felix C. Stegerman
-    Version     : v0.4.0
+    Version     : v1.0.0
     License     : AGPLv3+
 
   -->
   <head>
     {% include "_meta.html" %}
-    <title>jiten - sentences</title>
     <style>
       .play-audio svg {
-        height: 1.5rem; width: 1.5rem;
-        margin-top: 0.2rem; margin-bottom: 0.2rem;
+        height: 1.9rem; width: 1.9rem;
       }
       h6.jap {
         font-weight: normal;
@@ -101,20 +99,21 @@
                     </span>
                   </span>
                   {% if e.audio %}
+                    {%- set ha = S.have_audio(e.id) -%}
                     &nbsp;
                     <span class="ml-auto">
-                      <a class="play-audio btn btn-primary btn-lg px-2 py-1"
-                          aria-label="Play Audio"
+                      <a class="play-audio btn btn-primary btn-lg px-1 py-1 {% if not ha %}disabled{% endif %}"
+                          title="Play Audio" data-toggle="tooltip" data-placement="top"
                           href="/static/audio/{{ e.id }}.mp3">
-                        <!-- https://www.flaticon.com/free-icon/volume_565296 -->
+                        <!--
+                          Source: https://fonts.gstatic.com/s/i/materialicons/volume_up/v11/24px.svg
+                          License: http://www.apache.org/licenses/LICENSE-2.0.txt
+                        -->
                         <svg xmlns="http://www.w3.org/2000/svg"
-                            viewbox="0 0 384 384" focusable="false">
-                          <title>Play Audio</title>
-                          <g fill="currentColor">
-                            <path d="M288,192c0-37.653-21.76-70.187-53.333-85.867v171.84C266.24,262.187,288,229.653,288,192z"/>
-                            <polygon points="0,128 0,256 85.333,256 192,362.667 192,21.333 85.333,128"/>
-                            <path d="M234.667,4.907V48.96C296.32,67.307,341.333,124.373,341.333,192S296.32,316.693,234.667,335.04v44.053 C320.107,359.68,384,283.413,384,192S320.107,24.32,234.667,4.907z"/>
-                          </g>
+                            viewBox="0 0 24 24" focusable="false">
+                          <path d="M0 0h24v24H0z" fill="none"/>
+                          <path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"
+                            fill="currentColor"/>
                         </svg>
                       </a>
                     </span>
