@@ -47,6 +47,7 @@ jobs:
             +$GITHUB_SHA:refs/remotes/origin/${GITHUB_REF##*/}
           git checkout --progress --force -B ${GITHUB_REF##*/} \
             refs/remotes/origin/${GITHUB_REF##*/}
+          git submodule init && git submodule update
           git log -1 --format=%H
         "
     - name: Install dependencies (1)
