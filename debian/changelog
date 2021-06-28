@@ -1,7 +1,6 @@
 jiten (1.0.2-61-g1a627dc-1) UNRELEASED; urgency=medium
 
   * Snapshot @ v1.0.2-61-g1a627dc.
-  * Initial release. Closes: #nnnn
-    <nnnn is the bug number of your ITP>
+  * Initial release. Closes: #990387
 
  -- Felix C. Stegerman <flx@obfusk.net>  Mon, 28 Jun 2021 06:04:51 +0200
