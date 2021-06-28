@@ -1,5 +1,5 @@
 Source: jiten
-Section: non-free/text
+Section: text
 Priority: optional
 Maintainer: Felix C. Stegerman <flx@obfusk.net>
 Build-Depends: debhelper-compat (= 13),
@@ -25,9 +25,9 @@ Depends: jiten-data (= ${binary:Version}),
          ${misc:Depends},
          ${python3:Depends},
          ${shlibs:Depends},
-Recommends: jiten-pitch (= ${binary:Version}),
-            jiten-audio (= ${binary:Version}),
-            python3-webview (>= 3.3.5),
+Suggests: jiten-audio,
+          jiten-pitch,
+          python3-webview (>= 3.3.5),
 Description: Jiten Japanese Dictionary
  Jiten is a Japanese dictionary based on JMDict/Kanjidic
  .
@@ -82,24 +82,7 @@ Description: Jiten Japanese Dictionary
 
 Package: jiten-data
 Architecture: all
-Enhances: jiten
 Description: Data files for Jiten Japanese Dictionary
  Jiten is a Japanese dictionary based on JMDict/Kanjidic
  .
  This package contains the databases and audio files.
-
-Package: jiten-pitch
-Architecture: all
-Enhances: jiten
-Description: Pitch database for Jiten Japanese Dictionary
- Jiten is a Japanese dictionary based on JMDict/Kanjidic
- .
- This package contains the non-free pitch database.
-
-Package: jiten-audio
-Architecture: all
-Enhances: jiten
-Description: Audio files for Jiten Japanese Dictionary
- Jiten is a Japanese dictionary based on JMDict/Kanjidic
- .
- This package contains the non-free audio files.
