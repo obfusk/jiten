@@ -5,7 +5,7 @@
 #
 # File        : jiten/pitch.py
 # Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-# Date        : 2021-05-12
+# Date        : 2021-06-28
 #
 # Copyright   : Copyright (C) 2021  Felix C. Stegerman
 # Version     : v1.0.2
@@ -121,8 +121,9 @@ PITCH_CREATE_SQL = """
 """                                                             # }}}1
 
 def setup(file = SQLITE_FILE):
-  pitch = parse_pitch()
-  pitch2sqldb(pitch, file)
+  if os.path.exists(PITCH_FILE):
+    pitch = parse_pitch()
+    pitch2sqldb(pitch, file)
 
 @contextmanager
 def pitches(file = SQLITE_FILE):

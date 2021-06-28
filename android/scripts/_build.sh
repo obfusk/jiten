@@ -44,7 +44,7 @@ git push -f "$remote":_jiten.git "$branch":master --tags
 ssh "$remote" '
   set -e
   rm -fr build
-  git clone _jiten.git build/dev.obfusk.jiten
+  git clone --recurse-submodules _jiten.git build/dev.obfusk.jiten
 '
 
 # setup & build

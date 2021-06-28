@@ -1,0 +1,3 @@
+[submodule "nonfree-data"]
+	url = https://github.com/obfusk/jiten-nonfree-data.git
+	path = nonfree-data
