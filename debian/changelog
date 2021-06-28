@@ -1,7 +1,7 @@
-jiten (1.0.2-60-g22fb11c-1) UNRELEASED; urgency=medium
+jiten (1.0.2-61-g1a627dc-1) UNRELEASED; urgency=medium
 
-  * Snapshot @ v1.0.2-60-g22fb11c.
+  * Snapshot @ v1.0.2-61-g1a627dc.
   * Initial release. Closes: #nnnn
     <nnnn is the bug number of your ITP>
 
- -- Felix C. Stegerman <flx@obfusk.net>  Mon, 28 Jun 2021 05:31:23 +0200
+ -- Felix C. Stegerman <flx@obfusk.net>  Mon, 28 Jun 2021 06:04:51 +0200
