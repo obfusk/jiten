@@ -71,7 +71,7 @@ from .sql import sqlite_do
 
 SQLITE_FILE = M.resource_path("res/pitch.sqlite3")
 PITCH_FILE  = M.resource_path("res/pitch/PITCH")
-DATA_FILES  = (SQLITE_FILE, PITCH_FILE)
+DATA_FILES  = (SQLITE_FILE,)
 
 # NB: skip ･ for e.g. せꜛい･いꜜっぱい
 MORASPLIT   = re.compile(r"(･?.[ぁぃぅぇぉゃょゅァィゥェォャュョ]?)")
