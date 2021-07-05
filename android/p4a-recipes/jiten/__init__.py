@@ -7,7 +7,7 @@ class JitenRecipe(CompiledComponentsPythonRecipe):
     # version = '1.0.0'
     # url = 'https://github.com/obfusk/jiten/archive/v{version}.tar.gz'
 
-    depends = ['setuptools', 'flask', 'click', 'sqlite3', 'libpcre']
+    depends = ['setuptools', 'flask', 'click', 'sqlite3', 'libpcre', 'kanjidraw']
 
     call_hostpython_via_targetpython = False
     install_in_hostpython = False
