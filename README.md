@@ -2,7 +2,7 @@
 
     File        : README.md
     Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-    Date        : 2021-06-20
+    Date        : 2021-07-05
 
     Copyright   : Copyright (C) 2021  Felix C. Stegerman
     Version     : v1.0.0
@@ -18,6 +18,15 @@
 [![Android Build](https://github.com/obfusk/jiten/workflows/Android/badge.svg)](https://github.com/obfusk/jiten/actions?query=workflow%3AAndroid)
 [![AGPLv3+](https://img.shields.io/badge/license-AGPLv3+-blue.svg)](https://www.gnu.org/licenses/agpl-3.0.html)
 [![Sponsor](https://img.shields.io/badge/%E2%99%A5-support-violet.svg)](https://ko-fi.com/obfusk)
+
+<a href="https://repology.org/project/jiten/versions">
+  <img src="https://repology.org/badge/vertical-allrepos/jiten.svg?header="
+    alt="Packaging status" />
+</a>
+<a href="https://repology.org/project/python:jiten/versions">
+  <img src="https://repology.org/badge/vertical-allrepos/python:jiten.svg?header="
+    alt="Packaging status" />
+</a>
 
 ## jiten - japanese android/cli/web dictionary based on jmdict/kanjidic
 
