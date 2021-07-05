@@ -12,7 +12,7 @@ Build-Depends: debhelper-compat (= 12),
                libpcre3-dev,
                nodejs,
 Standards-Version: 4.5.1
-Vcs-Git: https://salsa.debian.org/obfusk/jiten.git
+Vcs-Git: https://salsa.debian.org/obfusk/jiten.git -b ubuntu/focal
 Vcs-Browser: https://salsa.debian.org/obfusk/jiten
 Homepage: https://github.com/obfusk/jiten
 Rules-Requires-Root: no
