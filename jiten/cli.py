@@ -5,7 +5,7 @@
 #
 # File        : jiten/cli.py
 # Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-# Date        : 2021-05-12
+# Date        : 2021-07-05
 #
 # Copyright   : Copyright (C) 2021  Felix C. Stegerman
 # Version     : v1.0.0
@@ -39,7 +39,7 @@ CLI
     kana alone | colloquialism
 
 >>> run("-v jmdict -m1 -w cat")
-DB v13 up to date.
+DB v14 up to date.
 query: +w cat
 <BLANKLINE>
 猫
@@ -58,7 +58,7 @@ see 猫車 | 猫火鉢
 seq# 1467640, freq# 2201, jlpt N5, prio; 1
 
 >>> run("-v jmdict -m1 -w kat -l dut")
-DB v13 up to date.
+DB v14 up to date.
 query: +w kat
 <BLANKLINE>
 猫
@@ -74,7 +74,7 @@ see 猫車 | 猫火鉢
 seq# 1467640, freq# 2201, jlpt N5, prio; 1
 
 >>> run("-v jmdict -m1 -w idiot")
-DB v13 up to date.
+DB v14 up to date.
 query: +w idiot
 <BLANKLINE>
 馬鹿 | 莫迦 | 破家 | 馬稼
@@ -94,7 +94,7 @@ see 馬鹿貝
 seq# 1601260, freq# 2472, jlpt N3, prio; 1
 
 >>> run("-v jmdict -m1 -e 誤魔化す")
-DB v13 up to date.
+DB v14 up to date.
 query: += 誤魔化す
 <BLANKLINE>
 誤魔化す | 誤摩化す | 胡麻化す | 誤魔かす | 胡魔化す
@@ -111,11 +111,11 @@ query: += 誤魔化す
 seq# 1271480, freq# 10495, jlpt N1, prio; 1
 
 >>> run("-v jmdict -m1 -w まる")
-DB v13 up to date.
+DB v14 up to date.
 query: +w まる
 <BLANKLINE>
 丸 | 円
-まる
+まる | マル
 まꜛる
 [eng]
 = circle
@@ -132,7 +132,7 @@ see ○ | まる | スッポン | 麻呂
 seq# 1216250, freq# 63, jlpt N3, prio; 1
 
 >>> run("-v jmdict -m1 -w cat --verb")
-DB v13 up to date.
+DB v14 up to date.
 query: +w cat
 <BLANKLINE>
 逆撫で | 逆なで
@@ -146,7 +146,7 @@ query: +w cat
 seq# 1227180, freq# 30500; 1
 
 >>> run("-v jmdict -m1 -w みる --noun")
-DB v13 up to date.
+DB v14 up to date.
 query: +w みる
 <BLANKLINE>
 海松 | 水松
@@ -160,19 +160,19 @@ query: +w みる
 seq# 1772790, freq# 75; 1
 
 >>> run("-v jmdict -m1 -w みる --noun --prio")
-DB v13 up to date.
+DB v14 up to date.
 query: +w みる
 <BLANKLINE>
 
 >>> run("-v jmdict -n5 +random") # doctest: +ELLIPSIS
-DB v13 up to date.
+DB v14 up to date.
 query: +random
 <BLANKLINE>
 ...
 seq# ... jlpt N5...
 
 >>> run("-v jmdict -m1 --hiragana --romaji -w neko")
-DB v13 up to date.
+DB v14 up to date.
 query: +w ねこ
 <BLANKLINE>
 猫
@@ -191,7 +191,7 @@ see 猫車 | 猫火鉢
 seq# 1467640, freq# 2201, jlpt N5, prio; 1
 
 >>> run("-v jmdict -m1 --romaji -w +hneko")
-DB v13 up to date.
+DB v14 up to date.
 query: +w ねこ
 <BLANKLINE>
 猫
@@ -210,7 +210,7 @@ see 猫車 | 猫火鉢
 seq# 1467640, freq# 2201, jlpt N5, prio; 1
 
 >>> run("-v jmdict -m1 --romaji -w +kneko")
-DB v13 up to date.
+DB v14 up to date.
 query: +w ネコ
 <BLANKLINE>
 猫
@@ -229,7 +229,7 @@ see 猫車 | 猫火鉢
 seq# 1467640, freq# 2201, jlpt N5, prio; 1
 
 >>> run("-v jmdict -m1 --romaji", "+k +w ko-hi-")
-DB v13 up to date.
+DB v14 up to date.
 query: +w コーヒー
 <BLANKLINE>
 珈琲
@@ -253,7 +253,7 @@ seq# 1049180, freq# 3762, jlpt N5, prio; 1
 = cat
 
 >>> run("-v kanji -m1 -e cat")
-DB v13 up to date.
+DB v14 up to date.
 query: += cat
 <BLANKLINE>
 猫
@@ -276,7 +276,7 @@ variants: 貓
 11 strokes, level 常用, freq# 1702, old jlpt N2, jlpt N3, skip 1-3-8
 
 >>> run("-v kanji -m1 -w 日")
-DB v13 up to date.
+DB v14 up to date.
 query: +w 日
 <BLANKLINE>
 日
@@ -297,7 +297,7 @@ query: +w 日
 4 strokes, level 常用1, freq# 1, old jlpt N4, jlpt N5, skip 3-3-1
 
 >>> run("-v kanji -m1 +r犭艹田")
-DB v13 up to date.
+DB v14 up to date.
 query: +r犭艹田
 <BLANKLINE>
 猫
@@ -320,7 +320,7 @@ variants: 貓
 11 strokes, level 常用, freq# 1702, old jlpt N2, jlpt N3, skip 1-3-8
 
 >>> run("-v kanji -m1 +s2-3-3")
-DB v13 up to date.
+DB v14 up to date.
 query: +s2-3-3
 <BLANKLINE>
 当
@@ -373,7 +373,7 @@ variants: 當
 === Sentences ===
 
 >>> run("-v sentences -m1 -l eng,dut,ger,fre,spa,swe congratulations")
-DB v13 up to date.
+DB v14 up to date.
 query: congratulations
 <BLANKLINE>
 [jap] おめでとうございます。
@@ -386,7 +386,7 @@ query: congratulations
 tatoeba #4854; 1
 
 >>> run("-v sentences -m1 +#9365736")
-DB v13 up to date.
+DB v14 up to date.
 query: +#9365736
 <BLANKLINE>
 [jap] 子ネコは大好きだな。

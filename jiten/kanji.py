@@ -5,7 +5,7 @@
 #
 # File        : jiten/kanji.py
 # Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-# Date        : 2021-06-27
+# Date        : 2021-07-05
 #
 # Copyright   : Copyright (C) 2021  Felix C. Stegerman
 # Version     : v1.0.2
@@ -69,9 +69,9 @@ Entry(char='日', cat='KANJI', level='常用1', strokes=4, freq=1, jlpt=4, new_j
 >>> len([ x for x in kanjidic if x.new_jlpt is not None ])
 2211
 >>> len([ x for x in kanjidic if x.skip is None ])
-952
+0
 >>> len([ x for x in kanjidic if x.skip is None and x.cat == "KANJI" ])
-403
+0
 
 >>> len([ x for x in kanjidic if x.strokes > 25 ])
 94
@@ -86,9 +86,9 @@ Entry(char='日', cat='KANJI', level='常用1', strokes=4, freq=1, jlpt=4, new_j
 >>> len([ x for x in kanjidic if len(x.nanori) ])
 1353
 >>> len([ x for x in kanjidic if not len(x.on) ])
-952
+953
 >>> len([ x for x in kanjidic if not len(x.kun) ])
-3288
+3287
 >>> len([ x for x in kanjidic if not len(x.meaning) ])
 2751
 
@@ -105,9 +105,9 @@ True
 
 >>> from .kana import kana2romaji
 >>> len([ kana2romaji(r) for e in kanjidic for r in e.on ])
-20994
+20993
 >>> len([ kana2romaji(r) for e in kanjidic for r in e.kun ])
-16024
+16028
 >>> len([ kana2romaji(r) for e in kanjidic for r in e.nanori ])
 3465
 

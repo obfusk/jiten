@@ -5,7 +5,7 @@
 #
 # File        : jiten/jmdict.py
 # Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-# Date        : 2021-05-12
+# Date        : 2021-07-05
 #
 # Copyright   : Copyright (C) 2021  Felix C. Stegerman
 # Version     : v1.0.2
@@ -24,30 +24,30 @@ JMDict.
 >>> click.progressbar = _progressbar
 
 >>> DBVERSION
-13
+14
 
 >>> jmdict = parse_jmdict()
 >>> len(jmdict)
-190722
+192310
 
 >>> print(jmdict[-1].sense[0].gloss[0])
-Japanese-Multilingual Dictionary Project - Creation Date: 2021-01-19
+Japanese-Multilingual Dictionary Project - Creation Date: 2021-07-05
 
 >>> len([ x for x in jmdict if x.isprio() ])
-22443
+22446
 >>> len([ x for x in jmdict if x.isprio() and list(x.pitch()) ])
-21269
+21455
 
 >>> len([ x for x in jmdict if x.jlpt == 1 ])
-3035
+3040
 >>> len([ x for x in jmdict if x.jlpt == 2 ])
-1725
+1726
 >>> len([ x for x in jmdict if x.jlpt == 3 ])
-1657
+1662
 >>> len([ x for x in jmdict if x.jlpt == 4 ])
 633
 >>> len([ x for x in jmdict if x.jlpt == 5 ])
-679
+680
 
 >>> len([ x for x in jmdict if x.jlpt == 1 and x.isprio() ])
 2628
@@ -185,10 +185,11 @@ intransitive verb
 auxiliary verb
 >>> print("\n".join(M.uniq(M.flatten( s.info for s in iku.sense ))))
 い sometimes omitted in auxiliary use
+after the -te form of a verb
 word usually written using kana alone
 slang
 >>> print("\n".join(iku.xinfo()))
-word containing out-dated kanji
+word containing out-dated kanji or kanji usage
 >>> print("\n".join(iku.xrefs()))
 来る
 くる
@@ -203,17 +204,17 @@ word containing out-dated kanji
 >>> kata = [ r for r in rs if M.iskatakana(r) ]
 >>> mixd = [ r for r in rs if not (M.ishiragana(r) or M.iskatakana(r)) ]
 >>> len(rs)
-228225
+230371
 >>> len([ k2r(r) for r in rs ])
-228225
+230371
 >>> len([ k2r(p) for e in jmdict for p in e.pitch() ])
-110153
+112765
 >>> len(hira)
-152312
+153607
 >>> len(kata)
-60127
+60718
 >>> len(mixd)
-15786
+16046
 >>> len([ r for r in hira if r2h(k2r(r)) != r ])
 0
 >>> len([ r for r in kata if r2k(k2r(r, True)) != r ])
@@ -236,7 +237,7 @@ from . import pitch as P
 from .kana import katakana2hiragana
 from .sql import sqlite_do, load_pcre_extension
 
-DBVERSION       = 13 # NB: update this when data/schema changes
+DBVERSION       = 14 # NB: update this when data/schema changes
 SQLITE_FILE     = M.resource_path("res/jmdict.sqlite3")
 JMDICT_FILE     = M.resource_path("res/jmdict/jmdict.xml.gz")
 JLPT_FILE_BASE  = M.resource_path("res/jlpt/N")
@@ -315,11 +316,10 @@ def pitch(e, conn = None): return M.uniq(pitch_w_dups(e, conn))
 
 # TODO
 def pitch_w_dups(e, conn = None):
-  ks = tuple( x.elem for x in e.kanji or e.reading )
   rs = tuple( r.elem for r in e.reading )
   hr = tuple( katakana2hiragana(r) for r in rs )
   for r in rs + tuple( r for r in hr if r not in rs ):
-    p = P.get_pitch(r, ks, conn = conn)
+    p = P.get_pitch(r, e.definition(), conn = conn)
     if p: yield p
 
 # TODO
