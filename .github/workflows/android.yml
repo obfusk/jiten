@@ -66,7 +66,7 @@ jobs:
           ~/build/dev.obfusk.jiten/android/scripts/setup-ndk.sh
           cd build/dev.obfusk.jiten/android
           if grep -q stretch /etc/os-release; then
-            python3.7 -mvenv ~/env
+            python3.9 -mvenv ~/env
             source ~/env/bin/activate
             PIP_INSTALL="pip3 install" ./scripts/setup-user.sh
           else
