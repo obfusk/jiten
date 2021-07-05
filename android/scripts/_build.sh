@@ -51,14 +51,9 @@ ssh "$remote" '
 ssh "$remote" '
   set -e && cd build/dev.obfusk.jiten/android
   export PATH=/usr/local/bin:/bin:/usr/bin
-  if grep -q stretch /etc/os-release; then
-    [ -e ~/env ] || python3.9 -mvenv ~/env
-    source ~/env/bin/activate
-    PIP_INSTALL="pip3 install" ./scripts/setup-user.sh
-  else
-    export PATH="$HOME/.local/bin:$PATH"
-    PIP_INSTALL="pip3 install --user" ./scripts/setup-user.sh
-  fi
+  [ -e ~/env ] || python3.9 -mvenv ~/env
+  source ~/env/bin/activate
+  PIP_INSTALL="pip3 install" ./scripts/setup-user.sh
   for target in '"$*"'; do
     if [ "$target" = clean ]; then
       make "$target" || true
