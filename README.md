@@ -2,7 +2,7 @@
 
     File        : README.md
     Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-    Date        : 2021-07-05
+    Date        : 2021-07-07
 
     Copyright   : Copyright (C) 2021  Felix C. Stegerman
     Version     : v1.0.0
@@ -21,14 +21,17 @@
 
 <a href="https://repology.org/project/jiten/versions">
   <img src="https://repology.org/badge/vertical-allrepos/jiten.svg?header="
-    alt="Packaging status" />
-</a>
-<a href="https://repology.org/project/python:jiten/versions">
-  <img src="https://repology.org/badge/vertical-allrepos/python:jiten.svg?header="
-    alt="Packaging status" />
+    alt="Packaging status" align="right" />
 </a>
 
-## jiten - japanese android/cli/web dictionary based on jmdict/kanjidic
+<a href="https://repology.org/project/python:jiten/versions">
+  <img src="https://repology.org/badge/vertical-allrepos/python:jiten.svg?header="
+    alt="Packaging status" align="right" />
+</a>
+
+# jiten
+
+## japanese android/cli/web dictionary based on jmdict/kanjidic
 
 → available online at https://jiten.obfusk.dev
 
