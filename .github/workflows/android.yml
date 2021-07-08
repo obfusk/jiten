@@ -53,9 +53,7 @@ jobs:
     - name: Install dependencies (1)
       run: |
         ~vagrant/build/dev.obfusk.jiten/android/scripts/setup-root.sh
-        if grep -q stretch /etc/os-release; then
-          ~vagrant/build/dev.obfusk.jiten/android/scripts/setup-python.sh
-        fi
+        ~vagrant/build/dev.obfusk.jiten/android/scripts/setup-python.sh
         ~vagrant/build/dev.obfusk.jiten/android/scripts/setup-sqlite.sh
     - name: Install dependencies (2)
       run: |
@@ -65,21 +63,15 @@ jobs:
           set -e
           ~/build/dev.obfusk.jiten/android/scripts/setup-ndk.sh
           cd build/dev.obfusk.jiten/android
-          if grep -q stretch /etc/os-release; then
-            python3.7 -mvenv ~/env
-            source ~/env/bin/activate
-            PIP_INSTALL="pip3 install" ./scripts/setup-user.sh
-          else
-            PIP_INSTALL="pip3 install --user" ./scripts/setup-user.sh
-          fi
+          python3.9 -mvenv ~/env
+          source ~/env/bin/activate
+          PIP_INSTALL="pip3 install" ./scripts/setup-user.sh
         '
     - name: System info
       run: |
         su - vagrant -c '
           set -e && cd build/dev.obfusk.jiten/android
-          if grep -q stretch /etc/os-release; then
-            source ~/env/bin/activate
-          fi
+          source ~/env/bin/activate
           uname -a && lsb_release -a
           git --version && python3 --version
           java -version && javac -version
@@ -90,11 +82,7 @@ jobs:
         su - vagrant -c '
           set -e && cd build/dev.obfusk.jiten/android
           export PATH=/usr/local/bin:/bin:/usr/bin
-          if grep -q stretch /etc/os-release; then
-            source ~/env/bin/activate
-          else
-            export PATH="$HOME/.local/bin:$PATH"
-          fi
+          source ~/env/bin/activate
           make ${{ matrix.target }} APP_PACKAGE_NAME=${{ matrix.package }}
         '
         mkdir bin

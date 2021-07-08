@@ -1,7 +1,7 @@
 #!/bin/bash
 set -xe -o pipefail
-year=2021 vsn=3350500
-sha512sum=9684fee89224f0c975c280cb6b2c64adb040334bc5517dfe0e354b0557459fa3ae642c4289a7a5265f65b3ad5b6747db8068a1e5172fbb8edec7f6d964ecbb20
+year=2021 vsn=3360000
+sha512sum=5c18f158a599b1e91d95c91de3aa5c5de52f986845ad0cb49dfd56b650587e55e24d469571b5b864229b870d0eaf85d78893f61ef950b95389cb41692be37f58
 dir=sqlite-amalgamation-$vsn
 url=https://www.sqlite.org/$year/$dir.zip
 wget -O "$dir.zip" -- "$url"

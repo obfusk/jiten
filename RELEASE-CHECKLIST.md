@@ -32,7 +32,7 @@
 - [ ] description & screenshots for f-droid (2x) & Play Store
 - [ ] description for Debian package
 - [ ] description for Nix package
-- [ ] changelog
+- [ ] changelog 2x
 
 # Release
 

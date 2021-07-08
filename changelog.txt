@@ -1,8 +1,9 @@
-master
+v1.1.0
 
 • new: handwritten kanji recognition (kanjidraw)
 • new: larger japanese text setting
 • new: browse kanji by SKIP code
+• updated databases
 • improved dark mode
 
 v1.0.0

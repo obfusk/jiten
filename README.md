@@ -2,10 +2,10 @@
 
     File        : README.md
     Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-    Date        : 2021-06-20
+    Date        : 2021-07-08
 
     Copyright   : Copyright (C) 2021  Felix C. Stegerman
-    Version     : v1.0.0
+    Version     : v1.1.0
     License     : AGPLv3+
 
 }}}1 -->
@@ -19,7 +19,19 @@
 [![AGPLv3+](https://img.shields.io/badge/license-AGPLv3+-blue.svg)](https://www.gnu.org/licenses/agpl-3.0.html)
 [![Sponsor](https://img.shields.io/badge/%E2%99%A5-support-violet.svg)](https://ko-fi.com/obfusk)
 
-## jiten - japanese android/cli/web dictionary based on jmdict/kanjidic
+<a href="https://repology.org/project/jiten/versions">
+  <img src="https://repology.org/badge/vertical-allrepos/jiten.svg?header="
+    alt="Packaging status" align="right" />
+</a>
+
+<a href="https://repology.org/project/python:jiten/versions">
+  <img src="https://repology.org/badge/vertical-allrepos/python:jiten.svg?header="
+    alt="Packaging status" align="right" />
+</a>
+
+# jiten
+
+## japanese android/cli/web dictionary based on jmdict/kanjidic
 
 → available online at https://jiten.obfusk.dev
 
@@ -239,8 +251,7 @@ $ make
 
 ### NixOS
 
-Jiten is now available in nixpkgs `master`.  You can also use
-[this nix expression](https://gist.github.com/obfusk/c51d353e75d576bd5cb8e92456cdec47).
+Jiten is available in nixpkgs (un)stable.
 
 ## Miscellaneous
 

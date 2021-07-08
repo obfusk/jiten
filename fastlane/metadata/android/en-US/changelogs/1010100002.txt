@@ -1,0 +1,5 @@
+• new: handwritten kanji recognition (kanjidraw)
+• new: larger japanese text setting
+• new: browse kanji by SKIP code
+• updated databases
+• improved dark mode

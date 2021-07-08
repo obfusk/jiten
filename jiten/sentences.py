@@ -5,7 +5,7 @@
 #
 # File        : jiten/sentences.py
 # Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-# Date        : 2021-05-27
+# Date        : 2021-07-05
 #
 # Copyright   : Copyright (C) 2021  Felix C. Stegerman
 # Version     : v1.0.2
@@ -25,32 +25,32 @@ Sentences from Tatoeba.
 
 >>> sentences = parse_sentences()
 >>> len(sentences)
-200806
+207995
 
 >>> len([ x for x in sentences if x.jap ])
-200806
+207995
 >>> len([ x for x in sentences if x.eng ])
-195598
+203308
 >>> len([ x for x in sentences if x.dut ])
-4750
+4860
 >>> len([ x for x in sentences if x.ger ])
-41344
+43208
 >>> len([ x for x in sentences if x.fre ])
-37128
+37491
 >>> len([ x for x in sentences if x.spa ])
-31911
+32690
 >>> len([ x for x in sentences if x.swe ])
-913
+939
 >>> len([ x for x in sentences if x.audio ])
 1281
 >>> len([ x for x in sentences if x.eng and x.dut and x.ger ])
-2551
+2662
 >>> len([ x for x in sentences if x.eng and x.dut and x.ger and x.audio ])
-538
+544
 >>> len([ x for x in sentences if x.eng and x.dut and x.ger and x.fre and x.spa ])
-771
+810
 >>> len([ x for x in sentences if x.eng and x.dut and x.ger and x.fre and x.spa and x.audio ])
-202
+205
 
 >>> [ x for x in sentences if "子猫" in x.jap ][0]
 Entry(id=74794, jap='「お前、どこの子だ？」足に纏わりついてきたのは、小さな子猫だった。灰色の縞模様のふわふわした猫だ。', eng='"Who do you belong to?" Wrapped around his feet was a small cat. It was a fluffy grey striped cat.', dut=None, ger=None, fre=None, spa=None, swe=None, audio=None)
