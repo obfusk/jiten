@@ -2,10 +2,10 @@
 
     File        : README.md
     Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-    Date        : 2021-07-07
+    Date        : 2021-07-08
 
     Copyright   : Copyright (C) 2021  Felix C. Stegerman
-    Version     : v1.0.0
+    Version     : v1.1.0
     License     : AGPLv3+
 
 }}}1 -->
@@ -251,8 +251,7 @@ $ make
 
 ### NixOS
 
-Jiten is now available in nixpkgs `master`.  You can also use
-[this nix expression](https://gist.github.com/obfusk/c51d353e75d576bd5cb8e92456cdec47).
+Jiten is available in nixpkgs (un)stable.
 
 ## Miscellaneous
 
