@@ -8,12 +8,12 @@ source.exclude_dirs = bin,patches,p4a-recipes,scripts
 source.exclude_patterns = makefile,p4a-commit,*.png,*.xml
 requirements =
   click==8.0.1,flask==2.0.1,jiten,openssl,sqlite3,
-  certifi==2021.5.30,kanjidraw==0.2.3,libpcre==8.44,
-  hostpython3==3.9.5,python3==3.9.5,
+  certifi==2021.5.30,kanjidraw==0.2.3,libpcre==8.45,
+  hostpython3==3.9.6,python3==3.9.6,
   android,genericndkbuild,
   itsdangerous==2.0.1,jinja2==3.0.1,markupsafe==2.0.1,werkzeug==2.0.1,
-  libffi==v3.3,pyjnius==1.3.0,
-  setuptools==57.0.0,six==1.16.0
+  libffi==v3.4.2,pyjnius==1.3.0,
+  setuptools==57.1.0,six==1.16.0
 requirements.source.jiten = ..
 icon.filename = %(source.dir)s/icon.png
 orientation = portrait
@@ -37,10 +37,10 @@ p4a.bootstrap = webview
 p4a.port = 29483
 
 # === DON'T FORGET TO UPDATE THIS ===
-version = 1.0.0
-android.numeric_version = 1010000002
+version = 1.1.0
+android.numeric_version = 1010100002
 # always "1" -------------^|||||||||
-# 1.0.0 ----> 01 00 00 ----^^^^^^|||
+# 1.1.0 ----> 01 01 00 ----^^^^^^|||
 # #commits since last tag -------^^|
 # 1 = armeabi-v7a, 2 = arm64-v8a --^
 # ===================================

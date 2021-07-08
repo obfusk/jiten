@@ -1,6 +1,6 @@
-jiten (1.0.2-61-g1a627dc-1ppa.focal1) focal; urgency=medium
+jiten (1.1.0-1ppa.focal1) focal; urgency=medium
 
   * Ubuntu focal requires debhelper-compat = 12 (and -b ubuntu/focal).
-  * Snapshot @ v1.0.2-61-g1a627dc for Ubuntu focal.
+  * v1.1.0 for Ubuntu focal.
 
- -- Felix C. Stegerman <flx@obfusk.net>  Mon, 28 Jun 2021 06:04:51 +0200
+ -- Felix C. Stegerman <flx@obfusk.net>  Thu, 08 Jul 2021 16:17:24 +0200

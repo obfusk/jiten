@@ -5,7 +5,7 @@
 #
 # File        : jiten/misc.py
 # Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-# Date        : 2021-05-14
+# Date        : 2021-07-08
 #
 # Copyright   : Copyright (C) 2021  Felix C. Stegerman
 # Version     : v1.0.0
@@ -223,6 +223,8 @@ DB_URLS   = {
        for k in "jmdict kanji pitch sentences".split() },
   13: { k: DB_URLFMT.format("v1.0.0", k)
        for k in "jmdict kanji pitch sentences".split() },
+  14: { k: DB_URLFMT.format("v1.1.0", k)
+       for k in "jmdict kanji pitch sentences".split() },
 }
 
 DB_SHA512SUMS = {                                               # {{{1
@@ -243,6 +245,12 @@ DB_SHA512SUMS = {                                               # {{{1
     kanji     = "c114afe09979851fdd433257e6328c745b45b700754d9387a51a93473a0be14ce80602da3b1609fb61546d7d5b6c539b6f8b686bd4cc221184b5938b828ecd0b",
     pitch     = "79727c3b52c0f3ed27acc531b81f935aef7692e92cba7f1fd90ad91264d21a1aba84c9dbfd7fa74a47dc06b17447d11a02a489b7b50180957b9f15d21bc15729",
     sentences = "8a1a8a0d6242d541103029230870285d236db8805fe4bac0ddd74802481326d6b8a3e9871f75c0ea0ebef98968fa0efb9bea657017639f7b921aa23f44f81c62",
+  ),
+  14: dict(
+    jmdict    = "61589fe4fe8c755f144c4a617f35d3e7ae7bb6820db46ce2c89576ff44b25b5e8070eda554058fe6087c391ab6ec37d2d0d92903ef0532edfb6467f9e5315f62",
+    kanji     = "ce74c96651ba14b790896e10fedda5d9f6d4f01e7a24d221a6ee2534b1f7b9eaf647ae681d5f2198571c11387fe57086da63c9116800a7be23b285b32f8b2d58",
+    pitch     = "30d3d9a7fdf609fe028980e325ba28b423fe42552774f5bfc180eddf6b1df6e39599646b8a425d5e87819370c16fb6f87707fe798995a97ed925ddc237a09699",
+    sentences = "02dda0e8cd95660733e70cc67560f2fd741d5aacc76454d9cdb16b0a4f5cf416221c1afa4715a363cae7093c248e9cda254231392f1c8b1ee1065f03d906def3",
   ),
 }                                                               # }}}1
 
