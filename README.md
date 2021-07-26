@@ -2,7 +2,7 @@
 
     File        : README.md
     Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-    Date        : 2021-07-08
+    Date        : 2021-07-26
 
     Copyright   : Copyright (C) 2021  Felix C. Stegerman
     Version     : v1.1.0
@@ -185,37 +185,19 @@ $ jiten-gui
 
 → jiten@obfusk.dev
 
-## Requirements
-
-* Python >= 3.6 + Flask + click +
-  [kanjidraw](https://github.com/obfusk/kanjidraw).
-* To build the SQLite PCRE C extension: a C compiler (e.g.
-  `gcc`/`clang`) and the `sqlite3` & `pcre` libraries & headers.
-* Basic build tools like `make` and `patch`.
-* To run the WebView GUI:
-  [pywebview](https://pywebview.flowrl.com) >= 3.3.5.
-
-### Debian/Ubuntu
-
-```bash
-$ apt install python3-dev build-essential libsqlite3-dev libpcre3-dev
-$ apt install python3-flask   # optional: Flask & click w/o pip
-```
-
-NB: currently, you'll need to install
-[kanjidraw](https://github.com/obfusk/kanjidraw) manually (i.e. using
-`pip` or from `git`).
-
-#### Optional: WebView GUI
-
-```bash
-$ apt install python3-pyqt5.qtwebengine   # recommended: qtwebengine
-
-$ apt install python3-webview             # if >= 3.3.5
-$ pip3 --user install pywebview           # otherwise
-```
-
 ## Installing
+
+### Debian
+
+An official Debian package should be available soon.
+
+You can also manually build a Debian package using the `debian/sid`
+branch, or download pre-built `.deb`s via GitHub releases.
+
+### NixOS
+
+An official package is also available in
+[nixpkgs (un)stable](https://github.com/NixOS/nixpkgs/blob/master/pkgs/applications/misc/jiten/default.nix).
 
 ### Using pip
 
@@ -249,9 +231,35 @@ $ git pull --rebase
 $ make
 ```
 
-### NixOS
+## Dependencies
 
-Jiten is available in nixpkgs (un)stable.
+* Python >= 3.6 + Flask + click +
+  [kanjidraw](https://github.com/obfusk/kanjidraw).
+* To build the SQLite PCRE C extension: a C compiler (e.g.
+  `gcc`/`clang`) and the `sqlite3` & `pcre` libraries & headers.
+* Basic build tools like `make` and `patch`.
+* To run the WebView GUI:
+  [pywebview](https://pywebview.flowrl.com) >= 3.3.5.
+
+### Debian/Ubuntu
+
+```bash
+$ apt install python3-dev build-essential libsqlite3-dev libpcre3-dev
+$ apt install python3-flask   # optional: Flask & click w/o pip
+```
+
+NB: currently, you'll need to install
+[kanjidraw](https://github.com/obfusk/kanjidraw) manually (i.e. using
+`pip` or from `git`).
+
+#### Optional: WebView GUI
+
+```bash
+$ apt install python3-pyqt5.qtwebengine   # recommended: qtwebengine
+
+$ apt install python3-webview             # if >= 3.3.5
+$ pip3 --user install pywebview           # otherwise
+```
 
 ## Miscellaneous
 
