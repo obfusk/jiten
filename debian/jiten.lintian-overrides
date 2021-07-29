@@ -1,0 +1,10 @@
+# Upstream has made some modifications to this file, so we can't just
+# use libjs-bootstrap.
+# FIXME: address this upstream if possible
+jiten binary: embedded-javascript-library usr/lib/python3/dist-packages/jiten/static/bootstrap.js please use libjs-bootstrap
+
+# Used to replace vendored copy with fonts-kanjistrokeorders package.
+jiten binary: breakout-link usr/lib/python3/dist-packages/jiten/static/font/KanjiStrokeOrders_v4.003.ttf -> usr/share/fonts/truetype/kanjistrokeorders/KanjiStrokeOrders_v4.003.ttf
+
+# Only by a few characters, not easily reformatted.
+jiten binary: extended-description-line-too-long

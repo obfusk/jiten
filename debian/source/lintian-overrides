@@ -1,0 +1,7 @@
+# Upstream distributes it like this; it's only used for the Android
+# build and doesn't affect the Debian package at all; repacking would
+# be overkill, so tell lintian to not complain.
+jiten source: wayward-symbolic-link-target-in-source android/.buildozer -> ../../_jiten_buildozer_
+
+# This package only contains data files.
+jiten source: debhelper-but-no-misc-depends jiten-data
