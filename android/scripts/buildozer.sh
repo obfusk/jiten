@@ -10,7 +10,7 @@ urls=(
   https://github.com/pallets/jinja/archive/3.0.1.zip
   https://github.com/obfusk/kanjidraw/archive/v0.2.3.tar.gz
   https://github.com/libffi/libffi/archive/v3.4.2.tar.gz
-  https://ftp.pcre.org/pub/pcre/pcre-8.45.tar.bz2
+  https://sourceforge.net/projects/pcre/files/pcre/8.45/pcre-8.45.tar.bz2/download
   https://github.com/pallets/markupsafe/archive/2.0.1.zip
   https://www.openssl.org/source/openssl-1.1.1k.tar.gz
   https://github.com/kivy/pyjnius/archive/1.3.0.zip
