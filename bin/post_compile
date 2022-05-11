@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 buildpack_url=https://github.com/heroku/heroku-buildpack-python
-buildpack_vsn=v197
+buildpack_vsn=v210
 
 # rebuild python if it's missing loadable sqlite extensions
 if  ! python3 -msysconfig | grep enable-loadable-sqlite-extensions \
