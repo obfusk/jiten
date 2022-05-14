@@ -16,6 +16,7 @@ jobs:
         container:
       # - stretch
         - buster
+        - bullseye
     steps:
     - name: Install git etc.
       run: |
