@@ -6,7 +6,9 @@ apt-get install -y build-essential git automake
 apt-get install -y python3-pip python3-dev libpcre3-dev liblzma-dev
 apt-get install -y zlib1g-dev zip unzip pkg-config libffi-dev
 apt-get install -y libltdl-dev libssl-dev
-apt-get remove -y openjdk-8-jdk-headless openjdk-8-jre-headless
+if dpkg -l | grep -q openjdk-8; then
+  apt-get remove -y openjdk-8-jdk-headless openjdk-8-jre-headless
+fi
 apt-get install -y openjdk-11-jdk-headless
 apt-get remove -y libsqlite3-dev
 if grep -q stretch /etc/os-release; then
