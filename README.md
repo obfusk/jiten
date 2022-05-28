@@ -1,10 +1,10 @@
 <!-- {{{1
 
     File        : README.md
-    Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-    Date        : 2021-07-26
+    Maintainer  : FC Stegerman <flx@obfusk.net>
+    Date        : 2022-05-28
 
-    Copyright   : Copyright (C) 2021  Felix C. Stegerman
+    Copyright   : Copyright (C) 2022  FC Stegerman
     Version     : v1.1.0
     License     : AGPLv3+
 
@@ -317,7 +317,7 @@ $ export JITEN_DOMAIN=jiten.obfusk.dev
 
 ### Code
 
-© Felix C. Stegerman
+© FC Stegerman
 
 [![AGPLv3+](https://www.gnu.org/graphics/agplv3-155x51.png)](https://www.gnu.org/licenses/agpl-3.0.html)
 

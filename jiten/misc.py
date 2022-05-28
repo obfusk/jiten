@@ -4,10 +4,10 @@
 # --                                                            ; {{{1
 #
 # File        : jiten/misc.py
-# Maintainer  : Felix C. Stegerman <flx@obfusk.net>
+# Maintainer  : FC Stegerman <flx@obfusk.net>
 # Date        : 2021-07-08
 #
-# Copyright   : Copyright (C) 2021  Felix C. Stegerman
+# Copyright   : Copyright (C) 2021  FC Stegerman
 # Version     : v1.0.0
 # License     : AGPLv3+
 #

@@ -1,6 +1,6 @@
 /*
  * Written by Alexey Tourbin <at@altlinux.org>.
- * Modified by Felix C. Stegerman <flx@obfusk.net>.
+ * Modified by FC Stegerman <flx@obfusk.net>.
  *
  * The author has dedicated the code to the public domain.  Anyone is free
  * to copy, modify, publish, use, compile, sell, or distribute the original

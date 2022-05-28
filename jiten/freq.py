@@ -4,10 +4,10 @@
 # --                                                            ; {{{1
 #
 # File        : jiten/freq.py
-# Maintainer  : Felix C. Stegerman <flx@obfusk.net>
+# Maintainer  : FC Stegerman <flx@obfusk.net>
 # Date        : 2020-08-19
 #
-# Copyright   : Copyright (C) 2020  Felix C. Stegerman
+# Copyright   : Copyright (C) 2020  FC Stegerman
 # Version     : v0.3.0
 # License     : AGPLv3+
 #
