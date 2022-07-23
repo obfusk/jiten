@@ -153,6 +153,10 @@ input[type=number] {
   box-shadow: none;
 }
 
+.help {
+  font-weight: bold;
+}
+
 code, .nowrap {
   display: inline-block;
 }
