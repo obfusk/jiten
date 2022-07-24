@@ -133,14 +133,22 @@
                  af, collapse = "kanji-collapse") %}
     <div class="form-group mb-0 d-inline">
       <fieldset class="d-inline border p-2 pl-3">
-        <legend>match</legend>
+        <legend>match query as</legend>
         <div class="form-check form-check-inline">
           <input type="checkbox" data-command="+w"
             class="form-check-input clear-input-unchecked"
             id="kanji-word" name="word" value="yes"
             {% if query.startswith("+w") %}checked{% endif %} />
           <label class="form-check-label" for="kanji-word"
-            title="\b...\b">word</label>
+            title="whole word in entry/meaning (\b...\b)">word</label>
+        </div>
+        <div class="form-check form-check-inline">
+          <input type="checkbox" data-command="+1"
+            class="form-check-input clear-input-unchecked"
+            id="kanji-1stword" name="1stword" value="yes"
+            {% if query.startswith("+1") %}checked{% endif %} />
+          <label class="form-check-label" for="kanji-1stword"
+            title="first word of entry/meaning (^...\b)">1st word</label>
         </div>
         <div class="form-check form-check-inline">
           <input type="checkbox" data-command="+="
@@ -148,7 +156,7 @@
             id="kanji-exact" name="exact" value="yes"
             {% if query.startswith("+=") %}checked{% endif %} />
           <label class="form-check-label" for="kanji-exact"
-            title="^...$">exact</label>
+            title="complete entry/meaning (^...$)">exact</label>
         </div>
       </fieldset>
     </div>
