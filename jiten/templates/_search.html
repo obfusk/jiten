@@ -2,7 +2,7 @@
 
   File        : templates/_search.html
   Maintainer  : FC Stegerman <flx@obfusk.net>
-  Date        : 2022-07-23
+  Date        : 2022-07-24
 
   Copyright   : Copyright (C) 2022  FC Stegerman
   Version     : v1.1.0
@@ -17,7 +17,7 @@
                  collapse = "jmdict-collapse", btn = "info") %}
     <div class="form-group mb-0 d-inline">
       <fieldset class="d-inline border p-2 pl-3">
-        <legend>match</legend>
+        <legend>match query as</legend>
         <div class="nowrap">
           <div class="form-check form-check-inline">
             <input type="checkbox" data-command="+w"
@@ -25,7 +25,7 @@
               id="jmdict-word" name="word" value="yes"
               {% if not query or query.startswith("+w") %}checked{% endif %} />
             <label class="form-check-label" for="jmdict-word"
-              title="\b...\b">word</label>
+              title="whole word in entry/meaning (\b...\b)">word</label>
           </div>
           <div class="form-check form-check-inline">
             <input type="checkbox" data-command="+1"
@@ -33,7 +33,7 @@
               id="jmdict-1stword" name="1stword" value="yes"
               {% if query.startswith("+1") %}checked{% endif %} />
             <label class="form-check-label" for="jmdict-1stword"
-              title="^...\b">1st word</label>
+              title="first word of entry/meaning (^...\b)">1st word</label>
           </div>
           <div class="form-check form-check-inline">
             <input type="checkbox" data-command="+="
@@ -41,7 +41,7 @@
               id="jmdict-exact" name="exact" value="yes"
               {% if query.startswith("+=") %}checked{% endif %} />
             <label class="form-check-label" for="jmdict-exact"
-              title="^...$">exact</label>
+              title="complete entry/meaning (^...$)">exact</label>
           </div>
         </div>
       </fieldset>
@@ -88,6 +88,20 @@
             </select>
             {% if loop.first %}-{% endif %}
           {% endfor %}
+        </div>
+      </fieldset>
+      <fieldset class="d-inline border p-2 px-3">
+        <legend>category/usage</legend>
+        <div class="form-inline d-flex flex-nowrap">
+          <input list="sinfo-suggestions" id="jmdict-sinfo"
+            name="sinfo" class="form-control form-control-sm"
+            size="11" placeholder="e.g. slang"
+            value="{{ request.args.get("sinfo", "").strip() }}" />
+          <datalist id="sinfo-suggestions">
+            {% for si in J.SINFO_SUGGESTIONS %}
+              <option value="{{ si }}"></option>
+            {% endfor %}
+          </datalist>
         </div>
       </fieldset>
       <fieldset class="d-inline border p-2 pl-3">

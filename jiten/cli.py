@@ -5,10 +5,10 @@
 #
 # File        : jiten/cli.py
 # Maintainer  : FC Stegerman <flx@obfusk.net>
-# Date        : 2021-07-05
+# Date        : 2022-07-24
 #
-# Copyright   : Copyright (C) 2021  FC Stegerman
-# Version     : v1.0.0
+# Copyright   : Copyright (C) 2022  FC Stegerman
+# Version     : v1.1.0
 # License     : AGPLv3+
 #
 # --                                                            ; }}}1
@@ -530,7 +530,9 @@ def cli(ctx, colour, pager, **kw):
 @click.option("--verb", is_flag = True, help = "Select verbs.")
 @click.option("--prio", is_flag = True, help = "Select priority entries.")
 @click.option("-n", "--jlpt", type = M.JLPT_LEVEL,
-              help = "Select entries by JLPT level(s); e.g. 1 or 3-5.")
+              help = "Select by JLPT level(s); e.g. 1 or 3-5.")
+@click.option("-s", "--sinfo",
+              help = "Select by sense info; e.g. colloquialism.")
 @click.option("--romaji", is_flag = True, help = "Show romaji.")
 @click.option("-h", "--hiragana", is_flag = True,
               help = "Convert query to hiragana.")

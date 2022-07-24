@@ -5,10 +5,10 @@
 #
 # File        : jiten/app.py
 # Maintainer  : FC Stegerman <flx@obfusk.net>
-# Date        : 2021-06-27
+# Date        : 2022-07-24
 #
-# Copyright   : Copyright (C) 2021  FC Stegerman
-# Version     : v1.0.0
+# Copyright   : Copyright (C) 2022  FC Stegerman
+# Version     : v1.1.0
 # License     : AGPLv3+
 #
 # --                                                            ; }}}1
@@ -289,12 +289,12 @@ def get_max():
   return int(arg("max", get_prefs().get("max", MAX), type = int))
 
 def get_filters():
-  n, v, p = arg("noun"), arg("verb"), arg("prio")
-  j       = "-".join(filter(None, request.args.getlist("jlpt"))) or None
-  jlpt    = M.JLPT_LEVEL.convert(j) if j else j
-  args    = dict(noun = n, verb = v, prio = p, jlpt = j)
-  filters = dict(noun = n == "yes", verb = v == "yes",
-                 prio = p == "yes", jlpt = jlpt)
+  n, v, p, s  = arg("noun"), arg("verb"), arg("prio"), arg("sinfo", "").strip()
+  j           = "-".join(filter(None, request.args.getlist("jlpt"))) or None
+  jlpt        = M.JLPT_LEVEL.convert(j) if j else j
+  args        = dict(noun = n, verb = v, prio = p, jlpt = j, sinfo = s)
+  filters     = dict(noun = n == "yes", verb = v == "yes",
+                     prio = p == "yes", jlpt = jlpt, sinfo = s)
   return filters, { k: v for k, v in args.items() if v is not None }
 
 @app.errorhandler(M.RegexError)
@@ -329,9 +329,10 @@ def r_index():
 def r_jmdict():
   filters, fargs = get_filters()
   if arg("query", "").strip().lower() == "+random":
-    q = "+#{}".format(J.random_seq(**filters))
-    return redirect(url_for("r_jmdict", query = q, lang = get_langs(),
-                            **fargs))
+    if (s := J.random_seq(**filters)) is not None:            #  FIXME
+      q = "+#{}".format(s)
+      return redirect(url_for("r_jmdict", query = q, lang = get_langs(),
+                              **fargs))
   query, max_r = get_query_max()
   opts = dict(langs = get_langs(), max_results = max_r, **filters)
   data = dict(page = "jmdict", query = query)

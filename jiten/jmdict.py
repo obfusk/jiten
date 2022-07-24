@@ -5,10 +5,10 @@
 #
 # File        : jiten/jmdict.py
 # Maintainer  : FC Stegerman <flx@obfusk.net>
-# Date        : 2021-07-05
+# Date        : 2022-07-24
 #
-# Copyright   : Copyright (C) 2021  FC Stegerman
-# Version     : v1.0.2
+# Copyright   : Copyright (C) 2022  FC Stegerman
+# Version     : v1.1.0
 # License     : AGPLv3+
 #
 # --                                                            ; }}}1
@@ -592,8 +592,9 @@ def setup(file = SQLITE_FILE):                                  # {{{1
   jmdict2sqldb(jmdict, file)
                                                                 # }}}1
 
-def search_filter(noun, verb, prio, jlpt):
-  if not any([noun, verb, prio, jlpt]): return ""
+# TODO: sinfo vs langs
+def search_filter(noun, verb, prio, jlpt, sinfo):
+  if not any([noun, verb, prio, jlpt, sinfo]): return ""
   s = []
   if noun and verb: s.append("(noun = 1 OR verb = 1)")
   elif noun       : s.append("noun = 1")
@@ -601,6 +602,12 @@ def search_filter(noun, verb, prio, jlpt):
   if prio         : s.append("prio >= {}".format(MINPRIO))
   if jlpt         : s.append("({} <= jlpt AND jlpt <= {})"
                              .format(*map(int, jlpt)))
+  if sinfo:
+    s.append("1 IN (SELECT 1 FROM sense WHERE entry = seq AND "
+                      "(INSTR(pos ,             :si) = 1 OR"
+                      " INSTR(pos , CHAR(10) || :si) > 0 OR"
+                      " INSTR(info,             :si) = 1 OR"
+                      " INSTR(info, CHAR(10) || :si) > 0))")
   return "WHERE " + " AND ".join(s)
 
 def load_entry(c, seq, jlpt):                                   # {{{1
@@ -630,11 +637,12 @@ def load_entry(c, seq, jlpt):                                   # {{{1
 # TODO
 def search(q, langs = [LANGS[0]], max_results = None,           # {{{1
            noun = False, verb = False, prio = False,
-           jlpt = None, file = SQLITE_FILE):
+           jlpt = None, sinfo = None, file = SQLITE_FILE):
   fix_rank = lambda r: (r if r != F.NOFREQ else None)
   with sqlite_do(file) as c:
     if q.lower() == "+random":
-      q = "+#{}".format(random_seq(noun, verb, prio, jlpt, file))
+      if (s := random_seq(noun, verb, prio, jlpt, sinfo, file)) is None: return
+      q = "+#{}".format(s)
     if re.fullmatch(r"\+#\s*\d+", q):
       seq = int(q[2:].strip())
       for r in c.execute("SELECT rank, jlpt FROM entry WHERE seq = ?", (seq,)):
@@ -644,7 +652,7 @@ def search(q, langs = [LANGS[0]], max_results = None,           # {{{1
     else:
       lang  = ",".join( "'" + l + "'" for l in langs if l in LANGS )
       limit = "LIMIT " + str(int(max_results)) if max_results else ""
-      fltr  = search_filter(noun, verb, prio, jlpt)
+      fltr  = search_filter(noun, verb, prio, jlpt, sinfo)
       ordr  = """ORDER BY IFNULL(prio, 0) >= {} DESC,
                           rank = {} ASC, prio IS NULL ASC,
                           rank ASC, jlpt DESC, prio DESC, seq ASC
@@ -652,11 +660,12 @@ def search(q, langs = [LANGS[0]], max_results = None,           # {{{1
       if len(q) == 1 and M.iskanji(q):
         query = ("""
           SELECT rank, seq, jlpt FROM (
-            SELECT entry FROM kanji_code WHERE code = ?
+            SELECT entry FROM kanji_code WHERE code = :q
           )
           INNER JOIN entry ON seq = entry
           {} {} {}
-        """.format(fltr, ordr, limit), (ord(q),))             # safe!
+        """.format(fltr, ordr, limit),
+          dict(q = ord(q), si = sinfo))                       # safe!
       elif M.iscjk(q):
         query = ("""
           SELECT rank, seq, jlpt FROM (
@@ -666,10 +675,11 @@ def search(q, langs = [LANGS[0]], max_results = None,           # {{{1
           )
           INNER JOIN entry ON seq = entry
           {} {} {}
-        """.format(fltr, ordr, limit), dict(q = "%"+q+"%"))   # safe!
+        """.format(fltr, ordr, limit),
+          dict(q = "%"+q+"%", si = sinfo))                    # safe!
       elif M.q2like(q):
         load_pcre_extension(c.connection)
-        prms  = dict(q = M.q2like(q), re = M.q2rx(q))
+        prms  = dict(q = M.q2like(q), re = M.q2rx(q), si = sinfo)
         query = ("""
           SELECT rank, seq, jlpt FROM (
               SELECT entry FROM kanji WHERE
@@ -699,8 +709,8 @@ def search(q, langs = [LANGS[0]], max_results = None,           # {{{1
           )
           INNER JOIN entry ON seq = entry
           {} {} {}
-        """.format(lang, fltr, ordr, limit),                  # safe!
-          dict(re = M.q2rx(q)))
+        """.format(lang, fltr, ordr, limit),
+          dict(re = M.q2rx(q), si = sinfo))                   # safe!
       for r, s, j in [ tuple(r) for r in c.execute(*query) ]: # eager!
         yield load_entry(c, s, j), fix_rank(r)
                                                                 # }}}1
@@ -725,18 +735,28 @@ def by_jlpt(n, offset = 0, limit = 1000, file = SQLITE_FILE):
       yield load_entry(c, seq, jlpt)
 
 def random_seq(noun = False, verb = False, prio = False, jlpt = None,
-               file = SQLITE_FILE):
-  f = search_filter(noun, verb, prio, jlpt)
+               sinfo = None, file = SQLITE_FILE):
+  f = search_filter(noun, verb, prio, jlpt, sinfo)
   with sqlite_do(file) as c:
     q = "SELECT seq FROM entry {} ORDER BY RANDOM() LIMIT 1".format(f)
-    return c.execute(q).fetchone()[0]                       # ^ safe!
+    r = c.execute(q, dict(si = sinfo)).fetchone()           # ^ safe!
+    return None if r is None else r[0]
 
 SACHINEKO = Entry(
   29483, None,
   (Kanji("幸猫", frozenset("幸猫"), (), None),),
-  (Reading("フェリックス", (), (), None),),
+  (Reading("フェイ", (), (), None),),
   (Sense((), "eng", ("(=^・^=)",), (), ()),)
 )
+
+# TODO: incomplete, show in CLI?
+SINFO_SUGGESTIONS = [ x.replace("_", " ") for x in """
+  Godan_verb Ichidan_verb abbreviation adjective adverb auxiliary_verb
+  colloquialism counter expressions idiomatic_expression interjection
+  intransitive_verb onomatopoeic_or_mimetic_word particle prefix
+  pronoun proverb slang suffix transitive_verb
+  word_usually_written_using_kana_alone yojijukugo
+""".split() ]
 
 if __name__ == "__main__":
   if "--doctest" in sys.argv:

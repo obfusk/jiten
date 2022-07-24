@@ -2,7 +2,7 @@
 
     File        : README.md
     Maintainer  : FC Stegerman <flx@obfusk.net>
-    Date        : 2022-05-28
+    Date        : 2022-07-24
 
     Copyright   : Copyright (C) 2022  FC Stegerman
     Version     : v1.1.0
@@ -233,7 +233,7 @@ $ make
 
 ## Dependencies
 
-* Python >= 3.6 + Flask + click +
+* Python >= 3.8 + Flask + click +
   [kanjidraw](https://github.com/obfusk/kanjidraw).
 * To build the SQLite PCRE C extension: a C compiler (e.g.
   `gcc`/`clang`) and the `sqlite3` & `pcre` libraries & headers.
