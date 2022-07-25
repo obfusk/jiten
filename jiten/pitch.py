@@ -5,10 +5,10 @@
 #
 # File        : jiten/pitch.py
 # Maintainer  : FC Stegerman <flx@obfusk.net>
-# Date        : 2021-07-05
+# Date        : 2022-07-24
 #
-# Copyright   : Copyright (C) 2021  FC Stegerman
-# Version     : v1.0.2
+# Copyright   : Copyright (C) 2022  FC Stegerman
+# Version     : v1.1.0
 # License     : AGPLv3+
 #
 # --                                                            ; }}}1
@@ -134,7 +134,7 @@ def pitches(file = SQLITE_FILE):
     yield lambda e: ()
 
 # TODO
-def get_pitch(reading, kanjis, conn = None, file = SQLITE_FILE):
+def get_pitch(reading, kanjis, conn = None, *, file = SQLITE_FILE):
   rd = reading.replace("・", "")
   def f(c):
     for k in ( k.replace("・", "") for k in kanjis ):

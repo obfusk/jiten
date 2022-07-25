@@ -637,11 +637,11 @@ def load_entry(c, seq, jlpt):                                   # {{{1
 # TODO
 def search(q, langs = [LANGS[0]], max_results = None,           # {{{1
            noun = False, verb = False, prio = False,
-           jlpt = None, sinfo = None, file = SQLITE_FILE):
+           jlpt = None, sinfo = None, *, file = SQLITE_FILE):
   fix_rank = lambda r: (r if r != F.NOFREQ else None)
   with sqlite_do(file) as c:
     if q.lower() == "+random":
-      if (s := random_seq(noun, verb, prio, jlpt, sinfo, file)) is None: return
+      if (s := random_seq(noun, verb, prio, jlpt, sinfo, file = file)) is None: return
       q = "+#{}".format(s)
     if re.fullmatch(r"\+#\s*\d+", q):
       seq = int(q[2:].strip())
@@ -715,7 +715,7 @@ def search(q, langs = [LANGS[0]], max_results = None,           # {{{1
         yield load_entry(c, s, j), fix_rank(r)
                                                                 # }}}1
 
-def by_freq(offset = 0, limit = 1000, file = SQLITE_FILE):
+def by_freq(offset = 0, limit = 1000, *, file = SQLITE_FILE):
   with sqlite_do(file) as c:
     q = """ SELECT seq, rank, jlpt FROM entry
               WHERE prio >= {} AND rank != {}
@@ -725,7 +725,7 @@ def by_freq(offset = 0, limit = 1000, file = SQLITE_FILE):
     for seq, rank, jlpt in ents:
       yield load_entry(c, seq, jlpt), rank
 
-def by_jlpt(n, offset = 0, limit = 1000, file = SQLITE_FILE):
+def by_jlpt(n, offset = 0, limit = 1000, *, file = SQLITE_FILE):
   with sqlite_do(file) as c:
     query =  (""" SELECT seq, jlpt FROM entry
                     WHERE prio >= {} AND jlpt = ?
@@ -735,7 +735,7 @@ def by_jlpt(n, offset = 0, limit = 1000, file = SQLITE_FILE):
       yield load_entry(c, seq, jlpt)
 
 def random_seq(noun = False, verb = False, prio = False, jlpt = None,
-               sinfo = None, file = SQLITE_FILE):
+               sinfo = None, *, file = SQLITE_FILE):
   f = search_filter(noun, verb, prio, jlpt, sinfo)
   with sqlite_do(file) as c:
     q = "SELECT seq FROM entry {} ORDER BY RANDOM() LIMIT 1".format(f)

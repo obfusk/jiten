@@ -5,10 +5,10 @@
 #
 # File        : jiten/sentences.py
 # Maintainer  : FC Stegerman <flx@obfusk.net>
-# Date        : 2021-07-05
+# Date        : 2022-07-24
 #
-# Copyright   : Copyright (C) 2021  FC Stegerman
-# Version     : v1.0.2
+# Copyright   : Copyright (C) 2022  FC Stegerman
+# Version     : v1.1.0
 # License     : AGPLv3+
 #
 # --                                                            ; }}}1
@@ -119,7 +119,7 @@ def setup(file = SQLITE_FILE):
   sentences2sqldb(sentences, file)
 
 # TODO
-def search(q, langs = [], max_results = None, audio = False,
+def search(q, langs = [], max_results = None, audio = False, *,
            file = SQLITE_FILE):
   lang  = " ".join( "AND " + l + " IS NOT NULL"
                     for l in langs if l in LANGS )

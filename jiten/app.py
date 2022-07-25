@@ -268,7 +268,7 @@ def respond(template, page_title, **data):
     PY_VERSION = py_version, kana2romaji = kana2romaji,
     SEARCH = SEARCH, GUI = bool(GUI_TOKEN), DESCRIPTION = DESCRIPTION,
     KEYWORDS = KEYWORDS, TITLE = TITLE, page_title = page_title,
-    **data
+    kanji_level_minmax = kanji_level_minmax, **data
   ))
 
 def get_langs(prefs = None):
@@ -288,14 +288,30 @@ def get_query_max():
 def get_max():
   return int(arg("max", get_prefs().get("max", MAX), type = int))
 
-def get_filters():
+def get_filters_jmdict():
   n, v, p, s  = arg("noun"), arg("verb"), arg("prio"), arg("sinfo", "").strip()
   j           = "-".join(filter(None, request.args.getlist("jlpt"))) or None
-  jlpt        = M.JLPT_LEVEL.convert(j) if j else j
+  jlpt        = M.JLPT_LEVEL.convert(j) if j else None
   args        = dict(noun = n, verb = v, prio = p, jlpt = j, sinfo = s)
   filters     = dict(noun = n == "yes", verb = v == "yes",
                      prio = p == "yes", jlpt = jlpt, sinfo = s)
   return filters, { k: v for k, v in args.items() if v is not None }
+
+def get_filters_kanji():
+  l       = "-".join(filter(None, request.args.getlist("level"))) or None
+  j       = "-".join(filter(None, request.args.getlist("jlpt"))) or None
+  s       = "-".join(filter(None, request.args.getlist("strokes"))) or None
+  level   = K.level_from_str(l, click.exceptions.BadParameter) if l else None
+  jlpt    = M.JLPT_LEVEL.convert(j) if j else None
+  strokes = K.STROKES_T.convert(s) if s else None
+  args    = dict(level = l, jlpt = j, strokes = s)
+  filters = dict(level = level, jlpt = jlpt, strokes = strokes)
+  return filters, { k: v for k, v in args.items() if v is not None }
+
+def kanji_level_minmax(lvl):
+  if not lvl: return (None, None)
+  f = lambda x: K.LEVELS.index(x)
+  return (min(lvl, key = f), max(lvl, key = f))
 
 @app.errorhandler(M.RegexError)
 def handle_regexerror(e):
@@ -327,7 +343,7 @@ def r_index():
 
 @app.route("/jmdict")
 def r_jmdict():
-  filters, fargs = get_filters()
+  filters, fargs = get_filters_jmdict()
   if arg("query", "").strip().lower() == "+random":
     if (s := J.random_seq(**filters)) is not None:            #  FIXME
       q = "+#{}".format(s)
@@ -368,11 +384,14 @@ def r_jmdict_random():
 
 @app.route("/kanji")
 def r_kanji():
+  filters, fargs = get_filters_kanji()
   if arg("query", "").strip().lower() == "+random":
-    return redirect(url_for("r_kanji", query = K.random().char))
+    if (k := K.random(**filters)) is not None:                #  FIXME
+      return redirect(url_for("r_kanji", query = k.char, **fargs))
   query, max_r = get_query_max()
+  opts = dict(max_results = max_r, **filters)
   data = dict(page = "kanji", query = query)
-  if query: data["results"] = K.search(query, max_results = max_r)
+  if query: data["results"] = K.search(query, **opts)
   return respond("kanji.html", "kanji", **data)
 
 @app.route("/kanji/by-freq")

@@ -647,6 +647,12 @@ def terminal_width():
               help = "Match exactly (same as ^...$).")
 @click.option("-m", "--max", "max_results", default = None,
               type = click.INT, help = "Maximum number of results.")
+@click.option("-l", "--level",
+              help = "Select by level(s); e.g. 常用1 or 常用5-人名.")
+@click.option("-n", "--jlpt", type = M.JLPT_LEVEL,
+              help = "Select by JLPT level(s); e.g. 1 or 3-5.")
+@click.option("-s", "--strokes", type = K.STROKES_T,
+              help = "Select by number of strokes; e.g. 1 or 10-15.")
 @click.option("--romaji", is_flag = True, help = "Show romaji.")
 @click.option("-h", "--hiragana", is_flag = True,
               help = "Convert query to hiragana.")
@@ -655,16 +661,21 @@ def terminal_width():
 @click.argument("query", required = False)
 @click.pass_context
 def kanji(ctx, query, **kw):
+  if kw["level"] is not None:
+    try:
+      kw["level"] = K.level_from_str(kw["level"])
+    except ValueError as e:
+      p, = [ x for x in kanji.params if x.name == "level" ]
+      raise click.exceptions.BadParameter(e.args[0], ctx, p)
   search(kanji_search, ctx, query, **kw)
 
-def kanji_search(q, verbose, word, exact, fstwd, max_results,
-                 romaji):                                       # {{{1
+def kanji_search(q, verbose, word, exact, fstwd, romaji, **kw): # {{{1
   q = M.process_query(q, word, exact, fstwd, True)
   w = terminal_width()
   f = kana.with_romaji if romaji else lambda x: x
   if verbose:
     yield "query: " + style(q, fg = "bright_red") + "\n\n"
-  for i, e in enumerate(K.search(q, max_results)):
+  for i, e in enumerate(K.search(q, **kw)):
     if i != 0: yield "\n"
     yield e.char + "\n"
     yield (" | ".join(

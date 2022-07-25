@@ -159,6 +159,57 @@
             title="complete entry/meaning (^...$)">exact</label>
         </div>
       </fieldset>
+      <fieldset class="d-inline border p-2 px-3">
+        <legend>level(s)</legend>
+        <div class="form-inline d-flex flex-nowrap">
+          {% set lvl = "-".join(request.args.getlist("level")) %}
+          {% set lvl = lvl.split("-")|select|list %}
+          {% for x in kanji_level_minmax(lvl) %}
+            <select class="form-control form-control-sm" name="level">
+              <option value="">&nbsp;</option>
+              {% for l in K.LEVELS %}
+                <option value="{{ l }}"
+                  {% if l == x %}selected{% endif %}>{{ l }}</option>
+              {% endfor %}
+            </select>
+            {% if loop.first %}-{% endif %}
+          {% endfor %}
+        </div>
+      </fieldset>
+      <fieldset class="d-inline border p-2 px-3">
+        <legend>jlpt level(s)</legend>
+        <div class="form-inline d-flex flex-nowrap">
+          {% set jlpt = "-".join(request.args.getlist("jlpt")) %}
+          {% set jlpt = jlpt.split("-")|map('int')|select|list %}
+          {% for x in (jlpt|min, jlpt|max) %}
+            <select class="form-control form-control-sm" name="jlpt">
+              <option value="">&nbsp;</option>
+              {% for n in range(1, 5+1) %}
+                <option value="{{ n }}"
+                  {% if n == x %}selected{% endif %}>N{{ n }}</option>
+              {% endfor %}
+            </select>
+            {% if loop.first %}-{% endif %}
+          {% endfor %}
+        </div>
+      </fieldset>
+      <fieldset class="d-inline border p-2 px-3">
+        <legend>strokes</legend>
+        <div class="form-inline d-flex flex-nowrap">
+          {% set strokes = "-".join(request.args.getlist("strokes")) %}
+          {% set strokes = strokes.split("-")|map('int')|select|list %}
+          {% for x in (strokes|min, strokes|max) %}
+            <select class="form-control form-control-sm" name="strokes">
+              <option value="">&nbsp;</option>
+              {% for n in range(K.MIN_STROKES, K.MAX_STROKES+1) %}
+                <option value="{{ n }}"
+                  {% if n == x %}selected{% endif %}>{{ n }}</option>
+              {% endfor %}
+            </select>
+            {% if loop.first %}-{% endif %}
+          {% endfor %}
+        </div>
+      </fieldset>
     </div>
     <div class="collapse show form-group mb-0" id="kanji-collapse">
       <br/>

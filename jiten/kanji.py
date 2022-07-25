@@ -5,10 +5,10 @@
 #
 # File        : jiten/kanji.py
 # Maintainer  : FC Stegerman <flx@obfusk.net>
-# Date        : 2021-07-05
+# Date        : 2022-07-24
 #
-# Copyright   : Copyright (C) 2021  FC Stegerman
-# Version     : v1.0.2
+# Copyright   : Copyright (C) 2022  FC Stegerman
+# Version     : v1.1.0
 # License     : AGPLv3+
 #
 # --                                                            ; }}}1
@@ -91,6 +91,11 @@ Entry(char='日', cat='KANJI', level='常用1', strokes=4, freq=1, jlpt=4, new_j
 3287
 >>> len([ x for x in kanjidic if not len(x.meaning) ])
 2751
+
+>>> min([ x.strokes for x in kanjidic ]) == MIN_STROKES
+True
+>>> max([ x.strokes for x in kanjidic ]) == MAX_STROKES
+True
 
 >>> len(RADICALS)
 214
@@ -343,7 +348,33 @@ def row2entry(r):
   i = r.keys().index("on_")
   return Entry(*(list(r[1:i]) + [ tuple(x.splitlines()) for x in r[i:] ]))
 
-def search(q, max_results = None, file = SQLITE_FILE):          # {{{1
+def search_filter(level, jlpt, strokes):
+  if not any([level, jlpt, strokes]): return ("", "")
+  s = []
+  if level  : s.append("({} <= level2int(level) AND level2int(level) <= {})"
+                       .format(*map(int, level)))
+  if jlpt   : s.append("({} <= new_jlpt AND new_jlpt <= {})"
+                       .format(*map(int, jlpt)))
+  if strokes: s.append("({} <= strokes AND strokes <= {})"
+                       .format(*map(int, strokes)))
+  f = " AND ".join(s)
+  return ("WHERE " + f, "AND " + f)
+
+def level_from_str(l, eclass = ValueError):
+  if l in LEVELS:
+    return (LEVELS.index(l),) * 2
+  if "-" in l:
+    a, b = l.split("-", 1)
+    if a in LEVELS and b in LEVELS:
+      return tuple(sorted(map(LEVELS.index, (a, b))))
+  raise eclass(f"{l!r} is not a valid kanji level or range")
+
+def search(q, max_results = None, level = None, jlpt = None,
+           strokes = None, *, file = SQLITE_FILE):              # {{{1
+  if q.lower() == "+random":
+    if (r := random(level, jlpt, strokes, file = file)) is not None:
+      yield r
+    return
   ideo  = tuple(M.uniq(filter(M.isideo, q)))
   order = """ORDER BY IFNULL(freq, {}) ASC, level2int(level) ASC,
              code ASC""".format(NOFREQ)                       # safe!
@@ -352,12 +383,11 @@ def search(q, max_results = None, file = SQLITE_FILE):          # {{{1
     c.connection.create_function("level2int", 1, level2int)
     ms = re.fullmatch(r"\+s(?:kip)?\s*([\d-]+)", q, re.I)
     mr = re.fullmatch(r"\+r(?:ad(?:icals?)?)?\s*(\S+)", q, re.I)
-    if q.lower() == "+random":
-      yield random(file)
-    elif ms:
-      for r in c.execute("""
-          SELECT * FROM entry WHERE skip = ? {} {}
-          """.format(order, limit), (ms.group(1),)):          # safe!
+    fltr_w, fltr_a = search_filter(level, jlpt, strokes)
+    if ms:
+      for r in c.execute(f"""
+          SELECT * FROM entry WHERE skip = ? {fltr_a} {order} {limit}
+          """, (ms.group(1),)):                               # safe!
         yield row2entry(r)
     elif mr:
       rads = [ VAR2RAD.get(c, c) for c in mr.group(1)
@@ -366,11 +396,11 @@ def search(q, max_results = None, file = SQLITE_FILE):          # {{{1
       radp = [ str(ord(c)) for c in rads ]
       subq = "SELECT entry FROM comp WHERE code = ?"
       isct = " INTERSECT ".join( subq for _ in radp )
-      for r in c.execute("""
-          SELECT entry.* FROM ({})
+      for r in c.execute(f"""
+          SELECT entry.* FROM ({isct})
           INNER JOIN entry ON code = entry
-          {} {}
-          """.format(isct, order, limit), radp):              # safe!
+          {fltr_w} {order} {limit}
+          """, radp):                                         # safe!
         yield row2entry(r)
     elif ideo:
       for char in ideo:
@@ -378,17 +408,17 @@ def search(q, max_results = None, file = SQLITE_FILE):          # {{{1
           yield row2entry(r) # #=1
     else:
       load_pcre_extension(c.connection)
-      for r in c.execute("""
-          SELECT * FROM entry WHERE
+      for r in c.execute(f"""
+          SELECT * FROM entry WHERE (
                             on_                        REGEXP :re OR
                             kun                        REGEXP :re OR
                             nanori                     REGEXP :re OR
             replace(replace(on_   , '.', ''), '-', '') REGEXP :re OR
             replace(replace(kun   , '.', ''), '-', '') REGEXP :re OR
             replace(replace(nanori, '.', ''), '-', '') REGEXP :re OR
-                            meaning                    REGEXP :re
-            {} {}
-          """.format(order, limit), dict(re = M.q2rx(q))):    # safe!
+                            meaning                    REGEXP :re )
+            {fltr_a} {order} {limit}
+          """, dict(re = M.q2rx(q))):                         # safe!
         yield row2entry(r)
                                                                 # }}}1
 
@@ -400,7 +430,7 @@ def by_freq(file = SQLITE_FILE):
         """):
       yield (r["char"], r["freq"]) + _readmean(r)
 
-def by_level(level, file = SQLITE_FILE):
+def by_level(level, *, file = SQLITE_FILE):
   with sqlite_do(file) as c:
     for r in c.execute("""
         SELECT char, on_, kun, meaning FROM entry
@@ -416,7 +446,7 @@ def by_jlpt(file = SQLITE_FILE):
   for level in "54321":
     yield int(level), tuple(sorted(data[int(level)]))
 
-def by_skip(category, file = SQLITE_FILE):
+def by_skip(category, *, file = SQLITE_FILE):
   data = []
   with sqlite_do(file) as c:
     for r in c.execute("""
@@ -441,10 +471,13 @@ def _readmean(r):
   return (tuple(r["on_"].splitlines() + r["kun"].splitlines()),
           tuple(r["meaning"].splitlines()))
 
-def random(file = SQLITE_FILE):
+def random(level = None, jlpt = None, strokes = None, *, file = SQLITE_FILE):
   with sqlite_do(file) as c:
-    q = "SELECT * FROM entry ORDER BY RANDOM() LIMIT 1"
-    return row2entry(c.execute(q).fetchone())
+    c.connection.create_function("level2int", 1, level2int)
+    fltr_w, fltr_a = search_filter(level, jlpt, strokes)
+    q = f"SELECT * FROM entry {fltr_w} ORDER BY RANDOM() LIMIT 1"
+    r = c.execute(q).fetchone()
+    return None if r is None else row2entry(r)
 
 RADICALS      = tuple( chr(i) + UD.normalize("NFKC", chr(i))    # {{{1
                        for i in range(0x2f00, 0x2fd6) )
@@ -519,6 +552,9 @@ RADVARSPRIV = tuple("""穴 麻 舟 歹 言 巾 白 八 �
 虫 釆 丿 女 玉 士 里 走 寸 田 工 谷 立 戶 酉 土 角
 馬 魚 牛 矢 山 山 弓 韋 牙 舛 肉 目""".split())   # TODO
                                                                 # }}}1
+
+MIN_STROKES, MAX_STROKES = 1, 34
+STROKES_T = M.IntOrRange(MIN_STROKES, MAX_STROKES, "STROKES")
 
 if __name__ == "__main__":
   if "--doctest" in sys.argv:
