@@ -2,7 +2,7 @@
 
     File        : README.md
     Maintainer  : FC Stegerman <flx@obfusk.net>
-    Date        : 2022-07-24
+    Date        : 2022-07-29
 
     Copyright   : Copyright (C) 2022  FC Stegerman
     Version     : v1.1.0
@@ -33,7 +33,7 @@
 
 ## japanese android/cli/web dictionary based on jmdict/kanjidic
 
-→ available online at https://jiten.obfusk.dev
+→ available online at [jiten.dev](https://jiten.obfusk.dev)
 
 [<img src="badges/fdroid.png" alt="Get it on F-Droid" height="60">](https://f-droid.org/app/dev.obfusk.jiten)
 [<img src="badges/google-play.png" alt="Get it on Google Play" height="60">](https://play.google.com/store/apps/details?id=dev.obfusk.jiten)
