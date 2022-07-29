@@ -10,13 +10,14 @@ jobs:
         - '3.9'
         - '3.10'
         - '3.11.0-alpha - 3.11'
-        - pypy3
+        - pypy3.8
+        - pypy3.9
     steps:
     - uses: actions/checkout@v2
       with:
         submodules: true
     - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v2
+      uses: actions/setup-python@v4
       with:
         python-version: ${{ matrix.python-version }}
     - name: Install dependencies
