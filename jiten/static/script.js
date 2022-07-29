@@ -4,10 +4,10 @@
 //
 //  File        : static/script.js
 //  Maintainer  : FC Stegerman <flx@obfusk.net>
-//  Date        : 2021-06-02
+//  Date        : 2022-07-29
 //
-//  Copyright   : Copyright (C) 2021  FC Stegerman
-//  Version     : v1.0.0
+//  Copyright   : Copyright (C) 2022  FC Stegerman
+//  Version     : v1.1.0
 //  License     : AGPLv3+
 //
 //  --                                                          ; }}}1
@@ -209,8 +209,8 @@ const saveHistory = (max = 500) => {
     if (query.startsWith("+#")) {
       const entry = $($(".entry")[0]).text().trim()
       if (entry) query += " (" + entry + ")"
-      params.delete("noun"); params.delete("verb")
-      params.delete("prio"); params.delete("jlpt")
+      params.delete("noun"); params.delete("verb"); params.delete("prio")
+      params.delete("jlpt"); params.delete("sinfo")
     }
     const what = document.title.split(" - ").slice(-1)[0]
     const link = location.pathname + "?" + params.toString()
@@ -512,12 +512,13 @@ $("[data-toggle='tooltip']").tooltip().click(evt =>
   $(evt.delegateTarget).tooltip("hide")
 )
 
-const disableJLPT = () =>
-  $("select[name=jlpt]").filter((i, x) => !x.value)
-    .prop("disabled", true)
-const enableJLPT = () =>
-  $("select[name=jlpt]").prop("disabled", false)
-$("#jmdict-query").parents("form").submit(disableJLPT)
+const disableJLPTetc = () =>
+  $("select[name=jlpt], select[name=level], select[name=strokes], input[name=sinfo]")
+    .filter((i, x) => !x.value).prop("disabled", true)
+const enableJLPTetc = () =>
+  $("select[name=jlpt], select[name=level], select[name=strokes], input[name=sinfo]")
+    .prop("disabled", false)
+$("#jmdict-query, #kanji-query").parents("form").submit(disableJLPTetc)
 
 const showLoading = () => {
   $("form.search-form .dropdown-toggle").addClass("disabled")
@@ -543,7 +544,7 @@ $(".search-alt").click(evt => {
 })
 
 // NB: undo modifications for firefox page cache
-$(window).on("pageshow", () => { enableJLPT(); undoLoading() })
+$(window).on("pageshow", () => { enableJLPTetc(); undoLoading() })
 
 // === save history & pywebview & token ===
 
