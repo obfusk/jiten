@@ -37,7 +37,7 @@ a[aria-expanded=false] .collapse-close {
   content: "Show ";
 }
 
-#jmdict-collapse.show, #sentences-collapse.show {
+#jmdict-collapse.show, #kanji-collapse.show, #sentences-collapse.show {
   display: inline;
 }
 

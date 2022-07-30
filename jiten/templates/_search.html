@@ -2,7 +2,7 @@
 
   File        : templates/_search.html
   Maintainer  : FC Stegerman <flx@obfusk.net>
-  Date        : 2022-07-24
+  Date        : 2022-07-30
 
   Copyright   : Copyright (C) 2022  FC Stegerman
   Version     : v1.1.0
@@ -159,6 +159,8 @@
             title="complete entry/meaning (^...$)">exact</label>
         </div>
       </fieldset>
+    </div>
+    <div class="collapse show form-group mb-0" id="kanji-collapse">
       <fieldset class="d-inline border p-2 px-3">
         <legend>level(s)</legend>
         <div class="form-inline d-flex flex-nowrap">
@@ -210,9 +212,7 @@
           {% endfor %}
         </div>
       </fieldset>
-    </div>
-    <div class="collapse show form-group mb-0" id="kanji-collapse">
-      <br/>
+      <br/><br/>
       <span class="nowrap">
         To search by
         <a href="https://en.wikipedia.org/wiki/Kodansha_Kanji_Learner%27s_Dictionary#SKIP"
