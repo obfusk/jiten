@@ -4,10 +4,10 @@
 
     File        : templates/sentences.html
     Maintainer  : FC Stegerman <flx@obfusk.net>
-    Date        : 2021-06-27
+    Date        : 2022-07-31
 
-    Copyright   : Copyright (C) 2021  FC Stegerman
-    Version     : v1.0.0
+    Copyright   : Copyright (C) 2022  FC Stegerman
+    Version     : v1.1.0
     License     : AGPLv3+
 
   -->
@@ -31,7 +31,7 @@
       {% if query %}
         {% for e in results %}
           <br/>
-          <div class="card">
+          <article class="card">
             <div class="card-header">
               <span class="float-right">{{ topbtn() }}</span>
               <h6 class="card-title entry jap sentence mb-1"
@@ -56,11 +56,10 @@
             <div class="card-body">
               <ul class="list-group">
                 {% for lang in S.LANGSFULL %}
-                  <li class="list-group-item p-2 d-flex"
-                      title="{{ lang }}">
+                  <li class="list-group-item p-2 d-flex" title="{{ lang }}">
                     {% if e|attr(lang[:3]) %}
                       {{ e|attr(lang[:3]) }}
-                      <span class="ml-auto align-self-end">
+                      <span class="ml-auto align-self-end" aria-hidden="true">
                         <small class="text-muted">
                           {{ lang[:3] }}
                         </small>
@@ -103,14 +102,16 @@
                     &nbsp;
                     <span class="ml-auto">
                       <a class="play-audio btn btn-primary btn-lg px-1 py-1 {% if not ha %}disabled{% endif %}"
-                          title="Play Audio" data-toggle="tooltip" data-placement="top"
+                          title="Play Audio" aria-label="Play Audio"
+                          data-toggle="tooltip" data-placement="top"
                           href="/static/audio/{{ e.id }}.mp3">
                         <!--
                           Source: https://fonts.gstatic.com/s/i/materialicons/volume_up/v11/24px.svg
                           License: http://www.apache.org/licenses/LICENSE-2.0.txt
                         -->
-                        <svg xmlns="http://www.w3.org/2000/svg"
+                        <svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true"
                             viewBox="0 0 24 24" focusable="false">
+                          <title>Play Audio</title>
                           <path d="M0 0h24v24H0z" fill="none"/>
                           <path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"
                             fill="currentColor"/>
@@ -121,7 +122,7 @@
                 </li>
               </ul>
             </div>
-          </div>
+          </article>
         {% else %}
           <br/>
           <div class="alert alert-{{ mode }} mb-0 text-center">

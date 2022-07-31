@@ -2,20 +2,20 @@
 
   File        : templates/_help.html
   Maintainer  : FC Stegerman <flx@obfusk.net>
-  Date        : 2022-07-23
+  Date        : 2022-07-31
 
   Copyright   : Copyright (C) 2022  FC Stegerman
   Version     : v1.1.0
   License     : AGPLv3+
 
 --> #}
-<div class="modal" tabindex="-1" role="dialog" id="help-modal">
+<div class="modal" tabindex="-1" role="dialog" id="help-modal"
+    aria-labelledby="help-modal-title">
   <div class="modal-dialog modal-lg" role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title">Help</h5>
-        <button type="button" class="close" data-dismiss="modal"
-            aria-label="Close">
+        <h5 class="modal-title" id="help-modal-title">Help</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
       </div>

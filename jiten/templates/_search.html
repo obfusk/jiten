@@ -2,7 +2,7 @@
 
   File        : templates/_search.html
   Maintainer  : FC Stegerman <flx@obfusk.net>
-  Date        : 2022-07-30
+  Date        : 2022-07-31
 
   Copyright   : Copyright (C) 2022  FC Stegerman
   Version     : v1.1.0
@@ -74,13 +74,14 @@
         </div>
       </fieldset>
       <fieldset class="d-inline border p-2 px-3">
-        <legend>jlpt level(s)</legend>
+        <legend id="jmdict-jlpt-legend">jlpt level(s)</legend>
         <div class="form-inline d-flex flex-nowrap">
           {% set jlpt = "-".join(request.args.getlist("jlpt")) %}
           {% set jlpt = jlpt.split("-")|map('int')|select|list %}
           {% for x in (jlpt|min, jlpt|max) %}
-            <select class="form-control form-control-sm" name="jlpt">
-              <option value="">&nbsp;</option>
+            <select class="form-control form-control-sm" name="jlpt"
+                aria-labelledby="jmdict-jlpt-legend">
+              <option value="" aria-label="none">&nbsp;</option>
               {% for n in range(1, 5+1) %}
                 <option value="{{ n }}"
                   {% if n == x %}selected{% endif %}>N{{ n }}</option>
@@ -91,12 +92,13 @@
         </div>
       </fieldset>
       <fieldset class="d-inline border p-2 px-3">
-        <legend>category/usage</legend>
+        <legend id="jmdict-sinfo-legend">category/usage</legend>
         <div class="form-inline d-flex flex-nowrap">
           <input list="sinfo-suggestions" id="jmdict-sinfo"
             name="sinfo" class="form-control form-control-sm"
             size="11" placeholder="e.g. slang"
-            value="{{ request.args.get("sinfo", "").strip() }}" />
+            value="{{ request.args.get("sinfo", "").strip() }}"
+            aria-labelledby="jmdict-sinfo-legend" />
           <datalist id="sinfo-suggestions">
             {% for si in J.SINFO_SUGGESTIONS %}
               <option value="{{ si }}"></option>
@@ -122,7 +124,7 @@
         href="/jmdict?query=%2Brandom"><kbd>+random</kbd></a>.
       <button type="button" data-toggle="modal" data-target="#help-modal"
         class="btn btn-outline-info btn-sm jap float-right help"
-        title="Help">？</button>
+        title="Help" aria-label="Help">？</button>
     </div>
   {% endcall %}
 {% endmacro %}
@@ -162,13 +164,14 @@
     </div>
     <div class="collapse show form-group mb-0" id="kanji-collapse">
       <fieldset class="d-inline border p-2 px-3">
-        <legend>level(s)</legend>
+        <legend id="kanji-level-legend">level(s)</legend>
         <div class="form-inline d-flex flex-nowrap">
           {% set lvl = "-".join(request.args.getlist("level")) %}
           {% set lvl = lvl.split("-")|select|list %}
           {% for x in kanji_level_minmax(lvl) %}
-            <select class="form-control form-control-sm" name="level">
-              <option value="">&nbsp;</option>
+            <select class="form-control form-control-sm" name="level"
+                aria-labelledby="kanji-level-legend">
+              <option value="" aria-label="none">&nbsp;</option>
               {% for l in K.LEVELS %}
                 <option value="{{ l }}"
                   {% if l == x %}selected{% endif %}>{{ l }}</option>
@@ -179,13 +182,14 @@
         </div>
       </fieldset>
       <fieldset class="d-inline border p-2 px-3">
-        <legend>jlpt level(s)</legend>
+        <legend id="kanji-jlpt-legend">jlpt level(s)</legend>
         <div class="form-inline d-flex flex-nowrap">
           {% set jlpt = "-".join(request.args.getlist("jlpt")) %}
           {% set jlpt = jlpt.split("-")|map('int')|select|list %}
           {% for x in (jlpt|min, jlpt|max) %}
-            <select class="form-control form-control-sm" name="jlpt">
-              <option value="">&nbsp;</option>
+            <select class="form-control form-control-sm" name="jlpt"
+                aria-labelledby="kanji-level-legend">
+              <option value="" aria-label="none">&nbsp;</option>
               {% for n in range(1, 5+1) %}
                 <option value="{{ n }}"
                   {% if n == x %}selected{% endif %}>N{{ n }}</option>
@@ -196,13 +200,14 @@
         </div>
       </fieldset>
       <fieldset class="d-inline border p-2 px-3">
-        <legend>strokes</legend>
+        <legend id="kanji-strokes-legend">strokes</legend>
         <div class="form-inline d-flex flex-nowrap">
           {% set strokes = "-".join(request.args.getlist("strokes")) %}
           {% set strokes = strokes.split("-")|map('int')|select|list %}
           {% for x in (strokes|min, strokes|max) %}
-            <select class="form-control form-control-sm" name="strokes">
-              <option value="">&nbsp;</option>
+            <select class="form-control form-control-sm" name="strokes"
+                aria-labelledby="kanji-strokes-legend">
+              <option value="" aria-label="none">&nbsp;</option>
               {% for n in range(K.MIN_STROKES, K.MAX_STROKES+1) %}
                 <option value="{{ n }}"
                   {% if n == x %}selected{% endif %}>{{ n }}</option>
@@ -240,7 +245,7 @@
       </span>
       <button type="button" data-toggle="modal" data-target="#help-modal"
         class="btn btn-outline-info btn-sm jap float-right help"
-        title="Help">？</button>
+        title="Help" aria-label="Help">？</button>
     </div>
   {% endcall %}
 {% endmacro %}
@@ -280,7 +285,7 @@
         href="/sentences?query=%2Brandom"><kbd>+random</kbd></a>.
       <button type="button" data-toggle="modal" data-target="#help-modal"
         class="btn btn-outline-info btn-sm jap float-right help"
-        title="Help">？</button>
+        title="Help" aria-label="Help">？</button>
     </div>
   {% endcall %}
 {% endmacro %}

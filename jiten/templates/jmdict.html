@@ -4,10 +4,10 @@
 
     File        : templates/jmdict.html
     Maintainer  : FC Stegerman <flx@obfusk.net>
-    Date        : 2021-06-27
+    Date        : 2022-07-31
 
-    Copyright   : Copyright (C) 2021  FC Stegerman
-    Version     : v1.0.0
+    Copyright   : Copyright (C) 2022  FC Stegerman
+    Version     : v1.1.0
     License     : AGPLv3+
 
   -->
@@ -29,7 +29,7 @@
           </span>
         </div>
         {% for e, rank in results %}
-          <div class="card">
+          <article class="card">
             <div class="card-body">
               <ul class="list-group">
                 <li class="list-group-item {{
@@ -69,7 +69,7 @@
                         >{{ kana2romaji(r.elem) }}</span>
                     </a>
                     {% if loop.last %}
-                      <span class="ml-auto align-self-end">
+                      <span class="ml-auto align-self-end" aria-hidden="true">
                         <small class="jap text-muted">読み</small>
                       </span>
                     {% endif %}
@@ -89,7 +89,7 @@
                         >{{ kana2romaji(p) }}</span>
                     </span>
                     {% if loop.last %}
-                      <span class="ml-auto align-self-end">
+                      <span class="ml-auto align-self-end" aria-hidden="true">
                         <small class="jap text-muted">高低</small>
                       </span>
                     {% endif %}
@@ -214,7 +214,7 @@
                 </li>
               </ul>
             </div>
-          </div>
+          </article>
           {% if not loop.last %}<br/>{% endif %}
         {% else %}
           <br/>

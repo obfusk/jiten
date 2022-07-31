@@ -4,7 +4,7 @@
 //
 //  File        : static/script.js
 //  Maintainer  : FC Stegerman <flx@obfusk.net>
-//  Date        : 2022-07-29
+//  Date        : 2022-07-31
 //
 //  Copyright   : Copyright (C) 2022  FC Stegerman
 //  Version     : v1.1.0
@@ -388,14 +388,6 @@ if (copyToClipboard) {
     copyToClipboard(selection(i)[1])
   }).show()
 }
-
-/*
-$("#romaji-convert").click(() =>
-  $("#romaji").val(romajiToHiragana($("#romaji").val()))
-)
-
-$("#romaji-modal").on("shown.bs.modal", () => $("#romaji").focus())
-*/
 
 const kanjiMatches = strokes => {
   const fuzzy   = $("#kanjidraw_chk_fuzzy" )[0].checked ? "yes" : "no",

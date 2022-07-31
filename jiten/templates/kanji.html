@@ -4,10 +4,10 @@
 
     File        : templates/kanji.html
     Maintainer  : FC Stegerman <flx@obfusk.net>
-    Date        : 2021-06-27
+    Date        : 2022-07-31
 
-    Copyright   : Copyright (C) 2021  FC Stegerman
-    Version     : v1.0.0
+    Copyright   : Copyright (C) 2022  FC Stegerman
+    Version     : v1.1.0
     License     : AGPLv3+
 
   -->
@@ -32,7 +32,7 @@
           </span>
         </div>
         {% for e in results %}
-          <div class="card">
+          <article class="card">
             <div class="card-body">
               <div class="d-flex">
                 <div class="d-flex flex-column">
@@ -57,7 +57,7 @@
                           >{{ kana2romaji(r) }}</span>
                       </a>
                       {% if loop.last %}
-                        <span class="ml-auto align-self-end">
+                        <span class="ml-auto align-self-end" aria-hidden="true">
                           <small class="jap text-muted">音</small>
                         </span>
                       {% endif %}
@@ -78,7 +78,7 @@
                           >{{ kana2romaji(r) }}</span>
                       </a>
                       {% if loop.last %}
-                        <span class="ml-auto align-self-end">
+                        <span class="ml-auto align-self-end" aria-hidden="true">
                           <small class="jap text-muted">訓</small>
                         </span>
                       {% endif %}
@@ -99,7 +99,7 @@
                           >{{ kana2romaji(r) }}</span>
                       </a>
                       {% if loop.last %}
-                        <span class="ml-auto align-self-end">
+                        <span class="ml-auto align-self-end" aria-hidden="true">
                           <small class="jap text-muted">名</small>
                         </span>
                       {% endif %}
@@ -115,7 +115,7 @@
                         {{ m }}
                       </span>
                       {% if loop.last %}
-                        <span class="ml-auto align-self-end">
+                        <span class="ml-auto align-self-end" aria-hidden="true">
                           <small class="jap text-muted">意味</small>
                         </span>
                       {% endif %}
@@ -140,7 +140,7 @@
                         >{{ e.kanji[0].elem }}
                         【{{ e.reading[0].elem }}】</a>
                     {% endfor %}
-                    <span class="ml-auto align-self-end">
+                    <span class="ml-auto align-self-end" aria-hidden="true">
                       <small class="jap text-muted">言葉</small>
                     </span>
                   </li>
@@ -161,7 +161,7 @@
                       </a>
                     </span>
                   {% endfor %}
-                  <span class="ml-auto align-self-end">
+                  <span class="ml-auto align-self-end" aria-hidden="true">
                     <small class="jap text-muted">部</small>
                   </span>
                 </li>
@@ -259,7 +259,7 @@
                 </li>
               </ul>
             </div>
-          </div>
+          </article>
           {% if not loop.last %}<br/>{% endif %}
         {% else %}
           <br/>

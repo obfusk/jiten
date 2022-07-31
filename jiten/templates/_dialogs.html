@@ -2,41 +2,22 @@
 
   File        : templates/_dialogs.html
   Maintainer  : FC Stegerman <flx@obfusk.net>
-  Date        : 2021-05-17
+  Date        : 2022-07-31
 
-  Copyright   : Copyright (C) 2021  FC Stegerman
-  Version     : v1.0.0
+  Copyright   : Copyright (C) 2022  FC Stegerman
+  Version     : v1.1.0
   License     : AGPLv3+
 
 --> #}
-{#-
-<div class="modal" tabindex="-1" role="dialog" id="romaji-modal">
+<div class="modal" tabindex="-1" role="dialog" id="kanjidraw-modal"
+    aria-labelledby="kanjidraw-modal-title">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="jap modal-title">konnnichiha → こんにちは</h5>
-        <button type="button" class="close" data-dismiss="modal"
-            aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <form action="javascript:void(0);"
-          class="modal-body form-inline justify-content-end">
-        <label class="sr-only" for="romaji">Romaji</label>
-        {{ input("romaji", "_", "", "", False, True, "2 mb-lg-0") }}
-        <button id="romaji-convert" class="btn btn-primary">Convert</button>
-      </form>
-    </div>
-  </div>
-</div>
-#}
-<div class="modal" tabindex="-1" role="dialog" id="kanjidraw-modal">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="jap modal-title">筆 Draw Kanji</h5>
-        <button type="button" class="close" data-dismiss="modal"
-            aria-label="Close">
+        <h5 class="jap modal-title" id="kanjidraw-modal-title">
+          <span aria-hidden="true">筆</span> Draw Kanji
+        </h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
@@ -68,7 +49,7 @@
             </div>
           </div>
           <hr class="mt-2"/>
-          <canvas id="kanjidraw_canvas" width="300" height="300"
+          <canvas id="kanjidraw_canvas" width="300" height="300" title="draw here"
             data-show-grid="{{ "false" if kanjidraw_nogrid else "true" }}">
           </canvas>
         </div>
@@ -85,13 +66,15 @@
     </div>
   </div>
 </div>
-<div class="modal" tabindex="-1" role="dialog" id="radical-modal">
+<div class="modal" tabindex="-1" role="dialog" id="radical-modal"
+    aria-labelledby="radical-modal-title">
   <div class="modal-dialog modal-lg" role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="jap modal-title">部 Radicals</h5>
-        <button type="button" class="close" data-dismiss="modal"
-            aria-label="Close">
+        <h5 class="jap modal-title" id="radical-modal-title">
+          <span aria-hidden="true">部</span> Radicals
+        </h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
@@ -117,13 +100,15 @@
     </div>
   </div>
 </div>
-<div class="modal" tabindex="-1" role="dialog" id="history-modal">
+<div class="modal" tabindex="-1" role="dialog" id="history-modal"
+    aria-labelledby="history-modal-title">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="jap modal-title">検索履歴 Search History</h5>
-        <button type="button" class="close" data-dismiss="modal"
-            aria-label="Close">
+        <h5 class="jap modal-title" id="history-modal-title">
+          <span aria-hidden="true">検索履歴</span> Search History
+        </h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
@@ -140,13 +125,15 @@
     </div>
   </div>
 </div>
-<div class="modal" tabindex="-1" role="dialog" id="settings-modal">
+<div class="modal" tabindex="-1" role="dialog" id="settings-modal"
+    aria-labelledby="settings-modal-title">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="jap modal-title">設定 Settings</h5>
-        <button type="button" class="close" data-dismiss="modal"
-            aria-label="Close">
+        <h5 class="jap modal-title" id="settings-modal-title">
+          <span aria-hidden="true">設定</span> Settings
+        </h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
@@ -215,9 +202,10 @@
           </fieldset>
           <br/>
           <fieldset class="d-inline border p-2 pl-3">
-            <legend>max results</legend>
+            <legend id="settings-max-legend">max results</legend>
             <input type="number" min="20" max="1000"
-              id="prefs-max" name="max" value="{{ pref_max }}" />
+              id="prefs-max" name="max" value="{{ pref_max }}"
+              aria-labelledby="settings-max-legend" />
           </fieldset>
         </div>
         <div class="modal-footer">
@@ -229,21 +217,22 @@
     </div>
   </div>
 </div>
-<div class="modal" tabindex="-1" role="dialog" id="share-modal">
+<div class="modal" tabindex="-1" role="dialog" id="share-modal"
+    aria-labelledby="share-modal-title">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title">Share Link</h5>
-        <button type="button" class="close" data-dismiss="modal"
-            aria-label="Close">
+        <h5 class="modal-title" id="share-modal-title">Share Link</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
       <div class="modal-body form-inline justify-content-end">
         {% set link = M.SERVER + request.full_path %}
         <div class="input-group mr-sm-2 mb-2 mb-lg-0 flex-grow-1">
+          <label class="sr-only" for="share-input">Link</label>
           <input type="text" class="form-control" value="{{ link }}"
-            readonly />
+            id="share-input" readonly />
           <div class="input-group-append">
             {{ copybtn() }}
           </div>
@@ -254,13 +243,15 @@
     </div>
   </div>
 </div>
-<div class="modal lazy-iframe-modal" tabindex="-1" role="dialog" id="licenses-modal">
+<div class="modal lazy-iframe-modal" tabindex="-1" role="dialog" id="licenses-modal"
+    aria-labelledby="licenses-modal-title">
   <div class="modal-dialog modal-lg" role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title">Free and Open Source Software Licenses</h5>
-        <button type="button" class="close" data-dismiss="modal"
-            aria-label="Close">
+        <h5 class="modal-title" id="licenses-modal-title">
+          Free and Open Source Software Licenses
+        </h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
@@ -272,36 +263,38 @@
               {{ name }}
             </a>
           </h6>
-          <iframe class="w-100" data-src="/static/licenses/{{ name }}.txt"></iframe>
+          <iframe class="w-100" data-src="/static/licenses/{{ name }}.txt"
+            title="License Text for {{ name }}"></iframe>
           {% if not loop.last %}<br/><br/>{% endif %}
         {% endfor %}
       </div>
     </div>
   </div>
 </div>
-<div class="modal lazy-iframe-modal" tabindex="-1" role="dialog" id="privacy-modal">
+<div class="modal lazy-iframe-modal" tabindex="-1" role="dialog" id="privacy-modal"
+    aria-labelledby="privacy-modal-title">
   <div class="modal-dialog modal-lg" role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title">Privacy</h5>
-        <button type="button" class="close" data-dismiss="modal"
-            aria-label="Close">
+        <h5 class="modal-title" id="privacy-modal-title">Privacy</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
       <div class="modal-body">
-        <iframe class="w-100" data-src="/static/privacy.txt"></iframe>
+        <iframe class="w-100" data-src="/static/privacy.txt"
+          title="Privacy Policy"></iframe>
       </div>
     </div>
   </div>
 </div>
-<div class="modal" tabindex="-1" role="dialog" id="alert-modal">
+<div class="modal" tabindex="-1" role="dialog" id="alert-modal"
+    aria-labelledby="alert-modal-title">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title">[...]</h5>
-        <button type="button" class="close" data-dismiss="modal"
-            aria-label="Close">
+        <h5 class="modal-title" id="alert-modal-title">[...]</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
@@ -312,13 +305,13 @@
     </div>
   </div>
 </div>
-<div class="modal" tabindex="-1" role="dialog" id="confirm-modal">
+<div class="modal" tabindex="-1" role="dialog" id="confirm-modal"
+    aria-labelledby="confirm-modal-title">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title">[...]</h5>
-        <button type="button" class="close" data-dismiss="modal"
-            aria-label="Close">
+        <h5 class="modal-title" id="confirm-modal-title">[...]</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
       </div>

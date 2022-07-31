@@ -2,23 +2,24 @@
 
   File        : templates/_macros.html
   Maintainer  : FC Stegerman <flx@obfusk.net>
-  Date        : 2021-05-14
+  Date        : 2022-07-31
 
-  Copyright   : Copyright (C) 2021  FC Stegerman
-  Version     : v1.0.0
+  Copyright   : Copyright (C) 2022  FC Stegerman
+  Version     : v1.1.0
   License     : AGPLv3+
 
 --> #}
 {% macro copybtn() %}
   <button type="button" style="display: none;" title="copy"
-      data-toggle="tooltip" data-placement="top"
+      aria-label="copy" data-toggle="tooltip" data-placement="top"
       class="copy-input input-group-text btn btn-dark">
     <!--
       Source: https://fonts.gstatic.com/s/i/materialiconssharp/content_copy/v15/24px.svg
       License: http://www.apache.org/licenses/LICENSE-2.0.txt
     -->
-    <svg xmlns="http://www.w3.org/2000/svg" class="icon"
+    <svg xmlns="http://www.w3.org/2000/svg" class="icon" aria-hidden="true"
         viewBox="0 0 24 24" focusable="false">
+      <title>copy</title>
       <path d="M0 0h24v24H0V0z" fill="none"/>
       <path d="M16 1H2v16h2V3h12V1zm5 4H6v18h15V5zm-2 16H8V7h11v14z"
         fill="currentColor"/>
@@ -29,6 +30,7 @@
   <div class="input-group mr-sm-2 mb-{{ mb }} flex-grow-1">
     <div class="input-group-prepend">
       <button type="button" title="{{ "" if nor2h else "a→" }}あ↔ア"
+          aria-label="convert between kana & romaji"
           data-convert-mode="k2h" data-convert-input="{{ id }}"
           data-r2h="{{ "no" if nor2h else "yes" }}"
           data-toggle="tooltip" data-placement="top"
@@ -42,15 +44,16 @@
       {% if copy %}
         {{ copybtn() }}
       {% endif %}
-      <button type="button" title="clear"
+      <button type="button" title="clear" aria-label="clear"
           data-toggle="tooltip" data-placement="top"
           class="clear-input input-group-text btn btn-dark disabled">
         <!--
           Source: https://fonts.gstatic.com/s/i/materialiconssharp/close/v14/24px.svg
           License: http://www.apache.org/licenses/LICENSE-2.0.txt
         -->
-        <svg xmlns="http://www.w3.org/2000/svg" class="icon"
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon" aria-hidden="true"
             viewBox="2 2 20 20" focusable="false">
+          <title>clear</title>
           <path d="M0 0h24v24H0V0z" fill="none"/>
           <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z"
             fill="currentColor"/>
@@ -72,14 +75,16 @@
         {{ input(id, name, value, ph, af, mb = imb) }}
         <div class="mb-{{ mb }}">
           {% if id == "kanji-query" %}
-            <div class="d-inline-block mr-1" title="select radicals"
+            <div class="d-inline-block mr-1"
+                title="select radicals" aria-label="select radicals"
                 data-toggle="tooltip" data-placement="top">
               <button type="button" class="jap btn btn-secondary"
                 data-toggle="modal" data-target="#radical-modal">部</button>
             </div>
           {%- endif -%}
           {% if id != "stroke-query" %}
-            <div class="d-inline-block mr-2" title="draw kanji"
+            <div class="d-inline-block mr-2"
+                title="draw kanji" aria-label="draw kanji"
                 data-toggle="tooltip" data-placement="top">
               <button type="button" class="jap btn btn-secondary"
                 data-toggle="modal" data-target="#kanjidraw-modal">筆</button>
@@ -132,15 +137,16 @@
   </div>
 {% endmacro %}
 {% macro topbtn() %}
-  <a href="#" title="go to top"
+  <a href="#" title="go to top" aria-label="go to top"
       data-toggle="tooltip" data-placement="top"
       class="btn btn-sm btn-outline-primary">
     <!--
       Source: https://fonts.gstatic.com/s/i/materialiconssharp/vertical_align_top/v10/24px.svg
       License: http://www.apache.org/licenses/LICENSE-2.0.txt
     -->
-    <svg xmlns="http://www.w3.org/2000/svg" class="icon"
+    <svg xmlns="http://www.w3.org/2000/svg" class="icon" aria-hidden="true"
         viewBox="0 0 24 24" focusable="false">
+      <title>go to top</title>
       <path d="M8 11h3v10h2V11h3l-4-4-4 4zM4 3v2h16V3H4z"
         fill="currentColor"/>
     </svg>
@@ -151,8 +157,9 @@
     Source: https://fonts.gstatic.com/s/i/materialiconssharp/expand_more/v12/24px.svg
     License: http://www.apache.org/licenses/LICENSE-2.0.txt
   -->
-  <svg xmlns="http://www.w3.org/2000/svg" class="icon collapse-open"
+  <svg xmlns="http://www.w3.org/2000/svg" class="icon collapse-open" aria-hidden="true"
       viewBox="4 4 16 16" focusable="false">
+    <title>expand</title>
     <path d="M24 24H0V0h24v24z" fill="none" opacity=".87"/>
     <path d="M16.59 8.59L12 13.17 7.41 8.59 6 10l6 6 6-6-1.41-1.41z"
       fill="currentColor"/>
@@ -163,8 +170,9 @@
     Source: https://fonts.gstatic.com/s/i/materialiconssharp/expand_less/v10/24px.svg
     License: http://www.apache.org/licenses/LICENSE-2.0.txt
   -->
-  <svg xmlns="http://www.w3.org/2000/svg" class="icon collapse-close"
+  <svg xmlns="http://www.w3.org/2000/svg" class="icon collapse-close" aria-hidden="true"
       viewBox="4 4 16 16" focusable="false">
+    <title>collapse</title>
     <path d="M0 0h24v24H0V0z" fill="none"/>
     <path d="M12 8l-6 6 1.41 1.41L12 10.83l4.59 4.58L18 14l-6-6z"
       fill="currentColor"/>
@@ -174,7 +182,7 @@
   <div class="d-inline-block" title="collapse/expand"
       data-toggle="tooltip" data-placement="top">
     <a class="btn btn-sm btn-outline-primary collapsebtn disabled"
-        href="#{{target }}"
+        href="#{{target }}" aria-label="collapse/expand"
         data-toggle="collapse" data-target="#{{ target }}"
         aria-expanded="true" aria-controls="{{ target }}">
       {{ collapseopen() }}
