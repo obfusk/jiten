@@ -10,7 +10,8 @@ HTMLOK  := The document is valid HTML5
 
 URL     := http://localhost:5000
 H5VCMD  := html5validator --show-warnings --log INFO --no-langdetect \
-             --ignore 'Unicode Normalization Form'
+             --ignore 'Unicode Normalization Form' \
+               'Possible misuse of "aria-label"' 'Article lacks heading'
 
 PYCOV   := $(PYTHON) -mcoverage run --source jiten
 
