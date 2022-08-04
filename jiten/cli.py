@@ -5,7 +5,7 @@
 #
 # File        : jiten/cli.py
 # Maintainer  : FC Stegerman <flx@obfusk.net>
-# Date        : 2022-07-24
+# Date        : 2022-07-31
 #
 # Copyright   : Copyright (C) 2022  FC Stegerman
 # Version     : v1.1.0
@@ -73,9 +73,9 @@ query: +w kat
 see 猫車 | 猫火鉢
 seq# 1467640, freq# 2201, jlpt N5, prio; 1
 
->>> run("-v jmdict -m1 -w idiot")
+>>> run("-v jmdict -m1 -w absurd")
 DB v14 up to date.
-query: +w idiot
+query: +w absurd
 <BLANKLINE>
 馬鹿 | 莫迦 | 破家 | 馬稼
 ばか | バカ

@@ -82,7 +82,7 @@ tmp-html:
 	while [ ! -e tmp-html/.running ]; do sleep 1; done ; \
 	dl index ; \
 	dl cat    /jmdict    -d max=10 -d word=yes --data-urlencode query=cat    ; \
-	dl idiot  /jmdict    -d max=10 -d word=yes --data-urlencode query=idiot  ; \
+	dl absurd /jmdict    -d max=10 -d word=yes --data-urlencode query=absurd ; \
 	dl neko   /kanji     -d max=10 -d word=yes --data-urlencode query=ねこ   ; \
 	dl hi     /kanji     -d max=10 -d word=yes --data-urlencode query=日     ; \
 	dl kitten /sentences -d max=10             --data-urlencode query=kitten ; \
@@ -96,6 +96,10 @@ tmp-html:
 	dl k-b-f  /kanji/by-freq    ; \
 	dl k-b-l  /kanji/by-level   ; \
 	dl k-b-j  /kanji/by-jlpt    ; \
+	dl k-b-s1 /kanji/by-skip/1  ; \
+	dl k-b-s2 /kanji/by-skip/2  ; \
+	dl k-b-s3 /kanji/by-skip/3  ; \
+	dl k-b-s4 /kanji/by-skip/4  ; \
 	touch tmp-html/.done ; wait $$pid
 
 # TODO
