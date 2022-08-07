@@ -2,7 +2,7 @@
 
     File        : README.md
     Maintainer  : FC Stegerman <flx@obfusk.net>
-    Date        : 2022-07-29
+    Date        : 2022-08-07
 
     Copyright   : Copyright (C) 2022  FC Stegerman
     Version     : v1.1.0
@@ -149,22 +149,25 @@ $ jiten sentences --help
 
 ### Tab Completion
 
+NB: the syntax for the environment variable changed in click >= 8.0,
+use e.g. `source_bash` instead of `bash_source` for older versions.
+
 For Bash, add this to `~/.bashrc`:
 
 ```bash
-eval "$(_JITEN_COMPLETE=source_bash jiten)"
+eval "$(_JITEN_COMPLETE=bash_source jiten)"
 ```
 
 For Zsh, add this to `~/.zshrc`:
 
 ```zsh
-eval "$(_JITEN_COMPLETE=source_zsh jiten)"
+eval "$(_JITEN_COMPLETE=zsh_source jiten)"
 ```
 
 For Fish, add this to `~/.config/fish/completions/jiten.fish`:
 
 ```fish
-eval (env _JITEN_COMPLETE=source_fish jiten)
+eval (env _JITEN_COMPLETE=fish_source jiten)
 ```
 
 ## WebView GUI for Linux/macOS/Windows
