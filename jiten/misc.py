@@ -5,7 +5,7 @@
 #
 # File        : jiten/misc.py
 # Maintainer  : FC Stegerman <flx@obfusk.net>
-# Date        : 2021-07-08
+# Date        : 2022-11-24
 #
 # Copyright   : Copyright (C) 2021  FC Stegerman
 # Version     : v1.0.0
@@ -280,6 +280,14 @@ DEPENDENCIES = dict(                                            # {{{1
   kanjidraw     = dict(url = "https://github.com/obfusk/kanjidraw"),
   kanjivg       = dict(url = "https://github.com/KanjiVG/kanjivg"),
 )                                                               # }}}1
+
+ANDROID_APP_IDS = ("dev.obfusk.jiten", "dev.obfusk.jiten_webview")
+ANDROID_CERT_FPRS = dict(
+  obfusk = "E3:60:3F:6A:1C:0A:41:CB:00:EE:82:1B:BC:4D:07:03:"
+           "2D:4B:2C:A2:6D:03:74:5D:4A:26:EB:EB:FB:C7:D4:FD",
+  fdroid = "F5:5A:A8:7C:70:46:50:12:73:F6:46:A6:A8:13:78:7C:"
+           "BE:26:30:E1:1E:38:18:3C:FB:2D:BA:B6:DA:48:EB:31",
+)
 
 if __name__ == "__main__":
   if "--doctest" in sys.argv:

@@ -5,7 +5,7 @@
 #
 # File        : jiten/app.py
 # Maintainer  : FC Stegerman <flx@obfusk.net>
-# Date        : 2022-07-24
+# Date        : 2022-11-24
 #
 # Copyright   : Copyright (C) 2022  FC Stegerman
 # Version     : v1.1.0
@@ -165,7 +165,7 @@ import json, os, sys, time
 from pathlib import Path
 
 import kanjidraw
-import click, jinja2, werkzeug
+import click, flask, jinja2, werkzeug
 
 os.environ["FLASK_SKIP_DOTENV"] = "yes"                       #  FIXME
 from flask import Flask, abort, escape, make_response, redirect, \
@@ -482,6 +482,17 @@ def r_save_prefs():
     nogrid  = yesno(request.form.get("nogrid") == "yes"),
     max     = str(request.form.get("max", MAX, type = int)),
   ), redirect(request.form.get("url", url_for("r_index"))))
+
+if os.environ.get(DOMAIN) == "jiten.obfusk.dev":
+  @app.route("/.well-known/assetlinks.json")
+  def asset_links():
+    return flask.json.jsonify([dict(
+      relation = ["delegate_permission/common.handle_all_urls"],
+      target = dict(
+        namespace = "android_app", package_name = p,
+        sha256_cert_fingerprints = list(M.ANDROID_CERT_FPRS.values()),
+      )
+    ) for p in M.ANDROID_APP_IDS])
 
 if GUI_TOKEN:
   @app.route("/__load_history__/" + GUI_TOKEN, methods = ["POST"])
