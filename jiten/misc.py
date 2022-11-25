@@ -281,13 +281,18 @@ DEPENDENCIES = dict(                                            # {{{1
   kanjivg       = dict(url = "https://github.com/KanjiVG/kanjivg"),
 )                                                               # }}}1
 
-ANDROID_APP_IDS = ("dev.obfusk.jiten", "dev.obfusk.jiten_webview")
 ANDROID_CERT_FPRS = dict(
-  obfusk = "E3:60:3F:6A:1C:0A:41:CB:00:EE:82:1B:BC:4D:07:03:"
-           "2D:4B:2C:A2:6D:03:74:5D:4A:26:EB:EB:FB:C7:D4:FD",
-  fdroid = "F5:5A:A8:7C:70:46:50:12:73:F6:46:A6:A8:13:78:7C:"
-           "BE:26:30:E1:1E:38:18:3C:FB:2D:BA:B6:DA:48:EB:31",
+  obfusk          = "E3:60:3F:6A:1C:0A:41:CB:00:EE:82:1B:BC:4D:07:03:"
+                    "2D:4B:2C:A2:6D:03:74:5D:4A:26:EB:EB:FB:C7:D4:FD",
+  fdroid          = "F5:5A:A8:7C:70:46:50:12:73:F6:46:A6:A8:13:78:7C:"
+                    "BE:26:30:E1:1E:38:18:3C:FB:2D:BA:B6:DA:48:EB:31",
+  fdroid_webview  = "AD:FD:B8:21:41:AA:EB:25:F2:6F:89:82:BE:84:1C:4D:"
+                    "05:40:F4:61:80:3A:0C:E4:E2:4D:D0:C9:FB:1F:81:F3",
 )
+ANDROID_APP_IDS_TO_CERTS = {
+  "dev.obfusk.jiten": ["obfusk", "fdroid"],
+  "dev.obfusk.jiten_webview": ["obfusk", "fdroid_webview"],
+}
 
 if __name__ == "__main__":
   if "--doctest" in sys.argv:

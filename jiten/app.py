@@ -489,10 +489,10 @@ if os.environ.get(DOMAIN) == "jiten.obfusk.dev":
     return flask.json.jsonify([dict(
       relation = ["delegate_permission/common.handle_all_urls"],
       target = dict(
-        namespace = "android_app", package_name = p,
-        sha256_cert_fingerprints = list(M.ANDROID_CERT_FPRS.values()),
+        namespace = "android_app", package_name = pkg,
+        sha256_cert_fingerprints = [ M.ANDROID_CERT_FPRS[c] for c in certs ]
       )
-    ) for p in M.ANDROID_APP_IDS])
+    ) for pkg, certs in M.ANDROID_APP_IDS_TO_CERTS.items()])
 
 if GUI_TOKEN:
   @app.route("/__load_history__/" + GUI_TOKEN, methods = ["POST"])
