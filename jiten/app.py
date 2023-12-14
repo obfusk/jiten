@@ -177,8 +177,7 @@ import kanjidraw
 import click, flask, jinja2, werkzeug
 
 os.environ["FLASK_SKIP_DOTENV"] = "yes"                       #  FIXME
-from flask import Flask, abort, escape, make_response, redirect, \
-                  request, render_template, url_for
+from flask import Flask, abort, make_response, redirect, request, render_template, url_for
 
 from .version import __version__, py_version
 from .kana import kana2romaji
