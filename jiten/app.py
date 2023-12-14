@@ -18,8 +18,9 @@ r"""
 
 Web interface.
 
->>> import re
+>>> import os, re
 
+>>> have_nonfree = os.path.exists("nonfree-data/pitch")
 >>> app.testing = True
 >>> client = app.test_client()
 
@@ -43,9 +44,9 @@ True
 
 >>> d = get("/jmdict?query=kitten&word=yes")
 200 OK
->>> "こꜛねꜜこ" in d
+>>> "こꜛねꜜこ" in d or not have_nonfree
 True
->>> "koꜛneꜜko" in d
+>>> "koꜛneꜜko" in d or not have_nonfree
 True
 >>> "kitten" in d
 True

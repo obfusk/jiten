@@ -31,6 +31,7 @@ test: all test-js
 	$(PYTHON) -m jiten.kana      $(VERBOSE) --doctest
 	$(PYTHON) -m jiten.kanji     $(VERBOSE) --doctest
 	$(PYTHON) -m jiten.misc      $(VERBOSE) --doctest
+	! test -e nonfree-data/pitch || \
 	$(PYTHON) -m jiten.pitch     $(VERBOSE) --doctest
 	$(PYTHON) -m jiten.sentences $(VERBOSE) --doctest
 
@@ -47,6 +48,7 @@ coverage: tmp-html
 	$(PYCOV) -a -m jiten.kana      --doctest
 	$(PYCOV) -a -m jiten.kanji     --doctest
 	$(PYCOV) -a -m jiten.misc      --doctest
+	! test -e nonfree-data/pitch || \
 	$(PYCOV) -a -m jiten.pitch     --doctest
 	$(PYCOV) -a -m jiten.sentences --doctest
 	$(PYTHON) -mcoverage html
