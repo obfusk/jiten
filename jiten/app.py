@@ -149,13 +149,22 @@ True
 >>> d.index("JLPT N3") < d.index("歯", d.index("JLPT N5")) < d.index("JLPT N2")
 True
 
->>> sorted( (c.name, c.value) for c in client.cookie_jar )
+>>> def cookies():
+...   import importlib.metadata
+...   v = tuple(map(int, importlib.metadata.version("werkzeug").split(".")))
+...   if v < (2, 3):
+...     return sorted( (c.name, c.value) for c in client.cookie_jar )
+...   else:
+...     cookies = [ client.get_cookie(k) for k in PREFS ]
+...     return sorted( (c.decoded_key, c.decoded_value) for c in cookies )
+
+>>> cookies()
 []
 >>> p = dict(dark = "yes", lang = "eng ger oops".split())
 >>> r = client.post("/_save_prefs", data = p, follow_redirects = True)
 >>> r.status
 '200 OK'
->>> sorted( (c.name, c.value) for c in client.cookie_jar )
+>>> cookies()
 [('dark', 'yes'), ('lang', '"eng ger"'), ('large', 'no'), ('max', '50'), ('nogrid', 'no'), ('nor2h', 'no'), ('roma', 'no')]
 
 """                                                             # }}}1
