@@ -156,7 +156,7 @@ True
 ...     return sorted( (c.name, c.value) for c in client.cookie_jar )
 ...   else:
 ...     cookies = [ client.get_cookie(k) for k in PREFS ]
-...     return sorted( (c.decoded_key, c.decoded_value) for c in cookies )
+...     return sorted( (c.key, c.value) for c in cookies if c is not None )
 
 >>> cookies()
 []
