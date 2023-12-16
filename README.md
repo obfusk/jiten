@@ -35,15 +35,8 @@
 
 → available online at [jiten.dev](https://jiten.obfusk.dev)
 
+[<img src="badges/faysrepo.png" alt="Get it from Fay's Repo" height="60">](https://obfusk.dev/fdroid/repo?fingerprint=2A21B7FFC93B878724B1991C05DAE113C72B93A556C193F49B5D3342884798B7)
 [<img src="badges/fdroid.png" alt="Get it on F-Droid" height="60">](https://f-droid.org/app/dev.obfusk.jiten)
-[<img src="badges/google-play.png" alt="Get it on Google Play" height="60">](https://play.google.com/store/apps/details?id=dev.obfusk.jiten)
-
-NB: jiten is now available in the official F-Droid repository, but you
-can also get it via [**obfusk's f-droid
-repo**](https://obfusk.dev/fdroid/repo?fingerprint=2A21B7FFC93B878724B1991C05DAE113C72B93A556C193F49B5D3342884798B7):
-this contains the exact same APKs available via Google Play, as well
-as occasional beta versions (which are only installed when selected
-manually).
 
 ## Screenshots
 
