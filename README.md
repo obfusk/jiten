@@ -37,6 +37,7 @@
 
 [<img src="badges/faysrepo.png" alt="Get it from Fay's Repo" height="60">](https://obfusk.dev/fdroid/repo?fingerprint=2A21B7FFC93B878724B1991C05DAE113C72B93A556C193F49B5D3342884798B7)
 [<img src="badges/fdroid.png" alt="Get it on F-Droid" height="60">](https://f-droid.org/app/dev.obfusk.jiten)
+[<img src="badges/github.png" alt="Get the APK from GitHub" height="60">](https://github.com/obfusk/jiten/releases/latest)
 
 ## Screenshots
 
