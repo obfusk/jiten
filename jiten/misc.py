@@ -261,7 +261,7 @@ DEPENDENCIES = dict(                                            # {{{1
   ),
 
   libffi        = dict(url = "https://github.com/libffi/libffi"),
-  libpcre       = dict(url = "https://www.pcre.org"),
+  libpcre2      = dict(url = "https://www.pcre.org"),
   openssl       = dict(url = "https://www.openssl.org"),
   pyjnius       = dict(url = "https://github.com/kivy/pyjnius"),
   python3       = dict(url = "https://www.python.org"),

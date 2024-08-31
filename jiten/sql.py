@@ -44,9 +44,9 @@ def sqlite_do(file, write = False):
   finally:
     conn.close()
 
-def load_pcre_extension(conn):
-  spec = importlib.util.find_spec("jiten._sqlite3_pcre")
-  if spec is None: raise RuntimeError("jiten._sqlite3_pcre not found")
+def load_pcre2_extension(conn):
+  spec = importlib.util.find_spec("jiten._sqlite3_pcre2")
+  if spec is None: raise RuntimeError("jiten._sqlite3_pcre2 not found")
   conn.enable_load_extension(True)
   if hasattr(conn, "load_extension"):
     conn.load_extension(spec.origin)

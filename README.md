@@ -233,7 +233,7 @@ $ make
 * Python >= 3.8 + Flask + click +
   [kanjidraw](https://github.com/obfusk/kanjidraw).
 * To build the SQLite PCRE C extension: a C compiler (e.g.
-  `gcc`/`clang`) and the `sqlite3` & `pcre` libraries & headers.
+  `gcc`/`clang`) and the `sqlite3` & `pcre2` libraries & headers.
 * Basic build tools like `make` and `patch`.
 * To run the WebView GUI:
   [pywebview](https://pywebview.flowrl.com) >= 3.3.5.
@@ -241,7 +241,7 @@ $ make
 ### Debian/Ubuntu
 
 ```bash
-$ apt install python3-dev build-essential libsqlite3-dev libpcre3-dev
+$ apt install python3-dev build-essential libsqlite3-dev libpcre2-dev
 $ apt install python3-flask   # optional: Flask & click w/o pip
 ```
 

@@ -128,7 +128,7 @@ import click
 
 from . import jmdict as J
 from . import misc   as M
-from .sql import sqlite_do, load_pcre_extension
+from .sql import sqlite_do, load_pcre2_extension
 
 SQLITE_FILE     = M.resource_path("res/kanji.sqlite3")
 KANJIDIC_FILE   = M.resource_path("res/jmdict/kanjidic2.xml.gz")
@@ -407,7 +407,7 @@ def search(q, max_results = None, level = None, jlpt = None,
         for r in c.execute("SELECT * FROM entry WHERE code = ?", (ord(char),)):
           yield row2entry(r) # #=1
     else:
-      load_pcre_extension(c.connection)
+      load_pcre2_extension(c.connection)
       for r in c.execute(f"""
           SELECT * FROM entry WHERE (
                             on_                        REGEXP :re OR

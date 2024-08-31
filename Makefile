@@ -54,7 +54,7 @@ coverage: tmp-html
 
 clean: cleanup
 	rm -f jiten/res/*.sqlite3
-	rm -f jiten/_sqlite3_pcre.*.so
+	rm -f jiten/_sqlite3_pcre*.so
 	rm -fr jiten.egg-info/
 	$(MAKE) -C jiten/res/jmdict clean
 	$(MAKE) -C jiten/res/sentences clean

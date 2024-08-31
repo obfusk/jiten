@@ -235,7 +235,7 @@ from . import freq  as F
 from . import misc  as M
 from . import pitch as P
 from .kana import katakana2hiragana
-from .sql import sqlite_do, load_pcre_extension
+from .sql import sqlite_do, load_pcre2_extension
 
 DBVERSION       = 14 # NB: update this when data/schema changes
 SQLITE_FILE     = M.resource_path("res/jmdict.sqlite3")
@@ -678,7 +678,7 @@ def search(q, langs = [LANGS[0]], max_results = None,           # {{{1
         """.format(fltr, ordr, limit),
           dict(q = "%"+q+"%", si = sinfo))                    # safe!
       elif M.q2like(q):
-        load_pcre_extension(c.connection)
+        load_pcre2_extension(c.connection)
         prms  = dict(q = M.q2like(q), re = M.q2rx(q), si = sinfo)
         query = ("""
           SELECT rank, seq, jlpt FROM (
@@ -697,7 +697,7 @@ def search(q, langs = [LANGS[0]], max_results = None,           # {{{1
           {} {} {}
         """.format(fltr, ordr, limit), prms)                  # safe!
       else:
-        load_pcre_extension(c.connection)
+        load_pcre2_extension(c.connection)
         query = ("""
           SELECT rank, seq, jlpt FROM (
               SELECT entry FROM kanji WHERE elem REGEXP :re

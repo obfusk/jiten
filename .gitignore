@@ -12,6 +12,6 @@ __pycache__
 /htmlcov
 
 /jiten/.version
-/jiten/_sqlite3_pcre.*.so
+/jiten/_sqlite3_pcre*.so
 /tmp
 /tmp-html

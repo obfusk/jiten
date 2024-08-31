@@ -10,8 +10,8 @@ vsn = vsn.replace("-", "+", 1)
 clean = "clean" in sys.argv[1:]
 
 info  = Path(__file__).with_name("README.md").read_text(encoding = "utf8")
-pcre  = setuptools.Extension("jiten._sqlite3_pcre", ["sqlite3-pcre.c"],
-                             libraries = "pcre sqlite3".split())
+pcre2 = setuptools.Extension("jiten._sqlite3_pcre2", ["sqlite3-pcre2.c"],
+                             libraries = "pcre2-8 sqlite3".split())
 
 data  = [ "res/jlpt/N" + l + "-" + x for l in "12345"
           for x in "kanji vocab-eng vocab-hiragana".split() ] \
@@ -98,5 +98,5 @@ setuptools.setup(
   python_requires   = ">=3.8",
   install_requires  = ["Flask", "click>=6.0", "kanjidraw>=0.2.1"],
   extras_require    = dict(gui = ["pywebview>=3.3.5"]),
-  ext_modules       = [pcre],
+  ext_modules       = [pcre2],
 )
